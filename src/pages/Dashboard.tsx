@@ -1,6 +1,5 @@
-
 import { useState } from "react";
-import { Package, Upload, BarChart3, MessageSquare, Settings, FileText, TrendingUp, DollarSign, Boxes, PieChart } from "lucide-react";
+import { Package, Upload, BarChart3, MessageSquare, Settings, FileText, TrendingUp, DollarSign, Boxes, PieChart, Plus, Calendar, Clock, MoreHorizontal, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -12,189 +11,361 @@ const Dashboard = () => {
 
   const stats = [
     {
-      title: "Total Savings",
-      value: "$12,450",
-      change: "+23%",
-      icon: DollarSign,
-      color: "text-green-600"
-    },
-    {
-      title: "Orders Processed",
+      title: "Finished",
       value: "1,247",
-      change: "+12%",
+      subtitle: "+8 orders",
       icon: Package,
-      color: "text-blue-600"
+      color: "text-blue-600",
+      bgColor: "bg-blue-50"
     },
     {
-      title: "Fill Rate Improvement",
+      title: "Tracked",
+      value: "$12,450",
+      subtitle: "- $2,340 saved",
+      icon: DollarSign,
+      color: "text-green-600",
+      bgColor: "bg-green-50"
+    },
+    {
+      title: "Efficiency",
       value: "87%",
-      change: "+15%",
+      subtitle: "+12%",
       icon: TrendingUp,
-      color: "text-purple-600"
-    },
-    {
-      title: "Waste Reduction",
-      value: "34%",
-      change: "+8%",
-      icon: Boxes,
-      color: "text-orange-600"
+      color: "text-purple-600",
+      bgColor: "bg-purple-50"
     }
   ];
 
   const recentActivity = [
-    { action: "Uploaded order batch #1247", time: "2 hours ago", status: "completed" },
-    { action: "Generated packaging report", time: "4 hours ago", status: "completed" },
-    { action: "AI analysis for SKU-4821", time: "6 hours ago", status: "completed" },
-    { action: "Optimized 45 orders", time: "1 day ago", status: "completed" }
+    { 
+      user: "System AI",
+      action: "Optimized packaging for Order #4821",
+      time: "10:15 AM",
+      avatar: "🤖",
+      details: "Recommended smaller box size, saved $4.50 on shipping"
+    },
+    { 
+      user: "Processing Engine",
+      action: "Uploaded order batch #1247",
+      time: "10:15 AM",
+      avatar: "⚙️",
+      details: "45 orders processed successfully"
+    },
+    { 
+      user: "Analytics Bot",
+      action: "Generated monthly report",
+      time: "10:15 AM",
+      avatar: "📊",
+      details: "Monthly packaging analysis complete"
+    },
+    { 
+      user: "AI Assistant",
+      action: "Answered packaging query",
+      time: "10:15 AM",
+      avatar: "💬",
+      details: "Explained CUIN calculation method"
+    }
+  ];
+
+  const currentTasks = [
+    {
+      title: "Monthly Packaging Report",
+      status: "In progress",
+      progress: 75,
+      time: "2h",
+      statusColor: "bg-orange-500",
+      icon: "📋"
+    },
+    {
+      title: "AI Analysis for SKU Batch",
+      status: "On hold",
+      progress: 30,
+      time: "4h",
+      statusColor: "bg-yellow-500",
+      icon: "🔍"
+    },
+    {
+      title: "Order Optimization Review",
+      status: "Done",
+      progress: 100,
+      time: "6h",
+      statusColor: "bg-green-500",
+      icon: "✅"
+    }
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Package className="h-8 w-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">QuantiPackAI Dashboard</h1>
+    <div className="min-h-screen bg-gray-50 flex">
+      {/* Sidebar */}
+      <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
+        {/* Logo */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <Package className="h-5 w-5 text-white" />
             </div>
-            <div className="flex items-center space-x-4">
-              <Badge variant="secondary" className="bg-green-100 text-green-800">
-                Corporate Plan
-              </Badge>
-              <Button variant="outline" size="sm">
-                <Settings className="h-4 w-4 mr-2" />
-                Settings
-              </Button>
-            </div>
+            <span className="font-bold text-gray-900">QuantiPackAI</span>
           </div>
         </div>
-      </header>
 
-      <div className="flex">
-        {/* Sidebar */}
-        <aside className="w-64 bg-white border-r min-h-screen">
-          <nav className="p-4 space-y-2">
-            <Button
-              variant={activeView === "overview" ? "default" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => setActiveView("overview")}
-            >
-              <BarChart3 className="h-4 w-4 mr-2" />
-              Overview
-            </Button>
-            <Button
-              variant={activeView === "upload" ? "default" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => setActiveView("upload")}
-            >
-              <Upload className="h-4 w-4 mr-2" />
-              Upload Data
-            </Button>
-            <Button
-              variant={activeView === "reports" ? "default" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => setActiveView("reports")}
-            >
-              <FileText className="h-4 w-4 mr-2" />
-              Reports
-            </Button>
-            <Button
-              variant={activeView === "ai-chat" ? "default" : "ghost"}
-              className="w-full justify-start"
-              onClick={() => setActiveView("ai-chat")}
-            >
-              <MessageSquare className="h-4 w-4 mr-2" />
-              AI Assistant
-            </Button>
-          </nav>
-        </aside>
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-2">
+          <Button
+            variant={activeView === "overview" ? "default" : "ghost"}
+            className={`w-full justify-start ${activeView === "overview" ? "bg-blue-50 text-blue-700 border-blue-200" : "text-gray-600 hover:bg-gray-50"}`}
+            onClick={() => setActiveView("overview")}
+          >
+            <BarChart3 className="h-4 w-4 mr-3" />
+            Overview
+          </Button>
+          <Button
+            variant="ghost"
+            className={`w-full justify-start ${activeView === "projects" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+            onClick={() => setActiveView("projects")}
+          >
+            <Package className="h-4 w-4 mr-3" />
+            Projects
+            <Plus className="h-4 w-4 ml-auto" />
+          </Button>
+          <Button
+            variant="ghost"
+            className={`w-full justify-start ${activeView === "upload" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+            onClick={() => setActiveView("upload")}
+          >
+            <Upload className="h-4 w-4 mr-3" />
+            Upload Data
+            <Plus className="h-4 w-4 ml-auto" />
+          </Button>
+          <Button
+            variant="ghost"
+            className={`w-full justify-start ${activeView === "reports" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+            onClick={() => setActiveView("reports")}
+          >
+            <FileText className="h-4 w-4 mr-3" />
+            Reports
+          </Button>
+          <Button
+            variant="ghost"
+            className={`w-full justify-start ${activeView === "team" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+            onClick={() => setActiveView("team")}
+          >
+            <User className="h-4 w-4 mr-3" />
+            Team
+          </Button>
+          <Button
+            variant="ghost"
+            className={`w-full justify-start ${activeView === "settings" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+            onClick={() => setActiveView("settings")}
+          >
+            <Settings className="h-4 w-4 mr-3" />
+            Settings
+          </Button>
+        </nav>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
+        {/* Upgrade Section */}
+        <div className="p-4 border-t border-gray-200">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
+            <h4 className="font-semibold text-gray-900 mb-2">Upgrade to Pro</h4>
+            <p className="text-sm text-gray-600 mb-3">Get 1 month free and unlock advanced features</p>
+            <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700">
+              Upgrade
+            </Button>
+          </div>
+        </div>
+
+        {/* Help & Logout */}
+        <div className="p-4 border-t border-gray-200 space-y-2">
+          <Button variant="ghost" className="w-full justify-start text-gray-600 hover:bg-gray-50">
+            <MessageSquare className="h-4 w-4 mr-3" />
+            Help & Information
+          </Button>
+          <Button variant="ghost" className="w-full justify-start text-gray-600 hover:bg-gray-50">
+            <span className="w-4 h-4 mr-3 flex items-center justify-center">⚪</span>
+            Log out
+          </Button>
+        </div>
+      </aside>
+
+      {/* Main Content */}
+      <main className="flex-1 flex flex-col">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="flex items-center space-x-3 mb-2">
+                <h1 className="text-2xl font-bold text-gray-900">Hello, Manager</h1>
+                <div className="flex items-center text-sm text-gray-500">
+                  <Calendar className="h-4 w-4 mr-1" />
+                  16 May, 2023
+                </div>
+              </div>
+              <p className="text-gray-600">Track packaging optimization here. You almost reach a goal!</p>
+            </div>
+            <div className="flex items-center space-x-4">
+              <div className="text-right">
+                <div className="font-semibold text-gray-900">QuantiPack User</div>
+                <div className="text-sm text-gray-500">@quantipack</div>
+              </div>
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                <span className="text-white font-semibold">Q</span>
+              </div>
+              <div className="flex space-x-2">
+                <Button variant="outline" size="sm">
+                  📞
+                </Button>
+                <Button variant="outline" size="sm">
+                  💬
+                </Button>
+                <Button variant="outline" size="sm">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Dashboard Content */}
+        <div className="flex-1 p-6">
           {activeView === "overview" && (
-            <div className="space-y-6">
-              {/* Stats Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {stats.map((stat, index) => (
-                  <Card key={index}>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium text-gray-600">
-                        {stat.title}
-                      </CardTitle>
-                      <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{stat.value}</div>
-                      <p className="text-xs text-green-600 mt-1">
-                        {stat.change} from last month
-                      </p>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-
-              {/* Charts and Analytics */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Packaging Optimization Trends</CardTitle>
-                    <CardDescription>
-                      Monthly savings and efficiency improvements
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                      <div className="text-center">
-                        <BarChart3 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-500">Chart visualization will be implemented</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Packaging Mix Analysis</CardTitle>
-                    <CardDescription>
-                      Current vs optimized packaging distribution
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 flex items-center justify-center bg-gray-50 rounded-lg">
-                      <div className="text-center">
-                        <PieChart className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-500">Pie chart visualization will be implemented</p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Recent Activity */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Recent Activity</CardTitle>
-                  <CardDescription>
-                    Latest processing and optimization activities
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {recentActivity.map((activity, index) => (
-                      <div key={index} className="flex items-center justify-between py-2">
-                        <div>
-                          <p className="text-sm font-medium">{activity.action}</p>
-                          <p className="text-xs text-gray-500">{activity.time}</p>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Column - Stats & Performance */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {stats.map((stat, index) => (
+                    <Card key={index} className="border-0 shadow-sm">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className={`w-8 h-8 ${stat.bgColor} rounded-lg flex items-center justify-center`}>
+                            <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                          </div>
                         </div>
-                        <Badge variant="secondary" className="bg-green-100 text-green-800">
-                          {activity.status}
-                        </Badge>
+                        <div className="space-y-1">
+                          <p className="text-sm font-medium text-gray-600">{stat.title}</p>
+                          <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+                          <p className={`text-xs ${stat.color}`}>{stat.subtitle}</p>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                {/* Performance Chart */}
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg font-semibold">Performance</CardTitle>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-500">01-07 May</span>
+                        <Button variant="ghost" size="sm">
+                          <Calendar className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg relative overflow-hidden">
+                      <div className="absolute inset-0 flex items-end justify-center pb-8">
+                        <div className="flex items-end space-x-2">
+                          {[3, 5, 2, 7, 4, 6, 8, 3, 5].map((height, i) => (
+                            <div
+                              key={i}
+                              className="bg-gradient-to-t from-blue-400 to-blue-600 rounded-t"
+                              style={{ width: '20px', height: `${height * 20}px` }}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                      <div className="text-center z-10">
+                        <BarChart3 className="h-16 w-16 text-blue-400 mx-auto mb-4" />
+                        <p className="text-gray-500">Performance visualization</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Current Tasks */}
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-lg font-semibold">Current Tasks</CardTitle>
+                      <div className="flex items-center space-x-2">
+                        <span className="text-sm text-gray-500">Done 75%</span>
+                        <Button variant="ghost" size="sm">Week</Button>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {currentTasks.map((task, index) => (
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border">
+                            <span className="text-sm">{task.icon}</span>
+                          </div>
+                          <div>
+                            <p className="font-medium text-gray-900">{task.title}</p>
+                            <div className="flex items-center space-x-2 mt-1">
+                              <div className={`w-2 h-2 rounded-full ${task.statusColor}`}></div>
+                              <span className="text-xs text-gray-500">{task.status}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <span className="text-sm text-gray-500">{task.time}</span>
+                          <Button variant="ghost" size="sm">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Right Column - Activity Feed */}
+              <div className="space-y-6">
+                <Card className="border-0 shadow-sm">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg font-semibold">Activity</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {recentActivity.map((activity, index) => (
+                      <div key={index} className="flex space-x-3">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center flex-shrink-0">
+                          <span className="text-xs">{activity.avatar}</span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <p className="font-medium text-gray-900 text-sm">{activity.user}</p>
+                            <span className="text-xs text-gray-500">{activity.time}</span>
+                          </div>
+                          <p className="text-sm text-gray-600 mt-1">{activity.action}</p>
+                          <p className="text-xs text-gray-500 mt-1">{activity.details}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+
+                {/* Message Input */}
+                <Card className="border-0 shadow-sm">
+                  <CardContent className="p-4">
+                    <div className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        placeholder="Ask AI about packaging optimization..."
+                        className="flex-1 px-3 py-2 bg-gray-50 border-0 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                        <MessageSquare className="h-4 w-4" />
+                      </Button>
+                      <Button variant="outline" size="sm">
+                        🎤
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           )}
 
@@ -422,8 +593,8 @@ const Dashboard = () => {
               </div>
             </div>
           )}
-        </main>
-      </div>
+        </div>
+      </main>
     </div>
   );
 };
