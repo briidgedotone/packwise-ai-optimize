@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Eye, BarChart3, FileImage } from 'lucide-react';
+import { Upload, Eye, BarChart3, FileImage, Camera, Zap, Target, CheckCircle2, AlertCircle, Info, Sparkles } from 'lucide-react';
 
 export const PDPAnalyzer = () => {
   const [files, setFiles] = useState<{
@@ -40,24 +40,78 @@ export const PDPAnalyzer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-pink-50/20">
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 p-8">
-          <h2 className="text-2xl font-semibold text-slate-800 mb-2">PDP Analyzer</h2>
-          <p className="text-slate-600">
-            Analyze and score your Principal Display Panel effectiveness against competitors
-          </p>
+        <div className="bg-white rounded-xl shadow-lg border border-slate-200/60 p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-pink-500/10 rounded-bl-full"></div>
+          <div className="relative">
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-lg">
+                  <Eye className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-800 mb-2">PDP Analyzer</h2>
+                  <p className="text-slate-600 text-lg">
+                    AI-powered visual analysis and competitor benchmarking
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-pink-50 border border-pink-200 rounded-lg">
+                <Camera className="h-4 w-4 text-pink-600" />
+                <span className="text-sm font-medium text-pink-700">Visual AI</span>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-4 mt-6">
+              <div className="flex items-center gap-3 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
+                <div className="p-2 bg-indigo-100 rounded-lg">
+                  <Sparkles className="h-5 w-5 text-indigo-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-indigo-800">Visual Analysis</div>
+                  <div className="text-xs text-indigo-600">AI-powered image recognition</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-pink-50 rounded-lg border border-pink-200">
+                <div className="p-2 bg-pink-100 rounded-lg">
+                  <Target className="h-5 w-5 text-pink-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-pink-800">Visibility Score</div>
+                  <div className="text-xs text-pink-600">Benchmarked performance</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <Zap className="h-5 w-5 text-purple-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-purple-800">Smart Recommendations</div>
+                  <div className="text-xs text-purple-600">Actionable design insights</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Upload Section */}
           <div className="space-y-6">
-            <Card className="bg-white border-slate-200/60 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                  <FileImage className="h-5 w-5 text-slate-600" />
+            <Card className="bg-white border-slate-200/60 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-indigo-50/50 rounded-t-lg">
+                <CardTitle className="text-xl flex items-center gap-3 text-slate-800">
+                  <div className="p-2 bg-indigo-100 rounded-lg">
+                    <FileImage className="h-5 w-5 text-indigo-600" />
+                  </div>
                   Your PDP
                 </CardTitle>
+                <div className="mt-2 p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-indigo-600" />
+                    <span className="text-sm text-indigo-700">Upload your Principal Display Panel for AI analysis</span>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="border-2 border-dashed border-slate-200 rounded-lg p-10 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
@@ -219,9 +273,19 @@ export const PDPAnalyzer = () => {
           <Button 
             size="lg"
             disabled={!files.mainPDP}
-            className="min-w-[140px] bg-slate-800 hover:bg-slate-700 text-white"
+            className="min-w-[160px] bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-semibold py-3 px-8"
           >
-            Analyze PDP
+            {!files.mainPDP ? (
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5" />
+                Upload PDP
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Eye className="h-5 w-5" />
+                Analyze PDP
+              </div>
+            )}
           </Button>
         </div>
       </div>

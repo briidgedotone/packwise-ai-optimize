@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, Calculator, PieChart, Settings } from 'lucide-react';
+import { Upload, Calculator, PieChart, Settings, TrendingUp, Package2, BarChart3, CheckCircle2, AlertCircle, Info, Calendar } from 'lucide-react';
 
 export const PackagingDemandPlanner = () => {
   const [files, setFiles] = useState<{
@@ -26,24 +26,78 @@ export const PackagingDemandPlanner = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-blue-50/20">
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200/60 p-8">
-          <h2 className="text-2xl font-semibold text-slate-800 mb-2">Packaging Demand Planner</h2>
-          <p className="text-slate-600">
-            Calculate exact packaging quantities needed based on forecasted product volumes
-          </p>
+        <div className="bg-white rounded-xl shadow-lg border border-slate-200/60 p-8 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-blue-500/10 rounded-bl-full"></div>
+          <div className="relative">
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg">
+                  <Calculator className="h-8 w-8 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-slate-800 mb-2">Demand Planner</h2>
+                  <p className="text-slate-600 text-lg">
+                    Calculate exact packaging quantities for your forecasts
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
+                <Calendar className="h-4 w-4 text-blue-600" />
+                <span className="text-sm font-medium text-blue-700">Future-Ready</span>
+              </div>
+            </div>
+            
+            <div className="grid md:grid-cols-3 gap-4 mt-6">
+              <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
+                <div className="p-2 bg-emerald-100 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-emerald-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-emerald-800">Demand Forecasting</div>
+                  <div className="text-xs text-emerald-600">Plan ahead with confidence</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Package2 className="h-5 w-5 text-blue-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-blue-800">Optimal Quantities</div>
+                  <div className="text-xs text-blue-600">Right-size your inventory</div>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-orange-50 rounded-lg border border-orange-200">
+                <div className="p-2 bg-orange-100 rounded-lg">
+                  <BarChart3 className="h-5 w-5 text-orange-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-medium text-orange-800">Smart Insights</div>
+                  <div className="text-xs text-orange-600">Data-driven recommendations</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="grid gap-8 lg:grid-cols-2">
           {/* Input Section */}
           <div className="space-y-6">
-            <Card className="bg-white border-slate-200/60 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                  <Upload className="h-5 w-5 text-slate-600" />
+            <Card className="bg-white border-slate-200/60 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-emerald-50/50 rounded-t-lg">
+                <CardTitle className="text-xl flex items-center gap-3 text-slate-800">
+                  <div className="p-2 bg-emerald-100 rounded-lg">
+                    <Upload className="h-5 w-5 text-emerald-600" />
+                  </div>
                   Required Files
                 </CardTitle>
+                <div className="mt-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <div className="flex items-center gap-2">
+                    <Info className="h-4 w-4 text-emerald-600" />
+                    <span className="text-sm text-emerald-700">Upload forecast data to calculate packaging requirements</span>
+                  </div>
+                </div>
               </CardHeader>
               <CardContent className="space-y-6">
                 {/* Forecast Upload */}
@@ -171,9 +225,19 @@ export const PackagingDemandPlanner = () => {
           <Button 
             size="lg"
             disabled={!files.forecast || !files.packagingSuite}
-            className="min-w-[140px] bg-slate-800 hover:bg-slate-700 text-white"
+            className="min-w-[160px] bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-semibold py-3 px-8"
           >
-            Generate Plan
+            {!files.forecast || !files.packagingSuite ? (
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-5 w-5" />
+                Upload Files
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <Calculator className="h-5 w-5" />
+                Generate Plan
+              </div>
+            )}
           </Button>
         </div>
       </div>

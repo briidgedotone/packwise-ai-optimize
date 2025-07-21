@@ -14,12 +14,17 @@ import {
   FileText,
   MessageSquare,
   Menu,
-  X
+  X,
+  Download,
+  Clock,
+  CheckCircle,
+  AlertCircle
 } from 'lucide-react';
 import { PackagingSuiteAnalyzer } from '@/components/PackagingSuiteAnalyzer';
 import { SpecGenerator } from '@/components/SpecGenerator';
 import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
+import { MonthlyChart, PackagingChart, EfficiencyChart } from '@/components/charts';
 
 const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -46,27 +51,143 @@ const Dashboard = () => {
         return <PDPAnalyzer />;
       case 'reports':
         return (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-2xl font-semibold text-slate-800 mb-2">Reports & Analytics</h2>
-              <p className="text-slate-500">
-                Access and download your packaging analysis reports
-              </p>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {['Suite Analysis Report', 'Spec Generation Report', 'Demand Planning Report', 'PDP Analysis Report'].map((report, index) => (
-                <Card key={index} className="border-slate-200 hover:shadow-sm transition-shadow">
-                  <CardHeader className="pb-3">
-                    <CardTitle className="text-lg text-slate-800">{report}</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-center py-8 text-slate-400">
-                      <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                      <p className="text-sm">No reports generated yet</p>
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20">
+            <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+              {/* Header */}
+              <div className="bg-white rounded-xl shadow-lg border border-slate-200/60 p-8 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-bl-full"></div>
+                <div className="relative">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="p-3 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-lg">
+                        <FileText className="h-8 w-8 text-white" />
+                      </div>
+                      <div>
+                        <h2 className="text-3xl font-bold text-slate-800 mb-2">Reports & Analytics</h2>
+                        <p className="text-slate-600 text-lg">
+                          Access comprehensive analysis reports and insights
+                        </p>
+                      </div>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    <div className="flex items-center gap-2 px-4 py-2 bg-purple-50 border border-purple-200 rounded-lg">
+                      <BarChart3 className="h-4 w-4 text-purple-600" />
+                      <span className="text-sm font-medium text-purple-700">Analytics Hub</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Report Cards */}
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {[
+                  {
+                    title: 'Suite Analysis Report',
+                    description: 'Comprehensive packaging optimization analysis',
+                    icon: Package,
+                    color: 'blue',
+                    status: 'ready'
+                  },
+                  {
+                    title: 'Spec Generation Report',
+                    description: 'AI-generated product specifications',
+                    icon: Calculator,
+                    color: 'purple',
+                    status: 'processing'
+                  },
+                  {
+                    title: 'Demand Planning Report',
+                    description: 'Future packaging quantity forecasts',
+                    icon: TrendingUp,
+                    color: 'emerald',
+                    status: 'pending'
+                  },
+                  {
+                    title: 'PDP Analysis Report',
+                    description: 'Visual analysis and competitor benchmarks',
+                    icon: Eye,
+                    color: 'pink',
+                    status: 'ready'
+                  },
+                  {
+                    title: 'Cost Optimization Report',
+                    description: 'Detailed cost savings analysis',
+                    icon: DollarSign,
+                    color: 'orange',
+                    status: 'ready'
+                  },
+                  {
+                    title: 'Executive Summary',
+                    description: 'High-level insights and recommendations',
+                    icon: BarChart3,
+                    color: 'indigo',
+                    status: 'processing'
+                  }
+                ].map((report, index) => (
+                  <Card key={index} className="bg-white border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className={`p-3 bg-${report.color}-50 rounded-xl group-hover:bg-${report.color}-100 transition-colors`}>
+                          <report.icon className={`h-6 w-6 text-${report.color}-600`} />
+                        </div>
+                        {report.status === 'ready' && (
+                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Ready
+                          </Badge>
+                        )}
+                        {report.status === 'processing' && (
+                          <Badge className="bg-blue-50 text-blue-700 border-blue-200">
+                            <Clock className="h-3 w-3 mr-1" />
+                            Processing
+                          </Badge>
+                        )}
+                        {report.status === 'pending' && (
+                          <Badge variant="outline" className="text-slate-600 border-slate-300">
+                            <AlertCircle className="h-3 w-3 mr-1" />
+                            Pending
+                          </Badge>
+                        )}
+                      </div>
+                      <CardTitle className="text-xl text-slate-800">{report.title}</CardTitle>
+                      <CardDescription className="text-slate-600">
+                        {report.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent className="pt-0">
+                      <div className="space-y-3">
+                        {report.status === 'ready' ? (
+                          <div className="space-y-2">
+                            <div className="flex justify-between text-sm text-slate-600">
+                              <span>Last updated: 2 hours ago</span>
+                              <span>12 pages</span>
+                            </div>
+                            <Button 
+                              className={`w-full bg-${report.color}-600 hover:bg-${report.color}-700 text-white`}
+                            >
+                              <Download className="h-4 w-4 mr-2" />
+                              Download PDF
+                            </Button>
+                          </div>
+                        ) : report.status === 'processing' ? (
+                          <div className="text-center py-4">
+                            <div className="flex items-center justify-center gap-2 text-blue-600">
+                              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                              <span className="text-sm">Generating report...</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center py-4">
+                            <p className="text-sm text-slate-500 mb-3">Run analysis to generate report</p>
+                            <Button variant="outline" className="w-full border-slate-300 text-slate-700">
+                              Start Analysis
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
           </div>
         );
@@ -135,25 +256,56 @@ const Dashboard = () => {
               </Card>
             </div>
 
-            {/* Performance Chart */}
-            <Card className="border-slate-200 bg-white shadow-sm">
-              <CardHeader className="pb-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg text-slate-800">Performance</CardTitle>
-                  <Badge variant="outline" className="text-slate-600 border-slate-300">
-                    01-07 May
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-64 bg-slate-50 rounded-lg flex items-center justify-center">
-                  <div className="text-center text-slate-400">
-                    <BarChart3 className="h-12 w-12 mx-auto mb-3 opacity-50" />
-                    <p className="text-sm">Performance chart will be displayed here</p>
+            {/* Performance Charts */}
+            <div className="space-y-6">
+              {/* Monthly Savings Trend */}
+              <Card className="border-slate-200 bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl text-slate-800">Monthly Savings Trend</CardTitle>
+                  <CardDescription className="text-slate-500">
+                    Cost reduction and order volume over time
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80 w-full">
+                    <MonthlyChart />
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+
+              {/* Charts Grid */}
+              <div className="grid gap-6 lg:grid-cols-2">
+                {/* Packaging Distribution */}
+                <Card className="border-slate-200 bg-white shadow-sm">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-xl text-slate-800">Packaging Distribution</CardTitle>
+                    <CardDescription className="text-slate-500">
+                      Current packaging type usage
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 w-full">
+                      <PackagingChart />
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Efficiency Improvements */}
+                <Card className="border-slate-200 bg-white shadow-sm">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-xl text-slate-800">Efficiency Improvements</CardTitle>
+                    <CardDescription className="text-slate-500">
+                      Packaging efficiency and fill rate trends
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 w-full">
+                      <EfficiencyChart />
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </div>
 
             {/* Core Features Grid */}
             <div>
