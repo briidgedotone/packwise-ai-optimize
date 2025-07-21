@@ -1,35 +1,37 @@
+
 import { useState } from "react";
-import { Package, Upload, BarChart3, MessageSquare, Settings, FileText, TrendingUp, DollarSign, Boxes, PieChart, Plus, Calendar, Clock, MoreHorizontal, User } from "lucide-react";
+import { Package, Upload, BarChart3, MessageSquare, Settings, FileText, TrendingUp, DollarSign, Brain, Eye, Plus, Calendar, MoreHorizontal, User, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const Dashboard = () => {
   const [activeView, setActiveView] = useState("overview");
 
   const stats = [
     {
-      title: "Finished",
+      title: "Orders Analyzed",
       value: "1,247",
-      subtitle: "+8 orders",
+      subtitle: "+8 this week",
       icon: Package,
       color: "text-blue-600",
       bgColor: "bg-blue-50"
     },
     {
-      title: "Tracked",
+      title: "Cost Savings",
       value: "$12,450",
-      subtitle: "- $2,340 saved",
+      subtitle: "This month",
       icon: DollarSign,
       color: "text-green-600",
       bgColor: "bg-green-50"
     },
     {
-      title: "Efficiency",
+      title: "Fill Efficiency",
       value: "87%",
-      subtitle: "+12%",
+      subtitle: "+12% improved",
       icon: TrendingUp,
       color: "text-purple-600",
       bgColor: "bg-purple-50"
@@ -38,59 +40,63 @@ const Dashboard = () => {
 
   const recentActivity = [
     { 
-      user: "System AI",
-      action: "Optimized packaging for Order #4821",
-      time: "10:15 AM",
-      avatar: "🤖",
-      details: "Recommended smaller box size, saved $4.50 on shipping"
+      user: "Packaging Suite Analyzer",
+      action: "Analyzed 45 orders from batch #1247",
+      time: "2 hours ago",
+      avatar: "📦",
+      status: "success"
     },
     { 
-      user: "Processing Engine",
-      action: "Uploaded order batch #1247",
-      time: "10:15 AM",
-      avatar: "⚙️",
-      details: "45 orders processed successfully"
+      user: "Spec Generator",
+      action: "Generated dimensions for 23 products",
+      time: "4 hours ago",
+      avatar: "🧠",
+      status: "success"
     },
     { 
-      user: "Analytics Bot",
-      action: "Generated monthly report",
-      time: "10:15 AM",
+      user: "Demand Planner",
+      action: "Forecast completed for Q1 2024",
+      time: "6 hours ago",
       avatar: "📊",
-      details: "Monthly packaging analysis complete"
+      status: "success"
     },
     { 
-      user: "AI Assistant",
-      action: "Answered packaging query",
-      time: "10:15 AM",
-      avatar: "💬",
-      details: "Explained CUIN calculation method"
+      user: "PDP Analyzer",
+      action: "Analyzed 5 competitor PDPs",
+      time: "1 day ago",
+      avatar: "👁️",
+      status: "info"
     }
   ];
 
-  const currentTasks = [
+  const quickActions = [
     {
-      title: "Monthly Packaging Report",
-      status: "In progress",
-      progress: 75,
-      time: "2h",
-      statusColor: "bg-orange-500",
-      icon: "📋"
+      title: "Upload Order History",
+      description: "Analyze packaging efficiency",
+      icon: Upload,
+      color: "bg-blue-500",
+      action: "suite-analyzer"
     },
     {
-      title: "AI Analysis for SKU Batch",
-      status: "On hold",
-      progress: 30,
-      time: "4h",
-      statusColor: "bg-yellow-500",
-      icon: "🔍"
+      title: "Generate Product Specs",
+      description: "AI-powered dimension estimation",
+      icon: Brain,
+      color: "bg-green-500",
+      action: "spec-generator"
     },
     {
-      title: "Order Optimization Review",
-      status: "Done",
-      progress: 100,
-      time: "6h",
-      statusColor: "bg-green-500",
-      icon: "✅"
+      title: "Plan Packaging Demand",
+      description: "Forecast packaging needs",
+      icon: TrendingUp,
+      color: "bg-purple-500",
+      action: "demand-planner"
+    },
+    {
+      title: "Analyze PDP Design",
+      description: "Score shelf performance",
+      icon: Eye,
+      color: "bg-orange-500",
+      action: "pdp-analyzer"
     }
   ];
 
@@ -118,24 +124,43 @@ const Dashboard = () => {
             <BarChart3 className="h-4 w-4 mr-3" />
             Overview
           </Button>
-          <Button
-            variant="ghost"
-            className={`w-full justify-start ${activeView === "projects" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
-            onClick={() => setActiveView("projects")}
-          >
-            <Package className="h-4 w-4 mr-3" />
-            Projects
-            <Plus className="h-4 w-4 ml-auto" />
-          </Button>
-          <Button
-            variant="ghost"
-            className={`w-full justify-start ${activeView === "upload" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
-            onClick={() => setActiveView("upload")}
-          >
-            <Upload className="h-4 w-4 mr-3" />
-            Upload Data
-            <Plus className="h-4 w-4 ml-auto" />
-          </Button>
+          
+          <div className="py-2">
+            <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Core Features</p>
+            <Button
+              variant="ghost"
+              className={`w-full justify-start ${activeView === "suite-analyzer" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+              onClick={() => setActiveView("suite-analyzer")}
+            >
+              <Package className="h-4 w-4 mr-3" />
+              Suite Analyzer
+            </Button>
+            <Button
+              variant="ghost"
+              className={`w-full justify-start ${activeView === "spec-generator" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+              onClick={() => setActiveView("spec-generator")}
+            >
+              <Brain className="h-4 w-4 mr-3" />
+              Spec Generator
+            </Button>
+            <Button
+              variant="ghost"
+              className={`w-full justify-start ${activeView === "demand-planner" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+              onClick={() => setActiveView("demand-planner")}
+            >
+              <TrendingUp className="h-4 w-4 mr-3" />
+              Demand Planner
+            </Button>
+            <Button
+              variant="ghost"
+              className={`w-full justify-start ${activeView === "pdp-analyzer" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
+              onClick={() => setActiveView("pdp-analyzer")}
+            >
+              <Eye className="h-4 w-4 mr-3" />
+              PDP Analyzer
+            </Button>
+          </div>
+
           <Button
             variant="ghost"
             className={`w-full justify-start ${activeView === "reports" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
@@ -143,14 +168,6 @@ const Dashboard = () => {
           >
             <FileText className="h-4 w-4 mr-3" />
             Reports
-          </Button>
-          <Button
-            variant="ghost"
-            className={`w-full justify-start ${activeView === "team" ? "bg-blue-50 text-blue-700" : "text-gray-600 hover:bg-gray-50"}`}
-            onClick={() => setActiveView("team")}
-          >
-            <User className="h-4 w-4 mr-3" />
-            Team
           </Button>
           <Button
             variant="ghost"
@@ -165,24 +182,12 @@ const Dashboard = () => {
         {/* Upgrade Section */}
         <div className="p-4 border-t border-gray-200">
           <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4">
-            <h4 className="font-semibold text-gray-900 mb-2">Upgrade to Pro</h4>
-            <p className="text-sm text-gray-600 mb-3">Get 1 month free and unlock advanced features</p>
+            <h4 className="font-semibold text-gray-900 mb-2">Upgrade to Corporate</h4>
+            <p className="text-sm text-gray-600 mb-3">Unlock advanced features and higher limits</p>
             <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700">
-              Upgrade
+              Upgrade Now
             </Button>
           </div>
-        </div>
-
-        {/* Help & Logout */}
-        <div className="p-4 border-t border-gray-200 space-y-2">
-          <Button variant="ghost" className="w-full justify-start text-gray-600 hover:bg-gray-50">
-            <MessageSquare className="h-4 w-4 mr-3" />
-            Help & Information
-          </Button>
-          <Button variant="ghost" className="w-full justify-start text-gray-600 hover:bg-gray-50">
-            <span className="w-4 h-4 mr-3 flex items-center justify-center">⚪</span>
-            Log out
-          </Button>
         </div>
       </aside>
 
@@ -193,32 +198,26 @@ const Dashboard = () => {
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center space-x-3 mb-2">
-                <h1 className="text-2xl font-bold text-gray-900">Hello, Manager</h1>
+                <h1 className="text-2xl font-bold text-gray-900">Good morning, Manager</h1>
                 <div className="flex items-center text-sm text-gray-500">
                   <Calendar className="h-4 w-4 mr-1" />
-                  16 May, 2023
+                  {new Date().toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
                 </div>
               </div>
-              <p className="text-gray-600">Track packaging optimization here. You almost reach a goal!</p>
+              <p className="text-gray-600">Your packaging optimization dashboard is ready. Let's make smarter decisions together.</p>
             </div>
             <div className="flex items-center space-x-4">
               <div className="text-right">
                 <div className="font-semibold text-gray-900">QuantiPack User</div>
-                <div className="text-sm text-gray-500">@quantipack</div>
+                <div className="text-sm text-gray-500">Individual Plan</div>
               </div>
               <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
                 <span className="text-white font-semibold">Q</span>
-              </div>
-              <div className="flex space-x-2">
-                <Button variant="outline" size="sm">
-                  📞
-                </Button>
-                <Button variant="outline" size="sm">
-                  💬
-                </Button>
-                <Button variant="outline" size="sm">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
               </div>
             </div>
           </div>
@@ -228,7 +227,7 @@ const Dashboard = () => {
         <div className="flex-1 p-6">
           {activeView === "overview" && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Left Column - Stats & Performance */}
+              {/* Left Column - Stats & Quick Actions */}
               <div className="lg:col-span-2 space-y-6">
                 {/* Stats Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -250,74 +249,43 @@ const Dashboard = () => {
                   ))}
                 </div>
 
-                {/* Performance Chart */}
+                {/* Quick Actions */}
                 <Card className="border-0 shadow-sm">
                   <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg font-semibold">Performance</CardTitle>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-500">01-07 May</span>
-                        <Button variant="ghost" size="sm">
-                          <Calendar className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </div>
+                    <CardTitle className="text-lg font-semibold">Quick Actions</CardTitle>
+                    <CardDescription>Start analyzing your packaging data</CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="h-64 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg relative overflow-hidden">
-                      <div className="absolute inset-0 flex items-end justify-center pb-8">
-                        <div className="flex items-end space-x-2">
-                          {[3, 5, 2, 7, 4, 6, 8, 3, 5].map((height, i) => (
-                            <div
-                              key={i}
-                              className="bg-gradient-to-t from-blue-400 to-blue-600 rounded-t"
-                              style={{ width: '20px', height: `${height * 20}px` }}
-                            />
-                          ))}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {quickActions.map((action, index) => (
+                        <div key={index} className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 transition-colors cursor-pointer" onClick={() => setActiveView(action.action)}>
+                          <div className="flex items-center space-x-3">
+                            <div className={`w-10 h-10 ${action.color} rounded-lg flex items-center justify-center`}>
+                              <action.icon className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <p className="font-medium text-gray-900">{action.title}</p>
+                              <p className="text-sm text-gray-500">{action.description}</p>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="text-center z-10">
-                        <BarChart3 className="h-16 w-16 text-blue-400 mx-auto mb-4" />
-                        <p className="text-gray-500">Performance visualization</p>
-                      </div>
+                      ))}
                     </div>
                   </CardContent>
                 </Card>
 
-                {/* Current Tasks */}
+                {/* Performance Chart Placeholder */}
                 <Card className="border-0 shadow-sm">
                   <CardHeader className="pb-4">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg font-semibold">Current Tasks</CardTitle>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-500">Done 75%</span>
-                        <Button variant="ghost" size="sm">Week</Button>
+                    <CardTitle className="text-lg font-semibold">Packaging Performance</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-64 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg">
+                      <div className="text-center">
+                        <BarChart3 className="h-16 w-16 text-blue-400 mx-auto mb-4" />
+                        <p className="text-gray-500">Performance charts will appear here</p>
                       </div>
                     </div>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {currentTasks.map((task, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center border">
-                            <span className="text-sm">{task.icon}</span>
-                          </div>
-                          <div>
-                            <p className="font-medium text-gray-900">{task.title}</p>
-                            <div className="flex items-center space-x-2 mt-1">
-                              <div className={`w-2 h-2 rounded-full ${task.statusColor}`}></div>
-                              <span className="text-xs text-gray-500">{task.status}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <span className="text-sm text-gray-500">{task.time}</span>
-                          <Button variant="ghost" size="sm">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
                   </CardContent>
                 </Card>
               </div>
@@ -326,7 +294,7 @@ const Dashboard = () => {
               <div className="space-y-6">
                 <Card className="border-0 shadow-sm">
                   <CardHeader className="pb-4">
-                    <CardTitle className="text-lg font-semibold">Activity</CardTitle>
+                    <CardTitle className="text-lg font-semibold">Recent Activity</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {recentActivity.map((activity, index) => (
@@ -340,28 +308,32 @@ const Dashboard = () => {
                             <span className="text-xs text-gray-500">{activity.time}</span>
                           </div>
                           <p className="text-sm text-gray-600 mt-1">{activity.action}</p>
-                          <p className="text-xs text-gray-500 mt-1">{activity.details}</p>
                         </div>
                       </div>
                     ))}
                   </CardContent>
                 </Card>
 
-                {/* Message Input */}
+                {/* AI Chat */}
                 <Card className="border-0 shadow-sm">
-                  <CardContent className="p-4">
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="text"
-                        placeholder="Ask AI about packaging optimization..."
-                        className="flex-1 px-3 py-2 bg-gray-50 border-0 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
-                      <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                        <MessageSquare className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        🎤
-                      </Button>
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-lg font-semibold">AI Assistant</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-3">
+                      <div className="bg-blue-50 p-3 rounded-lg">
+                        <p className="text-sm text-blue-800">Hi! I'm your packaging AI assistant. Ask me about CUIN calculations, optimization strategies, or any packaging questions.</p>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <input
+                          type="text"
+                          placeholder="Ask about packaging optimization..."
+                          className="flex-1 px-3 py-2 bg-gray-50 border-0 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                          <MessageSquare className="h-4 w-4" />
+                        </Button>
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -369,102 +341,532 @@ const Dashboard = () => {
             </div>
           )}
 
-          {activeView === "upload" && (
+          {/* Suite Analyzer View */}
+          {activeView === "suite-analyzer" && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">Upload Order Data</h2>
-                <p className="text-gray-600">Upload your order history to start the optimization process</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Packaging Suite Analyzer</h2>
+                <p className="text-gray-600">Upload your order history and packaging types to optimize your packaging allocation</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Upload className="h-5 w-5 mr-2" />
+                      Upload Order History
+                    </CardTitle>
+                    <CardDescription>
+                      Each row = one product in one order. Required: Order ID. Optional: L×W×H, CUIN, Quantity, Product Description
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                      <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-900 mb-2">
+                        Drop your order history file here
+                      </p>
+                      <p className="text-gray-500 mb-4">
+                        CSV or Excel files accepted
+                      </p>
+                      <Button>Select File</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Package className="h-5 w-5 mr-2" />
+                      Upload Packaging Suite
+                    </CardTitle>
+                    <CardDescription>
+                      Define your available packaging types with dimensions and costs
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                      <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-900 mb-2">
+                        Drop your packaging suite file here
+                      </p>
+                      <p className="text-gray-500 mb-4">
+                        Required: Package Name, L×W×H, Cost per unit
+                      </p>
+                      <Button>Select File</Button>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>File Upload</CardTitle>
+                  <CardTitle>Optional: Baseline Packaging Mix</CardTitle>
                   <CardDescription>
-                    Upload CSV or Excel files containing your order data
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-12 text-center hover:border-blue-400 transition-colors">
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-lg font-medium text-gray-900 mb-2">
-                      Drop your files here, or <span className="text-blue-600 cursor-pointer">browse</span>
-                    </p>
-                    <p className="text-gray-500">
-                      Supports CSV, Excel files up to 10MB
-                    </p>
-                    <Button className="mt-4">
-                      Select Files
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Required Fields</CardTitle>
-                  <CardDescription>
-                    Ensure your data contains these fields for optimal results
+                    Upload your current packaging usage percentages or quantities for comparison
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-green-600">Required</h4>
-                      <ul className="space-y-1 text-sm">
-                        <li>• Order ID</li>
-                        <li>• Product Description</li>
-                        <li>• Quantity</li>
-                      </ul>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Upload File</h4>
+                      <div className="border border-gray-300 rounded-lg p-4 text-center">
+                        <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                        <p className="text-sm text-gray-600">CSV with package types and percentages</p>
+                        <Button variant="outline" size="sm" className="mt-2">Upload</Button>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <h4 className="font-semibold text-blue-600">Optional (will be estimated)</h4>
-                      <ul className="space-y-1 text-sm">
-                        <li>• Length (L)</li>
-                        <li>• Width (W)</li>
-                        <li>• Height (H)</li>
-                        <li>• CUIN</li>
-                      </ul>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Manual Entry</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center space-x-2">
+                          <input type="text" placeholder="Package Type" className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                          <input type="number" placeholder="%" className="w-16 px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        </div>
+                        <Button variant="outline" size="sm">Add More</Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Fallback Dimensions</CardTitle>
+                  <CardDescription>
+                    Used when product dimensions are missing. Enter your typical product size ranges.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Smallest Product</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        <input type="number" placeholder="L" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        <input type="number" placeholder="W" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        <input type="number" placeholder="H" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Average Product</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        <input type="number" placeholder="L" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        <input type="number" placeholder="W" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        <input type="number" placeholder="H" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="font-semibold text-gray-900 mb-2">Largest Product</h4>
+                      <div className="grid grid-cols-3 gap-2">
+                        <input type="number" placeholder="L" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        <input type="number" placeholder="W" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        <input type="number" placeholder="H" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-center">
+                <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
+                  Analyze Packaging Suite
+                </Button>
+              </div>
             </div>
           )}
 
+          {/* Spec Generator View */}
+          {activeView === "spec-generator" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Spec Generator</h2>
+                <p className="text-gray-600">Generate AI-estimated L×W×H and CUIN for products using industry knowledge and your dimensional boundaries</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Brain className="h-5 w-5 mr-2" />
+                      Product List Upload
+                    </CardTitle>
+                    <CardDescription>
+                      Upload a list of product names or descriptions for dimension estimation
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                      <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-900 mb-2">
+                        Drop your product list here
+                      </p>
+                      <p className="text-gray-500 mb-4">
+                        Each row = one product name/description
+                      </p>
+                      <Button>Select File</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Bounding Dimensions</CardTitle>
+                    <CardDescription>
+                      Define size ranges to calibrate AI predictions
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Min Dimensions (inches)</h4>
+                        <div className="grid grid-cols-3 gap-2">
+                          <input type="number" placeholder="L" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                          <input type="number" placeholder="W" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                          <input type="number" placeholder="H" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Average Dimensions</h4>
+                        <div className="grid grid-cols-3 gap-2">
+                          <input type="number" placeholder="L" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                          <input type="number" placeholder="W" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                          <input type="number" placeholder="H" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 mb-2">Max Dimensions</h4>
+                        <div className="grid grid-cols-3 gap-2">
+                          <input type="number" placeholder="L" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                          <input type="number" placeholder="W" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                          <input type="number" placeholder="H" className="px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Optional Enhancement Fields</CardTitle>
+                  <CardDescription>
+                    Additional information to improve estimation accuracy
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                      <input type="text" placeholder="e.g., Electronics, Cosmetics" className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Material Type</label>
+                      <input type="text" placeholder="e.g., Plastic, Metal" className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Size Range</label>
+                      <input type="text" placeholder="e.g., S, M, L" className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-center">
+                <Button size="lg" className="bg-green-600 hover:bg-green-700">
+                  Generate Product Specs
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Demand Planner View */}
+          {activeView === "demand-planner" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Packaging Demand Planner</h2>
+                <p className="text-gray-600">Forecast packaging quantities needed based on product volumes and packaging efficiency</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <TrendingUp className="h-5 w-5 mr-2" />
+                      Forecasted Products
+                    </CardTitle>
+                    <CardDescription>
+                      Upload your forecasted product volumes and quantities
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                      <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-900 mb-2">
+                        Drop your forecast file here
+                      </p>
+                      <p className="text-gray-500 mb-4">
+                        Required: Product Name, Forecasted Quantity
+                      </p>
+                      <Button>Select File</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Package className="h-5 w-5 mr-2" />
+                      Packaging Suite
+                    </CardTitle>
+                    <CardDescription>
+                      Define available packaging types for demand calculation
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                      <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-900 mb-2">
+                        Drop your packaging suite file here
+                      </p>
+                      <p className="text-gray-500 mb-4">
+                        Required: Package Name, L×W×H, Cost per Unit
+                      </p>
+                      <Button>Select File</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Sample Demand Plan Output</CardTitle>
+                  <CardDescription>
+                    Preview of what your packaging demand forecast will look like
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Package Type</TableHead>
+                        <TableHead>Quantity Needed</TableHead>
+                        <TableHead>% of Total</TableHead>
+                        <TableHead>Average Fill Rate</TableHead>
+                        <TableHead>Estimated Cost</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      <TableRow>
+                        <TableCell>Small Box</TableCell>
+                        <TableCell>14,000</TableCell>
+                        <TableCell>35%</TableCell>
+                        <TableCell>89%</TableCell>
+                        <TableCell>$1,680</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Medium Mailer</TableCell>
+                        <TableCell>21,500</TableCell>
+                        <TableCell>54%</TableCell>
+                        <TableCell>81%</TableCell>
+                        <TableCell>$3,010</TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell>Large Carton</TableCell>
+                        <TableCell>4,000</TableCell>
+                        <TableCell>11%</TableCell>
+                        <TableCell>74%</TableCell>
+                        <TableCell>$720</TableCell>
+                      </TableRow>
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-center">
+                <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
+                  Generate Demand Forecast
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* PDP Analyzer View */}
+          {activeView === "pdp-analyzer" && (
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">PDP Analyzer</h2>
+                <p className="text-gray-600">Analyze your Principal Display Panel's shelf performance and compare against competitors</p>
+              </div>
+
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <Eye className="h-5 w-5 mr-2" />
+                      Upload Your PDP
+                    </CardTitle>
+                    <CardDescription>
+                      Upload your product's Principal Display Panel for analysis
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                      <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-900 mb-2">
+                        Drop your PDP image here
+                      </p>
+                      <p className="text-gray-500 mb-4">
+                        JPG, PNG, or PDF accepted
+                      </p>
+                      <Button>Select Image</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Competitor PDPs (Optional)</CardTitle>
+                    <CardDescription>
+                      Upload up to 4 competitor PDPs for benchmarking
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                      <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-lg font-medium text-gray-900 mb-2">
+                        Drop competitor images here
+                      </p>
+                      <p className="text-gray-500 mb-4">
+                        Up to 4 images for comparison
+                      </p>
+                      <Button>Select Images</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Analysis Parameters</CardTitle>
+                  <CardDescription>
+                    Optional information to enhance analysis accuracy
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Product Category</label>
+                      <input type="text" placeholder="e.g., snacks, cosmetics" className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Shelf Type</label>
+                      <input type="text" placeholder="e.g., vertical peg, laydown" className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Primary Claims</label>
+                      <input type="text" placeholder="e.g., Organic, New Formula" className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm" />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Analysis Scoring Factors</CardTitle>
+                  <CardDescription>
+                    Your PDP will be scored on these 8 shelf visibility factors (0-10 scale)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium">Hierarchy</span>
+                        <span className="text-sm text-gray-500">Visual flow guidance</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium">Readability</span>
+                        <span className="text-sm text-gray-500">Message clarity at distance</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium">Color Impact</span>
+                        <span className="text-sm text-gray-500">Contrast and eye-catching use</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium">Logo Visibility</span>
+                        <span className="text-sm text-gray-500">Size, clarity, positioning</span>
+                      </div>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium">Emotional Appeal</span>
+                        <span className="text-sm text-gray-500">Visual storytelling</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium">Claims Communication</span>
+                        <span className="text-sm text-gray-500">Clarity and effectiveness</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium">Font Choice</span>
+                        <span className="text-sm text-gray-500">Appropriateness and legibility</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <span className="font-medium">White Space Balance</span>
+                        <span className="text-sm text-gray-500">Spacing to avoid clutter</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <div className="flex justify-center">
+                <Button size="lg" className="bg-orange-600 hover:bg-orange-700">
+                  Analyze PDP Performance
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Reports View */}
           {activeView === "reports" && (
             <div className="space-y-6">
               <div>
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Reports & Analytics</h2>
-                <p className="text-gray-600">Download detailed reports and insights</p>
+                <p className="text-gray-600">Download comprehensive reports and insights from your packaging analysis</p>
               </div>
 
-              <Tabs defaultValue="summary" className="space-y-4">
-                <TabsList>
-                  <TabsTrigger value="summary">Summary Reports</TabsTrigger>
-                  <TabsTrigger value="detailed">Detailed Analysis</TabsTrigger>
-                  <TabsTrigger value="comparisons">Before/After</TabsTrigger>
+              <Tabs defaultValue="suite" className="space-y-4">
+                <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="suite">Suite Analysis</TabsTrigger>
+                  <TabsTrigger value="specs">Spec Generation</TabsTrigger>
+                  <TabsTrigger value="demand">Demand Planning</TabsTrigger>
+                  <TabsTrigger value="pdp">PDP Analysis</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="summary" className="space-y-4">
+                <TabsContent value="suite" className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <Card>
                       <CardHeader>
-                        <CardTitle>Monthly Summary</CardTitle>
-                        <CardDescription>Comprehensive monthly packaging report</CardDescription>
+                        <CardTitle>Packaging Optimization Report</CardTitle>
+                        <CardDescription>Complete analysis with savings calculations</CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
                           <div className="flex justify-between items-center">
-                            <span>Orders Processed</span>
+                            <span>Orders Analyzed</span>
                             <span className="font-semibold">1,247</span>
                           </div>
                           <div className="flex justify-between items-center">
                             <span>Total Savings</span>
                             <span className="font-semibold text-green-600">$12,450</span>
                           </div>
+                          <div className="flex justify-between items-center">
+                            <span>Efficiency Improvement</span>
+                            <span className="font-semibold text-blue-600">+12%</span>
+                          </div>
                           <Button className="w-full">
                             <FileText className="h-4 w-4 mr-2" />
-                            Download PDF
+                            Download PDF Report
                           </Button>
                         </div>
                       </CardContent>
@@ -473,7 +875,7 @@ const Dashboard = () => {
                     <Card>
                       <CardHeader>
                         <CardTitle>Raw Data Export</CardTitle>
-                        <CardDescription>Export processed order data with recommendations</CardDescription>
+                        <CardDescription>Detailed order-by-order allocation data</CardDescription>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
@@ -495,99 +897,104 @@ const Dashboard = () => {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="detailed">
+                <TabsContent value="specs">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Detailed Analysis Coming Soon</CardTitle>
+                      <CardTitle>Generated Specifications Report</CardTitle>
                       <CardDescription>
-                        Advanced analytics and detailed breakdowns will be available here
+                        AI-estimated dimensions with reasoning and confidence levels
                       </CardDescription>
                     </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 mb-4">Complete your spec generation analysis to download reports</p>
+                      <Button disabled>
+                        <FileText className="h-4 w-4 mr-2" />
+                        Download Specs Report
+                      </Button>
+                    </CardContent>
                   </Card>
                 </TabsContent>
 
-                <TabsContent value="comparisons">
+                <TabsContent value="demand">
                   <Card>
                     <CardHeader>
-                      <CardTitle>Before/After Comparisons Coming Soon</CardTitle>
+                      <CardTitle>Packaging Demand Forecast</CardTitle>
                       <CardDescription>
-                        Visual comparisons of packaging efficiency before and after optimization
+                        Comprehensive demand planning with quantity recommendations
                       </CardDescription>
                     </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 mb-4">Complete your demand planning analysis to download reports</p>
+                      <Button disabled>
+                        <FileText className="h-4 w-4 mr-2" />
+                        Download Demand Report
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                <TabsContent value="pdp">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>PDP Performance Analysis</CardTitle>
+                      <CardDescription>
+                        Detailed scoring with competitor comparison and design recommendations
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-600 mb-4">Complete your PDP analysis to download reports</p>
+                      <Button disabled>
+                        <FileText className="h-4 w-4 mr-2" />
+                        Download PDP Report
+                      </Button>
+                    </CardContent>
                   </Card>
                 </TabsContent>
               </Tabs>
             </div>
           )}
 
-          {activeView === "ai-chat" && (
+          {/* Settings View */}
+          {activeView === "settings" && (
             <div className="space-y-6">
               <div>
-                <h2 className="text-3xl font-bold text-gray-900 mb-2">AI Packaging Assistant</h2>
-                <p className="text-gray-600">Ask questions about packaging optimization and CUIN calculations</p>
+                <h2 className="text-3xl font-bold text-gray-900 mb-2">Settings</h2>
+                <p className="text-gray-600">Manage your account preferences and subscription</p>
               </div>
 
-              <Card className="h-96">
-                <CardHeader>
-                  <CardTitle className="flex items-center">
-                    <MessageSquare className="h-5 w-5 mr-2" />
-                    Chat with AI Assistant
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="flex-1 flex flex-col">
-                  <div className="flex-1 bg-gray-50 rounded-lg p-4 mb-4">
-                    <div className="h-full flex items-center justify-center">
-                      <div className="text-center">
-                        <MessageSquare className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-500">AI chatbot interface will be implemented</p>
-                        <p className="text-sm text-gray-400 mt-2">
-                          Ask about CUIN calculations, packaging recommendations, and optimization strategies
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      placeholder="Ask about packaging optimization..."
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <Button>Send</Button>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">Sample Questions</CardTitle>
+                    <CardTitle>Account Information</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      <li className="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
-                        "How is CUIN calculated?"
-                      </li>
-                      <li className="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
-                        "What's the best packaging for order #123?"
-                      </li>
-                      <li className="p-2 bg-gray-50 rounded cursor-pointer hover:bg-gray-100">
-                        "How do I reduce void space?"
-                      </li>
-                    </ul>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                      <input type="email" value="user@example.com" className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Company</label>
+                      <input type="text" placeholder="Your Company" className="w-full px-3 py-2 border border-gray-300 rounded-md" />
+                    </div>
+                    <Button>Update Profile</Button>
                   </CardContent>
                 </Card>
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-lg">AI Capabilities</CardTitle>
+                    <CardTitle>Subscription Plan</CardTitle>
                   </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-2 text-sm">
-                      <li>• Explain CUIN and DIM weight calculations</li>
-                      <li>• Provide packaging recommendations</li>
-                      <li>• Analyze specific orders</li>
-                      <li>• Suggest optimization strategies</li>
-                    </ul>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span>Current Plan</span>
+                      <Badge>Individual</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span>Monthly Usage</span>
+                      <span className="font-semibold">75 / 100 orders</span>
+                    </div>
+                    <Progress value={75} className="w-full" />
+                    <Button className="w-full">Upgrade Plan</Button>
                   </CardContent>
                 </Card>
               </div>
