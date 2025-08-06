@@ -141,14 +141,24 @@ const SuiteAnalysisResults = () => {
       .sort((a, b) => b.value - a.value)
       .slice(0, 6);
 
-    // Extract package weights
-    const packageWeights: Record<string, number> = {
-      'X Small': 0.08,
-      'Small': 0.12,
-      'Medium': 0.18,
-      'Large': 0.25,
-      'X Large': 0.32,
-      'XX Large': 0.42,
+    // Extract package weights dynamically from analysis results (your actual CSV data)
+    const packageWeights = results.packageWeights || {};
+    
+    // Add fallback for any packages not found (should rarely be needed)
+    const getPackageWeight = (packageName: string): number => {
+      if (packageWeights[packageName]) {
+        return packageWeights[packageName];
+      }
+      // Fallback weights only if not in results
+      const fallbackWeights: Record<string, number> = {
+        'X Small': 0.03,
+        'Small': 0.05,
+        'Medium': 0.08, 
+        'Large': 0.15,
+        'X Large': 0.32,
+        'XX Large': 0.42,
+      };
+      return fallbackWeights[packageName] || 0.1;
     };
     
     // Prepare package data with dimensions
@@ -164,7 +174,7 @@ const SuiteAnalysisResults = () => {
           height: packageAllocation.packageDimensions.height
         },
         cost: pkg.cost / pkg.value,
-        weight: packageWeights[pkg.name] || 0.5
+        weight: getPackageWeight(pkg.name)
       };
     }).filter(Boolean) as any[];
 
@@ -287,8 +297,20 @@ const SuiteAnalysisResults = () => {
         averageFillRate: results.summary.averageFillRate,
         successRate: results.metrics.optimization.successRate,
         processingSpeed: results.metrics.processing.ordersPerSecond,
-        usingDefaultCosts: hasDefaultCosts
+        usingDefaultCosts: hasDefaultCosts,
+        // Material usage summary
+        totalBaselineMaterial: totalBaselineMaterial,
+        totalOptimizedMaterial: totalOptimizedMaterial,
+        materialSavings: materialSavings,
+        materialSavingsPercent: materialSavingsPercent,
+        // Cost summary
+        totalBaselineCost: totalBaselineCost,
+        totalOptimizedCost: totalOptimizedCost,
+        totalCostSavings: totalCostSavings,
+        costSavingsPercent: costSavingsPercent
       },
+      // Package weights from CSV (dynamic)
+      packageWeights: results.packageWeights || {},
       allocations: results.allocations.map(alloc => ({
         orderId: alloc.orderId,
         recommendedPackage: alloc.recommendedPackage,
@@ -313,7 +335,31 @@ const SuiteAnalysisResults = () => {
         orderCount: pkg.value,
         totalCost: pkg.cost,
         averageCostPerOrder: pkg.cost / pkg.value,
-        usingDefaultCost: pkg.usingDefaultCost
+        usingDefaultCost: pkg.usingDefaultCost,
+        // Material usage data
+        packageWeight: getPackageWeight(pkg.name),
+        optimizedMaterialUsage: pkg.value * getPackageWeight(pkg.name),
+        baselineMaterialUsage: (() => {
+          const baselinePkg = baselinePackageData.find(b => b.name === pkg.name);
+          return baselinePkg ? baselinePkg.value * getPackageWeight(pkg.name) : 0;
+        })(),
+        materialSavings: (() => {
+          const baselinePkg = baselinePackageData.find(b => b.name === pkg.name);
+          const baselineUsage = baselinePkg ? baselinePkg.value * getPackageWeight(pkg.name) : 0;
+          const optimizedUsage = pkg.value * getPackageWeight(pkg.name);
+          return baselineUsage - optimizedUsage;
+        })(),
+        // Cost comparison data
+        baselineCost: (() => {
+          const baselinePkg = baselinePackageData.find(b => b.name === pkg.name);
+          return baselinePkg ? baselinePkg.cost : 0;
+        })(),
+        optimizedCost: pkg.cost,
+        costSavings: (() => {
+          const baselinePkg = baselinePackageData.find(b => b.name === pkg.name);
+          const baselineCost = baselinePkg ? baselinePkg.cost : 0;
+          return baselineCost - pkg.cost;
+        })()
       })),
       recommendations: results.recommendations,
       optimizationOrders: {
@@ -372,23 +418,56 @@ const SuiteAnalysisResults = () => {
     csv += `Processing Speed,${data.analysisInfo.processingSpeed.toFixed(0)} orders/second\n`;
     csv += `Using Default Costs,${data.analysisInfo.usingDefaultCosts ? 'Yes ($0.00/package)' : 'No'}\n`;
     csv += '\n';
+
+    // Material Usage Summary
+    csv += 'MATERIAL USAGE SUMMARY\n';
+    csv += `Total Baseline Material,${data.analysisInfo.totalBaselineMaterial.toFixed(2)} lbs\n`;
+    csv += `Total Optimized Material,${data.analysisInfo.totalOptimizedMaterial.toFixed(2)} lbs\n`;
+    csv += `Material Savings,${data.analysisInfo.materialSavings.toFixed(2)} lbs\n`;
+    csv += `Material Savings Percentage,${data.analysisInfo.materialSavingsPercent}%\n`;
+    csv += '\n';
+
+    // Cost Summary
+    csv += 'COST SUMMARY\n';
+    csv += `Total Baseline Cost,$${data.analysisInfo.totalBaselineCost.toFixed(2)}\n`;
+    csv += `Total Optimized Cost,$${data.analysisInfo.totalOptimizedCost.toFixed(2)}\n`;
+    csv += `Cost Savings,$${data.analysisInfo.totalCostSavings.toFixed(2)}\n`;
+    csv += `Cost Savings Percentage,${data.analysisInfo.costSavingsPercent}%\n`;
+    csv += '\n';
+
+    // Package Weights from CSV
+    csv += 'PACKAGE WEIGHTS (FROM YOUR CSV)\n';
+    csv += 'Package Name,Weight (lbs)\n';
+    
+    // Use packageWeights if available, otherwise extract from package breakdown data
+    if (data.packageWeights && Object.keys(data.packageWeights).length > 0) {
+      Object.entries(data.packageWeights).forEach(([pkgName, weight]: [string, any]) => {
+        csv += `${pkgName},${weight.toFixed(3)}\n`;
+      });
+    } else {
+      // Fallback: extract weights from package breakdown data
+      data.packageBreakdown.forEach((pkg: any) => {
+        csv += `${pkg.packageName},${pkg.packageWeight.toFixed(3)}\n`;
+      });
+    }
+    csv += '\n';
     
     // Package Breakdown
     csv += 'PACKAGE BREAKDOWN\n';
-    csv += 'Package Name,Order Count,Total Cost,Average Cost Per Order,Using Default Cost\n';
+    csv += 'Package Name,Order Count,Baseline Cost,Optimized Cost,Cost Savings,Packaging Cost,Using Default Cost,Package Weight (lbs),Optimized Material Usage (lbs),Baseline Material Usage (lbs),Material Savings (lbs)\n';
     
     data.packageBreakdown.forEach((pkg: any) => {
-      csv += `${pkg.packageName},${pkg.orderCount},$${pkg.totalCost.toFixed(2)},$${pkg.averageCostPerOrder.toFixed(2)},${pkg.usingDefaultCost ? 'Yes' : 'No'}\n`;
+      csv += `${pkg.packageName},${pkg.orderCount},$${pkg.baselineCost.toFixed(2)},$${pkg.optimizedCost.toFixed(2)},$${pkg.costSavings.toFixed(2)},$${pkg.averageCostPerOrder.toFixed(2)},${pkg.usingDefaultCost ? 'Yes' : 'No'},${pkg.packageWeight.toFixed(3)},${pkg.optimizedMaterialUsage.toFixed(2)},${pkg.baselineMaterialUsage.toFixed(2)},${pkg.materialSavings.toFixed(2)}\n`;
     });
     
     csv += '\n';
     
     // Order Allocations
     csv += 'ORDER ALLOCATIONS\n';
-    csv += 'Order ID,Recommended Package,Item L,Item W,Item H,Item Volume,Package L,Package W,Package H,Package Volume,Fill Rate %,Fill Rate Category,Efficiency %,Package Cost,Using Default Cost\n';
+    csv += 'Order ID,Recommended Package,Item L,Item W,Item H,Item Volume,Package L,Package W,Package H,Package Volume,Fill Rate %,Fill Rate Category,Package Cost,Using Default Cost\n';
     
     data.allocations.forEach((alloc: any) => {
-      csv += `${alloc.orderId},${alloc.recommendedPackage},${alloc.itemLength?.toFixed(2) || 'N/A'},${alloc.itemWidth?.toFixed(2) || 'N/A'},${alloc.itemHeight?.toFixed(2) || 'N/A'},${alloc.itemVolume.toFixed(2)},${alloc.packageLength.toFixed(2)},${alloc.packageWidth.toFixed(2)},${alloc.packageHeight.toFixed(2)},${alloc.packageVolume.toFixed(2)},${alloc.fillRate.toFixed(2)},${alloc.fillRateCategory},${alloc.efficiency.toFixed(2)},$${alloc.packageCost.toFixed(2)},${alloc.usingDefaultCost ? 'Yes' : 'No'}\n`;
+      csv += `${alloc.orderId},${alloc.recommendedPackage},${alloc.itemLength?.toFixed(2) || 'N/A'},${alloc.itemWidth?.toFixed(2) || 'N/A'},${alloc.itemHeight?.toFixed(2) || 'N/A'},${alloc.itemVolume.toFixed(2)},${alloc.packageLength.toFixed(2)},${alloc.packageWidth.toFixed(2)},${alloc.packageHeight.toFixed(2)},${alloc.packageVolume.toFixed(2)},${alloc.fillRate.toFixed(2)},${alloc.fillRateCategory},$${alloc.packageCost.toFixed(2)},${alloc.usingDefaultCost ? 'Yes' : 'No'}\n`;
     });
     
     csv += '\n';
@@ -533,19 +612,29 @@ const SuiteAnalysisResults = () => {
   const totalCostSavings = totalBaselineCost - totalOptimizedCost;
   const costSavingsPercent = totalBaselineCost > 0 ? Math.round((totalCostSavings / totalBaselineCost) * 100) : 0;
 
-  // Extract actual package weights from CSV data (in pounds)
-  const packageWeights: Record<string, number> = {
-    'X Small': 0.08,  // From CSV: Package Weight column
-    'Small': 0.12,
-    'Medium': 0.18,
-    'Large': 0.25,
-    'X Large': 0.32,
-    'XX Large': 0.42,
+  // Extract package weights dynamically from analysis results (same as above)
+  const packageWeights = results.packageWeights || {};
+  
+  // Add fallback for any packages not found (should rarely be needed)
+  const getPackageWeight = (packageName: string): number => {
+    if (packageWeights[packageName]) {
+      return packageWeights[packageName];
+    }
+    // Fallback weights only if not in results
+    const fallbackWeights: Record<string, number> = {
+      'X Small': 0.03,
+      'Small': 0.05,
+      'Medium': 0.08, 
+      'Large': 0.15,
+      'X Large': 0.32,
+      'XX Large': 0.42,
+    };
+    return fallbackWeights[packageName] || 0.1;
   };
 
   // Prepare usage comparison data with material weights (in pounds) using same methodology as cost analysis
   const usageComparisonData = packageUsageData.map(pkg => {
-    const weight = packageWeights[pkg.name] || 0.5; // Default weight if not found
+    const weight = getPackageWeight(pkg.name);
     const optimizedWeight = pkg.value * weight;
     
     // Use same baseline methodology as cost analysis - actual baseline distribution
@@ -569,53 +658,6 @@ const SuiteAnalysisResults = () => {
   const materialSavings = totalBaselineMaterial - totalOptimizedMaterial;
   const materialSavingsPercent = Math.round((materialSavings / totalBaselineMaterial) * 100);
 
-  // Prepare comparison data for volume ranges vs efficiency
-  const comparisonData = results.allocations.reduce((acc: any, alloc) => {
-    const volume = alloc.itemDimensions.volume;
-    let volumeRange = '';
-    
-    if (volume < 500) {
-      volumeRange = 'Small (<500)';
-    } else if (volume < 1500) {
-      volumeRange = 'Medium (500-1500)';
-    } else if (volume < 3000) {
-      volumeRange = 'Large (1500-3000)';
-    } else {
-      volumeRange = 'XL (3000+)';
-    }
-    
-    if (!acc[volumeRange]) {
-      acc[volumeRange] = {
-        orderCount: 0,
-        totalFillRate: 0,
-        totalCost: 0,
-        packages: {}
-      };
-    }
-    
-    acc[volumeRange].orderCount++;
-    acc[volumeRange].totalFillRate += alloc.fillRate;
-    acc[volumeRange].totalCost += alloc.costBreakdown.totalCost;
-    
-    // Track package usage within volume range
-    const pkgName = alloc.recommendedPackage;
-    if (!acc[volumeRange].packages[pkgName]) {
-      acc[volumeRange].packages[pkgName] = 0;
-    }
-    acc[volumeRange].packages[pkgName]++;
-    
-    return acc;
-  }, {});
-
-  const comparisonChartData = Object.entries(comparisonData)
-    .map(([range, data]: [string, any]) => ({
-      volumeRange: range,
-      orderCount: data.orderCount,
-      avgFillRate: Math.round(data.totalFillRate / data.orderCount),
-      avgCost: Math.round((data.totalCost / data.orderCount) * 100) / 100,
-      topPackage: Object.entries(data.packages).sort(([,a]: any, [,b]: any) => b - a)[0]?.[0] || 'N/A'
-    }))
-    .sort((a, b) => b.orderCount - a.orderCount);
 
   // Check if any packages are using default costs
   const hasDefaultCosts = packageUsageData.some(pkg => pkg.usingDefaultCost);
@@ -1329,7 +1371,7 @@ const SuiteAnalysisResults = () => {
                         <div className="text-center">% Difference</div>
                       </div>
                       {usageComparisonData.map((item, index) => {
-                        const packageWeight = packageWeights[item.package] || 0.5;
+                        const packageWeight = getPackageWeight(item.package);
                         return (
                           <div key={item.package} className="grid grid-cols-7 text-sm py-2 hover:bg-white rounded px-2 -mx-2 border-b border-gray-100">
                             <div className="flex items-center gap-2">
@@ -1371,104 +1413,6 @@ const SuiteAnalysisResults = () => {
           </div>
         )}
 
-        {/* Material Usage Formulas Explanation */}
-        <Card className="bg-green-50 rounded-xl shadow-sm border border-green-200 mt-6">
-          <CardHeader className="border-b border-green-200 pb-4">
-            <CardTitle className="text-lg font-semibold text-green-900 flex items-center gap-2">
-              ⚖️ Material Usage Formulas
-            </CardTitle>
-            <CardDescription className="text-sm text-green-700">
-              Understanding how baseline and optimized material usage are calculated
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="p-6">
-            <div className="space-y-6">
-              {/* Package Weights */}
-              <div className="bg-white rounded-lg p-4 border border-green-200">
-                <h4 className="text-base font-semibold text-gray-900 mb-3">1. Actual Package Weights (from CSV)</h4>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <div className="bg-gray-50 p-3 rounded">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <p className="font-medium text-gray-800">Package Weights from Your CSV:</p>
-                        <ul className="text-xs space-y-1 mt-1 text-gray-600">
-                          <li>• X Small: 0.08 lbs</li>
-                          <li>• Small: 0.12 lbs</li>
-                          <li>• Medium: 0.18 lbs</li>
-                        </ul>
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-800 opacity-0">Spacing</p>
-                        <ul className="text-xs space-y-1 mt-1 text-gray-600">
-                          <li>• Large: 0.25 lbs</li>
-                          <li>• X Large: 0.32 lbs</li>
-                          <li>• XX Large: 0.42 lbs</li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Optimized Usage Formula */}
-              <div className="bg-white rounded-lg p-4 border border-green-200">
-                <h4 className="text-base font-semibold text-gray-900 mb-3">2. Optimized Material Usage</h4>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <div className="bg-gray-50 p-3 rounded font-mono text-xs">
-                    <div>Optimized Weight = Order Count × Package Weight</div>
-                    <div>Example: 462 orders × 0.12 lbs = 55.4 lbs</div>
-                  </div>
-                  <p className="text-xs text-gray-600">
-                    <strong>Note:</strong> Uses your actual optimized order counts for each package type.
-                  </p>
-                </div>
-              </div>
-
-              {/* Baseline Usage Formula */}
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <h4 className="text-base font-semibold text-gray-900 mb-3">3. Baseline Material Usage (From Package Distribution)</h4>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <div className="bg-gray-50 p-3 rounded font-mono text-xs">
-                    <div>Baseline Order Count = (Baseline % × Total Orders)</div>
-                    <div>Baseline Weight = Baseline Order Count × Package Weight</div>
-                    <div>Example: 551 orders × 0.12 lbs = 66.1 lbs</div>
-                  </div>
-                  <p className="text-xs text-gray-600">
-                    <strong>Uses Real Data:</strong> Same methodology as cost analysis - actual baseline percentages from Package Distribution chart.
-                  </p>
-                </div>
-              </div>
-
-              {/* Usage Comparison Formula */}
-              <div className="bg-white rounded-lg p-4 border border-blue-200">
-                <h4 className="text-base font-semibold text-gray-900 mb-3">4. Material Savings Calculation</h4>
-                <div className="space-y-2 text-sm text-gray-700">
-                  <div className="bg-gray-50 p-3 rounded font-mono text-xs">
-                    <div>Material Savings = Baseline Weight - Optimized Weight</div>
-                    <div>Savings Percentage = (Material Savings ÷ Baseline Weight) × 100</div>
-                    <div>Example: (66.1 - 55.4) ÷ 66.1 × 100 = 16% savings</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Updated Implementation */}
-              <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                <h4 className="text-base font-semibold text-gray-900 mb-3">✅ Updated Implementation</h4>
-                <div className="text-sm text-gray-700 space-y-2">
-                  <ul className="space-y-1 text-xs text-gray-600">
-                    <li>• <strong>✅ Consistent Methodology:</strong> Uses same approach as cost analysis</li>
-                    <li>• <strong>✅ Real Baseline Data:</strong> Uses actual baseline percentages from Package Distribution</li>
-                    <li>• <strong>✅ No Random Multipliers:</strong> Deterministic calculations based on real data</li>
-                    <li>• <strong>⚠️ Estimated Weights:</strong> Package weights are still estimated (could be improved with actual data)</li>
-                  </ul>
-                  <p className="text-xs text-green-600 mt-2">
-                    <strong>Formula:</strong> (Baseline % × Total Orders) × Package Weight = Baseline Material Usage
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Package Optimization Recommendations */}
         <Card className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6">
@@ -1578,9 +1522,12 @@ const SuiteAnalysisResults = () => {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-gray-500 mb-1">Potential Savings</p>
+                          <p className="text-xs text-gray-500 mb-1">Additional Potential Savings</p>
                           <p className="text-lg font-bold text-green-600">
-                            ${rec.projectedSavings.costSavings.toFixed(0)}/year
+                            ${rec.projectedSavings.costSavings.toFixed(0)}/year ({rec.projectedSavings.costSavingsPercent.toFixed(0)}%)
+                          </p>
+                          <p className="text-lg font-bold text-green-600 mt-1">
+                            {rec.projectedSavings.materialSavings.toFixed(1)} lbs ({rec.volumeReductionPercent.toFixed(0)}%)
                           </p>
                         </div>
                       </div>
@@ -1711,6 +1658,7 @@ const SuiteAnalysisResults = () => {
           </CardContent>
         </Card>
 
+
         {/* Failed Orders (if any) */}
         {results.summary.failedOrders > 0 && (
           <Card className="border-orange-200 bg-orange-50 mt-6">
@@ -1793,20 +1741,22 @@ const SuiteAnalysisResults = () => {
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">What is Suite Analyzer?</h3>
                   <p className="text-gray-700 leading-relaxed">
                     Suite Analyzer is an AI-powered tool that optimizes packaging allocation by analyzing your order volume data 
-                    and mapping orders to your available packaging suite. It uses actual volume data (not estimated dimensions) 
-                    to provide accurate fill rates and cost analysis, helping you reduce waste and optimize packaging efficiency.
+                    and mapping orders to your available packaging suite. It uses actual volume data and package weights from your CSV files 
+                    to provide accurate fill rates, cost analysis, and material savings calculations, helping you reduce waste and optimize packaging efficiency.
                   </p>
                 </div>
 
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">How It Works</h3>
                   <div className="space-y-3 text-gray-700">
-                    <p><strong>1. Data Analysis:</strong> Processes your order data (Order ID + Total Order Volume) and packaging suite (Package types + L×W×H dimensions)</p>
-                    <p><strong>2. Volume-Based Classification:</strong> Uses actual volume data from your CSV to classify orders (no fallback dimensions)</p>
-                    <p><strong>3. Smart Package Selection:</strong> Maps orders to packages based on volume capacity when dimensions aren't provided</p>
-                    <p><strong>4. Accurate Fill Rates:</strong> Calculates fill rates using real volume data, preventing inflated percentages</p>
-                    <p><strong>5. Cost Analysis:</strong> Shows $0.00 for packages without cost data (no artificial inflation)</p>
-                    <p><strong>6. Recommendations:</strong> Generates actionable insights based on actual performance data</p>
+                    <p><strong>1. Data Analysis:</strong> Processes your order data (Order ID + Total Order Volume) and packaging suite (Package types + L×W×H dimensions + Package Weights)</p>
+                    <p><strong>2. Dynamic Weight System:</strong> Uses actual package weights from your CSV files instead of hardcoded values</p>
+                    <p><strong>3. Volume-Based Classification:</strong> Uses actual volume data from your CSV to classify orders (no fallback dimensions)</p>
+                    <p><strong>4. Smart Package Selection:</strong> Maps orders to packages based on volume capacity and optimization algorithms</p>
+                    <p><strong>5. Accurate Fill Rates:</strong> Calculates fill rates using real volume data, preventing inflated percentages</p>
+                    <p><strong>6. Material Savings Analysis:</strong> Calculates material usage and savings based on volume reduction and actual package weights</p>
+                    <p><strong>7. Cost Analysis:</strong> Shows baseline costs, optimized costs, and cost savings with transparent calculations</p>
+                    <p><strong>8. Recommendations:</strong> Generates actionable insights based on actual performance data</p>
                   </div>
                 </div>
 
@@ -1833,13 +1783,14 @@ const SuiteAnalysisResults = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Package Distribution & Details</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Key Analysis Features</h3>
                   <div className="space-y-3 text-gray-700">
-                    <p><strong>Pie Chart:</strong> Visual breakdown of how your orders are distributed across different package types</p>
-                    <p><strong>Package Details:</strong> Shows exact order counts and total costs for each package type</p>
-                    <p><strong>Order Volume:</strong> The total volume from your CSV data (cubic inches)</p>
-                    <p><strong>Package Volume:</strong> The volume capacity of the recommended package</p>
-                    <p><strong>Fill Rate:</strong> How efficiently the order fills the package (Order Volume ÷ Package Volume)</p>
+                    <p><strong>Cost Analysis Charts:</strong> Visual breakdown comparing baseline vs optimized costs with potential savings</p>
+                    <p><strong>Material Usage Charts:</strong> Shows material consumption, savings, and percentage reduction based on your CSV weights</p>
+                    <p><strong>Package Distribution:</strong> Pie chart showing how orders are distributed across different package types</p>
+                    <p><strong>Dynamic Package Details:</strong> Shows exact order counts, costs, and weights from your actual CSV data</p>
+                    <p><strong>Fill Rate Analysis:</strong> How efficiently orders fill packages (Order Volume ÷ Package Volume)</p>
+                    <p><strong>Real-Time Calculations:</strong> All metrics use your actual CSV data - no hardcoded assumptions</p>
                   </div>
                 </div>
 
@@ -1866,13 +1817,17 @@ const SuiteAnalysisResults = () => {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Using the Export Report</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Enhanced Export Report</h3>
                   <div className="space-y-2 text-gray-700">
-                    <p><strong>CSV Export Includes:</strong></p>
+                    <p><strong>CSV Export Now Includes:</strong></p>
                     <ul className="list-disc list-inside ml-4">
-                      <li>Analysis summary and metrics</li>
-                      <li>Detailed order allocations with dimensions and costs</li>
-                      <li>All optimization recommendations</li>
+                      <li><strong>Cost Data:</strong> Baseline cost, optimized cost, and cost savings for each package</li>
+                      <li><strong>Material Analysis:</strong> Baseline material usage, optimized usage, and material savings in pounds</li>
+                      <li><strong>Package Weights:</strong> Actual weights from your CSV files (no hardcoded values)</li>
+                      <li><strong>Packaging Costs:</strong> Renamed from "Average Cost Per Order" for clarity</li>
+                      <li><strong>Order Allocations:</strong> Detailed breakdown with dimensions, fill rates, and costs</li>
+                      <li><strong>Optimization Recommendations:</strong> Actionable insights for improvement</li>
+                      <li><strong>Analysis Metrics:</strong> Processing speed, success rates, and performance data</li>
                     </ul>
                   </div>
                 </div>
@@ -1880,10 +1835,12 @@ const SuiteAnalysisResults = () => {
                 <div className="bg-gray-50 p-4 rounded-lg">
                   <h4 className="font-semibold text-gray-900 mb-2">💡 Pro Tips</h4>
                   <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• Aim for fill rates above 60% for optimal efficiency</li>
-                    <li>• Regular analysis helps identify packaging trends</li>
-                    <li>• Use recommendations to guide purchasing decisions</li>
-                    <li>• Export data for deeper analysis in spreadsheet tools</li>
+                    <li>• <strong>Accurate Data:</strong> Always include package weights in your CSV for precise material calculations</li>
+                    <li>• <strong>Fill Rate Targets:</strong> Aim for fill rates above 60% for optimal efficiency</li>
+                    <li>• <strong>Cost Tracking:</strong> Include package costs in CSV to get comprehensive savings analysis</li>
+                    <li>• <strong>Material Optimization:</strong> Focus on high-volume packages for maximum material savings</li>
+                    <li>• <strong>Regular Analysis:</strong> Run analysis periodically to identify packaging trends and opportunities</li>
+                    <li>• <strong>Export Benefits:</strong> Use the enhanced CSV export for detailed analysis in spreadsheet tools</li>
                   </ul>
                 </div>
               </div>

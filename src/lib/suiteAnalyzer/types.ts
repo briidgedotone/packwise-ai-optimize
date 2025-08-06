@@ -109,6 +109,7 @@ export interface SuiteAnalysisResult {
   baseline: BaselineComparison;
   recommendations: SuiteRecommendation[];
   metrics: AnalysisMetrics;
+  packageWeights: Record<string, number>; // Store actual package weights from CSV
 }
 
 export interface SuiteRecommendation {

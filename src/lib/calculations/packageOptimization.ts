@@ -33,6 +33,7 @@ export interface OptimizationRecommendation {
   projectedSavings: {
     materialSavings: number; // in pounds
     costSavings: number; // in dollars
+    costSavingsPercent: number; // percentage of total cost saved
     wasteReduction: number; // percentage
   };
   impactedOrders: number;
@@ -193,9 +194,12 @@ export function calculateOptimizationRecommendation(
   const materialSavings = (packageWeight * stats.orderCount * materialSavingsPercent) / 100;
   
   // Cost savings (assuming cost scales with size reduction)
+  const currentTotalCost = packageCost * stats.orderCount; // Current total cost spent
   const costSavings = packageCost > 0 
     ? (packageCost * stats.orderCount * volumeReductionPercent) / 100
     : 0;
+  // Cost savings percentage = (cost saved) / (cost spent) * 100
+  const costSavingsPercent = currentTotalCost > 0 ? (costSavings / currentTotalCost) * 100 : 0;
   
   // Waste reduction is the improvement in fill rate
   const wasteReduction = targetFillRate - stats.averageFillRate;
@@ -215,6 +219,7 @@ export function calculateOptimizationRecommendation(
     projectedSavings: {
       materialSavings,
       costSavings,
+      costSavingsPercent,
       wasteReduction
     },
     impactedOrders

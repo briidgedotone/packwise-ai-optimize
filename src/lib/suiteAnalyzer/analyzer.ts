@@ -156,6 +156,12 @@ export class SuiteAnalyzer {
       // Step 7: Compile final results
       this.updateProgress('complete', 100, orderProcessingResult.validOrders.length, orderProcessingResult.validOrders.length, 'Analysis complete');
       
+      // Extract package weights from packaging options for dynamic use in results
+      const packageWeights: Record<string, number> = {};
+      packagingOptions.forEach(pkg => {
+        packageWeights[pkg.packageName] = pkg.packageWeight;
+      });
+
       const result: SuiteAnalysisResult = {
         analysisId,
         timestamp: new Date(),
@@ -185,7 +191,8 @@ export class SuiteAnalyzer {
             costDistribution: {},
             efficiencyScores: allocationResult.allocations.map(a => a.efficiency)
           }
-        }
+        },
+        packageWeights // Store actual package weights from CSV
       };
 
       return result;
