@@ -5,6 +5,7 @@ import { api } from '../../convex/_generated/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Slider } from '@/components/ui/slider';
 import { 
   ArrowLeft, 
   Package, 
@@ -12,10 +13,20 @@ import {
   AlertCircle,
   BarChart3,
   Download,
-  Info
+  Info,
+  Target,
+  TrendingDown,
+  Boxes
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Sector } from 'recharts';
 import type { Id } from '../../convex/_generated/dataModel';
+import { 
+  calculatePackageStats, 
+  generatePackageRecommendations,
+  calculateTotalImpact,
+  formatDimensionOption,
+  type OptimizationRecommendation 
+} from '@/lib/calculations/packageOptimization';
 
 interface SuiteAnalysisResult {
   analysisId: string;
@@ -92,10 +103,77 @@ const SuiteAnalysisResults = () => {
   const [showPackageOrders, setShowPackageOrders] = React.useState<string | null>(null);
   const [activeIndex, setActiveIndex] = React.useState<number | undefined>(undefined);
   const [expandedPackages, setExpandedPackages] = React.useState<string[]>([]);
+  const [targetFillRate, setTargetFillRate] = React.useState<number>(85);
+  const [showPackageRecommendations, setShowPackageRecommendations] = React.useState<boolean>(true);
+  const [expandedRecommendations, setExpandedRecommendations] = React.useState<string[]>([]);
   
   const analysisData = useQuery(api.suiteAnalyzerBackend.getAnalysis, 
     analysisId ? { analysisId: analysisId as Id<"analyses"> } : "skip"
   );
+
+  // Calculate package optimization recommendations - MUST be before any early returns
+  const packageOptimizations: OptimizationRecommendation[] = React.useMemo(() => {
+    if (!analysisData?.results || analysisData.status !== 'completed') {
+      return [];
+    }
+    
+    const results = analysisData.results as SuiteAnalysisResult;
+    
+    // Get package usage data first
+    const packageUsageData = Object.entries(
+      results.allocations.reduce((acc: any, alloc) => {
+        const pkgName = alloc.recommendedPackage;
+        if (!acc[pkgName]) {
+          acc[pkgName] = { count: 0, totalCost: 0, usingDefaultCost: false };
+        }
+        acc[pkgName].count++;
+        acc[pkgName].totalCost += alloc.costBreakdown.totalCost;
+        acc[pkgName].usingDefaultCost = alloc.costBreakdown.usingDefaultCost;
+        return acc;
+      }, {})
+    )
+      .map(([pkg, data]: [string, any]) => ({
+        name: pkg.length > 15 ? pkg.substring(0, 15) + '...' : pkg,
+        value: data.count,
+        cost: data.totalCost,
+        usingDefaultCost: data.usingDefaultCost,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 6);
+
+    // Extract package weights
+    const packageWeights: Record<string, number> = {
+      'X Small': 0.08,
+      'Small': 0.12,
+      'Medium': 0.18,
+      'Large': 0.25,
+      'X Large': 0.32,
+      'XX Large': 0.42,
+    };
+    
+    // Prepare package data with dimensions
+    const packagesWithDimensions = packageUsageData.map(pkg => {
+      const packageAllocation = results.allocations.find(a => a.recommendedPackage === pkg.name);
+      if (!packageAllocation) return null;
+      
+      return {
+        name: pkg.name,
+        dimensions: {
+          length: packageAllocation.packageDimensions.length,
+          width: packageAllocation.packageDimensions.width,
+          height: packageAllocation.packageDimensions.height
+        },
+        cost: pkg.cost / pkg.value,
+        weight: packageWeights[pkg.name] || 0.5
+      };
+    }).filter(Boolean) as any[];
+
+    return generatePackageRecommendations(
+      results.allocations,
+      packagesWithDimensions,
+      targetFillRate
+    );
+  }, [analysisData, targetFillRate]);
 
   // Log distributions for debugging (always called, regardless of early returns)
   React.useEffect(() => {
@@ -541,6 +619,9 @@ const SuiteAnalysisResults = () => {
 
   // Check if any packages are using default costs
   const hasDefaultCosts = packageUsageData.some(pkg => pkg.usingDefaultCost);
+
+  // Calculate total impact of recommendations
+  const totalImpact = calculateTotalImpact(packageOptimizations);
 
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#F97316'];
 
@@ -1389,151 +1470,246 @@ const SuiteAnalysisResults = () => {
           </CardContent>
         </Card>
 
-        {/* Recommendations */}
-        {results.recommendations.length > 0 && (
-          <Card className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6">
-            <CardHeader className="border-b border-gray-100 pb-4">
-              <CardTitle className="text-lg font-semibold text-gray-900">Optimization Recommendations</CardTitle>
-              <CardDescription className="text-sm text-gray-600">Suggestions to improve your packaging efficiency</CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                {results.recommendations.slice(0, 3).map((rec, index) => (
-                  <div key={index} className="p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-100">
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Badge className={`text-xs ${
-                          rec.priority === 'high' ? 'bg-red-100 text-red-800' : 
-                          rec.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' : 
-                          'bg-blue-100 text-blue-800'
-                        }`}>
-                          {rec.priority.toUpperCase()}
-                        </Badge>
+        {/* Package Optimization Recommendations */}
+        <Card className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6">
+          <CardHeader className="border-b border-gray-100 pb-4">
+            <div className="flex items-start justify-between">
+              <div>
+                <CardTitle className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                  <Target className="h-5 w-5 text-blue-600" />
+                  Package Optimization Recommendations
+                </CardTitle>
+                <CardDescription className="text-sm text-gray-600 mt-1">
+                  Detailed package-by-package analysis with dimension recommendations
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-xs text-gray-500 mb-1">Target Fill Rate</p>
+                  <div className="flex items-center gap-3">
+                    <Slider
+                      value={[targetFillRate]}
+                      onValueChange={(value) => setTargetFillRate(value[0])}
+                      min={70}
+                      max={95}
+                      step={5}
+                      className="w-32"
+                    />
+                    <span className="text-lg font-semibold text-blue-600 w-12">{targetFillRate}%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-6">
+            {/* Summary Impact */}
+            {packageOptimizations.length > 0 && (
+              <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                <h4 className="text-sm font-semibold text-blue-900 mb-3">Projected Total Impact</h4>
+                <div className="grid grid-cols-4 gap-4">
+                  <div>
+                    <p className="text-xs text-blue-700">Material Savings</p>
+                    <p className="text-lg font-bold text-blue-900">{totalImpact.totalMaterialSavings.toFixed(1)} lbs</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-blue-700">Cost Savings</p>
+                    <p className="text-lg font-bold text-blue-900">${totalImpact.totalCostSavings.toFixed(2)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-blue-700">Waste Reduction</p>
+                    <p className="text-lg font-bold text-blue-900">{totalImpact.averageWasteReduction.toFixed(1)}%</p>
+                  </div>
+                  <div>
+                    <p className="text-xs text-blue-700">Orders Impacted</p>
+                    <p className="text-lg font-bold text-blue-900">{totalImpact.totalImpactedOrders}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Package-by-Package Recommendations */}
+            <div className="space-y-4">
+              {packageOptimizations.length > 0 ? (
+                packageOptimizations.map((rec, index) => (
+                  <div key={rec.packageName} className="border border-gray-200 rounded-lg overflow-hidden">
+                    {/* Package Header */}
+                    <div 
+                      className="p-4 bg-gradient-to-r from-gray-50 to-blue-50 cursor-pointer hover:from-gray-100 hover:to-blue-100 transition-colors"
+                      onClick={() => {
+                        setExpandedRecommendations(prev => 
+                          prev.includes(rec.packageName) 
+                            ? prev.filter(p => p !== rec.packageName)
+                            : [...prev, rec.packageName]
+                        );
+                      }}
+                    >
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="flex items-center gap-3 mb-2">
+                            <Boxes className="h-5 w-5 text-blue-600" />
+                            <h4 className="font-semibold text-gray-900 text-lg">{rec.packageName}</h4>
+                            <Badge className="bg-orange-100 text-orange-800 text-xs">
+                              {rec.currentStats.orderCount} orders
+                            </Badge>
+                          </div>
+                          <div className="grid grid-cols-3 gap-4 text-sm">
+                            <div>
+                              <span className="text-gray-600">Current Fill Rate:</span>
+                              <span className={`ml-2 font-semibold ${
+                                rec.currentStats.averageFillRate < 60 ? 'text-red-600' :
+                                rec.currentStats.averageFillRate < 80 ? 'text-yellow-600' :
+                                'text-green-600'
+                              }`}>
+                                {rec.currentStats.averageFillRate.toFixed(1)}%
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Volume Reduction:</span>
+                              <span className="ml-2 font-semibold text-green-600">
+                                -{rec.volumeReductionPercent.toFixed(0)}%
+                              </span>
+                            </div>
+                            <div>
+                              <span className="text-gray-600">Impacted Orders:</span>
+                              <span className="ml-2 font-semibold text-blue-600">
+                                {rec.impactedOrders}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-xs text-gray-500 mb-1">Potential Savings</p>
+                          <p className="text-lg font-bold text-green-600">
+                            ${rec.projectedSavings.costSavings.toFixed(0)}/year
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-500">{rec.impact.affectedOrders} orders</span>
-                        {rec.type === 'size_optimization' && lowFillRateOrders.length > 0 && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowOptimizationOrders(showOptimizationOrders === 'size' ? null : 'size')}
-                            className="text-xs h-6 px-2"
-                          >
-                            {showOptimizationOrders === 'size' ? 'Hide' : 'View'} Orders
-                          </Button>
-                        )}
-                        {rec.type === 'cost_reduction' && highCostOrders.length > 0 && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setShowOptimizationOrders(showOptimizationOrders === 'cost' ? null : 'cost')}
-                            className="text-xs h-6 px-2"
-                          >
-                            {showOptimizationOrders === 'cost' ? 'Hide' : 'View'} Orders
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                    <h4 className="font-semibold text-gray-900 mb-1">{rec.title}</h4>
-                    <p className="text-sm text-gray-600 mb-2">{rec.description}</p>
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>{rec.implementation.difficulty} • {rec.implementation.timeframe}</span>
                     </div>
                     
-                    {/* Orders Details */}
-                    {showOptimizationOrders === 'size' && rec.type === 'size_optimization' && (
-                      <div className="mt-4 bg-white rounded-lg border border-gray-200">
-                        <div className="p-3 border-b border-gray-200 bg-gray-50">
-                          <h5 className="font-semibold text-gray-900 text-sm">Orders with Fill Rate Below 60%</h5>
-                          <p className="text-xs text-gray-600 mt-1">These orders have poor space utilization</p>
-                        </div>
-                        <div className="max-h-60 overflow-y-auto">
-                          <table className="w-full text-xs">
-                            <thead className="bg-gray-50 sticky top-0">
-                              <tr>
-                                <th className="text-left p-2 font-semibold text-gray-700">Order ID</th>
-                                <th className="text-left p-2 font-semibold text-gray-700">Package</th>
-                                <th className="text-left p-2 font-semibold text-gray-700">Fill Rate</th>
-                                <th className="text-left p-2 font-semibold text-gray-700">Item Volume</th>
-                                <th className="text-left p-2 font-semibold text-gray-700">Package Cost</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {lowFillRateOrders.slice(0, 20).map((order, idx) => (
-                                <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                                  <td className="p-2 font-medium text-gray-900">{order.orderId}</td>
-                                  <td className="p-2 text-gray-600">{order.recommendedPackage}</td>
-                                  <td className="p-2">
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
-                                      {order.fillRate.toFixed(1)}%
-                                    </span>
-                                  </td>
-                                  <td className="p-2 text-gray-600">{order.itemDimensions.volume.toFixed(0)} CUIN</td>
-                                  <td className="p-2 text-gray-600">${order.costBreakdown.packageCost.toFixed(2)}</td>
-                                </tr>
-                              ))}
-                              {lowFillRateOrders.length > 20 && (
-                                <tr>
-                                  <td colSpan={5} className="p-3 text-center text-gray-500 text-xs">
-                                    ... and {lowFillRateOrders.length - 20} more orders
-                                  </td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
+                    {/* Expanded Details */}
+                    {expandedRecommendations.includes(rec.packageName) && (
+                      <div className="bg-white p-4 border-t border-gray-200">
+                        <div className="grid grid-cols-2 gap-6">
+                          {/* Current vs Recommended */}
+                          <div>
+                            <h5 className="font-semibold text-gray-900 mb-3">Volume Analysis</h5>
+                            <div className="space-y-2 text-sm">
+                              <div className="flex justify-between py-2 border-b border-gray-100">
+                                <span className="text-gray-600">Current Package Volume:</span>
+                                <span className="font-medium">{rec.currentStats.currentVolume.toFixed(0)} CUIN</span>
+                              </div>
+                              <div className="flex justify-between py-2 border-b border-gray-100">
+                                <span className="text-gray-600">Average Item Volume:</span>
+                                <span className="font-medium">{rec.currentStats.averageItemVolume.toFixed(0)} CUIN</span>
+                              </div>
+                              <div className="flex justify-between py-2 border-b border-gray-100">
+                                <span className="text-gray-600">Recommended Volume:</span>
+                                <span className="font-semibold text-blue-600">{rec.recommendedVolume.toFixed(0)} CUIN</span>
+                              </div>
+                              <div className="flex justify-between py-2">
+                                <span className="text-gray-600">Volume Reduction:</span>
+                                <span className="font-semibold text-green-600">
+                                  {rec.volumeReduction.toFixed(0)} CUIN ({rec.volumeReductionPercent.toFixed(0)}%)
+                                </span>
+                              </div>
+                            </div>
+                          </div>
 
-                    {showOptimizationOrders === 'cost' && rec.type === 'cost_reduction' && (
-                      <div className="mt-4 bg-white rounded-lg border border-gray-200">
-                        <div className="p-3 border-b border-gray-200 bg-gray-50">
-                          <h5 className="font-semibold text-gray-900 text-sm">High-Cost Orders (Above $15)</h5>
-                          <p className="text-xs text-gray-600 mt-1">These orders have elevated packaging costs</p>
+                          {/* Fill Rate Distribution */}
+                          <div>
+                            <h5 className="font-semibold text-gray-900 mb-3">Fill Rate Distribution</h5>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-gray-600">Below 60%:</span>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="bg-red-500 h-2 rounded-full"
+                                      style={{ width: `${(rec.currentStats.fillRateDistribution.below60 / rec.currentStats.orderCount) * 100}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-sm font-medium w-12 text-right">
+                                    {rec.currentStats.fillRateDistribution.below60}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-gray-600">60-80%:</span>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="bg-yellow-500 h-2 rounded-full"
+                                      style={{ width: `${(rec.currentStats.fillRateDistribution.between60and80 / rec.currentStats.orderCount) * 100}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-sm font-medium w-12 text-right">
+                                    {rec.currentStats.fillRateDistribution.between60and80}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm text-gray-600">Above 80%:</span>
+                                <div className="flex items-center gap-2">
+                                  <div className="w-24 bg-gray-200 rounded-full h-2">
+                                    <div 
+                                      className="bg-green-500 h-2 rounded-full"
+                                      style={{ width: `${(rec.currentStats.fillRateDistribution.above80 / rec.currentStats.orderCount) * 100}%` }}
+                                    />
+                                  </div>
+                                  <span className="text-sm font-medium w-12 text-right">
+                                    {rec.currentStats.fillRateDistribution.above80}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                        <div className="max-h-60 overflow-y-auto">
-                          <table className="w-full text-xs">
-                            <thead className="bg-gray-50 sticky top-0">
-                              <tr>
-                                <th className="text-left p-2 font-semibold text-gray-700">Order ID</th>
-                                <th className="text-left p-2 font-semibold text-gray-700">Package</th>
-                                <th className="text-left p-2 font-semibold text-gray-700">Total Cost</th>
-                                <th className="text-left p-2 font-semibold text-gray-700">Fill Rate</th>
-                                <th className="text-left p-2 font-semibold text-gray-700">Item Volume</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {highCostOrders.slice(0, 20).map((order, idx) => (
-                                <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
-                                  <td className="p-2 font-medium text-gray-900">{order.orderId}</td>
-                                  <td className="p-2 text-gray-600">{order.recommendedPackage}</td>
-                                  <td className="p-2">
-                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                                      ${order.costBreakdown.totalCost.toFixed(2)}
-                                    </span>
-                                  </td>
-                                  <td className="p-2 text-gray-600">{order.fillRate.toFixed(1)}%</td>
-                                  <td className="p-2 text-gray-600">{order.itemDimensions.volume.toFixed(0)} CUIN</td>
-                                </tr>
-                              ))}
-                              {highCostOrders.length > 20 && (
-                                <tr>
-                                  <td colSpan={5} className="p-3 text-center text-gray-500 text-xs">
-                                    ... and {highCostOrders.length - 20} more orders
-                                  </td>
-                                </tr>
-                              )}
-                            </tbody>
-                          </table>
+
+                        {/* Dimension Recommendations */}
+                        <div className="mt-6">
+                          <h5 className="font-semibold text-gray-900 mb-3">Recommended Package Dimensions</h5>
+                          <p className="text-sm text-gray-600 mb-4">
+                            To achieve {targetFillRate}% fill rate, consider these dimension options for {rec.recommendedVolume.toFixed(0)} CUIN:
+                          </p>
+                          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                            {rec.dimensionOptions.map((option, idx) => (
+                              <div key={idx} className="p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
+                                <div className="flex items-start justify-between mb-2">
+                                  <span className="text-xs font-semibold text-blue-800">{option.aspectRatio}</span>
+                                  {idx === 0 && (
+                                    <Badge className="bg-green-100 text-green-800 text-xs">Recommended</Badge>
+                                  )}
+                                </div>
+                                <p className="text-lg font-bold text-gray-900 mb-1">
+                                  {formatDimensionOption(option)}
+                                </p>
+                                <p className="text-xs text-gray-600">{option.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                          <div className="mt-4 p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <p className="text-xs text-yellow-800">
+                              <strong>Note:</strong> These are calculated dimensions. Consider your product mix, stacking requirements, 
+                              and supplier constraints when selecting final dimensions.
+                            </p>
+                          </div>
                         </div>
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                ))
+              ) : (
+                <div className="text-center py-8">
+                  <TrendingDown className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+                  <p className="text-gray-600 font-medium">All packages are performing well!</p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    All packages have average fill rates above {targetFillRate}%
+                  </p>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Failed Orders (if any) */}
         {results.summary.failedOrders > 0 && (
