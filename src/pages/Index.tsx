@@ -133,10 +133,10 @@ const Index = () => {
               <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">About</a>
             </nav>
             <div className="flex items-center space-x-4">
-              <Link to="/login">
+              <Link to="/sign-in">
                 <Button variant="ghost">Login</Button>
               </Link>
-              <Link to="/signup">
+              <Link to="/sign-up">
                 <Button className="bg-blue-600 hover:bg-blue-700">Start Free Trial</Button>
               </Link>
             </div>
@@ -159,7 +159,7 @@ const Index = () => {
             QuantiPackAI uses AI to analyze, generate, and forecast packaging strategies that cut cost, reduce waste, and give you an edge from warehouse to shelf.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup">
+            <Link to="/sign-up">
               <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-4">
                 Start Saving Now
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -321,7 +321,7 @@ const Index = () => {
                       </li>
                     ))}
                   </ul>
-                  <Link to="/signup" className="block mt-6">
+                  <Link to="/sign-up" className="block mt-6">
                     <Button className={`w-full ${plan.name === 'Corporate' ? 'bg-blue-600 hover:bg-blue-700' : ''}`}>
                       {plan.name === 'Enterprise' ? 'Contact Sales' : 'Start Free Trial'}
                     </Button>
@@ -343,7 +343,7 @@ const Index = () => {
             Join thousands of brands already saving money and reducing waste with QuantiPackAI
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/signup">
+            <Link to="/sign-up">
               <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4">
                 Start Your Free Trial
                 <ArrowRight className="ml-2 h-5 w-5" />

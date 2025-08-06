@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useClerk, useUser, UserButton } from '@clerk/clerk-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -18,61 +19,84 @@ import {
   Download,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Settings,
+  Home,
+  Users,
+  HelpCircle,
+  LogOut,
+  Bell,
+  Search,
+  Calendar,
+  Plus,
+  ChevronDown,
+  MoreHorizontal
 } from 'lucide-react';
-import { PackagingSuiteAnalyzer } from '@/components/PackagingSuiteAnalyzer';
+import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
 import { SpecGenerator } from '@/components/SpecGenerator';
 import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
 import { MonthlyChart, PackagingChart, EfficiencyChart } from '@/components/charts';
+import CUINDemo from '@/components/CUINDemo';
+import Phase2Demo from '@/components/Phase2Demo';
 
 const Dashboard = () => {
+  const { signOut } = useClerk();
+  const { user } = useUser();
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [aiAssistantOpen, setAiAssistantOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await signOut();
+  };
 
   const menuItems = [
     { id: 'overview', label: 'Dashboard', icon: BarChart3 },
-    { id: 'suite-analyzer', label: 'Suite Analyzer', icon: Package },
+    { id: 'suite-analyzer-backend', label: 'Suite Analyzer', icon: Package },
     { id: 'spec-generator', label: 'Spec Generator', icon: Calculator },
     { id: 'demand-planner', label: 'Demand Planner', icon: TrendingUp },
     { id: 'pdp-analyzer', label: 'PDP Analyzer', icon: Eye },
+    { id: 'cuin-demo', label: 'CUIN Calculator', icon: Calculator },
+    { id: 'phase2-demo', label: 'Core Engines', icon: Package },
     { id: 'reports', label: 'Reports', icon: FileText },
   ];
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'suite-analyzer':
-        return <PackagingSuiteAnalyzer />;
+      case 'suite-analyzer-backend':
+        return <PackagingSuiteAnalyzerBackend />;
       case 'spec-generator':
         return <SpecGenerator />;
       case 'demand-planner':
         return <PackagingDemandPlanner />;
       case 'pdp-analyzer':
         return <PDPAnalyzer />;
+      case 'cuin-demo':
+        return <CUINDemo />;
+      case 'phase2-demo':
+        return <Phase2Demo />;
       case 'reports':
         return (
-          <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/20">
-            <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+          <div className="min-h-screen bg-gray-50">
+            <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
               {/* Header */}
-              <div className="bg-white rounded-xl shadow-lg border border-slate-200/60 p-8 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 rounded-bl-full"></div>
-                <div className="relative">
-                  <div className="flex items-start justify-between mb-6">
-                    <div className="flex items-center gap-4">
-                      <div className="p-3 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-lg">
-                        <FileText className="h-8 w-8 text-white" />
-                      </div>
-                      <div>
-                        <h2 className="text-3xl font-bold text-slate-800 mb-2">Reports & Analytics</h2>
-                        <p className="text-slate-600 text-lg">
-                          Access comprehensive analysis reports and insights
-                        </p>
-                      </div>
+              <div className="bg-white rounded-lg border border-gray-100 p-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
+                      <FileText className="h-5 w-5 text-white" />
                     </div>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-purple-50 border border-purple-200 rounded-lg">
-                      <BarChart3 className="h-4 w-4 text-purple-600" />
-                      <span className="text-sm font-medium text-purple-700">Analytics Hub</span>
+                    <div>
+                      <h1 className="text-2xl font-medium text-gray-900">Reports & Analytics</h1>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Access comprehensive analysis reports and insights
+                      </p>
                     </div>
+                  </div>
+                  <div className="flex items-center gap-2 px-3 py-1 bg-purple-50 border border-purple-200 rounded-lg">
+                    <BarChart3 className="h-3 w-3 text-purple-600" />
+                    <span className="text-xs font-medium text-purple-700">Analytics Hub</span>
                   </div>
                 </div>
               </div>
@@ -123,11 +147,11 @@ const Dashboard = () => {
                     status: 'processing'
                   }
                 ].map((report, index) => (
-                  <Card key={index} className="bg-white border-slate-200/60 shadow-lg hover:shadow-xl transition-all duration-300 group">
+                  <Card key={index} className="bg-white border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
                     <CardHeader className="pb-4">
                       <div className="flex items-center justify-between mb-3">
-                        <div className={`p-3 bg-${report.color}-50 rounded-xl group-hover:bg-${report.color}-100 transition-colors`}>
-                          <report.icon className={`h-6 w-6 text-${report.color}-600`} />
+                        <div className={`w-10 h-10 bg-${report.color}-50 rounded-lg flex items-center justify-center group-hover:bg-${report.color}-100 transition-colors`}>
+                          <report.icon className={`h-5 w-5 text-${report.color}-600`} />
                         </div>
                         {report.status === 'ready' && (
                           <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">
@@ -148,8 +172,8 @@ const Dashboard = () => {
                           </Badge>
                         )}
                       </div>
-                      <CardTitle className="text-xl text-slate-800">{report.title}</CardTitle>
-                      <CardDescription className="text-slate-600">
+                      <CardTitle className="text-lg font-medium text-gray-900">{report.title}</CardTitle>
+                      <CardDescription className="text-gray-500">
                         {report.description}
                       </CardDescription>
                     </CardHeader>
@@ -157,7 +181,7 @@ const Dashboard = () => {
                       <div className="space-y-3">
                         {report.status === 'ready' ? (
                           <div className="space-y-2">
-                            <div className="flex justify-between text-sm text-slate-600">
+                            <div className="flex justify-between text-sm text-gray-500">
                               <span>Last updated: 2 hours ago</span>
                               <span>12 pages</span>
                             </div>
@@ -177,8 +201,8 @@ const Dashboard = () => {
                           </div>
                         ) : (
                           <div className="text-center py-4">
-                            <p className="text-sm text-slate-500 mb-3">Run analysis to generate report</p>
-                            <Button variant="outline" className="w-full border-slate-300 text-slate-700">
+                            <p className="text-sm text-gray-500 mb-3">Run analysis to generate report</p>
+                            <Button variant="outline" className="w-full border-gray-200 text-gray-700">
                               Start Analysis
                             </Button>
                           </div>
@@ -193,127 +217,139 @@ const Dashboard = () => {
         );
       default:
         return (
-          <div className="space-y-8">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-semibold text-slate-800 mb-2">Hello, User</h1>
-                <p className="text-slate-500">Track your packaging optimization progress here. You almost reach a goal!</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-sm text-slate-500">16 May, 2024</span>
-                <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-50">
-                  All Systems Active
-                </Badge>
-              </div>
-            </div>
-
+          <div className="space-y-6">
             {/* Metrics Grid */}
-            <div className="grid gap-4 md:grid-cols-3">
-              <Card className="border-slate-200 bg-white shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                  <div>
-                    <CardTitle className="text-sm font-medium text-slate-600">Finished</CardTitle>
-                    <div className="flex items-baseline gap-2 mt-1">
-                      <span className="text-2xl font-semibold text-slate-800">18</span>
-                      <span className="text-sm text-emerald-600">+8 tasks</span>
-                    </div>
+            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+              {/* Total Savings */}
+              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                    <DollarSign className="h-4 w-4 text-white" />
                   </div>
-                  <div className="p-2 bg-blue-50 rounded-lg">
-                    <DollarSign className="h-5 w-5 text-blue-600" />
+                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                    <TrendingUp className="h-2.5 w-2.5" />
+                    +12.3%
                   </div>
-                </CardHeader>
+                </div>
+                <div className="space-y-0.5">
+                  <h3 className="text-xl font-semibold text-gray-900">$34,250</h3>
+                  <p className="text-xs text-gray-500">Total Savings</p>
+                </div>
               </Card>
 
-              <Card className="border-slate-200 bg-white shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                  <div>
-                    <CardTitle className="text-sm font-medium text-slate-600">Tracked</CardTitle>
-                    <div className="flex items-baseline gap-2 mt-1">
-                      <span className="text-2xl font-semibold text-slate-800">31h</span>
-                      <span className="text-sm text-red-500">-6 hours</span>
-                    </div>
+              {/* Cost Reduction */}
+              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                    <BarChart3 className="h-4 w-4 text-white" />
                   </div>
-                  <div className="p-2 bg-emerald-50 rounded-lg">
-                    <Package className="h-5 w-5 text-emerald-600" />
+                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                    <TrendingUp className="h-2.5 w-2.5" />
+                    +2.1%
                   </div>
-                </CardHeader>
+                </div>
+                <div className="space-y-0.5">
+                  <h3 className="text-xl font-semibold text-gray-900">23.8%</h3>
+                  <p className="text-xs text-gray-500">Cost Reduction</p>
+                </div>
               </Card>
 
-              <Card className="border-slate-200 bg-white shadow-sm">
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-                  <div>
-                    <CardTitle className="text-sm font-medium text-slate-600">Efficiency</CardTitle>
-                    <div className="flex items-baseline gap-2 mt-1">
-                      <span className="text-2xl font-semibold text-slate-800">93%</span>
-                      <span className="text-sm text-emerald-600">+12%</span>
-                    </div>
+              {/* Waste Reduction */}
+              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+                    <Recycle className="h-4 w-4 text-white" />
                   </div>
-                  <div className="p-2 bg-orange-50 rounded-lg">
-                    <TrendingUp className="h-5 w-5 text-orange-600" />
+                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                    <TrendingUp className="h-2.5 w-2.5" />
+                    +5.7%
                   </div>
-                </CardHeader>
+                </div>
+                <div className="space-y-0.5">
+                  <h3 className="text-xl font-semibold text-gray-900">19.9%</h3>
+                  <p className="text-xs text-gray-500">Waste Reduction</p>
+                </div>
+              </Card>
+
+              {/* Processed Orders */}
+              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                    <Package className="h-4 w-4 text-white" />
+                  </div>
+                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
+                    <TrendingUp className="h-2.5 w-2.5" />
+                    +8.4%
+                  </div>
+                </div>
+                <div className="space-y-0.5">
+                  <h3 className="text-xl font-semibold text-gray-900">12,847</h3>
+                  <p className="text-xs text-gray-500">Processed Orders</p>
+                </div>
               </Card>
             </div>
 
-            {/* Performance Charts */}
-            <div className="space-y-6">
-              {/* Monthly Savings Trend */}
-              <Card className="border-slate-200 bg-white shadow-sm">
-                <CardHeader className="pb-4">
-                  <CardTitle className="text-xl text-slate-800">Monthly Savings Trend</CardTitle>
-                  <CardDescription className="text-slate-500">
-                    Cost reduction and order volume over time
+            {/* Performance Section */}
+            <Card className="border-gray-100 bg-white shadow-sm">
+              <CardHeader className="pb-6">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base sm:text-lg font-medium text-gray-900">Performance</CardTitle>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" size="sm" className="text-xs border-gray-200 text-gray-600 hidden sm:flex">
+                      01-07 May
+                      <ChevronDown className="ml-1 h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80 w-full">
+                  <MonthlyChart />
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Charts Grid */}
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+              {/* Packaging Distribution */}
+              <Card className="border-gray-100 bg-white shadow-sm">
+                <CardHeader className="pb-6">
+                  <CardTitle className="text-lg font-medium text-gray-900">Packaging Distribution</CardTitle>
+                  <CardDescription className="text-gray-500">
+                    Current packaging type usage
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-80 w-full">
-                    <MonthlyChart />
+                  <div className="h-64 w-full">
+                    <PackagingChart />
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Charts Grid */}
-              <div className="grid gap-6 lg:grid-cols-2">
-                {/* Packaging Distribution */}
-                <Card className="border-slate-200 bg-white shadow-sm">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-xl text-slate-800">Packaging Distribution</CardTitle>
-                    <CardDescription className="text-slate-500">
-                      Current packaging type usage
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 w-full">
-                      <PackagingChart />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Efficiency Improvements */}
-                <Card className="border-slate-200 bg-white shadow-sm">
-                  <CardHeader className="pb-4">
-                    <CardTitle className="text-xl text-slate-800">Efficiency Improvements</CardTitle>
-                    <CardDescription className="text-slate-500">
-                      Packaging efficiency and fill rate trends
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="h-64 w-full">
-                      <EfficiencyChart />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
+              {/* Efficiency Improvements */}
+              <Card className="border-gray-100 bg-white shadow-sm">
+                <CardHeader className="pb-6">
+                  <CardTitle className="text-lg font-medium text-gray-900">Efficiency Improvements</CardTitle>
+                  <CardDescription className="text-gray-500">
+                    Performance comparison before and after QuantiPackAI implementation
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-64 w-full">
+                    <EfficiencyChart />
+                  </div>
+                </CardContent>
+              </Card>
             </div>
+
 
             {/* Core Features Grid */}
             <div>
-              <h2 className="text-xl font-semibold text-slate-800 mb-4">Core Features</h2>
-              <div className="grid gap-4 md:grid-cols-2">
+              <h2 className="text-lg font-medium text-gray-900 mb-4">Core Features</h2>
+              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
                 {[
                   {
-                    id: 'suite-analyzer',
+                    id: 'suite-analyzer-backend',
                     title: 'Packaging Suite Analyzer',
                     description: 'Optimize your packaging mix and identify cost savings',
                     icon: Package,
@@ -345,23 +381,23 @@ const Dashboard = () => {
                     color: 'purple',
                   },
                 ].map((feature) => (
-                  <Card key={feature.id} className="border-slate-200 bg-white shadow-sm hover:shadow-md transition-all cursor-pointer group">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-center justify-between">
-                        <div className={`p-3 bg-${feature.color}-50 rounded-xl group-hover:bg-${feature.color}-100 transition-colors`}>
-                          <feature.icon className={`h-6 w-6 text-${feature.color}-600`} />
+                  <Card key={feature.id} className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-all cursor-pointer group">
+                    <CardHeader className="pb-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className={`h-10 w-10 bg-${feature.color}-50 rounded-lg flex items-center justify-center group-hover:bg-${feature.color}-100 transition-colors`}>
+                          <feature.icon className={`h-5 w-5 text-${feature.color}-600`} />
                         </div>
-                        <Badge variant="outline" className="text-emerald-600 border-emerald-200 bg-emerald-50">
+                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
                           {feature.status}
                         </Badge>
                       </div>
-                      <CardTitle className="text-lg text-slate-800 mt-3">{feature.title}</CardTitle>
-                      <CardDescription className="text-slate-500">{feature.description}</CardDescription>
+                      <CardTitle className="text-base font-medium text-gray-900">{feature.title}</CardTitle>
+                      <CardDescription className="text-sm text-gray-500 mt-1">{feature.description}</CardDescription>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pt-0">
                       <Button 
                         variant="outline" 
-                        className="w-full border-slate-300 text-slate-700 hover:bg-slate-50"
+                        className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 text-sm"
                         onClick={() => setActiveTab(feature.id)}
                       >
                         Launch Tool
@@ -373,9 +409,9 @@ const Dashboard = () => {
             </div>
 
             {/* Recent Activity */}
-            <Card className="border-slate-200 bg-white shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-slate-800">Recent Activity</CardTitle>
+            <Card className="border-gray-100 bg-white shadow-sm">
+              <CardHeader className="pb-6">
+                <CardTitle className="text-lg font-medium text-gray-900">Recent Activity</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -389,10 +425,10 @@ const Dashboard = () => {
                       <div className={`w-2 h-2 rounded-full ${
                         activity.type === 'success' ? 'bg-emerald-500' :
                         activity.type === 'info' ? 'bg-blue-500' :
-                        activity.type === 'warning' ? 'bg-orange-500' : 'bg-slate-400'
+                        activity.type === 'warning' ? 'bg-orange-500' : 'bg-gray-400'
                       }`} />
-                      <span className="text-slate-700 flex-1">{activity.text}</span>
-                      <span className="text-slate-400 text-xs">{activity.time}</span>
+                      <span className="text-gray-700 flex-1">{activity.text}</span>
+                      <span className="text-gray-400 text-xs">{activity.time}</span>
                     </div>
                   ))}
                 </div>
@@ -404,73 +440,86 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between p-4 border-b border-slate-200 bg-white">
-        <h1 className="text-xl font-semibold text-slate-800">QuantiPackAI</h1>
+      <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-100">
+        <h1 className="text-xl font-medium text-gray-900">QuantiPackAI</h1>
         <Button
           variant="ghost"
           size="sm"
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="text-slate-600"
+          className="text-gray-600 hover:text-gray-900"
         >
           {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
       </div>
 
-      <div className="flex">
+      <div className="flex h-screen">
         {/* Sidebar */}
-        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-64 h-screen bg-white border-r border-slate-200 transition-transform duration-200 ease-in-out`}>
-          <div className="p-6 border-b border-slate-200">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-64 h-full bg-white border-r border-gray-100 transition-transform duration-200 ease-in-out`}>
+          <div className="p-4 sm:p-6">
+            <div className="flex items-center gap-3 mb-6 sm:mb-8">
+              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
                 <Package className="h-4 w-4 text-white" />
               </div>
-              <div>
-                <h1 className="text-lg font-semibold text-slate-800">QuantiPackAI</h1>
-              </div>
+              <h1 className="text-base sm:text-lg font-medium text-gray-900">QuantiPackAI</h1>
+            </div>
+
+            <nav className="space-y-1">
+              {menuItems.map((item) => (
+                <Button
+                  key={item.id}
+                  variant="ghost"
+                  className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base ${
+                    activeTab === item.id 
+                      ? "bg-gray-100 text-gray-900 font-medium" 
+                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                  }`}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    setSidebarOpen(false);
+                  }}
+                >
+                  <item.icon className="h-4 w-4 mr-3" />
+                  {item.label}
+                </Button>
+              ))}
+            </nav>
+          </div>
+
+          {/* Bottom Section */}
+          <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 space-y-4">
+            {/* Upgrade Card */}
+            <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
+              <h4 className="font-medium text-blue-900 mb-2">Upgrade to Pro</h4>
+              <p className="text-xs text-blue-700 mb-3">
+                Get 1 month free and unlock advanced features
+              </p>
+              <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs">
+                Upgrade
+              </Button>
+            </div>
+
+            {/* Help Links */}
+            <div className="space-y-2">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-left text-gray-600 hover:text-gray-900 hover:bg-gray-50 text-sm h-8"
+              >
+                <HelpCircle className="h-4 w-4 mr-3" />
+                Help & Information
+              </Button>
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-left text-gray-600 hover:text-gray-900 hover:bg-gray-50 text-sm h-8"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4 mr-3" />
+                Log out
+              </Button>
             </div>
           </div>
 
-          <nav className="p-4 space-y-1">
-            {menuItems.map((item) => (
-              <Button
-                key={item.id}
-                variant={activeTab === item.id ? "secondary" : "ghost"}
-                className={`w-full justify-start text-left ${
-                  activeTab === item.id 
-                    ? "bg-blue-50 text-blue-700 border-blue-200" 
-                    : "text-slate-600 hover:bg-slate-50 hover:text-slate-800"
-                }`}
-                onClick={() => {
-                  setActiveTab(item.id);
-                  setSidebarOpen(false);
-                }}
-              >
-                <item.icon className="h-4 w-4 mr-3" />
-                {item.label}
-              </Button>
-            ))}
-          </nav>
-
-          <div className="absolute bottom-4 left-4 right-4">
-            <Card className="border-slate-200 bg-slate-50">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-sm flex items-center gap-2 text-slate-700">
-                  <MessageSquare className="h-4 w-4" />
-                  AI Assistant
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-xs text-slate-500 mb-3">
-                  Need help with packaging optimization?
-                </p>
-                <Button size="sm" variant="outline" className="w-full text-slate-600 border-slate-300 hover:bg-white">
-                  Ask AI
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
         </div>
 
         {/* Overlay for mobile */}
@@ -482,11 +531,137 @@ const Dashboard = () => {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 min-h-screen">
-          <div className="p-6 lg:p-8">
+        <div className="flex-1 overflow-auto bg-white">
+          {/* Top Header - Only show on dashboard */}
+          {activeTab === 'overview' && (
+            <div className="border-b border-gray-100 bg-white px-4 sm:px-6 py-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-medium text-gray-900">
+                    Hello, {user?.firstName || user?.username || 'User'}
+                  </h1>
+                  <p className="text-xs sm:text-sm text-gray-500 mt-1">Track your packaging optimization progress here. You almost reach a goal!</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs sm:text-sm text-gray-500">
+                    {new Date().toLocaleDateString('en-US', { 
+                      day: 'numeric', 
+                      month: 'long', 
+                      year: 'numeric' 
+                    })}
+                  </span>
+                  <div className="w-8 h-8 bg-gray-100 rounded-full hidden sm:flex items-center justify-center">
+                    <Calendar className="h-4 w-4 text-gray-600" />
+                  </div>
+                  <div className="relative">
+                    <div className="w-2 h-2 bg-orange-500 rounded-full absolute top-1 right-1 z-10"></div>
+                    <UserButton 
+                      appearance={{
+                        elements: {
+                          avatarBox: "w-8 h-8",
+                          userButtonPopoverCard: "shadow-lg border border-gray-200",
+                          userButtonPopoverActionButton: "text-gray-700 hover:bg-gray-100",
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className={activeTab === 'overview' ? 'p-4 sm:p-6' : 'p-0'}>
             {renderContent()}
           </div>
         </div>
+
+        {/* Floating AI Assistant Button */}
+        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50">
+          <Button
+            onClick={() => setAiAssistantOpen(!aiAssistantOpen)}
+            className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+          >
+            <MessageSquare className="h-5 w-5" />
+          </Button>
+        </div>
+
+        {/* AI Assistant Panel */}
+        {aiAssistantOpen && (
+          <div className="fixed bottom-20 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-80 max-w-sm h-96 bg-white border border-gray-200 rounded-lg shadow-2xl z-40 flex flex-col">
+            {/* Header */}
+            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                  <MessageSquare className="h-4 w-4 text-blue-600" />
+                </div>
+                <h3 className="font-medium text-gray-900">AI Assistant</h3>
+              </div>
+              <Button
+                variant="ghost" 
+                size="sm"
+                onClick={() => setAiAssistantOpen(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+            
+            {/* Messages Area */}
+            <div className="flex-1 p-4 overflow-y-auto">
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <MessageSquare className="h-3 w-3 text-blue-600" />
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 flex-1">
+                    <p className="text-sm text-gray-700">
+                      Hi! I'm your AI assistant for packaging optimization. How can I help you today?
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="flex gap-3">
+                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <MessageSquare className="h-3 w-3 text-blue-600" />
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 flex-1">
+                    <p className="text-sm text-gray-700">
+                      I can help you with:
+                    </p>
+                    <ul className="text-xs text-gray-600 mt-2 space-y-1">
+                      <li>• Suite analysis questions</li>
+                      <li>• Spec generation guidance</li>
+                      <li>• Demand planning insights</li>
+                      <li>• PDP optimization tips</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Input Area */}
+            <div className="p-4 border-t border-gray-100">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Ask me anything about packaging..."
+                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
+                  Send
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Overlay for AI Assistant */}
+        {aiAssistantOpen && (
+          <div 
+            className="fixed inset-0 bg-black/20 z-30"
+            onClick={() => setAiAssistantOpen(false)}
+          />
+        )}
       </div>
     </div>
   );

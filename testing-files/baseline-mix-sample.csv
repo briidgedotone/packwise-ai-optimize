@@ -1,0 +1,11 @@
+Package Name,Package ID,Usage Percent,Monthly Volume,Average Cost
+Medium Box,BOX-MD,25.5,127,0.85
+Large Box,BOX-LG,18.2,91,1.25
+Small Box,BOX-SM,15.8,79,0.65
+Large Poly Mailer,POLY-LG,12.4,62,0.35
+Medium Poly Mailer,POLY-MD,8.6,43,0.22
+Extra Large Box,BOX-XL,6.8,34,1.85
+Wide Box,BOX-WIDE,4.2,21,1.45
+Priority Medium Box,PRIOR-MD,3.4,17,1.35
+Small Poly Mailer,POLY-SM,2.8,14,0.15
+Large Padded Envelope,PAD-LG,2.3,12,0.75

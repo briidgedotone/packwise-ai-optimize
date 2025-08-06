@@ -1,0 +1,5 @@
+Package Name,Package ID,Length,Width,Height,Unit,Cost per Unit,Package Weight,Max Weight,Material,Type,Usage %
+X Small,XS,10.75,10.75,2.25,in,0.11,0.11,5,Cardboard,box,15
+Small,SM,13,15.5,3.5,in,0.12,0.16,10,Cardboard,box,25
+Medium,MD,21,16,4.5,in,0.15,0.26,20,Cardboard,box,35
+Large,LG,24,19,6,in,0.20,0.34,35,Cardboard,box,25

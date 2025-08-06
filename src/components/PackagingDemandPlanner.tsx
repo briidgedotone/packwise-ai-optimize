@@ -1,24 +1,25 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, Calculator, PieChart, Settings, TrendingUp, Package2, BarChart3, CheckCircle2, AlertCircle, Info, Calendar } from 'lucide-react';
+import { Upload, PieChart, Settings, AlertCircle, TrendingUp, BarChart3, FileSpreadsheet } from 'lucide-react';
 
 export const PackagingDemandPlanner = () => {
+  const [totalOrders, setTotalOrders] = useState('');
+  const [forecastPeriod, setForecastPeriod] = useState('');
+  const [mixSource, setMixSource] = useState<'usage-log' | 'manual'>('usage-log');
+  const [safetyStock, setSafetyStock] = useState('');
+  
   const [files, setFiles] = useState<{
-    forecast: File | null;
+    usageLog: File | null;
+    manualMix: File | null;
     packagingSuite: File | null;
   }>({
-    forecast: null,
+    usageLog: null,
+    manualMix: null,
     packagingSuite: null,
-  });
-
-  const [fallbackDimensions, setFallbackDimensions] = useState({
-    min: { l: '', w: '', h: '' },
-    avg: { l: '', w: '', h: '' },
-    max: { l: '', w: '', h: '' },
   });
 
   const handleFileUpload = (type: keyof typeof files, file: File | null) => {
@@ -26,216 +27,241 @@ export const PackagingDemandPlanner = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50/30 to-blue-50/20">
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        <div className="bg-white rounded-xl shadow-lg border border-slate-200/60 p-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-500/10 to-blue-500/10 rounded-bl-full"></div>
-          <div className="relative">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg">
-                  <Calculator className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold text-slate-800 mb-2">Demand Planner</h2>
-                  <p className="text-slate-600 text-lg">
-                    Calculate exact packaging quantities for your forecasts
-                  </p>
-                </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
+        <div className="bg-white rounded-lg border border-gray-100 p-4 sm:p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+                <TrendingUp className="h-5 w-5 text-white" />
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-blue-50 border border-blue-200 rounded-lg">
-                <Calendar className="h-4 w-4 text-blue-600" />
-                <span className="text-sm font-medium text-blue-700">Future-Ready</span>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-medium text-gray-900">Packaging Demand Planner</h1>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                  Forecast packaging needs based on total order volumes and historical mix
+                </p>
               </div>
             </div>
-            
-            <div className="grid md:grid-cols-3 gap-4 mt-6">
-              <div className="flex items-center gap-3 p-4 bg-emerald-50 rounded-lg border border-emerald-200">
-                <div className="p-2 bg-emerald-100 rounded-lg">
-                  <TrendingUp className="h-5 w-5 text-emerald-600" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-emerald-800">Demand Forecasting</div>
-                  <div className="text-xs text-emerald-600">Plan ahead with confidence</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <div className="p-2 bg-blue-100 rounded-lg">
-                  <Package2 className="h-5 w-5 text-blue-600" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-blue-800">Optimal Quantities</div>
-                  <div className="text-xs text-blue-600">Right-size your inventory</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-orange-50 rounded-lg border border-orange-200">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <BarChart3 className="h-5 w-5 text-orange-600" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-orange-800">Smart Insights</div>
-                  <div className="text-xs text-orange-600">Data-driven recommendations</div>
-                </div>
-              </div>
+            <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-orange-50 border border-orange-200 rounded-lg">
+              <BarChart3 className="h-3 w-3 text-orange-600" />
+              <span className="text-xs font-medium text-orange-700">Mix-Based Planning</span>
             </div>
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2">
-          {/* Input Section */}
-          <div className="space-y-6">
-            <Card className="bg-white border-slate-200/60 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-emerald-50/50 rounded-t-lg">
-                <CardTitle className="text-xl flex items-center gap-3 text-slate-800">
-                  <div className="p-2 bg-emerald-100 rounded-lg">
-                    <Upload className="h-5 w-5 text-emerald-600" />
-                  </div>
-                  Required Files
-                </CardTitle>
-                <div className="mt-2 p-3 bg-emerald-50 border border-emerald-200 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Info className="h-4 w-4 text-emerald-600" />
-                    <span className="text-sm text-emerald-700">Upload forecast data to calculate packaging requirements</span>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Forecast Upload */}
-                <div className="space-y-3">
-                  <Label htmlFor="forecast-file" className="text-slate-700 font-medium">Forecasted Product Orders *</Label>
-                  <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
-                    <Upload className="h-10 w-10 mx-auto mb-3 text-slate-400" />
-                    <p className="text-sm text-slate-600 mb-3">
-                      Product Name, Forecasted Quantity, L×W×H, Total CUIN
-                    </p>
-                    <Input
-                      id="forecast-file"
-                      type="file"
-                      accept=".csv,.xlsx"
-                      onChange={(e) => handleFileUpload('forecast', e.target.files?.[0] || null)}
-                      className="hidden"
-                    />
-                    <Button 
-                      variant="outline"
-                      onClick={() => document.getElementById('forecast-file')?.click()}
-                      className="border-slate-300 text-slate-700 hover:bg-slate-50"
-                    >
-                      {files.forecast ? files.forecast.name : 'Choose File'}
-                    </Button>
-                  </div>
-                </div>
-
-                {/* Packaging Suite Upload */}
-                <div className="space-y-3">
-                  <Label htmlFor="suite-file" className="text-slate-700 font-medium">Packaging Suite *</Label>
-                  <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
-                    <Upload className="h-10 w-10 mx-auto mb-3 text-slate-400" />
-                    <p className="text-sm text-slate-600 mb-3">
-                      Package Name, L×W×H, Internal CUIN, Cost, Weight
-                    </p>
-                    <Input
-                      id="suite-file"
-                      type="file"
-                      accept=".csv,.xlsx"
-                      onChange={(e) => handleFileUpload('packagingSuite', e.target.files?.[0] || null)}
-                      className="hidden"
-                    />
-                    <Button 
-                      variant="outline"
-                      onClick={() => document.getElementById('suite-file')?.click()}
-                      className="border-slate-300 text-slate-700 hover:bg-slate-50"
-                    >
-                      {files.packagingSuite ? files.packagingSuite.name : 'Choose File'}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white border-slate-200/60 shadow-sm">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+          {/* Total Order Forecast */}
+          <div className="space-y-4">
+            <Card className="bg-white border-gray-100 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                  <Settings className="h-5 w-5 text-slate-600" />
-                  Fallback Dimensions
+                <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="h-4 w-4 text-orange-600" />
+                  </div>
+                  Total Order Forecast
                 </CardTitle>
-                <CardDescription className="text-slate-600">
-                  Used when product specs are incomplete
+                <CardDescription className="text-xs sm:text-sm text-gray-500 mt-2">
+                  Enter your total forecasted shipments for the planning period
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-6">
-                {['min', 'avg', 'max'].map((type) => (
-                  <div key={type} className="space-y-3">
-                    <Label className="capitalize text-slate-700 font-medium">{type === 'avg' ? 'Average' : type === 'min' ? 'Minimum' : 'Maximum'} Product Dimensions</Label>
-                    <div className="grid grid-cols-3 gap-3">
-                      {['l', 'w', 'h'].map((dim) => (
-                        <div key={dim} className="space-y-2">
-                          <Label className="text-xs text-slate-500 uppercase font-medium">{dim}</Label>
-                          <Input
-                            placeholder="0"
-                            className="border-slate-300 focus:border-slate-400 focus:ring-slate-400"
-                            value={fallbackDimensions[type as keyof typeof fallbackDimensions][dim as 'l' | 'w' | 'h']}
-                            onChange={(e) => setFallbackDimensions(prev => ({
-                              ...prev,
-                              [type]: {
-                                ...prev[type as keyof typeof prev],
-                                [dim]: e.target.value
-                              }
-                            }))}
-                          />
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Results Section */}
-          <div className="space-y-6">
-            <Card className="bg-white border-slate-200/60 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                  <PieChart className="h-5 w-5 text-slate-600" />
-                  Demand Forecast
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-16 text-slate-500">
-                  <Calculator className="h-16 w-16 mx-auto mb-4 opacity-40" />
-                  <p className="text-sm">Upload forecast data to see demand planning results</p>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-gray-700 font-medium text-sm">Total Forecasted Orders *</Label>
+                  <Input
+                    placeholder="e.g., 40,000"
+                    value={totalOrders}
+                    onChange={(e) => setTotalOrders(e.target.value)}
+                    className="border-gray-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-gray-700 font-medium text-sm">Forecast Period *</Label>
+                  <Input
+                    placeholder="e.g., Q4 2025"
+                    value={forecastPeriod}
+                    onChange={(e) => setForecastPeriod(e.target.value)}
+                    className="border-gray-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                  />
                 </div>
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-slate-200/60 shadow-sm">
+            {/* Packaging Mix Source */}
+            <Card className="bg-white border-gray-100 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-slate-800">Insights & Recommendations</CardTitle>
+                <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
+                    <PieChart className="h-4 w-4 text-blue-600" />
+                  </div>
+                  Packaging Mix Source
+                </CardTitle>
+                <CardDescription className="text-xs sm:text-sm text-gray-500 mt-2">
+                  Choose how to determine your packaging mix percentages
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Mix Source Toggle */}
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant={mixSource === 'usage-log' ? 'default' : 'outline'}
+                      onClick={() => setMixSource('usage-log')}
+                      className={mixSource === 'usage-log' ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}
+                      size="sm"
+                    >
+                      <FileSpreadsheet className="h-4 w-4 mr-2" />
+                      Usage History
+                    </Button>
+                    <Button
+                      variant={mixSource === 'manual' ? 'default' : 'outline'}
+                      onClick={() => setMixSource('manual')}
+                      className={mixSource === 'manual' ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}
+                      size="sm"
+                    >
+                      <Settings className="h-4 w-4 mr-2" />
+                      Manual Entry
+                    </Button>
+                  </div>
+                  
+                  {mixSource === 'usage-log' && (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                      <p className="text-xs text-blue-700 font-medium mb-2">📁 Option A: Usage Log (Recommended)</p>
+                      <p className="text-xs text-blue-600 mb-3">Upload historical data to automatically calculate mix percentages</p>
+                      <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 text-center hover:border-blue-300 hover:bg-blue-25 transition-colors">
+                        <Upload className="h-6 w-6 mx-auto mb-2 text-blue-500" />
+                        <p className="text-xs text-blue-600 mb-2">Date, Package Type, Quantity Used</p>
+                        <Input
+                          type="file"
+                          accept=".csv,.xlsx"
+                          onChange={(e) => handleFileUpload('usageLog', e.target.files?.[0] || null)}
+                          className="hidden"
+                          id="usage-log-file"
+                        />
+                        <Button 
+                          variant="outline"
+                          onClick={() => document.getElementById('usage-log-file')?.click()}
+                          className="border-blue-200 text-blue-700 hover:bg-blue-50 text-sm"
+                        >
+                          {files.usageLog ? files.usageLog.name : 'Upload Usage Log'}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {mixSource === 'manual' && (
+                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                      <p className="text-xs text-orange-700 font-medium mb-2">⚙️ Option B: Manual Mix</p>
+                      <p className="text-xs text-orange-600 mb-3">Manually specify packaging mix percentages</p>
+                      <div className="border-2 border-dashed border-orange-200 rounded-lg p-4 text-center hover:border-orange-300 hover:bg-orange-25 transition-colors">
+                        <Upload className="h-6 w-6 mx-auto mb-2 text-orange-500" />
+                        <p className="text-xs text-orange-600 mb-2">Package Type, Usage % (e.g., 35%)</p>
+                        <Input
+                          type="file"
+                          accept=".csv,.xlsx"
+                          onChange={(e) => handleFileUpload('manualMix', e.target.files?.[0] || null)}
+                          className="hidden"
+                          id="manual-mix-file"
+                        />
+                        <Button 
+                          variant="outline"
+                          onClick={() => document.getElementById('manual-mix-file')?.click()}
+                          className="border-orange-200 text-orange-700 hover:bg-orange-50 text-sm"
+                        >
+                          {files.manualMix ? files.manualMix.name : 'Upload Manual Mix'}
+                        </Button>
+                      </div>
+                      <div className="mt-2 text-xs text-orange-600">
+                        ⚠️ This will override any calculated values from usage logs
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Packaging Suite & Settings */}
+          <div className="space-y-4">
+            <Card className="bg-white border-gray-100 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
+                    <Upload className="h-4 w-4 text-purple-600" />
+                  </div>
+                  Packaging Suite
+                </CardTitle>
+                <CardDescription className="text-xs sm:text-sm text-gray-500 mt-2">
+                  Upload your packaging specifications and costs
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-12 text-slate-500">
-                  <p className="text-sm">Analysis insights will appear here</p>
+                <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
+                  <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <Upload className="h-4 w-4 text-gray-600" />
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-2">
+                    Package Type, L×W×H, Cost per Unit, Weight per Unit
+                  </p>
+                  <Input
+                    id="suite-file"
+                    type="file"
+                    accept=".csv,.xlsx"
+                    onChange={(e) => handleFileUpload('packagingSuite', e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+                  <Button 
+                    variant="outline"
+                    onClick={() => document.getElementById('suite-file')?.click()}
+                    className="border-gray-200 text-gray-700 hover:bg-gray-50 text-sm"
+                  >
+                    {files.packagingSuite ? files.packagingSuite.name : 'Choose File'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Safety Stock */}
+            <Card className="bg-white border-gray-100 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-gray-600" />
+                  Safety Stock Buffer
+                </CardTitle>
+                <CardDescription className="text-xs sm:text-sm text-gray-500">
+                  Add a buffer to prevent packaging shortages
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Label className="text-gray-700 font-medium text-sm">Safety Stock % (Optional)</Label>
+                  <Input
+                    placeholder="e.g., 10"
+                    value={safetyStock}
+                    onChange={(e) => setSafetyStock(e.target.value)}
+                    className="border-gray-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                  />
+                  <p className="text-xs text-gray-500">Final Quantity = Base Quantity × (1 + Safety Stock %)</p>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-center lg:justify-end px-4 sm:px-0">
           <Button 
             size="lg"
-            disabled={!files.forecast || !files.packagingSuite}
-            className="min-w-[160px] bg-gradient-to-r from-emerald-600 to-blue-600 hover:from-emerald-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-semibold py-3 px-8"
+            disabled={!totalOrders || !forecastPeriod || !files.packagingSuite || (mixSource === 'usage-log' && !files.usageLog) || (mixSource === 'manual' && !files.manualMix)}
+            className="bg-orange-600 hover:bg-orange-700 text-white disabled:bg-gray-300 disabled:text-gray-500 min-w-48"
           >
-            {!files.forecast || !files.packagingSuite ? (
+            {(!totalOrders || !forecastPeriod || !files.packagingSuite || (mixSource === 'usage-log' && !files.usageLog) || (mixSource === 'manual' && !files.manualMix)) ? (
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5" />
-                Upload Files
+                <AlertCircle className="h-4 w-4" />
+                Complete Setup
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Calculator className="h-5 w-5" />
-                Generate Plan
+                <TrendingUp className="h-4 w-4" />
+                Generate Demand Plan
               </div>
             )}
           </Button>

@@ -1,0 +1,51 @@
+Order ID,Product Name,Length,Width,Height,Unit,Quantity,Weight,Category,Priority,Zone
+ORD-2024-001,Gaming Laptop,15.2,10.8,1.2,in,1,5.5,Electronics,standard,domestic
+ORD-2024-002,Coffee Mug Set,8.5,6.2,4.1,in,2,1.8,Kitchen,standard,zone_2
+ORD-2024-003,Wireless Headphones,7.3,6.1,3.2,in,1,0.8,Electronics,express,domestic
+ORD-2024-004,Running Shoes,12.5,8.2,4.8,in,1,2.1,Apparel,standard,zone_3
+ORD-2024-005,Desk Organizer,14.0,9.5,3.2,in,1,2.3,Office,standard,domestic
+ORD-2024-006,Phone Case,6.8,3.5,0.8,in,3,0.2,Electronics,overnight,zone_2
+ORD-2024-007,Water Bottle,10.2,3.1,3.1,in,2,1.2,Sports,standard,domestic
+ORD-2024-008,Bluetooth Speaker,8.7,4.2,4.2,in,1,1.9,Electronics,express,zone_4
+ORD-2024-009,Notebook Set,11.8,8.3,1.5,in,4,0.8,Office,standard,zone_2
+ORD-2024-010,Tablet Stand,9.4,7.2,2.8,in,1,1.5,Electronics,standard,domestic
+ORD-2024-011,Kitchen Scale,8.9,6.7,2.1,in,1,3.2,Kitchen,standard,zone_3
+ORD-2024-012,Yoga Mat,24.0,6.0,0.25,in,1,2.8,Sports,standard,zone_5
+ORD-2024-013,Wireless Mouse,4.7,2.4,1.8,in,2,0.3,Electronics,express,domestic
+ORD-2024-014,Travel Pillow,14.2,9.8,5.6,in,1,1.1,Travel,standard,zone_2
+ORD-2024-015,Power Bank,5.9,2.8,0.9,in,1,1.2,Electronics,overnight,zone_4
+ORD-2024-016,Picture Frame,10.4,8.2,0.8,in,3,1.5,Home,standard,domestic
+ORD-2024-017,Gaming Keyboard,17.8,6.2,1.4,in,1,2.1,Electronics,express,zone_3
+ORD-2024-018,Candle Set,3.2,3.2,4.8,in,6,0.9,Home,standard,zone_2
+ORD-2024-019,Fitness Tracker,9.5,1.8,0.5,in,1,0.1,Electronics,standard,domestic
+ORD-2024-020,Book Collection,9.2,6.1,8.3,in,5,2.8,Books,standard,zone_5
+ORD-2024-021,Wireless Charger,4.3,4.3,0.4,in,2,0.7,Electronics,express,zone_2
+ORD-2024-022,Backpack,18.5,12.8,7.2,in,1,3.2,Travel,standard,zone_3
+ORD-2024-023,LED Desk Lamp,8.2,6.4,18.5,in,1,2.9,Office,standard,domestic
+ORD-2024-024,Skincare Set,6.8,4.2,2.1,in,1,1.8,Beauty,overnight,zone_4
+ORD-2024-025,USB Hub,4.9,2.8,0.8,in,1,0.4,Electronics,standard,zone_2
+ORD-2024-026,Wall Clock,12.0,12.0,2.1,in,1,2.5,Home,standard,domestic
+ORD-2024-027,Protein Powder,6.2,6.2,8.9,in,2,5.5,Health,standard,zone_3
+ORD-2024-028,Wireless Earbuds,3.8,2.1,1.2,in,1,0.2,Electronics,express,zone_2
+ORD-2024-029,Cutting Board,16.0,10.0,0.75,in,1,3.1,Kitchen,standard,domestic
+ORD-2024-030,Monitor Stand,22.4,8.7,4.2,in,1,4.8,Office,standard,zone_4
+ORD-2024-031,Smart Watch,1.7,1.5,0.4,in,1,0.1,Electronics,overnight,zone_2
+ORD-2024-032,Throw Pillows,18.0,18.0,6.0,in,2,1.8,Home,standard,zone_5
+ORD-2024-033,External SSD,4.5,2.9,0.4,in,1,0.3,Electronics,express,domestic
+ORD-2024-034,Lunch Box,9.8,7.2,4.1,in,1,1.9,Kitchen,standard,zone_3
+ORD-2024-035,Gaming Chair Cushion,16.5,16.5,4.2,in,1,2.7,Furniture,standard,zone_2
+ORD-2024-036,Phone Stand,4.8,3.2,5.1,in,2,0.5,Electronics,standard,domestic
+ORD-2024-037,Essential Oils Set,8.4,6.2,2.1,in,1,1.2,Health,overnight,zone_4
+ORD-2024-038,Cable Organizer,12.2,8.4,1.8,in,1,0.8,Office,standard,zone_2
+ORD-2024-039,Desk Mat,35.4,15.7,0.12,in,1,1.5,Office,express,zone_3
+ORD-2024-040,Portable Humidifier,6.8,6.8,8.2,in,1,2.1,Home,standard,domestic
+ORD-2024-041,Bluetooth Tracker,1.3,1.3,0.3,in,4,0.02,Electronics,standard,zone_2
+ORD-2024-042,Kitchen Timer,3.2,3.2,1.8,in,2,0.4,Kitchen,standard,zone_5
+ORD-2024-043,Laptop Sleeve,16.2,11.8,0.8,in,1,0.9,Electronics,express,domestic
+ORD-2024-044,Travel Mug,7.1,3.5,3.5,in,1,1.1,Travel,standard,zone_3
+ORD-2024-045,Wall Mount,8.2,6.4,2.1,in,1,2.3,Electronics,standard,zone_2
+ORD-2024-046,Desk Calendar,11.0,8.5,0.5,in,1,0.7,Office,overnight,zone_4
+ORD-2024-047,Phone Lens Kit,3.9,3.9,1.2,in,1,0.3,Electronics,standard,domestic
+ORD-2024-048,Meditation Cushion,16.0,16.0,6.0,in,1,3.2,Health,standard,zone_2
+ORD-2024-049,Car Phone Mount,4.2,3.8,5.9,in,1,0.8,Auto,express,zone_3
+ORD-2024-050,Jewelry Box,9.8,6.2,3.4,in,1,1.9,Fashion,standard,domestic

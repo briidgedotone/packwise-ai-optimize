@@ -1,0 +1,1001 @@
+Order ID,Product Name,Length,Width,Height,Unit,Quantity,Weight,Category,Priority,Zone
+ORD-2024-000001,Sunglasses,6.4,5.8,2.9,in,2,0.3,Fashion,overnight,international
+ORD-2024-000002,Smartphone,6.4,3.0,0.3,in,4,0.5,Electronics,overnight,international
+ORD-2024-000003,T-Shirt,13.0,8.6,1.0,in,4,0.4,Fashion,express,zone_2
+ORD-2024-000004,Sunglasses,5.6,5.9,2.9,in,3,0.3,Fashion,standard,domestic
+ORD-2024-000005,Belt,19.1,1.9,0.5,in,4,0.7,Fashion,express,international
+ORD-2024-000006,Watch,2.0,2.0,0.8,in,4,0.5,Fashion,overnight,zone_2
+ORD-2024-000007,Notebook Set,11.0,8.9,1.6,in,3,0.7,Office,express,zone_3
+ORD-2024-000008,Notebook Set,12.6,8.5,1.4,in,3,0.8,Office,standard,zone_3
+ORD-2024-000009,Pen Holder,4.1,4.3,5.3,in,1,0.9,Office,standard,zone_4
+ORD-2024-000010,Jeans,14.4,10.1,2.1,in,4,1.7,Fashion,express,zone_3
+ORD-2024-000011,T-Shirt,12.5,8.5,0.9,in,2,0.7,Fashion,standard,domestic
+ORD-2024-000012,Picture Frame,10.4,8.6,0.9,in,4,1.8,Home,overnight,domestic
+ORD-2024-000013,Resistance Bands,9.1,6.4,2.9,in,4,1.1,Sports,express,zone_2
+ORD-2024-000014,Resistance Bands,9.0,6.4,2.7,in,4,1.1,Sports,express,international
+ORD-2024-000015,Portable Humidifier,6.8,7.4,8.0,in,1,1.9,Home,standard,international
+ORD-2024-000016,Essential Oils Set,8.9,6.2,2.1,in,1,1.2,Home,express,zone_3
+ORD-2024-000017,Candle Set,3.5,3.2,4.9,in,1,1.1,Home,express,international
+ORD-2024-000018,Monitor Stand,22.4,8.3,4.2,in,2,4.3,Office,standard,zone_5
+ORD-2024-000019,Jump Rope,11.0,3.8,1.1,in,2,0.6,Sports,overnight,zone_5
+ORD-2024-000020,Storage Basket,14.2,10.9,8.6,in,3,2.2,Home,standard,international
+ORD-2024-000021,T-Shirt,12.3,9.0,1.1,in,4,0.5,Fashion,standard,zone_3
+ORD-2024-000022,Water Bottle,10.4,2.9,2.8,in,1,1.3,Kitchen,express,zone_4
+ORD-2024-000023,Cutting Board,14.9,10.6,0.7,in,2,4.0,Kitchen,standard,domestic
+ORD-2024-000024,T-Shirt,11.0,9.1,1.1,in,2,0.6,Fashion,overnight,zone_3
+ORD-2024-000025,Utensil Set,13.7,8.2,2.3,in,2,2.3,Kitchen,standard,international
+ORD-2024-000026,Pen Holder,4.2,4.0,6.0,in,3,1.0,Office,express,domestic
+ORD-2024-000027,Tablet,12.0,7.1,0.2,in,2,1.0,Electronics,express,zone_5
+ORD-2024-000028,Cable Organizer,11.1,8.9,1.7,in,3,1.1,Office,overnight,zone_3
+ORD-2024-000029,Resistance Bands,8.4,6.5,2.7,in,3,0.9,Sports,overnight,zone_3
+ORD-2024-000030,Utensil Set,11.8,8.5,1.9,in,4,1.9,Kitchen,standard,zone_4
+ORD-2024-000031,Kitchen Scale,8.6,6.1,2.2,in,2,3.2,Kitchen,express,zone_5
+ORD-2024-000032,Kitchen Timer,2.9,3.2,1.9,in,2,0.4,Kitchen,standard,domestic
+ORD-2024-000033,T-Shirt,12.8,8.3,1.1,in,3,0.4,Fashion,express,zone_5
+ORD-2024-000034,Tablet,11.1,6.9,0.3,in,4,1.1,Electronics,overnight,zone_3
+ORD-2024-000035,Yoga Mat,24.7,6.2,0.3,in,4,2.7,Sports,overnight,domestic
+ORD-2024-000036,LED Desk Lamp,7.8,6.9,20.0,in,1,3.4,Office,overnight,zone_4
+ORD-2024-000037,T-Shirt,11.8,8.4,1.1,in,2,0.5,Fashion,express,zone_5
+ORD-2024-000038,Yoga Mat,24.6,6.1,0.3,in,3,3.0,Sports,express,zone_3
+ORD-2024-000039,Resistance Bands,8.0,6.5,2.6,in,1,0.9,Sports,overnight,zone_4
+ORD-2024-000040,Utensil Set,13.3,8.0,2.1,in,1,2.3,Kitchen,overnight,zone_5
+ORD-2024-000041,Handbag,14.6,11.8,6.7,in,2,2.2,Fashion,standard,zone_2
+ORD-2024-000042,Belt,18.3,2.1,0.5,in,4,0.5,Fashion,express,zone_5
+ORD-2024-000043,Watch,2.0,1.9,0.9,in,3,0.2,Fashion,overnight,domestic
+ORD-2024-000044,Exercise Ball,12.0,12.8,12.9,in,1,2.7,Sports,overnight,zone_5
+ORD-2024-000045,Phone Case,6.6,3.5,0.7,in,1,0.2,Electronics,standard,domestic
+ORD-2024-000046,Jump Rope,9.3,3.6,1.2,in,1,0.7,Sports,overnight,zone_2
+ORD-2024-000047,Picture Frame,10.6,9.0,0.9,in,4,1.3,Home,overnight,domestic
+ORD-2024-000048,Wall Clock,11.6,12.5,2.2,in,2,2.3,Home,overnight,zone_5
+ORD-2024-000049,Essential Oils Set,8.8,6.3,2.3,in,3,1.4,Home,express,zone_2
+ORD-2024-000050,Desk Calendar,10.9,7.8,0.5,in,4,0.9,Office,standard,zone_5
+ORD-2024-000051,Coffee Mug,4.4,4.4,4.7,in,2,1.2,Kitchen,overnight,domestic
+ORD-2024-000052,Jeans,15.3,10.0,2.1,in,2,1.6,Fashion,express,domestic
+ORD-2024-000053,Gaming Mouse,4.9,2.4,1.9,in,4,0.3,Electronics,standard,international
+ORD-2024-000054,Picture Frame,10.8,8.8,0.8,in,3,1.5,Home,standard,zone_2
+ORD-2024-000055,Sneakers,12.2,8.3,4.8,in,2,2.4,Fashion,overnight,zone_4
+ORD-2024-000056,Water Bottle,10.9,3.0,3.3,in,3,1.3,Sports,express,zone_5
+ORD-2024-000057,Gym Towel,15.2,25.8,0.5,in,4,1.0,Sports,express,international
+ORD-2024-000058,Smartphone,6.2,3.4,0.3,in,1,0.4,Electronics,standard,zone_5
+ORD-2024-000059,Lunch Box,10.2,6.9,4.2,in,1,1.9,Kitchen,express,zone_5
+ORD-2024-000060,Throw Pillow,19.7,17.9,5.6,in,3,1.6,Home,express,zone_4
+ORD-2024-000061,Utensil Set,11.7,8.7,2.0,in,1,1.9,Kitchen,express,zone_4
+ORD-2024-000062,Storage Basket,13.8,11.9,9.0,in,2,2.6,Home,express,zone_3
+ORD-2024-000063,Resistance Bands,9.1,6.4,2.6,in,2,1.0,Sports,overnight,international
+ORD-2024-000064,Pen Holder,4.4,4.4,5.9,in,4,0.9,Office,express,international
+ORD-2024-000065,Cable Organizer,13.2,8.5,1.8,in,2,0.7,Office,express,zone_2
+ORD-2024-000066,Throw Pillow,19.7,18.6,5.6,in,1,1.6,Home,express,international
+ORD-2024-000067,Watch,2.3,2.0,0.7,in,2,0.4,Fashion,overnight,zone_3
+ORD-2024-000068,Belt,17.6,1.9,0.5,in,4,0.8,Fashion,overnight,international
+ORD-2024-000069,Throw Pillow,19.4,19.3,5.7,in,1,1.5,Home,overnight,zone_3
+ORD-2024-000070,Watch,2.4,2.0,0.7,in,4,0.3,Fashion,express,zone_4
+ORD-2024-000071,Coffee Mug,4.0,4.0,4.4,in,1,0.9,Kitchen,standard,domestic
+ORD-2024-000072,Kitchen Timer,3.1,3.0,1.7,in,3,0.6,Kitchen,overnight,zone_5
+ORD-2024-000073,T-Shirt,11.0,9.2,0.9,in,3,0.8,Fashion,express,international
+ORD-2024-000074,Picture Frame,10.7,8.0,0.8,in,3,1.7,Home,overnight,zone_4
+ORD-2024-000075,Desk Organizer,15.1,8.9,3.3,in,4,2.1,Office,express,zone_4
+ORD-2024-000076,Notebook Set,12.7,7.8,1.6,in,3,0.7,Office,overnight,domestic
+ORD-2024-000077,Utensil Set,13.2,8.5,2.3,in,2,2.5,Kitchen,overnight,zone_4
+ORD-2024-000078,Water Bottle,10.8,3.2,3.3,in,2,1.1,Sports,express,zone_3
+ORD-2024-000079,Cable Organizer,12.1,8.5,1.7,in,1,0.8,Office,overnight,zone_5
+ORD-2024-000080,Exercise Ball,11.6,11.9,11.8,in,4,2.4,Sports,express,domestic
+ORD-2024-000081,Kitchen Scale,8.2,6.3,2.3,in,2,3.6,Kitchen,express,zone_4
+ORD-2024-000082,Kitchen Scale,8.4,6.1,2.0,in,2,3.8,Kitchen,express,zone_4
+ORD-2024-000083,Water Bottle,10.8,3.2,2.9,in,3,1.5,Sports,overnight,zone_3
+ORD-2024-000084,Water Bottle,9.2,3.3,3.2,in,2,1.3,Kitchen,express,domestic
+ORD-2024-000085,Cable Organizer,12.6,8.9,1.7,in,3,1.0,Office,standard,zone_5
+ORD-2024-000086,Desk Organizer,13.7,9.2,3.5,in,3,2.0,Office,standard,zone_4
+ORD-2024-000087,Picture Frame,10.3,8.4,0.9,in,1,1.8,Home,standard,international
+ORD-2024-000088,Jeans,14.1,10.5,2.0,in,4,1.3,Fashion,overnight,zone_2
+ORD-2024-000089,Cutting Board,17.2,10.6,0.7,in,2,3.4,Kitchen,express,zone_2
+ORD-2024-000090,Water Bottle,10.7,3.3,2.9,in,4,1.2,Sports,express,zone_3
+ORD-2024-000091,Phone Case,7.2,3.8,0.7,in,3,0.3,Electronics,express,international
+ORD-2024-000092,Candle Set,3.5,3.2,4.6,in,2,1.1,Home,express,zone_4
+ORD-2024-000093,Storage Basket,13.1,11.4,9.0,in,3,2.4,Home,express,domestic
+ORD-2024-000094,Coffee Mug,4.3,3.9,5.2,in,4,1.1,Kitchen,express,domestic
+ORD-2024-000095,T-Shirt,10.9,8.8,0.9,in,2,0.7,Fashion,standard,international
+ORD-2024-000096,Watch,2.4,1.9,0.8,in,4,0.3,Fashion,overnight,domestic
+ORD-2024-000097,Kitchen Timer,3.5,3.3,1.7,in,3,0.4,Kitchen,overnight,domestic
+ORD-2024-000098,LED Desk Lamp,8.6,6.8,17.6,in,2,3.5,Office,overnight,zone_4
+ORD-2024-000099,Smartphone,6.6,3.0,0.3,in,4,0.6,Electronics,standard,zone_5
+ORD-2024-000100,Sunglasses,6.7,5.9,2.6,in,2,0.4,Fashion,overnight,international
+ORD-2024-000101,Phone Case,7.3,3.4,0.8,in,2,0.2,Electronics,express,zone_3
+ORD-2024-000102,Coffee Mug,4.3,4.4,4.8,in,4,1.1,Kitchen,express,zone_5
+ORD-2024-000103,Kitchen Timer,3.4,3.2,1.9,in,1,0.6,Kitchen,express,zone_2
+ORD-2024-000104,Phone Case,6.5,3.7,0.8,in,1,0.3,Electronics,overnight,international
+ORD-2024-000105,Smartphone,6.4,3.0,0.3,in,4,0.6,Electronics,overnight,domestic
+ORD-2024-000106,Essential Oils Set,8.5,6.3,2.2,in,3,1.2,Home,standard,zone_4
+ORD-2024-000107,Mixing Bowl Set,12.3,11.3,5.8,in,3,2.4,Kitchen,standard,international
+ORD-2024-000108,Pen Holder,4.1,4.2,6.0,in,2,1.1,Office,express,zone_3
+ORD-2024-000109,Candle Set,3.0,3.0,5.1,in,4,1.2,Home,overnight,zone_3
+ORD-2024-000110,Notebook Set,12.8,8.5,1.6,in,3,0.9,Office,overnight,zone_2
+ORD-2024-000111,Resistance Bands,8.0,5.9,2.5,in,1,1.1,Sports,overnight,zone_5
+ORD-2024-000112,Throw Pillow,19.5,16.4,5.5,in,4,1.8,Home,express,zone_3
+ORD-2024-000113,Resistance Bands,8.8,5.7,2.8,in,2,0.9,Sports,overnight,zone_3
+ORD-2024-000114,Pen Holder,4.5,4.1,6.0,in,1,0.9,Office,standard,domestic
+ORD-2024-000115,Desk Mat,35.9,16.7,0.1,in,2,1.8,Office,standard,zone_4
+ORD-2024-000116,Watch,2.0,1.9,0.8,in,4,0.4,Fashion,express,zone_3
+ORD-2024-000117,Protein Shaker,4.3,4.4,10.7,in,3,0.7,Sports,standard,international
+ORD-2024-000118,Storage Basket,13.3,10.7,9.0,in,3,2.2,Home,overnight,zone_5
+ORD-2024-000119,Water Bottle,9.7,2.9,3.1,in,2,0.9,Kitchen,express,international
+ORD-2024-000120,USB Hub,5.3,3.0,0.8,in,1,0.6,Electronics,standard,zone_4
+ORD-2024-000121,Bluetooth Speaker,7.9,4.2,4.4,in,2,1.7,Electronics,standard,zone_3
+ORD-2024-000122,Watch,2.0,2.0,0.8,in,1,0.5,Fashion,express,international
+ORD-2024-000123,Essential Oils Set,8.5,6.2,2.1,in,4,1.2,Home,standard,zone_4
+ORD-2024-000124,Protein Shaker,4.1,4.0,10.4,in,2,0.8,Sports,overnight,international
+ORD-2024-000125,Mixing Bowl Set,10.8,12.2,6.2,in,4,2.1,Kitchen,express,international
+ORD-2024-000126,USB Hub,5.1,2.6,0.7,in,4,0.3,Electronics,express,domestic
+ORD-2024-000127,Tablet,10.9,7.2,0.3,in,4,1.1,Electronics,standard,zone_5
+ORD-2024-000128,Exercise Ball,12.8,10.8,12.4,in,3,2.8,Sports,overnight,domestic
+ORD-2024-000129,Jump Rope,9.7,4.2,1.2,in,3,0.6,Sports,express,international
+ORD-2024-000130,Yoga Mat,21.9,5.8,0.2,in,4,2.6,Sports,standard,zone_4
+ORD-2024-000131,Gaming Mouse,4.7,2.2,1.9,in,2,0.4,Electronics,standard,zone_5
+ORD-2024-000132,Wireless Headphones,6.9,5.8,3.5,in,1,1.1,Electronics,overnight,domestic
+ORD-2024-000133,Wall Clock,12.7,12.3,2.2,in,4,2.4,Home,standard,international
+ORD-2024-000134,Exercise Ball,12.6,10.8,10.8,in,3,2.8,Sports,standard,zone_2
+ORD-2024-000135,LED Desk Lamp,7.4,5.8,17.9,in,1,2.6,Office,standard,domestic
+ORD-2024-000136,Throw Pillow,19.6,16.3,6.4,in,4,1.7,Home,express,zone_3
+ORD-2024-000137,Pen Holder,4.3,4.2,6.0,in,1,1.0,Office,standard,zone_2
+ORD-2024-000138,Cutting Board,17.3,10.5,0.7,in,3,3.6,Kitchen,express,international
+ORD-2024-000139,Smartphone,5.9,3.1,0.3,in,2,0.6,Electronics,standard,zone_2
+ORD-2024-000140,Kitchen Scale,9.7,6.9,2.0,in,2,3.8,Kitchen,overnight,zone_4
+ORD-2024-000141,Jump Rope,10.5,3.7,1.2,in,3,0.7,Sports,overnight,zone_3
+ORD-2024-000142,Essential Oils Set,7.6,6.0,1.9,in,1,1.0,Home,express,international
+ORD-2024-000143,Wireless Headphones,6.8,5.5,3.1,in,1,0.7,Electronics,standard,zone_2
+ORD-2024-000144,Desk Mat,34.7,16.8,0.1,in,1,1.6,Office,standard,zone_5
+ORD-2024-000145,Portable Humidifier,7.3,7.0,8.8,in,4,2.2,Home,standard,zone_4
+ORD-2024-000146,Desk Organizer,13.1,10.0,3.5,in,4,2.6,Office,overnight,international
+ORD-2024-000147,Essential Oils Set,8.7,6.8,2.2,in,4,1.3,Home,overnight,domestic
+ORD-2024-000148,Picture Frame,10.3,8.2,0.8,in,2,1.5,Home,express,zone_3
+ORD-2024-000149,Candle Set,2.9,2.9,4.9,in,1,1.2,Home,overnight,zone_5
+ORD-2024-000150,Exercise Ball,13.0,11.1,11.9,in,3,2.3,Sports,overnight,zone_5
+ORD-2024-000151,Wireless Keyboard,16.6,6.5,1.5,in,2,2.3,Electronics,standard,zone_3
+ORD-2024-000152,Belt,17.1,2.0,0.5,in,1,0.5,Fashion,overnight,international
+ORD-2024-000153,Candle Set,3.2,3.5,5.2,in,4,0.9,Home,standard,zone_5
+ORD-2024-000154,Resistance Bands,8.9,5.9,2.7,in,1,1.1,Sports,standard,zone_5
+ORD-2024-000155,Desk Calendar,11.2,7.9,0.5,in,1,0.9,Office,overnight,international
+ORD-2024-000156,Desk Calendar,11.0,8.0,0.5,in,2,0.6,Office,overnight,zone_2
+ORD-2024-000157,Sunglasses,5.7,5.8,3.0,in,2,0.3,Fashion,standard,zone_3
+ORD-2024-000158,Protein Shaker,4.0,4.4,9.4,in,3,1.0,Sports,express,domestic
+ORD-2024-000159,Sunglasses,6.5,5.6,3.1,in,3,0.4,Fashion,overnight,domestic
+ORD-2024-000160,Essential Oils Set,8.7,5.9,2.0,in,1,1.2,Home,overnight,domestic
+ORD-2024-000161,Wireless Headphones,7.2,5.9,3.1,in,4,0.7,Electronics,express,zone_4
+ORD-2024-000162,Water Bottle,10.9,3.0,3.0,in,3,1.1,Kitchen,standard,zone_3
+ORD-2024-000163,Resistance Bands,9.2,5.9,3.1,in,2,0.8,Sports,overnight,zone_3
+ORD-2024-000164,Phone Case,7.1,3.6,0.8,in,1,0.3,Electronics,overnight,international
+ORD-2024-000165,Cutting Board,14.5,9.7,0.8,in,1,2.8,Kitchen,standard,international
+ORD-2024-000166,Mixing Bowl Set,12.6,11.6,6.4,in,2,2.8,Kitchen,overnight,zone_5
+ORD-2024-000167,Sneakers,13.4,8.8,4.4,in,2,1.8,Fashion,express,zone_2
+ORD-2024-000168,Desk Calendar,11.8,8.5,0.5,in,3,0.8,Office,overnight,zone_2
+ORD-2024-000169,Belt,18.1,1.8,0.5,in,2,0.7,Fashion,overnight,domestic
+ORD-2024-000170,Smartphone,6.3,3.1,0.3,in,4,0.5,Electronics,standard,zone_4
+ORD-2024-000171,USB Hub,4.6,3.0,0.7,in,3,0.4,Electronics,express,international
+ORD-2024-000172,Exercise Ball,10.8,11.0,12.9,in,4,2.7,Sports,standard,zone_3
+ORD-2024-000173,LED Desk Lamp,8.2,6.1,19.0,in,4,2.7,Office,standard,zone_2
+ORD-2024-000174,Candle Set,3.2,3.4,4.5,in,2,0.8,Home,standard,zone_5
+ORD-2024-000175,Wireless Headphones,7.9,6.1,3.5,in,4,1.1,Electronics,express,domestic
+ORD-2024-000176,Candle Set,3.5,3.5,4.6,in,1,1.1,Home,overnight,zone_5
+ORD-2024-000177,Coffee Mug,4.2,4.4,4.7,in,2,0.9,Kitchen,express,international
+ORD-2024-000178,Water Bottle,10.3,2.9,3.1,in,1,1.3,Sports,overnight,zone_2
+ORD-2024-000179,Jewelry Box,9.2,5.9,3.5,in,4,2.2,Home,overnight,zone_5
+ORD-2024-000180,Essential Oils Set,8.6,6.6,2.3,in,1,1.3,Home,overnight,zone_5
+ORD-2024-000181,Gaming Mouse,4.9,2.2,1.6,in,3,0.4,Electronics,overnight,zone_3
+ORD-2024-000182,Desk Organizer,13.1,9.6,3.1,in,2,2.6,Office,express,zone_2
+ORD-2024-000183,Gaming Mouse,4.4,2.5,1.9,in,3,0.3,Electronics,standard,zone_5
+ORD-2024-000184,Sunglasses,6.6,6.1,2.9,in,1,0.3,Fashion,express,zone_3
+ORD-2024-000185,Desk Organizer,13.5,10.1,3.4,in,4,2.0,Office,express,zone_5
+ORD-2024-000186,Mixing Bowl Set,10.6,10.7,6.4,in,4,2.2,Kitchen,standard,domestic
+ORD-2024-000187,LED Desk Lamp,8.2,6.0,19.9,in,2,3.0,Office,overnight,international
+ORD-2024-000188,Desk Calendar,9.9,9.2,0.5,in,3,0.6,Office,overnight,domestic
+ORD-2024-000189,Storage Basket,12.9,9.9,8.4,in,4,2.2,Home,overnight,zone_4
+ORD-2024-000190,Portable Humidifier,6.5,7.3,8.6,in,4,2.4,Home,overnight,domestic
+ORD-2024-000191,Power Bank,5.6,2.8,0.9,in,1,1.0,Electronics,express,zone_5
+ORD-2024-000192,Watch,2.1,1.9,0.7,in,4,0.4,Fashion,express,domestic
+ORD-2024-000193,Desk Mat,33.8,14.8,0.1,in,2,1.6,Office,express,zone_2
+ORD-2024-000194,Desk Organizer,12.7,9.9,3.1,in,2,2.4,Office,standard,domestic
+ORD-2024-000195,Jump Rope,11.2,3.6,1.3,in,1,0.8,Sports,standard,zone_5
+ORD-2024-000196,Smartphone,5.9,3.0,0.3,in,4,0.6,Electronics,standard,international
+ORD-2024-000197,Tablet,10.3,8.2,0.3,in,3,1.4,Electronics,express,zone_4
+ORD-2024-000198,Belt,17.3,2.1,0.5,in,4,0.6,Fashion,express,zone_2
+ORD-2024-000199,Laptop,15.1,10.2,1.3,in,2,4.5,Electronics,standard,domestic
+ORD-2024-000200,Desk Mat,37.9,14.3,0.1,in,2,1.4,Office,standard,domestic
+ORD-2024-000201,Wireless Keyboard,18.5,5.7,1.5,in,1,2.3,Electronics,express,zone_3
+ORD-2024-000202,Jewelry Box,9.4,6.4,3.1,in,3,2.2,Home,express,zone_2
+ORD-2024-000203,Bluetooth Speaker,8.2,4.0,3.9,in,3,2.4,Electronics,overnight,domestic
+ORD-2024-000204,Bluetooth Speaker,8.5,4.5,4.4,in,4,2.1,Electronics,express,zone_5
+ORD-2024-000205,Desk Calendar,10.8,8.8,0.5,in,3,0.7,Office,express,zone_4
+ORD-2024-000206,Picture Frame,10.3,8.4,0.9,in,4,1.7,Home,express,domestic
+ORD-2024-000207,Power Bank,6.0,2.8,0.9,in,3,1.1,Electronics,express,zone_5
+ORD-2024-000208,Water Bottle,11.1,2.8,3.0,in,2,1.3,Kitchen,standard,zone_4
+ORD-2024-000209,Cable Organizer,11.3,8.7,1.7,in,1,0.9,Office,standard,zone_4
+ORD-2024-000210,Cutting Board,16.2,10.1,0.7,in,3,2.5,Kitchen,express,zone_2
+ORD-2024-000211,T-Shirt,12.8,8.7,1.0,in,3,0.7,Fashion,express,domestic
+ORD-2024-000212,Protein Shaker,4.4,4.1,9.3,in,3,0.8,Sports,standard,domestic
+ORD-2024-000213,Belt,18.8,1.8,0.5,in,2,0.9,Fashion,overnight,zone_5
+ORD-2024-000214,Lunch Box,9.6,6.7,4.0,in,2,1.9,Kitchen,standard,zone_5
+ORD-2024-000215,Protein Shaker,3.9,3.8,9.4,in,4,0.9,Sports,express,zone_3
+ORD-2024-000216,Gaming Mouse,4.6,2.6,1.9,in,1,0.5,Electronics,express,zone_2
+ORD-2024-000217,Protein Shaker,4.3,4.3,10.0,in,2,0.9,Sports,overnight,zone_4
+ORD-2024-000218,Sunglasses,6.5,5.7,2.7,in,2,0.4,Fashion,overnight,domestic
+ORD-2024-000219,Cutting Board,15.5,11.0,0.8,in,4,2.6,Kitchen,standard,domestic
+ORD-2024-000220,Wall Clock,11.7,12.7,2.1,in,1,2.7,Home,overnight,zone_2
+ORD-2024-000221,Desk Mat,33.2,14.9,0.1,in,4,1.8,Office,express,international
+ORD-2024-000222,Throw Pillow,17.2,16.6,5.5,in,1,2.0,Home,overnight,zone_3
+ORD-2024-000223,Monitor Stand,24.1,9.0,3.8,in,3,5.3,Office,standard,international
+ORD-2024-000224,Notebook Set,12.3,9.1,1.4,in,2,0.8,Office,overnight,zone_5
+ORD-2024-000225,Sunglasses,6.1,5.7,2.8,in,3,0.4,Fashion,express,zone_3
+ORD-2024-000226,Belt,18.6,2.1,0.5,in,4,0.6,Fashion,express,zone_5
+ORD-2024-000227,Bluetooth Speaker,7.9,4.5,4.5,in,1,2.0,Electronics,standard,zone_5
+ORD-2024-000228,Kitchen Timer,3.4,3.2,1.9,in,2,0.4,Kitchen,standard,zone_3
+ORD-2024-000229,Water Bottle,10.7,2.8,3.2,in,4,1.4,Sports,standard,zone_3
+ORD-2024-000230,Yoga Mat,23.2,5.8,0.3,in,2,2.8,Sports,express,domestic
+ORD-2024-000231,Jewelry Box,9.4,5.9,3.1,in,1,2.1,Home,standard,international
+ORD-2024-000232,LED Desk Lamp,8.8,6.0,20.2,in,3,3.0,Office,express,zone_5
+ORD-2024-000233,Exercise Ball,13.2,12.8,12.7,in,3,2.6,Sports,standard,domestic
+ORD-2024-000234,Jump Rope,9.8,3.8,1.3,in,1,0.5,Sports,standard,international
+ORD-2024-000235,Water Bottle,9.5,3.4,3.0,in,4,1.0,Kitchen,standard,zone_3
+ORD-2024-000236,Notebook Set,10.6,8.9,1.5,in,2,1.2,Office,standard,zone_5
+ORD-2024-000237,Wireless Keyboard,19.3,6.6,1.5,in,1,2.1,Electronics,overnight,zone_4
+ORD-2024-000238,Kitchen Timer,3.1,3.2,2.0,in,4,0.5,Kitchen,standard,zone_4
+ORD-2024-000239,Mixing Bowl Set,12.6,10.6,5.6,in,2,2.6,Kitchen,overnight,zone_4
+ORD-2024-000240,Cutting Board,16.9,10.4,0.8,in,1,2.7,Kitchen,express,zone_5
+ORD-2024-000241,Water Bottle,11.2,3.2,3.0,in,3,1.2,Sports,express,zone_5
+ORD-2024-000242,Wireless Headphones,7.3,6.2,3.1,in,1,0.9,Electronics,standard,domestic
+ORD-2024-000243,Water Bottle,10.9,3.1,3.0,in,3,1.1,Sports,standard,zone_2
+ORD-2024-000244,Protein Shaker,4.0,4.0,9.3,in,1,0.9,Sports,overnight,zone_3
+ORD-2024-000245,Jump Rope,10.1,4.0,1.3,in,3,0.7,Sports,overnight,international
+ORD-2024-000246,Picture Frame,9.8,7.5,0.8,in,3,1.7,Home,standard,international
+ORD-2024-000247,Monitor Stand,23.6,8.2,4.3,in,3,4.4,Office,standard,zone_3
+ORD-2024-000248,Sunglasses,6.3,5.7,2.8,in,3,0.2,Fashion,overnight,domestic
+ORD-2024-000249,Throw Pillow,17.7,17.9,5.5,in,3,1.7,Home,express,zone_5
+ORD-2024-000250,Wireless Keyboard,17.2,6.6,1.3,in,2,2.1,Electronics,express,zone_3
+ORD-2024-000251,Pen Holder,4.5,4.2,5.2,in,2,1.1,Office,express,zone_4
+ORD-2024-000252,Phone Case,6.2,3.2,0.8,in,2,0.2,Electronics,express,zone_5
+ORD-2024-000253,Notebook Set,11.3,8.4,1.5,in,2,1.0,Office,express,zone_4
+ORD-2024-000254,Laptop,15.2,10.0,1.3,in,2,5.3,Electronics,express,zone_4
+ORD-2024-000255,Sunglasses,6.1,5.8,3.0,in,2,0.4,Fashion,overnight,zone_2
+ORD-2024-000256,Storage Basket,13.5,9.7,8.1,in,4,2.3,Home,overnight,zone_2
+ORD-2024-000257,Pen Holder,4.3,3.8,5.4,in,3,0.8,Office,express,domestic
+ORD-2024-000258,Wireless Headphones,7.2,5.7,3.2,in,4,0.9,Electronics,standard,zone_5
+ORD-2024-000259,Sneakers,12.9,7.7,4.6,in,1,2.3,Fashion,overnight,zone_2
+ORD-2024-000260,Jump Rope,9.6,3.7,1.2,in,2,0.5,Sports,express,zone_4
+ORD-2024-000261,Protein Shaker,4.3,4.5,8.9,in,2,0.8,Sports,overnight,zone_5
+ORD-2024-000262,Water Bottle,10.7,3.1,3.2,in,2,0.9,Kitchen,express,zone_3
+ORD-2024-000263,USB Hub,4.9,2.7,0.8,in,4,0.5,Electronics,standard,zone_4
+ORD-2024-000264,Desk Mat,34.4,14.4,0.1,in,3,1.5,Office,express,zone_5
+ORD-2024-000265,Desk Mat,32.2,14.3,0.1,in,1,1.3,Office,overnight,zone_3
+ORD-2024-000266,Watch,2.4,2.1,0.9,in,2,0.3,Fashion,overnight,zone_5
+ORD-2024-000267,Coffee Mug,4.1,3.9,5.1,in,2,0.9,Kitchen,express,international
+ORD-2024-000268,Wall Clock,12.9,12.0,1.9,in,4,2.6,Home,standard,zone_2
+ORD-2024-000269,Kitchen Scale,8.6,6.2,2.1,in,1,3.3,Kitchen,overnight,domestic
+ORD-2024-000270,Coffee Mug,4.0,4.4,4.6,in,1,0.8,Kitchen,express,domestic
+ORD-2024-000271,Tablet,11.1,7.2,0.2,in,2,1.2,Electronics,overnight,zone_3
+ORD-2024-000272,Lunch Box,9.4,7.7,3.9,in,3,2.2,Kitchen,overnight,zone_3
+ORD-2024-000273,Resistance Bands,7.7,6.7,2.8,in,4,1.2,Sports,overnight,domestic
+ORD-2024-000274,Desk Calendar,11.2,8.2,0.5,in,3,0.8,Office,standard,zone_4
+ORD-2024-000275,Lunch Box,9.6,7.5,4.0,in,4,2.2,Kitchen,overnight,domestic
+ORD-2024-000276,Cutting Board,16.9,9.3,0.8,in,3,3.8,Kitchen,express,zone_4
+ORD-2024-000277,Utensil Set,13.5,8.8,1.9,in,4,2.5,Kitchen,express,zone_2
+ORD-2024-000278,Cable Organizer,12.4,8.0,1.7,in,3,0.9,Office,express,zone_4
+ORD-2024-000279,Phone Case,6.2,3.3,0.8,in,3,0.3,Electronics,standard,zone_5
+ORD-2024-000280,Gaming Mouse,4.9,2.4,1.8,in,4,0.2,Electronics,overnight,international
+ORD-2024-000281,Water Bottle,9.3,3.4,3.4,in,1,1.3,Sports,standard,zone_2
+ORD-2024-000282,LED Desk Lamp,8.2,6.0,17.3,in,2,2.6,Office,overnight,international
+ORD-2024-000283,Desk Calendar,11.5,8.0,0.5,in,4,0.9,Office,overnight,zone_5
+ORD-2024-000284,Water Bottle,10.3,3.3,3.3,in,3,1.5,Sports,overnight,zone_3
+ORD-2024-000285,Desk Organizer,14.3,9.4,3.5,in,1,2.5,Office,overnight,zone_2
+ORD-2024-000286,Pen Holder,4.5,4.3,5.9,in,1,1.1,Office,express,domestic
+ORD-2024-000287,Sneakers,11.4,7.7,4.9,in,4,2.5,Fashion,standard,zone_2
+ORD-2024-000288,Protein Shaker,4.2,4.2,9.0,in,1,0.9,Sports,overnight,zone_2
+ORD-2024-000289,Mixing Bowl Set,11.8,10.5,6.5,in,3,3.2,Kitchen,express,zone_5
+ORD-2024-000290,Gaming Mouse,4.4,2.6,1.7,in,1,0.5,Electronics,express,international
+ORD-2024-000291,Monitor Stand,23.6,8.4,3.8,in,1,4.6,Office,overnight,zone_2
+ORD-2024-000292,Yoga Mat,23.7,5.8,0.2,in,1,3.1,Sports,standard,domestic
+ORD-2024-000293,Storage Basket,14.2,10.8,8.6,in,4,2.2,Home,express,zone_3
+ORD-2024-000294,Throw Pillow,16.6,17.1,5.5,in,3,2.0,Home,express,zone_2
+ORD-2024-000295,T-Shirt,12.0,9.4,1.1,in,3,0.6,Fashion,standard,zone_4
+ORD-2024-000296,Sneakers,11.3,8.1,4.5,in,2,2.0,Fashion,overnight,zone_3
+ORD-2024-000297,Essential Oils Set,8.0,5.7,2.2,in,3,1.5,Home,standard,domestic
+ORD-2024-000298,Sunglasses,6.7,6.1,3.1,in,2,0.4,Fashion,standard,zone_3
+ORD-2024-000299,Protein Shaker,3.9,3.8,9.2,in,3,0.8,Sports,overnight,zone_3
+ORD-2024-000300,Picture Frame,9.9,8.9,0.9,in,2,1.3,Home,standard,international
+ORD-2024-000301,Coffee Mug,4.4,4.5,4.5,in,1,0.9,Kitchen,express,zone_3
+ORD-2024-000302,Mixing Bowl Set,11.2,11.1,6.3,in,4,3.1,Kitchen,standard,domestic
+ORD-2024-000303,Desk Calendar,11.4,8.4,0.5,in,4,0.7,Office,overnight,zone_4
+ORD-2024-000304,Lunch Box,9.5,7.3,4.2,in,3,1.6,Kitchen,express,zone_2
+ORD-2024-000305,Water Bottle,9.7,3.0,2.9,in,1,0.9,Kitchen,express,zone_5
+ORD-2024-000306,Yoga Mat,24.0,5.6,0.2,in,2,2.5,Sports,overnight,zone_2
+ORD-2024-000307,Portable Humidifier,7.2,6.9,8.0,in,3,2.0,Home,express,zone_2
+ORD-2024-000308,Kitchen Timer,3.2,3.5,2.0,in,1,0.5,Kitchen,overnight,international
+ORD-2024-000309,Wall Clock,12.6,11.0,2.3,in,3,2.4,Home,overnight,international
+ORD-2024-000310,Phone Case,6.9,3.5,0.8,in,1,0.2,Electronics,standard,international
+ORD-2024-000311,Bluetooth Speaker,9.0,4.4,4.2,in,3,2.0,Electronics,express,domestic
+ORD-2024-000312,Bluetooth Speaker,9.2,3.9,4.3,in,1,1.6,Electronics,overnight,zone_2
+ORD-2024-000313,Phone Case,6.8,3.4,0.8,in,3,0.2,Electronics,overnight,zone_4
+ORD-2024-000314,Cutting Board,15.1,10.7,0.7,in,4,2.6,Kitchen,overnight,zone_4
+ORD-2024-000315,Laptop,15.9,10.8,1.2,in,4,4.6,Electronics,express,zone_2
+ORD-2024-000316,Laptop,14.8,9.9,1.1,in,1,4.5,Electronics,standard,international
+ORD-2024-000317,Lunch Box,9.5,6.5,3.9,in,4,2.0,Kitchen,overnight,zone_3
+ORD-2024-000318,Jeans,14.4,10.0,1.9,in,3,1.4,Fashion,overnight,domestic
+ORD-2024-000319,Wall Clock,11.1,12.2,2.1,in,4,2.4,Home,standard,international
+ORD-2024-000320,T-Shirt,11.2,8.9,0.9,in,1,0.8,Fashion,standard,international
+ORD-2024-000321,Jeans,14.4,9.9,2.2,in,2,1.3,Fashion,express,zone_3
+ORD-2024-000322,Power Bank,5.7,2.5,1.0,in,2,1.0,Electronics,standard,zone_4
+ORD-2024-000323,Yoga Mat,25.8,5.8,0.3,in,3,3.1,Sports,overnight,zone_3
+ORD-2024-000324,LED Desk Lamp,8.3,6.1,17.5,in,2,2.7,Office,overnight,zone_2
+ORD-2024-000325,LED Desk Lamp,7.5,6.7,17.6,in,4,3.0,Office,standard,zone_5
+ORD-2024-000326,Cable Organizer,11.5,7.7,1.7,in,1,1.2,Office,standard,zone_4
+ORD-2024-000327,Jeans,14.8,10.2,2.0,in,4,1.8,Fashion,standard,zone_3
+ORD-2024-000328,Wireless Headphones,7.8,6.2,2.9,in,3,1.1,Electronics,overnight,zone_3
+ORD-2024-000329,Belt,17.8,1.8,0.5,in,2,0.5,Fashion,standard,zone_2
+ORD-2024-000330,Kitchen Timer,3.1,3.5,1.8,in,3,0.5,Kitchen,overnight,zone_3
+ORD-2024-000331,Exercise Ball,12.7,11.9,13.0,in,2,2.5,Sports,express,zone_4
+ORD-2024-000332,Power Bank,6.3,2.8,1.0,in,4,1.4,Electronics,overnight,international
+ORD-2024-000333,Water Bottle,9.4,3.2,2.8,in,2,1.2,Sports,express,zone_2
+ORD-2024-000334,Watch,2.1,1.8,0.8,in,3,0.3,Fashion,overnight,zone_3
+ORD-2024-000335,Belt,18.0,2.2,0.5,in,4,0.8,Fashion,standard,zone_3
+ORD-2024-000336,Exercise Ball,11.6,11.8,10.9,in,3,2.8,Sports,express,zone_2
+ORD-2024-000337,Water Bottle,10.7,3.4,3.2,in,3,1.4,Sports,express,domestic
+ORD-2024-000338,Coffee Mug,4.0,4.0,5.2,in,2,1.2,Kitchen,overnight,zone_2
+ORD-2024-000339,Essential Oils Set,8.3,6.1,2.3,in,4,1.2,Home,standard,zone_4
+ORD-2024-000340,Laptop,16.5,9.8,1.2,in,2,5.2,Electronics,standard,domestic
+ORD-2024-000341,Cable Organizer,12.2,8.2,1.8,in,3,1.0,Office,overnight,zone_5
+ORD-2024-000342,Jeans,14.7,10.3,2.0,in,4,1.2,Fashion,express,international
+ORD-2024-000343,Essential Oils Set,9.0,5.6,2.1,in,3,1.0,Home,overnight,zone_4
+ORD-2024-000344,Jeans,14.3,9.6,2.1,in,4,1.2,Fashion,express,zone_3
+ORD-2024-000345,Belt,16.9,1.8,0.5,in,3,0.7,Fashion,express,zone_2
+ORD-2024-000346,Picture Frame,11.1,8.1,0.8,in,3,1.3,Home,express,zone_2
+ORD-2024-000347,Wireless Headphones,7.3,6.4,3.5,in,4,0.8,Electronics,standard,domestic
+ORD-2024-000348,Water Bottle,9.4,3.3,3.2,in,3,1.2,Sports,standard,zone_3
+ORD-2024-000349,Cutting Board,14.4,9.0,0.8,in,1,2.7,Kitchen,express,zone_2
+ORD-2024-000350,Jeans,14.9,9.5,2.1,in,3,1.2,Fashion,standard,international
+ORD-2024-000351,Watch,2.1,2.1,0.8,in,2,0.4,Fashion,overnight,domestic
+ORD-2024-000352,Yoga Mat,22.1,5.9,0.2,in,3,3.0,Sports,overnight,zone_4
+ORD-2024-000353,Cutting Board,14.9,9.2,0.8,in,2,2.7,Kitchen,overnight,zone_3
+ORD-2024-000354,Kitchen Scale,9.1,6.1,2.1,in,1,3.2,Kitchen,overnight,domestic
+ORD-2024-000355,Wireless Headphones,7.1,6.6,3.2,in,4,1.2,Electronics,express,zone_2
+ORD-2024-000356,Candle Set,3.5,3.4,4.9,in,1,1.0,Home,overnight,international
+ORD-2024-000357,Lunch Box,9.6,7.8,4.2,in,3,1.9,Kitchen,overnight,domestic
+ORD-2024-000358,Power Bank,5.9,2.8,0.8,in,4,0.9,Electronics,express,international
+ORD-2024-000359,Storage Basket,15.4,10.6,8.0,in,3,2.5,Home,express,zone_5
+ORD-2024-000360,USB Hub,4.8,2.8,0.8,in,1,0.6,Electronics,express,domestic
+ORD-2024-000361,Resistance Bands,7.7,6.1,3.0,in,3,1.0,Sports,overnight,zone_2
+ORD-2024-000362,Notebook Set,12.3,8.4,1.5,in,2,1.0,Office,express,zone_5
+ORD-2024-000363,Lunch Box,8.9,6.9,4.5,in,3,1.7,Kitchen,express,domestic
+ORD-2024-000364,Yoga Mat,24.3,5.7,0.2,in,4,2.6,Sports,overnight,zone_3
+ORD-2024-000365,Desk Mat,38.9,15.1,0.1,in,2,1.6,Office,standard,zone_3
+ORD-2024-000366,Notebook Set,11.0,8.7,1.5,in,3,0.7,Office,overnight,international
+ORD-2024-000367,Protein Shaker,4.5,4.0,9.4,in,4,0.7,Sports,standard,zone_2
+ORD-2024-000368,Wireless Headphones,7.6,5.7,3.4,in,4,0.7,Electronics,standard,domestic
+ORD-2024-000369,Phone Case,7.3,3.5,0.8,in,1,0.2,Electronics,standard,zone_5
+ORD-2024-000370,Monitor Stand,21.3,8.0,4.5,in,2,5.8,Office,overnight,zone_4
+ORD-2024-000371,Mixing Bowl Set,10.4,12.5,6.1,in,3,2.2,Kitchen,standard,zone_4
+ORD-2024-000372,Gym Towel,16.0,26.2,0.5,in,1,1.1,Sports,standard,zone_2
+ORD-2024-000373,Protein Shaker,4.1,4.2,9.4,in,1,0.6,Sports,standard,zone_3
+ORD-2024-000374,Lunch Box,9.7,7.4,4.0,in,4,2.2,Kitchen,overnight,zone_3
+ORD-2024-000375,Belt,19.6,2.1,0.5,in,4,0.5,Fashion,standard,domestic
+ORD-2024-000376,Gym Towel,15.7,23.6,0.5,in,3,1.1,Sports,express,zone_3
+ORD-2024-000377,Power Bank,6.3,2.9,0.9,in,1,1.0,Electronics,overnight,zone_5
+ORD-2024-000378,Water Bottle,9.5,3.1,3.4,in,3,1.0,Sports,standard,domestic
+ORD-2024-000379,Bluetooth Speaker,8.5,4.2,4.0,in,2,2.5,Electronics,overnight,international
+ORD-2024-000380,Essential Oils Set,8.2,6.6,2.1,in,1,1.4,Home,standard,domestic
+ORD-2024-000381,Notebook Set,12.7,9.0,1.6,in,2,1.2,Office,overnight,international
+ORD-2024-000382,Exercise Ball,11.8,12.5,12.3,in,4,2.3,Sports,overnight,domestic
+ORD-2024-000383,Kitchen Timer,3.0,3.5,1.9,in,4,0.6,Kitchen,standard,zone_4
+ORD-2024-000384,Desk Mat,35.8,15.1,0.1,in,2,1.2,Office,overnight,domestic
+ORD-2024-000385,Belt,17.6,1.8,0.5,in,4,0.8,Fashion,overnight,international
+ORD-2024-000386,Kitchen Timer,3.5,2.9,1.9,in,1,0.3,Kitchen,overnight,zone_2
+ORD-2024-000387,Sunglasses,6.0,6.1,2.6,in,3,0.4,Fashion,standard,zone_4
+ORD-2024-000388,Protein Shaker,4.0,4.1,10.3,in,1,1.0,Sports,standard,zone_2
+ORD-2024-000389,Coffee Mug,4.4,4.1,4.5,in,1,1.0,Kitchen,overnight,zone_5
+ORD-2024-000390,Belt,18.6,2.0,0.5,in,3,0.5,Fashion,express,domestic
+ORD-2024-000391,Bluetooth Speaker,9.4,4.6,4.5,in,2,1.7,Electronics,overnight,zone_4
+ORD-2024-000392,Essential Oils Set,8.0,5.7,2.0,in,3,1.4,Home,express,zone_2
+ORD-2024-000393,Desk Organizer,13.2,9.2,3.3,in,1,2.5,Office,express,international
+ORD-2024-000394,Desk Organizer,14.5,9.1,3.4,in,4,2.7,Office,standard,zone_3
+ORD-2024-000395,T-Shirt,11.1,9.3,1.0,in,2,0.6,Fashion,overnight,domestic
+ORD-2024-000396,Throw Pillow,19.2,19.0,6.5,in,4,1.7,Home,express,zone_3
+ORD-2024-000397,Coffee Mug,3.9,4.2,4.6,in,1,1.2,Kitchen,standard,zone_3
+ORD-2024-000398,Resistance Bands,8.5,5.7,2.6,in,2,1.0,Sports,overnight,international
+ORD-2024-000399,Yoga Mat,22.6,5.6,0.2,in,4,2.8,Sports,express,zone_5
+ORD-2024-000400,Water Bottle,9.9,3.1,2.9,in,1,1.2,Sports,standard,zone_2
+ORD-2024-000401,Watch,2.2,1.9,0.8,in,4,0.2,Fashion,express,zone_5
+ORD-2024-000402,Cutting Board,16.9,10.9,0.8,in,3,4.0,Kitchen,standard,zone_3
+ORD-2024-000403,Storage Basket,13.6,9.7,9.1,in,1,2.4,Home,overnight,zone_3
+ORD-2024-000404,Mixing Bowl Set,10.4,11.7,6.8,in,1,2.2,Kitchen,overnight,domestic
+ORD-2024-000405,Protein Shaker,3.9,4.6,10.8,in,1,0.9,Sports,express,zone_3
+ORD-2024-000406,Utensil Set,13.4,9.0,2.1,in,1,2.3,Kitchen,overnight,domestic
+ORD-2024-000407,Sunglasses,6.2,6.5,2.7,in,2,0.3,Fashion,standard,zone_2
+ORD-2024-000408,Bluetooth Speaker,8.6,4.2,4.4,in,2,2.1,Electronics,overnight,domestic
+ORD-2024-000409,Laptop,15.7,10.4,1.1,in,4,6.0,Electronics,standard,zone_4
+ORD-2024-000410,Jeans,14.7,10.4,2.1,in,1,1.5,Fashion,express,zone_2
+ORD-2024-000411,Desk Mat,32.4,14.4,0.1,in,2,1.4,Office,standard,zone_5
+ORD-2024-000412,Phone Case,7.3,3.5,0.8,in,3,0.2,Electronics,overnight,zone_3
+ORD-2024-000413,Coffee Mug,4.3,4.2,4.4,in,2,1.2,Kitchen,standard,zone_5
+ORD-2024-000414,Cable Organizer,12.0,7.6,1.7,in,3,1.1,Office,express,zone_2
+ORD-2024-000415,Wireless Keyboard,18.2,6.4,1.4,in,2,2.4,Electronics,express,domestic
+ORD-2024-000416,Bluetooth Speaker,8.9,3.8,4.1,in,3,2.0,Electronics,express,zone_5
+ORD-2024-000417,Kitchen Timer,3.3,3.1,2.0,in,4,0.4,Kitchen,standard,zone_5
+ORD-2024-000418,Laptop,15.6,10.2,1.2,in,2,5.7,Electronics,standard,zone_4
+ORD-2024-000419,Water Bottle,9.9,3.1,3.1,in,3,1.4,Kitchen,overnight,zone_2
+ORD-2024-000420,Desk Organizer,15.2,9.6,3.1,in,1,2.7,Office,overnight,zone_5
+ORD-2024-000421,Mixing Bowl Set,10.5,12.6,6.7,in,4,3.1,Kitchen,standard,zone_4
+ORD-2024-000422,Lunch Box,9.5,7.6,4.1,in,4,1.7,Kitchen,overnight,international
+ORD-2024-000423,Gaming Mouse,4.3,2.4,1.8,in,2,0.4,Electronics,express,zone_3
+ORD-2024-000424,Water Bottle,10.6,3.4,2.8,in,1,1.1,Sports,express,international
+ORD-2024-000425,Throw Pillow,16.8,17.1,6.1,in,1,2.0,Home,standard,international
+ORD-2024-000426,Gym Towel,16.6,26.1,0.5,in,1,1.1,Sports,standard,zone_2
+ORD-2024-000427,Resistance Bands,9.2,6.2,2.7,in,2,0.9,Sports,standard,domestic
+ORD-2024-000428,Essential Oils Set,8.0,6.2,2.2,in,3,1.1,Home,express,zone_2
+ORD-2024-000429,Handbag,15.3,10.7,6.7,in,1,1.9,Fashion,standard,zone_5
+ORD-2024-000430,Power Bank,5.7,2.8,0.9,in,1,1.2,Electronics,express,zone_5
+ORD-2024-000431,T-Shirt,12.5,9.4,0.9,in,1,0.5,Fashion,standard,zone_2
+ORD-2024-000432,Utensil Set,13.9,8.6,2.2,in,1,2.4,Kitchen,express,zone_5
+ORD-2024-000433,Laptop,16.6,10.2,1.1,in,3,6.0,Electronics,overnight,international
+ORD-2024-000434,Wireless Keyboard,17.2,5.7,1.5,in,1,1.9,Electronics,express,international
+ORD-2024-000435,Coffee Mug,4.4,4.5,5.1,in,1,1.1,Kitchen,express,zone_2
+ORD-2024-000436,Lunch Box,8.9,6.7,4.5,in,3,2.1,Kitchen,overnight,zone_4
+ORD-2024-000437,Jeans,14.8,9.4,2.0,in,1,1.4,Fashion,standard,international
+ORD-2024-000438,Exercise Ball,11.1,11.0,11.7,in,3,2.4,Sports,express,zone_4
+ORD-2024-000439,Gym Towel,15.1,23.6,0.5,in,1,1.0,Sports,overnight,zone_3
+ORD-2024-000440,Belt,18.7,2.2,0.5,in,3,0.7,Fashion,standard,zone_4
+ORD-2024-000441,T-Shirt,12.2,8.4,1.0,in,4,0.5,Fashion,express,zone_4
+ORD-2024-000442,Desk Organizer,13.6,9.7,3.4,in,3,2.6,Office,overnight,zone_3
+ORD-2024-000443,Water Bottle,10.0,2.9,3.0,in,4,1.1,Kitchen,standard,zone_5
+ORD-2024-000444,Belt,19.3,1.9,0.5,in,4,0.6,Fashion,express,zone_2
+ORD-2024-000445,Picture Frame,10.1,8.1,0.8,in,2,1.4,Home,standard,international
+ORD-2024-000446,Jeans,13.9,9.7,2.1,in,1,1.7,Fashion,express,zone_2
+ORD-2024-000447,Desk Organizer,12.7,8.6,3.2,in,3,2.8,Office,standard,international
+ORD-2024-000448,Utensil Set,13.0,7.8,2.0,in,2,2.0,Kitchen,overnight,zone_2
+ORD-2024-000449,Phone Case,6.2,3.3,0.9,in,3,0.2,Electronics,overnight,zone_3
+ORD-2024-000450,Protein Shaker,4.5,4.0,9.5,in,3,0.9,Sports,express,international
+ORD-2024-000451,T-Shirt,12.5,9.7,0.9,in,3,0.6,Fashion,overnight,domestic
+ORD-2024-000452,Monitor Stand,24.1,8.2,4.5,in,2,5.6,Office,express,international
+ORD-2024-000453,Power Bank,5.4,2.5,1.0,in,3,1.0,Electronics,standard,zone_5
+ORD-2024-000454,Cutting Board,17.5,10.2,0.8,in,4,3.6,Kitchen,express,zone_3
+ORD-2024-000455,Notebook Set,10.9,7.7,1.5,in,2,0.9,Office,standard,zone_2
+ORD-2024-000456,Smartphone,6.1,2.8,0.3,in,1,0.7,Electronics,express,zone_5
+ORD-2024-000457,Notebook Set,11.0,7.7,1.4,in,3,1.1,Office,express,domestic
+ORD-2024-000458,T-Shirt,12.3,9.5,0.9,in,4,0.5,Fashion,standard,international
+ORD-2024-000459,Jewelry Box,9.1,6.0,3.7,in,1,2.0,Home,express,zone_2
+ORD-2024-000460,Cable Organizer,11.2,8.6,1.9,in,4,0.7,Office,standard,zone_2
+ORD-2024-000461,Coffee Mug,4.2,4.3,5.0,in,4,0.9,Kitchen,overnight,zone_5
+ORD-2024-000462,Throw Pillow,16.8,17.5,5.8,in,2,2.0,Home,express,international
+ORD-2024-000463,Protein Shaker,4.1,4.6,10.5,in,1,0.8,Sports,express,zone_3
+ORD-2024-000464,Desk Organizer,15.0,9.3,3.4,in,3,2.3,Office,standard,zone_2
+ORD-2024-000465,Bluetooth Speaker,8.8,3.9,3.8,in,3,2.3,Electronics,overnight,domestic
+ORD-2024-000466,T-Shirt,11.5,9.7,1.1,in,4,0.5,Fashion,express,zone_3
+ORD-2024-000467,Yoga Mat,26.2,6.3,0.2,in,3,2.7,Sports,express,domestic
+ORD-2024-000468,Cutting Board,14.9,11.0,0.8,in,1,4.0,Kitchen,standard,international
+ORD-2024-000469,Storage Basket,14.8,10.4,8.8,in,4,2.3,Home,standard,zone_3
+ORD-2024-000470,Water Bottle,9.2,2.9,3.2,in,4,0.9,Kitchen,express,domestic
+ORD-2024-000471,Desk Mat,38.1,14.5,0.1,in,3,1.3,Office,standard,zone_4
+ORD-2024-000472,Picture Frame,10.1,8.0,0.9,in,3,1.4,Home,express,zone_3
+ORD-2024-000473,Sneakers,13.1,8.7,4.8,in,1,2.3,Fashion,standard,zone_5
+ORD-2024-000474,Exercise Ball,13.1,12.6,11.4,in,4,2.3,Sports,overnight,zone_5
+ORD-2024-000475,Mixing Bowl Set,11.5,11.6,5.7,in,4,3.1,Kitchen,overnight,zone_2
+ORD-2024-000476,Notebook Set,11.3,7.5,1.5,in,1,0.8,Office,express,zone_5
+ORD-2024-000477,Gym Towel,15.5,22.8,0.5,in,3,1.1,Sports,express,zone_5
+ORD-2024-000478,Kitchen Timer,3.5,3.4,1.6,in,1,0.6,Kitchen,overnight,zone_3
+ORD-2024-000479,Pen Holder,4.1,4.5,5.3,in,2,0.9,Office,standard,zone_2
+ORD-2024-000480,Picture Frame,10.0,8.2,0.8,in,3,1.4,Home,overnight,zone_2
+ORD-2024-000481,Kitchen Scale,9.4,7.3,1.9,in,1,3.2,Kitchen,standard,zone_3
+ORD-2024-000482,Throw Pillow,16.4,17.1,6.0,in,4,1.6,Home,overnight,domestic
+ORD-2024-000483,Kitchen Timer,3.3,3.2,1.7,in,1,0.4,Kitchen,overnight,zone_2
+ORD-2024-000484,Essential Oils Set,8.3,5.7,2.0,in,4,1.0,Home,express,zone_3
+ORD-2024-000485,Lunch Box,10.1,6.5,4.3,in,4,1.5,Kitchen,standard,domestic
+ORD-2024-000486,Bluetooth Speaker,7.8,4.0,3.8,in,4,1.7,Electronics,express,zone_3
+ORD-2024-000487,Sneakers,11.8,8.1,5.1,in,3,2.2,Fashion,express,zone_2
+ORD-2024-000488,Laptop,14.9,10.8,1.3,in,4,6.2,Electronics,overnight,domestic
+ORD-2024-000489,Yoga Mat,22.2,6.4,0.2,in,3,2.6,Sports,express,zone_4
+ORD-2024-000490,Bluetooth Speaker,9.1,4.4,4.0,in,2,2.2,Electronics,express,international
+ORD-2024-000491,Watch,2.2,2.1,0.8,in,3,0.3,Fashion,standard,zone_2
+ORD-2024-000492,Portable Humidifier,7.1,7.2,8.3,in,1,2.0,Home,overnight,zone_5
+ORD-2024-000493,Jewelry Box,9.4,6.3,3.2,in,4,2.1,Home,overnight,zone_4
+ORD-2024-000494,Sneakers,13.3,7.8,4.3,in,2,2.0,Fashion,express,international
+ORD-2024-000495,Desk Calendar,11.6,8.5,0.5,in,3,0.6,Office,overnight,zone_2
+ORD-2024-000496,T-Shirt,10.9,9.0,1.0,in,1,0.5,Fashion,overnight,international
+ORD-2024-000497,Resistance Bands,9.1,6.2,2.8,in,3,0.9,Sports,standard,zone_3
+ORD-2024-000498,Jump Rope,9.3,4.1,1.2,in,1,0.7,Sports,overnight,zone_5
+ORD-2024-000499,Jeans,14.7,9.7,1.8,in,4,1.7,Fashion,express,international
+ORD-2024-000500,Cutting Board,14.6,10.3,0.7,in,2,3.4,Kitchen,express,zone_2
+ORD-2024-000501,Desk Mat,37.4,14.6,0.1,in,2,1.6,Office,express,zone_3
+ORD-2024-000502,Kitchen Timer,3.2,3.0,1.7,in,2,0.5,Kitchen,overnight,zone_5
+ORD-2024-000503,Yoga Mat,23.5,6.2,0.3,in,4,2.7,Sports,overnight,zone_2
+ORD-2024-000504,Desk Mat,32.5,15.1,0.1,in,4,1.4,Office,express,zone_4
+ORD-2024-000505,Utensil Set,12.1,9.2,2.2,in,4,2.4,Kitchen,express,zone_2
+ORD-2024-000506,Essential Oils Set,8.0,5.7,1.9,in,1,1.5,Home,standard,zone_5
+ORD-2024-000507,Essential Oils Set,7.6,6.5,2.3,in,3,1.1,Home,overnight,zone_3
+ORD-2024-000508,LED Desk Lamp,7.9,6.3,19.0,in,2,2.9,Office,standard,domestic
+ORD-2024-000509,Monitor Stand,24.5,9.1,4.4,in,3,4.8,Office,standard,domestic
+ORD-2024-000510,Desk Mat,36.2,16.1,0.1,in,1,1.7,Office,express,zone_3
+ORD-2024-000511,Gym Towel,14.5,24.8,0.5,in,1,0.9,Sports,overnight,domestic
+ORD-2024-000512,Jewelry Box,9.2,6.1,3.6,in,1,1.7,Home,express,international
+ORD-2024-000513,Throw Pillow,17.7,17.6,6.4,in,4,1.9,Home,express,zone_3
+ORD-2024-000514,Portable Humidifier,7.5,7.0,8.2,in,4,2.4,Home,standard,international
+ORD-2024-000515,Notebook Set,12.6,8.0,1.4,in,2,1.2,Office,express,zone_3
+ORD-2024-000516,Yoga Mat,23.5,6.3,0.2,in,4,2.7,Sports,standard,zone_3
+ORD-2024-000517,Bluetooth Speaker,9.0,4.0,4.5,in,2,2.3,Electronics,standard,international
+ORD-2024-000518,Sunglasses,5.7,5.5,2.8,in,1,0.2,Fashion,express,zone_3
+ORD-2024-000519,Kitchen Scale,8.9,7.4,2.0,in,3,3.8,Kitchen,overnight,international
+ORD-2024-000520,Sneakers,11.8,7.4,5.1,in,1,2.2,Fashion,express,international
+ORD-2024-000521,Sneakers,13.4,7.5,4.6,in,4,2.4,Fashion,overnight,zone_3
+ORD-2024-000522,Jump Rope,9.4,3.5,1.2,in,3,0.6,Sports,standard,zone_3
+ORD-2024-000523,T-Shirt,10.9,8.8,1.0,in,4,0.4,Fashion,express,zone_4
+ORD-2024-000524,Jump Rope,10.4,4.1,1.2,in,1,0.8,Sports,overnight,zone_2
+ORD-2024-000525,Essential Oils Set,8.6,5.7,2.0,in,4,1.5,Home,express,domestic
+ORD-2024-000526,Sneakers,13.2,7.9,5.2,in,1,2.3,Fashion,express,international
+ORD-2024-000527,Water Bottle,10.7,3.1,3.3,in,2,1.1,Kitchen,overnight,zone_2
+ORD-2024-000528,Wall Clock,13.2,11.8,2.2,in,4,2.3,Home,overnight,domestic
+ORD-2024-000529,Sneakers,12.0,8.9,4.6,in,2,1.8,Fashion,overnight,zone_2
+ORD-2024-000530,Essential Oils Set,9.0,6.7,2.1,in,2,1.2,Home,overnight,zone_2
+ORD-2024-000531,Tablet,11.7,7.5,0.2,in,1,1.4,Electronics,express,zone_4
+ORD-2024-000532,Laptop,15.8,9.8,1.2,in,3,4.6,Electronics,standard,zone_5
+ORD-2024-000533,Exercise Ball,13.0,11.4,11.7,in,2,2.8,Sports,express,international
+ORD-2024-000534,Jump Rope,9.2,3.7,1.1,in,1,0.6,Sports,standard,zone_2
+ORD-2024-000535,Cutting Board,16.1,9.6,0.7,in,1,3.4,Kitchen,standard,zone_5
+ORD-2024-000536,Jump Rope,11.0,3.9,1.2,in,2,0.6,Sports,overnight,zone_3
+ORD-2024-000537,Gaming Mouse,4.3,2.3,1.8,in,2,0.3,Electronics,overnight,international
+ORD-2024-000538,Jump Rope,9.6,4.1,1.1,in,4,0.6,Sports,overnight,international
+ORD-2024-000539,Pen Holder,4.2,4.2,6.4,in,4,0.9,Office,express,zone_5
+ORD-2024-000540,Wireless Headphones,7.6,6.1,3.3,in,2,0.8,Electronics,overnight,zone_3
+ORD-2024-000541,Desk Mat,32.2,15.2,0.1,in,1,1.5,Office,express,zone_5
+ORD-2024-000542,Water Bottle,9.2,2.9,2.9,in,3,1.5,Sports,express,zone_4
+ORD-2024-000543,Pen Holder,4.0,3.8,5.4,in,1,0.9,Office,express,zone_5
+ORD-2024-000544,Power Bank,5.5,3.1,0.9,in,1,1.1,Electronics,overnight,domestic
+ORD-2024-000545,Sneakers,11.9,8.4,4.7,in,1,1.8,Fashion,express,international
+ORD-2024-000546,Utensil Set,14.0,8.6,2.2,in,4,2.1,Kitchen,standard,zone_3
+ORD-2024-000547,Portable Humidifier,6.5,7.1,8.1,in,3,2.3,Home,standard,domestic
+ORD-2024-000548,Belt,19.2,1.8,0.5,in,2,0.8,Fashion,standard,zone_5
+ORD-2024-000549,Power Bank,5.3,2.7,0.9,in,2,0.9,Electronics,standard,zone_4
+ORD-2024-000550,Jump Rope,11.0,3.7,1.3,in,3,0.8,Sports,overnight,zone_4
+ORD-2024-000551,Water Bottle,9.7,2.9,3.0,in,4,1.2,Sports,overnight,zone_4
+ORD-2024-000552,Essential Oils Set,8.8,6.2,2.2,in,3,1.5,Home,overnight,international
+ORD-2024-000553,Laptop,13.9,11.4,1.2,in,1,5.5,Electronics,standard,domestic
+ORD-2024-000554,Coffee Mug,4.3,4.1,4.8,in,4,0.9,Kitchen,overnight,domestic
+ORD-2024-000555,Cutting Board,16.0,9.1,0.8,in,1,2.9,Kitchen,express,zone_2
+ORD-2024-000556,Desk Calendar,10.2,8.9,0.5,in,2,0.6,Office,standard,international
+ORD-2024-000557,Gaming Mouse,4.7,2.3,1.8,in,3,0.4,Electronics,express,zone_2
+ORD-2024-000558,Notebook Set,11.4,7.5,1.4,in,4,0.7,Office,standard,domestic
+ORD-2024-000559,Kitchen Scale,9.4,7.1,2.0,in,2,3.5,Kitchen,overnight,domestic
+ORD-2024-000560,LED Desk Lamp,8.7,5.9,17.5,in,4,3.0,Office,standard,domestic
+ORD-2024-000561,Exercise Ball,12.4,12.8,12.1,in,3,2.5,Sports,standard,zone_2
+ORD-2024-000562,Wireless Headphones,7.7,6.3,3.2,in,4,0.6,Electronics,standard,domestic
+ORD-2024-000563,Coffee Mug,4.4,4.3,5.2,in,2,1.0,Kitchen,overnight,zone_2
+ORD-2024-000564,Storage Basket,14.8,11.1,8.4,in,3,2.1,Home,overnight,zone_3
+ORD-2024-000565,Kitchen Timer,3.5,3.2,1.8,in,1,0.4,Kitchen,overnight,international
+ORD-2024-000566,T-Shirt,10.9,8.3,1.0,in,2,0.6,Fashion,overnight,domestic
+ORD-2024-000567,Resistance Bands,9.2,5.8,2.6,in,2,1.0,Sports,standard,zone_3
+ORD-2024-000568,Picture Frame,9.9,8.3,0.8,in,4,1.5,Home,standard,zone_2
+ORD-2024-000569,Throw Pillow,19.5,19.6,6.4,in,3,1.8,Home,standard,international
+ORD-2024-000570,Pen Holder,4.5,4.0,5.3,in,2,1.2,Office,standard,international
+ORD-2024-000571,Desk Mat,38.5,14.3,0.1,in,4,1.3,Office,standard,zone_5
+ORD-2024-000572,Watch,2.2,1.8,0.9,in,4,0.3,Fashion,overnight,zone_5
+ORD-2024-000573,Pen Holder,4.1,4.3,6.1,in,1,1.1,Office,standard,zone_5
+ORD-2024-000574,Utensil Set,13.0,7.7,1.9,in,1,2.1,Kitchen,express,zone_5
+ORD-2024-000575,Kitchen Scale,9.1,6.6,2.0,in,3,3.5,Kitchen,overnight,zone_2
+ORD-2024-000576,Water Bottle,9.7,3.3,3.3,in,1,1.1,Sports,overnight,zone_5
+ORD-2024-000577,Phone Case,6.6,3.3,0.8,in,2,0.2,Electronics,express,zone_3
+ORD-2024-000578,Essential Oils Set,7.7,6.5,2.0,in,4,1.1,Home,standard,zone_4
+ORD-2024-000579,Desk Mat,36.6,15.5,0.1,in,2,1.6,Office,express,zone_3
+ORD-2024-000580,Kitchen Scale,9.6,7.2,1.9,in,3,2.9,Kitchen,overnight,domestic
+ORD-2024-000581,T-Shirt,12.9,8.9,0.9,in,3,0.7,Fashion,standard,zone_3
+ORD-2024-000582,Wireless Keyboard,17.8,6.5,1.3,in,4,2.1,Electronics,standard,zone_5
+ORD-2024-000583,Bluetooth Speaker,9.5,4.3,4.3,in,4,2.5,Electronics,standard,zone_3
+ORD-2024-000584,Water Bottle,10.3,3.0,3.3,in,1,1.5,Sports,standard,international
+ORD-2024-000585,Lunch Box,9.3,6.7,4.0,in,2,2.2,Kitchen,standard,zone_4
+ORD-2024-000586,Candle Set,3.3,3.0,5.2,in,4,1.1,Home,overnight,international
+ORD-2024-000587,Storage Basket,12.8,11.2,8.6,in,4,2.0,Home,overnight,zone_4
+ORD-2024-000588,Sunglasses,6.0,6.2,2.6,in,2,0.3,Fashion,overnight,international
+ORD-2024-000589,Kitchen Scale,9.8,6.8,2.2,in,4,3.6,Kitchen,standard,zone_3
+ORD-2024-000590,Cutting Board,17.4,10.4,0.8,in,4,2.8,Kitchen,express,zone_3
+ORD-2024-000591,T-Shirt,11.6,9.8,0.9,in,4,0.7,Fashion,overnight,domestic
+ORD-2024-000592,Sneakers,12.7,7.5,4.6,in,4,2.0,Fashion,standard,international
+ORD-2024-000593,T-Shirt,11.5,9.6,1.1,in,3,0.4,Fashion,standard,domestic
+ORD-2024-000594,Coffee Mug,4.6,3.8,4.8,in,1,0.9,Kitchen,standard,zone_2
+ORD-2024-000595,Wireless Keyboard,17.3,6.1,1.3,in,3,1.9,Electronics,express,zone_5
+ORD-2024-000596,Lunch Box,10.4,7.7,4.1,in,3,1.6,Kitchen,standard,international
+ORD-2024-000597,Water Bottle,11.1,3.2,3.4,in,4,1.3,Sports,overnight,zone_2
+ORD-2024-000598,Picture Frame,11.2,8.0,0.8,in,3,1.8,Home,express,international
+ORD-2024-000599,USB Hub,5.2,2.8,0.8,in,4,0.3,Electronics,overnight,zone_4
+ORD-2024-000600,Gym Towel,14.7,24.9,0.5,in,4,1.1,Sports,overnight,domestic
+ORD-2024-000601,Smartphone,6.8,3.1,0.3,in,3,0.7,Electronics,express,zone_2
+ORD-2024-000602,Exercise Ball,12.7,11.2,13.0,in,4,2.9,Sports,overnight,zone_2
+ORD-2024-000603,Yoga Mat,22.2,6.3,0.2,in,1,3.2,Sports,standard,domestic
+ORD-2024-000604,Jewelry Box,10.3,6.6,3.2,in,2,2.1,Home,overnight,zone_3
+ORD-2024-000605,Wall Clock,13.0,12.6,2.0,in,2,2.6,Home,standard,zone_3
+ORD-2024-000606,Picture Frame,11.1,8.5,0.8,in,2,1.3,Home,standard,zone_5
+ORD-2024-000607,USB Hub,5.1,3.0,0.9,in,2,0.5,Electronics,standard,zone_5
+ORD-2024-000608,Sunglasses,6.3,6.3,3.0,in,3,0.2,Fashion,standard,zone_5
+ORD-2024-000609,Throw Pillow,16.8,16.9,6.2,in,4,1.6,Home,express,domestic
+ORD-2024-000610,Watch,2.2,2.0,0.9,in,1,0.4,Fashion,overnight,zone_5
+ORD-2024-000611,Notebook Set,11.4,8.0,1.6,in,3,1.0,Office,standard,zone_5
+ORD-2024-000612,Water Bottle,9.6,3.3,2.9,in,3,1.1,Sports,standard,domestic
+ORD-2024-000613,Kitchen Timer,3.1,3.4,1.9,in,3,0.5,Kitchen,overnight,zone_2
+ORD-2024-000614,Desk Mat,33.8,15.3,0.1,in,3,1.3,Office,express,zone_3
+ORD-2024-000615,Gaming Mouse,4.7,2.5,1.6,in,2,0.5,Electronics,overnight,zone_5
+ORD-2024-000616,T-Shirt,11.8,9.2,0.9,in,1,0.6,Fashion,overnight,zone_5
+ORD-2024-000617,Water Bottle,9.7,3.2,3.0,in,4,1.2,Sports,overnight,zone_3
+ORD-2024-000618,Mixing Bowl Set,11.1,10.9,6.2,in,4,2.8,Kitchen,standard,zone_3
+ORD-2024-000619,Lunch Box,10.7,7.4,3.8,in,2,1.8,Kitchen,express,zone_3
+ORD-2024-000620,Jump Rope,10.0,3.9,1.2,in,4,0.8,Sports,overnight,zone_2
+ORD-2024-000621,Jeans,13.5,9.9,2.0,in,3,1.2,Fashion,express,international
+ORD-2024-000622,Water Bottle,9.3,3.3,3.2,in,3,1.0,Kitchen,standard,zone_3
+ORD-2024-000623,Wireless Keyboard,18.2,6.7,1.5,in,2,2.4,Electronics,overnight,zone_3
+ORD-2024-000624,Exercise Ball,12.8,12.5,11.2,in,3,2.6,Sports,standard,zone_2
+ORD-2024-000625,Lunch Box,9.8,7.7,4.3,in,4,1.9,Kitchen,standard,zone_4
+ORD-2024-000626,Water Bottle,10.4,3.1,2.8,in,2,1.4,Sports,express,zone_5
+ORD-2024-000627,Monitor Stand,23.0,9.0,4.3,in,1,4.3,Office,standard,domestic
+ORD-2024-000628,Water Bottle,9.8,3.2,3.2,in,2,1.3,Sports,overnight,international
+ORD-2024-000629,Sneakers,12.7,8.8,4.4,in,1,2.5,Fashion,express,zone_2
+ORD-2024-000630,Water Bottle,10.2,2.9,2.9,in,4,1.2,Kitchen,overnight,zone_3
+ORD-2024-000631,Protein Shaker,3.8,4.4,10.0,in,2,0.8,Sports,express,domestic
+ORD-2024-000632,Lunch Box,10.5,7.2,3.8,in,4,1.5,Kitchen,standard,zone_2
+ORD-2024-000633,LED Desk Lamp,8.2,6.5,17.6,in,2,3.5,Office,overnight,zone_4
+ORD-2024-000634,Belt,17.1,1.8,0.5,in,1,0.6,Fashion,overnight,domestic
+ORD-2024-000635,Cutting Board,15.6,10.6,0.8,in,1,3.2,Kitchen,standard,zone_4
+ORD-2024-000636,Jewelry Box,10.2,6.5,3.4,in,4,2.1,Home,express,zone_3
+ORD-2024-000637,Tablet,10.2,7.8,0.2,in,2,1.5,Electronics,standard,international
+ORD-2024-000638,Desk Mat,38.7,16.2,0.1,in,2,1.5,Office,standard,zone_3
+ORD-2024-000639,Desk Organizer,14.8,9.9,3.4,in,2,2.2,Office,express,domestic
+ORD-2024-000640,Mixing Bowl Set,10.5,12.6,6.5,in,3,2.4,Kitchen,standard,international
+ORD-2024-000641,Resistance Bands,8.5,6.8,3.1,in,4,1.0,Sports,overnight,zone_3
+ORD-2024-000642,Handbag,14.0,11.5,6.4,in,3,1.5,Fashion,overnight,zone_4
+ORD-2024-000643,Watch,2.1,2.0,0.8,in,1,0.3,Fashion,express,zone_5
+ORD-2024-000644,Mixing Bowl Set,10.8,11.2,5.6,in,4,2.4,Kitchen,standard,zone_4
+ORD-2024-000645,Laptop,13.8,9.9,1.2,in,3,5.4,Electronics,overnight,international
+ORD-2024-000646,Essential Oils Set,7.7,5.7,2.0,in,3,1.3,Home,standard,zone_4
+ORD-2024-000647,Gaming Mouse,4.5,2.6,1.9,in,4,0.4,Electronics,express,domestic
+ORD-2024-000648,Yoga Mat,24.5,6.3,0.2,in,2,2.8,Sports,standard,international
+ORD-2024-000649,Monitor Stand,22.0,8.2,3.9,in,4,4.9,Office,express,zone_3
+ORD-2024-000650,Protein Shaker,4.1,4.5,9.9,in,1,0.7,Sports,standard,zone_5
+ORD-2024-000651,Gaming Mouse,4.3,2.2,1.7,in,1,0.2,Electronics,standard,domestic
+ORD-2024-000652,Exercise Ball,12.3,12.8,12.4,in,2,2.7,Sports,standard,zone_3
+ORD-2024-000653,Portable Humidifier,6.2,7.0,8.2,in,3,2.2,Home,overnight,domestic
+ORD-2024-000654,Wall Clock,13.1,13.1,2.2,in,1,2.5,Home,express,zone_4
+ORD-2024-000655,Sunglasses,6.2,5.7,3.1,in,4,0.3,Fashion,express,international
+ORD-2024-000656,Gym Towel,14.9,23.3,0.5,in,2,1.1,Sports,standard,international
+ORD-2024-000657,Mixing Bowl Set,10.9,10.5,6.7,in,1,2.8,Kitchen,overnight,zone_3
+ORD-2024-000658,Wall Clock,12.3,11.3,2.3,in,3,2.7,Home,standard,zone_5
+ORD-2024-000659,Gym Towel,17.4,22.2,0.5,in,4,1.0,Sports,overnight,zone_5
+ORD-2024-000660,Yoga Mat,23.8,5.6,0.2,in,3,3.0,Sports,overnight,zone_5
+ORD-2024-000661,T-Shirt,12.5,9.2,1.0,in,1,0.7,Fashion,standard,zone_2
+ORD-2024-000662,Coffee Mug,3.8,4.5,4.5,in,3,1.1,Kitchen,standard,zone_3
+ORD-2024-000663,Mixing Bowl Set,12.2,12.6,6.2,in,4,2.7,Kitchen,express,domestic
+ORD-2024-000664,Mixing Bowl Set,12.6,11.1,5.9,in,2,2.5,Kitchen,standard,zone_4
+ORD-2024-000665,Monitor Stand,22.9,8.6,3.9,in,3,4.5,Office,express,domestic
+ORD-2024-000666,Power Bank,6.4,2.8,1.0,in,3,1.5,Electronics,standard,zone_4
+ORD-2024-000667,Cable Organizer,12.4,9.2,2.0,in,4,0.9,Office,standard,zone_2
+ORD-2024-000668,Desk Organizer,14.2,9.4,3.2,in,3,2.0,Office,overnight,domestic
+ORD-2024-000669,Sunglasses,6.5,5.7,2.6,in,3,0.4,Fashion,standard,zone_5
+ORD-2024-000670,Wireless Keyboard,16.3,6.2,1.4,in,1,2.2,Electronics,express,international
+ORD-2024-000671,Phone Case,6.2,3.2,0.8,in,1,0.3,Electronics,standard,zone_2
+ORD-2024-000672,Cutting Board,17.5,10.5,0.8,in,3,3.0,Kitchen,overnight,zone_4
+ORD-2024-000673,Jeans,13.5,10.0,1.8,in,2,1.8,Fashion,standard,zone_4
+ORD-2024-000674,Essential Oils Set,8.5,6.5,2.0,in,4,1.3,Home,overnight,domestic
+ORD-2024-000675,Protein Shaker,3.9,4.4,9.5,in,1,0.9,Sports,express,zone_5
+ORD-2024-000676,Kitchen Timer,3.4,3.5,2.0,in,4,0.3,Kitchen,overnight,zone_3
+ORD-2024-000677,Laptop,15.2,11.1,1.2,in,3,5.1,Electronics,overnight,zone_5
+ORD-2024-000678,Portable Humidifier,7.1,6.4,8.6,in,1,2.3,Home,overnight,zone_4
+ORD-2024-000679,Exercise Ball,11.0,11.7,12.2,in,3,2.9,Sports,overnight,zone_4
+ORD-2024-000680,T-Shirt,12.0,9.9,0.9,in,1,0.6,Fashion,express,international
+ORD-2024-000681,Handbag,12.9,10.0,6.3,in,1,2.4,Fashion,express,zone_4
+ORD-2024-000682,Desk Mat,36.3,16.5,0.1,in,4,1.8,Office,standard,zone_2
+ORD-2024-000683,Coffee Mug,4.3,4.3,4.7,in,3,1.0,Kitchen,standard,domestic
+ORD-2024-000684,Protein Shaker,3.8,4.4,10.3,in,2,0.6,Sports,overnight,zone_3
+ORD-2024-000685,Laptop,15.8,9.9,1.3,in,3,4.9,Electronics,standard,zone_4
+ORD-2024-000686,Water Bottle,10.1,3.0,3.0,in,4,1.2,Sports,overnight,zone_4
+ORD-2024-000687,Wall Clock,11.1,11.6,2.0,in,4,2.5,Home,express,zone_5
+ORD-2024-000688,LED Desk Lamp,8.4,5.8,20.0,in,4,2.7,Office,express,zone_2
+ORD-2024-000689,Handbag,15.2,10.3,6.6,in,3,1.6,Fashion,standard,zone_5
+ORD-2024-000690,Tablet,10.7,6.9,0.3,in,4,1.5,Electronics,standard,zone_2
+ORD-2024-000691,Smartphone,5.8,3.3,0.3,in,1,0.5,Electronics,express,zone_4
+ORD-2024-000692,Sunglasses,6.2,6.3,2.9,in,1,0.4,Fashion,overnight,zone_2
+ORD-2024-000693,Resistance Bands,8.5,6.5,3.0,in,4,1.0,Sports,standard,domestic
+ORD-2024-000694,Power Bank,5.7,2.7,0.8,in,2,1.2,Electronics,overnight,domestic
+ORD-2024-000695,Utensil Set,13.7,7.8,2.0,in,1,2.2,Kitchen,standard,zone_3
+ORD-2024-000696,Sunglasses,5.7,5.6,2.7,in,1,0.2,Fashion,standard,zone_5
+ORD-2024-000697,Kitchen Timer,3.4,3.4,1.9,in,3,0.5,Kitchen,express,zone_4
+ORD-2024-000698,Jump Rope,10.1,4.2,1.3,in,1,0.7,Sports,standard,zone_2
+ORD-2024-000699,Sneakers,11.5,8.6,5.0,in,3,2.1,Fashion,standard,zone_3
+ORD-2024-000700,Cutting Board,15.5,9.3,0.8,in,1,3.3,Kitchen,standard,zone_3
+ORD-2024-000701,Jewelry Box,9.9,6.2,3.2,in,2,1.9,Home,standard,zone_2
+ORD-2024-000702,Coffee Mug,4.3,3.9,4.4,in,3,1.2,Kitchen,express,zone_2
+ORD-2024-000703,Mixing Bowl Set,10.7,10.6,6.1,in,1,2.3,Kitchen,overnight,zone_5
+ORD-2024-000704,Essential Oils Set,8.6,6.5,2.0,in,3,1.0,Home,standard,zone_2
+ORD-2024-000705,Belt,19.4,2.2,0.5,in,3,0.7,Fashion,overnight,domestic
+ORD-2024-000706,Monitor Stand,21.8,9.5,4.6,in,1,5.3,Office,standard,zone_5
+ORD-2024-000707,Belt,16.3,1.9,0.5,in,4,0.8,Fashion,express,domestic
+ORD-2024-000708,Mixing Bowl Set,11.5,10.6,6.2,in,3,3.0,Kitchen,standard,zone_5
+ORD-2024-000709,Kitchen Timer,3.4,3.5,1.7,in,4,0.5,Kitchen,overnight,zone_4
+ORD-2024-000710,Storage Basket,15.4,10.0,8.5,in,4,2.5,Home,express,zone_4
+ORD-2024-000711,Water Bottle,11.0,2.9,3.2,in,1,1.5,Sports,overnight,international
+ORD-2024-000712,Lunch Box,9.5,6.6,3.8,in,2,2.2,Kitchen,overnight,zone_4
+ORD-2024-000713,Cutting Board,14.6,9.9,0.8,in,4,3.1,Kitchen,overnight,zone_3
+ORD-2024-000714,Throw Pillow,19.0,16.4,6.5,in,1,1.5,Home,standard,zone_4
+ORD-2024-000715,Bluetooth Speaker,8.7,4.5,4.1,in,2,2.2,Electronics,express,international
+ORD-2024-000716,Pen Holder,3.9,4.1,5.6,in,2,1.0,Office,overnight,zone_4
+ORD-2024-000717,Bluetooth Speaker,9.1,3.9,4.5,in,3,1.6,Electronics,express,zone_3
+ORD-2024-000718,USB Hub,4.9,2.7,0.9,in,4,0.4,Electronics,standard,zone_5
+ORD-2024-000719,Essential Oils Set,8.2,5.6,2.1,in,3,1.1,Home,standard,zone_4
+ORD-2024-000720,Handbag,13.8,10.1,6.0,in,3,1.8,Fashion,express,international
+ORD-2024-000721,Power Bank,5.3,3.0,1.0,in,1,0.8,Electronics,express,international
+ORD-2024-000722,Notebook Set,11.6,9.1,1.4,in,3,0.8,Office,express,zone_3
+ORD-2024-000723,Storage Basket,12.8,10.0,8.0,in,2,2.4,Home,overnight,international
+ORD-2024-000724,Yoga Mat,26.1,5.6,0.3,in,2,2.6,Sports,express,zone_2
+ORD-2024-000725,Cable Organizer,12.7,7.9,1.7,in,2,1.1,Office,express,zone_4
+ORD-2024-000726,Essential Oils Set,8.7,5.8,2.0,in,1,1.4,Home,overnight,zone_2
+ORD-2024-000727,Tablet,11.9,7.2,0.2,in,4,1.2,Electronics,standard,international
+ORD-2024-000728,Gaming Mouse,4.3,2.3,1.6,in,3,0.3,Electronics,express,zone_4
+ORD-2024-000729,Gaming Mouse,4.5,2.2,1.7,in,3,0.5,Electronics,overnight,international
+ORD-2024-000730,Handbag,14.7,9.8,5.9,in,3,2.1,Fashion,express,zone_5
+ORD-2024-000731,Resistance Bands,9.1,6.2,2.6,in,1,1.0,Sports,standard,zone_4
+ORD-2024-000732,Notebook Set,12.2,8.1,1.4,in,1,1.1,Office,overnight,zone_5
+ORD-2024-000733,Picture Frame,10.3,8.8,0.9,in,4,1.3,Home,express,international
+ORD-2024-000734,Storage Basket,13.5,11.3,9.0,in,4,2.7,Home,express,zone_5
+ORD-2024-000735,Notebook Set,12.9,8.2,1.6,in,4,1.2,Office,express,zone_4
+ORD-2024-000736,Exercise Ball,11.2,13.1,13.1,in,1,2.9,Sports,express,zone_5
+ORD-2024-000737,Notebook Set,12.8,8.3,1.4,in,1,0.9,Office,standard,zone_4
+ORD-2024-000738,Yoga Mat,26.1,5.7,0.3,in,2,3.0,Sports,express,domestic
+ORD-2024-000739,Wireless Keyboard,16.3,6.5,1.4,in,2,2.1,Electronics,express,zone_5
+ORD-2024-000740,Throw Pillow,18.0,16.8,6.5,in,3,2.1,Home,standard,zone_4
+ORD-2024-000741,Exercise Ball,11.0,12.2,11.3,in,4,3.0,Sports,standard,domestic
+ORD-2024-000742,Cable Organizer,11.6,8.5,1.9,in,1,1.1,Office,overnight,international
+ORD-2024-000743,Lunch Box,10.6,6.8,3.8,in,4,1.8,Kitchen,express,zone_2
+ORD-2024-000744,Candle Set,3.0,3.2,5.1,in,3,1.1,Home,express,zone_2
+ORD-2024-000745,Watch,2.1,2.1,0.8,in,3,0.2,Fashion,overnight,zone_3
+ORD-2024-000746,Portable Humidifier,7.3,6.5,8.4,in,2,2.2,Home,standard,zone_2
+ORD-2024-000747,Gym Towel,17.0,23.2,0.5,in,3,0.9,Sports,overnight,zone_5
+ORD-2024-000748,Kitchen Scale,9.6,6.1,2.1,in,3,3.5,Kitchen,standard,zone_3
+ORD-2024-000749,Kitchen Timer,3.0,3.3,1.7,in,2,0.5,Kitchen,express,international
+ORD-2024-000750,Belt,16.9,2.0,0.5,in,1,0.6,Fashion,express,zone_5
+ORD-2024-000751,Sunglasses,6.5,6.2,2.6,in,4,0.2,Fashion,express,domestic
+ORD-2024-000752,Portable Humidifier,6.6,6.6,7.5,in,3,2.1,Home,express,zone_5
+ORD-2024-000753,Protein Shaker,4.2,4.4,10.4,in,1,0.9,Sports,express,zone_3
+ORD-2024-000754,Cable Organizer,13.4,8.5,1.7,in,1,1.1,Office,express,zone_3
+ORD-2024-000755,Desk Calendar,11.3,9.0,0.5,in,1,0.7,Office,overnight,zone_3
+ORD-2024-000756,T-Shirt,10.9,9.5,1.0,in,3,0.7,Fashion,standard,domestic
+ORD-2024-000757,Gym Towel,15.9,24.4,0.5,in,2,1.1,Sports,overnight,international
+ORD-2024-000758,Cutting Board,15.2,9.6,0.8,in,1,3.8,Kitchen,standard,zone_4
+ORD-2024-000759,Storage Basket,14.5,11.8,8.9,in,1,2.1,Home,standard,zone_2
+ORD-2024-000760,Gym Towel,15.4,23.0,0.5,in,4,1.0,Sports,standard,zone_2
+ORD-2024-000761,Utensil Set,13.4,7.7,2.2,in,1,2.3,Kitchen,overnight,zone_4
+ORD-2024-000762,Storage Basket,13.7,10.7,7.8,in,2,2.4,Home,standard,zone_5
+ORD-2024-000763,Water Bottle,9.5,3.1,3.0,in,4,1.4,Sports,standard,international
+ORD-2024-000764,Tablet,11.4,8.0,0.2,in,1,1.5,Electronics,standard,zone_3
+ORD-2024-000765,Watch,2.1,2.0,0.8,in,4,0.3,Fashion,standard,zone_4
+ORD-2024-000766,Wall Clock,12.7,11.0,2.3,in,3,2.7,Home,standard,international
+ORD-2024-000767,Sunglasses,6.4,5.7,2.8,in,2,0.2,Fashion,overnight,zone_4
+ORD-2024-000768,Desk Calendar,10.5,9.1,0.5,in,3,0.7,Office,overnight,zone_5
+ORD-2024-000769,Monitor Stand,21.4,9.4,4.0,in,4,4.3,Office,standard,zone_3
+ORD-2024-000770,Picture Frame,10.2,8.2,0.8,in,4,1.7,Home,overnight,zone_4
+ORD-2024-000771,Phone Case,7.5,3.4,0.9,in,4,0.3,Electronics,overnight,zone_5
+ORD-2024-000772,Gym Towel,14.6,21.8,0.5,in,4,1.1,Sports,standard,zone_4
+ORD-2024-000773,Throw Pillow,18.9,18.3,6.5,in,1,1.9,Home,standard,domestic
+ORD-2024-000774,Handbag,15.0,10.8,6.1,in,4,2.1,Fashion,standard,international
+ORD-2024-000775,Smartphone,5.6,3.3,0.3,in,1,0.5,Electronics,express,international
+ORD-2024-000776,Desk Mat,36.6,14.3,0.1,in,1,1.3,Office,standard,international
+ORD-2024-000777,Wall Clock,11.5,12.6,2.0,in,2,2.3,Home,overnight,zone_3
+ORD-2024-000778,Exercise Ball,13.1,12.3,10.9,in,2,2.8,Sports,express,zone_3
+ORD-2024-000779,Storage Basket,12.8,10.8,8.3,in,1,2.3,Home,overnight,domestic
+ORD-2024-000780,Jump Rope,9.5,3.9,1.1,in,1,0.7,Sports,express,zone_2
+ORD-2024-000781,Essential Oils Set,8.2,6.8,2.1,in,4,1.5,Home,standard,zone_5
+ORD-2024-000782,Smartphone,6.7,3.0,0.3,in,1,0.5,Electronics,standard,zone_3
+ORD-2024-000783,Power Bank,6.2,2.8,0.8,in,2,1.0,Electronics,overnight,zone_4
+ORD-2024-000784,Notebook Set,11.2,8.4,1.5,in,3,0.6,Office,express,zone_4
+ORD-2024-000785,Exercise Ball,12.8,13.2,12.4,in,2,2.5,Sports,standard,international
+ORD-2024-000786,Desk Calendar,11.5,8.2,0.5,in,1,0.7,Office,express,zone_5
+ORD-2024-000787,Sneakers,11.8,8.2,4.6,in,1,1.9,Fashion,express,zone_3
+ORD-2024-000788,Wall Clock,11.7,11.1,2.1,in,4,2.4,Home,express,international
+ORD-2024-000789,Utensil Set,13.3,7.9,2.1,in,2,2.1,Kitchen,express,zone_3
+ORD-2024-000790,Cutting Board,14.6,9.4,0.7,in,4,3.7,Kitchen,express,zone_3
+ORD-2024-000791,Watch,2.2,2.0,0.7,in,2,0.4,Fashion,standard,domestic
+ORD-2024-000792,Power Bank,5.7,2.7,0.8,in,2,1.1,Electronics,express,domestic
+ORD-2024-000793,Kitchen Scale,8.9,6.6,2.2,in,2,3.6,Kitchen,overnight,domestic
+ORD-2024-000794,LED Desk Lamp,7.8,6.9,18.7,in,1,3.3,Office,overnight,international
+ORD-2024-000795,Gaming Mouse,4.6,2.4,1.9,in,2,0.4,Electronics,overnight,domestic
+ORD-2024-000796,Power Bank,6.0,3.0,0.9,in,1,1.1,Electronics,express,domestic
+ORD-2024-000797,Jeans,14.8,9.3,2.1,in,3,1.6,Fashion,standard,zone_2
+ORD-2024-000798,USB Hub,5.4,2.5,0.8,in,2,0.5,Electronics,express,international
+ORD-2024-000799,Protein Shaker,4.1,3.8,9.9,in,3,0.7,Sports,standard,international
+ORD-2024-000800,Portable Humidifier,6.9,6.7,7.5,in,3,1.9,Home,express,zone_4
+ORD-2024-000801,Belt,17.0,1.8,0.5,in,1,0.5,Fashion,standard,zone_4
+ORD-2024-000802,Wall Clock,11.8,10.9,2.1,in,3,2.6,Home,overnight,domestic
+ORD-2024-000803,Mixing Bowl Set,12.3,11.4,6.5,in,4,2.2,Kitchen,overnight,zone_4
+ORD-2024-000804,Bluetooth Speaker,9.5,4.2,3.8,in,3,1.9,Electronics,standard,international
+ORD-2024-000805,Jewelry Box,8.9,5.6,3.5,in,4,1.7,Home,express,international
+ORD-2024-000806,Sneakers,13.7,7.7,4.5,in,4,2.0,Fashion,standard,domestic
+ORD-2024-000807,Power Bank,5.8,3.0,0.9,in,1,1.4,Electronics,overnight,zone_2
+ORD-2024-000808,Watch,2.3,2.0,0.7,in,2,0.5,Fashion,express,zone_4
+ORD-2024-000809,Picture Frame,10.7,7.5,0.8,in,3,1.2,Home,standard,zone_3
+ORD-2024-000810,Cutting Board,15.2,9.7,0.8,in,2,2.7,Kitchen,standard,zone_4
+ORD-2024-000811,Jump Rope,10.1,3.9,1.3,in,4,0.6,Sports,express,zone_3
+ORD-2024-000812,Utensil Set,11.8,8.7,2.1,in,2,2.1,Kitchen,express,zone_3
+ORD-2024-000813,Gym Towel,15.4,24.0,0.5,in,4,1.0,Sports,express,zone_3
+ORD-2024-000814,Protein Shaker,3.8,4.1,9.8,in,3,0.9,Sports,express,zone_3
+ORD-2024-000815,Phone Case,7.1,3.5,0.8,in,2,0.3,Electronics,express,zone_5
+ORD-2024-000816,Laptop,14.8,11.5,1.1,in,1,4.7,Electronics,express,international
+ORD-2024-000817,Exercise Ball,11.1,11.0,13.1,in,1,2.8,Sports,overnight,domestic
+ORD-2024-000818,Desk Organizer,15.3,10.2,2.9,in,4,2.1,Office,express,zone_2
+ORD-2024-000819,Handbag,14.2,10.8,6.0,in,3,1.7,Fashion,express,zone_2
+ORD-2024-000820,Protein Shaker,4.0,4.5,10.5,in,3,0.6,Sports,overnight,zone_5
+ORD-2024-000821,Kitchen Scale,8.9,6.3,2.3,in,4,3.7,Kitchen,express,domestic
+ORD-2024-000822,Belt,18.1,2.1,0.5,in,1,0.8,Fashion,express,domestic
+ORD-2024-000823,Kitchen Scale,9.0,7.1,2.3,in,4,2.9,Kitchen,overnight,zone_2
+ORD-2024-000824,LED Desk Lamp,8.0,6.1,17.6,in,1,3.3,Office,express,zone_4
+ORD-2024-000825,Exercise Ball,10.9,12.5,12.6,in,2,2.9,Sports,overnight,domestic
+ORD-2024-000826,Sunglasses,6.3,5.9,2.8,in,1,0.4,Fashion,overnight,zone_2
+ORD-2024-000827,Water Bottle,11.1,2.8,3.2,in,4,1.1,Kitchen,express,domestic
+ORD-2024-000828,Wireless Keyboard,16.6,6.7,1.5,in,3,1.8,Electronics,express,zone_5
+ORD-2024-000829,Wireless Keyboard,18.5,6.2,1.5,in,3,2.0,Electronics,standard,zone_3
+ORD-2024-000830,Coffee Mug,4.0,3.9,5.2,in,4,0.9,Kitchen,overnight,international
+ORD-2024-000831,Desk Mat,36.4,15.5,0.1,in,1,1.6,Office,express,zone_3
+ORD-2024-000832,Gaming Mouse,4.6,2.3,1.8,in,2,0.2,Electronics,overnight,zone_5
+ORD-2024-000833,USB Hub,5.4,2.6,0.9,in,3,0.5,Electronics,express,zone_4
+ORD-2024-000834,Yoga Mat,23.4,6.3,0.2,in,1,3.1,Sports,standard,zone_2
+ORD-2024-000835,Essential Oils Set,8.6,6.1,2.1,in,4,1.2,Home,overnight,international
+ORD-2024-000836,Protein Shaker,4.0,3.8,10.7,in,3,0.7,Sports,express,international
+ORD-2024-000837,Gaming Mouse,4.3,2.4,1.9,in,2,0.3,Electronics,overnight,zone_4
+ORD-2024-000838,Phone Case,6.9,3.2,0.8,in,1,0.2,Electronics,express,zone_3
+ORD-2024-000839,Smartphone,6.7,3.3,0.3,in,3,0.4,Electronics,overnight,domestic
+ORD-2024-000840,Yoga Mat,25.6,6.2,0.2,in,4,2.5,Sports,standard,zone_2
+ORD-2024-000841,Notebook Set,11.6,9.1,1.4,in,1,0.9,Office,overnight,domestic
+ORD-2024-000842,Sunglasses,6.6,6.3,3.1,in,1,0.3,Fashion,express,domestic
+ORD-2024-000843,Cable Organizer,11.8,8.8,1.7,in,1,1.0,Office,express,zone_4
+ORD-2024-000844,Gaming Mouse,4.4,2.5,1.9,in,1,0.2,Electronics,express,zone_5
+ORD-2024-000845,Yoga Mat,23.6,5.6,0.2,in,2,2.9,Sports,standard,domestic
+ORD-2024-000846,Pen Holder,4.4,4.3,6.3,in,2,1.1,Office,overnight,domestic
+ORD-2024-000847,Throw Pillow,17.0,16.3,5.7,in,4,1.8,Home,overnight,zone_5
+ORD-2024-000848,Picture Frame,10.0,8.3,0.8,in,1,1.7,Home,express,domestic
+ORD-2024-000849,Essential Oils Set,9.2,5.9,2.0,in,1,1.2,Home,overnight,domestic
+ORD-2024-000850,Notebook Set,11.6,7.9,1.6,in,2,0.8,Office,standard,zone_4
+ORD-2024-000851,Storage Basket,13.6,11.5,8.1,in,4,2.5,Home,overnight,international
+ORD-2024-000852,Cutting Board,15.0,9.9,0.7,in,2,4.0,Kitchen,express,zone_3
+ORD-2024-000853,Coffee Mug,4.2,3.9,4.8,in,2,1.2,Kitchen,express,zone_2
+ORD-2024-000854,Desk Mat,32.6,14.8,0.1,in,2,1.6,Office,standard,domestic
+ORD-2024-000855,Wall Clock,12.6,11.2,2.1,in,4,2.4,Home,standard,domestic
+ORD-2024-000856,Watch,2.2,2.0,0.7,in,3,0.3,Fashion,overnight,international
+ORD-2024-000857,Lunch Box,10.2,7.4,4.5,in,4,2.2,Kitchen,express,zone_5
+ORD-2024-000858,Desk Mat,34.8,14.4,0.1,in,2,1.4,Office,overnight,zone_4
+ORD-2024-000859,T-Shirt,11.4,9.2,1.1,in,4,0.5,Fashion,express,zone_5
+ORD-2024-000860,Bluetooth Speaker,8.2,4.6,4.0,in,3,1.9,Electronics,express,zone_2
+ORD-2024-000861,Desk Organizer,13.9,10.1,3.4,in,2,2.7,Office,express,domestic
+ORD-2024-000862,Wireless Headphones,7.1,5.6,3.3,in,4,0.7,Electronics,express,zone_2
+ORD-2024-000863,Gym Towel,16.1,23.8,0.5,in,4,0.8,Sports,express,zone_2
+ORD-2024-000864,Sneakers,12.0,8.1,4.4,in,3,2.0,Fashion,express,zone_2
+ORD-2024-000865,Portable Humidifier,7.1,6.7,8.9,in,3,2.4,Home,standard,zone_2
+ORD-2024-000866,Mixing Bowl Set,12.3,12.3,6.8,in,4,2.4,Kitchen,standard,domestic
+ORD-2024-000867,Wall Clock,13.0,11.7,2.2,in,3,2.6,Home,standard,zone_4
+ORD-2024-000868,Jeans,12.9,9.3,2.2,in,2,1.6,Fashion,overnight,zone_4
+ORD-2024-000869,Sneakers,13.1,8.1,5.2,in,2,2.2,Fashion,overnight,zone_2
+ORD-2024-000870,Protein Shaker,4.4,4.4,9.8,in,2,1.0,Sports,express,international
+ORD-2024-000871,Protein Shaker,4.3,3.9,10.4,in,3,0.7,Sports,express,zone_3
+ORD-2024-000872,Kitchen Scale,9.5,6.2,2.1,in,3,3.4,Kitchen,overnight,zone_3
+ORD-2024-000873,Utensil Set,13.7,7.8,2.0,in,2,2.3,Kitchen,express,zone_4
+ORD-2024-000874,Candle Set,3.1,3.0,5.1,in,2,1.0,Home,overnight,domestic
+ORD-2024-000875,Tablet,11.2,6.9,0.2,in,1,1.2,Electronics,standard,zone_3
+ORD-2024-000876,Resistance Bands,9.1,6.0,2.9,in,1,0.9,Sports,overnight,zone_4
+ORD-2024-000877,Essential Oils Set,8.9,5.8,2.3,in,4,1.0,Home,overnight,zone_4
+ORD-2024-000878,Desk Organizer,14.4,10.4,3.2,in,4,2.7,Office,express,zone_3
+ORD-2024-000879,Gym Towel,16.8,23.3,0.5,in,2,0.8,Sports,standard,zone_5
+ORD-2024-000880,Portable Humidifier,6.4,7.3,8.7,in,3,2.3,Home,express,zone_4
+ORD-2024-000881,Desk Mat,36.3,16.1,0.1,in,1,1.3,Office,express,domestic
+ORD-2024-000882,Water Bottle,11.0,3.4,3.1,in,4,1.1,Sports,standard,zone_3
+ORD-2024-000883,Belt,18.1,1.8,0.5,in,4,0.8,Fashion,standard,zone_3
+ORD-2024-000884,USB Hub,4.7,3.0,0.7,in,4,0.4,Electronics,standard,zone_5
+ORD-2024-000885,Protein Shaker,4.4,3.9,10.6,in,1,1.0,Sports,overnight,zone_3
+ORD-2024-000886,T-Shirt,12.5,8.7,1.1,in,3,0.7,Fashion,express,zone_4
+ORD-2024-000887,T-Shirt,11.6,9.6,1.0,in,2,0.6,Fashion,overnight,zone_2
+ORD-2024-000888,Sneakers,12.9,8.1,4.9,in,2,2.4,Fashion,express,zone_3
+ORD-2024-000889,Smartphone,6.0,2.8,0.3,in,2,0.4,Electronics,express,zone_2
+ORD-2024-000890,Storage Basket,14.2,9.9,8.7,in,1,2.0,Home,overnight,zone_5
+ORD-2024-000891,Yoga Mat,22.1,6.1,0.3,in,2,3.0,Sports,express,domestic
+ORD-2024-000892,Jeans,14.4,10.8,2.0,in,4,1.5,Fashion,overnight,zone_2
+ORD-2024-000893,Kitchen Scale,9.6,6.7,2.0,in,3,2.9,Kitchen,overnight,zone_4
+ORD-2024-000894,Exercise Ball,11.8,11.5,11.5,in,1,2.4,Sports,standard,zone_4
+ORD-2024-000895,USB Hub,4.5,3.0,0.9,in,1,0.4,Electronics,express,zone_4
+ORD-2024-000896,Resistance Bands,7.7,5.8,2.8,in,2,0.8,Sports,express,zone_3
+ORD-2024-000897,Desk Organizer,15.0,9.0,3.3,in,3,2.5,Office,express,zone_2
+ORD-2024-000898,Candle Set,3.0,3.3,4.9,in,1,0.7,Home,express,zone_5
+ORD-2024-000899,Smartphone,6.5,3.2,0.3,in,1,0.6,Electronics,standard,zone_2
+ORD-2024-000900,Cutting Board,16.8,11.0,0.8,in,4,2.5,Kitchen,standard,international
+ORD-2024-000901,Belt,17.3,1.8,0.5,in,4,0.9,Fashion,standard,zone_2
+ORD-2024-000902,Coffee Mug,4.5,4.2,4.5,in,4,1.0,Kitchen,standard,zone_5
+ORD-2024-000903,Exercise Ball,12.8,13.1,13.1,in,3,2.9,Sports,express,zone_5
+ORD-2024-000904,Water Bottle,9.7,2.9,3.3,in,4,1.2,Kitchen,overnight,zone_4
+ORD-2024-000905,Kitchen Timer,3.1,3.4,1.7,in,1,0.6,Kitchen,standard,zone_5
+ORD-2024-000906,Desk Calendar,9.9,9.2,0.5,in,2,0.7,Office,express,zone_2
+ORD-2024-000907,Yoga Mat,25.1,5.9,0.3,in,2,2.9,Sports,express,zone_3
+ORD-2024-000908,Desk Organizer,13.6,10.4,3.3,in,1,2.6,Office,overnight,domestic
+ORD-2024-000909,Water Bottle,9.5,3.2,2.9,in,4,1.2,Sports,overnight,zone_4
+ORD-2024-000910,Portable Humidifier,6.6,6.4,8.3,in,4,2.3,Home,overnight,domestic
+ORD-2024-000911,Water Bottle,9.2,3.3,2.9,in,3,1.5,Sports,standard,domestic
+ORD-2024-000912,Desk Mat,38.0,17.2,0.1,in,2,1.8,Office,express,zone_4
+ORD-2024-000913,Gaming Mouse,5.1,2.4,1.8,in,4,0.4,Electronics,standard,zone_2
+ORD-2024-000914,Desk Mat,33.7,16.3,0.1,in,2,1.4,Office,standard,domestic
+ORD-2024-000915,Wall Clock,11.3,11.1,2.2,in,1,2.2,Home,standard,zone_4
+ORD-2024-000916,Essential Oils Set,7.8,6.5,2.2,in,2,1.5,Home,standard,zone_4
+ORD-2024-000917,Lunch Box,10.3,7.0,3.8,in,4,1.9,Kitchen,express,domestic
+ORD-2024-000918,Yoga Mat,25.0,5.6,0.2,in,2,3.1,Sports,standard,zone_4
+ORD-2024-000919,Water Bottle,10.7,3.1,3.2,in,2,1.5,Sports,express,zone_5
+ORD-2024-000920,Power Bank,5.6,2.7,0.8,in,2,1.3,Electronics,overnight,domestic
+ORD-2024-000921,Desk Calendar,10.7,8.8,0.5,in,4,0.6,Office,standard,zone_4
+ORD-2024-000922,Laptop,15.7,11.9,1.1,in,2,6.2,Electronics,express,zone_5
+ORD-2024-000923,Belt,19.5,1.8,0.5,in,3,0.7,Fashion,express,domestic
+ORD-2024-000924,Belt,18.9,1.9,0.5,in,2,0.6,Fashion,overnight,zone_2
+ORD-2024-000925,Candle Set,3.1,3.5,4.7,in,1,0.9,Home,express,international
+ORD-2024-000926,Wireless Keyboard,17.4,6.5,1.3,in,3,1.9,Electronics,express,zone_2
+ORD-2024-000927,Portable Humidifier,7.1,7.0,7.7,in,2,1.9,Home,standard,zone_2
+ORD-2024-000928,Picture Frame,9.9,7.5,0.9,in,1,1.2,Home,standard,zone_3
+ORD-2024-000929,Phone Case,6.3,3.8,0.8,in,3,0.2,Electronics,express,zone_2
+ORD-2024-000930,Resistance Bands,7.8,5.8,2.8,in,1,1.1,Sports,standard,zone_3
+ORD-2024-000931,USB Hub,4.7,2.6,0.7,in,3,0.4,Electronics,standard,domestic
+ORD-2024-000932,Jewelry Box,10.7,5.7,3.6,in,2,1.9,Home,express,zone_4
+ORD-2024-000933,Resistance Bands,8.1,6.1,2.8,in,1,1.1,Sports,standard,zone_5
+ORD-2024-000934,Monitor Stand,20.9,9.3,4.3,in,3,5.3,Office,standard,international
+ORD-2024-000935,Belt,17.8,1.9,0.5,in,4,0.7,Fashion,express,zone_3
+ORD-2024-000936,Kitchen Timer,3.2,3.1,1.7,in,1,0.4,Kitchen,express,international
+ORD-2024-000937,Pen Holder,4.0,4.2,5.5,in,4,1.2,Office,overnight,international
+ORD-2024-000938,Belt,17.2,2.1,0.5,in,3,0.5,Fashion,overnight,zone_3
+ORD-2024-000939,LED Desk Lamp,8.6,6.5,19.0,in,3,2.7,Office,express,zone_4
+ORD-2024-000940,Power Bank,6.2,2.8,0.8,in,1,1.3,Electronics,overnight,zone_5
+ORD-2024-000941,Handbag,12.9,10.2,6.7,in,3,1.9,Fashion,standard,zone_3
+ORD-2024-000942,Notebook Set,12.0,8.6,1.6,in,2,0.8,Office,express,domestic
+ORD-2024-000943,Belt,17.5,2.1,0.5,in,3,0.9,Fashion,standard,zone_4
+ORD-2024-000944,Laptop,16.0,11.6,1.2,in,3,6.5,Electronics,express,zone_5
+ORD-2024-000945,USB Hub,4.6,2.8,0.7,in,1,0.5,Electronics,standard,zone_4
+ORD-2024-000946,Handbag,14.7,11.1,6.7,in,4,2.3,Fashion,express,domestic
+ORD-2024-000947,Monitor Stand,21.9,7.9,4.2,in,4,5.2,Office,standard,zone_3
+ORD-2024-000948,Gym Towel,15.6,22.5,0.5,in,1,1.2,Sports,express,zone_4
+ORD-2024-000949,Wall Clock,12.5,11.3,2.3,in,4,2.5,Home,express,zone_4
+ORD-2024-000950,Watch,2.2,2.1,0.8,in,2,0.3,Fashion,overnight,zone_3
+ORD-2024-000951,Water Bottle,9.3,3.2,3.3,in,2,1.1,Sports,overnight,international
+ORD-2024-000952,T-Shirt,13.1,9.3,0.9,in,2,0.8,Fashion,overnight,zone_2
+ORD-2024-000953,Kitchen Scale,8.7,6.0,2.1,in,4,3.0,Kitchen,overnight,zone_5
+ORD-2024-000954,Coffee Mug,3.8,4.0,4.4,in,1,1.0,Kitchen,overnight,zone_2
+ORD-2024-000955,Gym Towel,17.2,23.2,0.5,in,4,0.8,Sports,overnight,international
+ORD-2024-000956,Kitchen Timer,3.1,3.1,1.7,in,4,0.4,Kitchen,standard,international
+ORD-2024-000957,Desk Organizer,15.2,9.1,3.3,in,2,2.6,Office,overnight,domestic
+ORD-2024-000958,Yoga Mat,25.0,5.9,0.2,in,4,2.6,Sports,overnight,zone_5
+ORD-2024-000959,Protein Shaker,4.0,4.1,9.3,in,1,0.7,Sports,standard,zone_5
+ORD-2024-000960,Candle Set,3.1,3.1,4.3,in,1,1.1,Home,overnight,international
+ORD-2024-000961,Belt,18.1,2.1,0.5,in,2,0.8,Fashion,standard,zone_4
+ORD-2024-000962,Portable Humidifier,6.3,6.6,8.2,in,1,1.8,Home,express,zone_2
+ORD-2024-000963,Wireless Keyboard,19.2,6.5,1.5,in,4,2.4,Electronics,standard,zone_4
+ORD-2024-000964,Essential Oils Set,7.7,5.9,2.2,in,2,1.2,Home,standard,zone_5
+ORD-2024-000965,Gym Towel,15.2,24.5,0.5,in,3,0.8,Sports,express,zone_4
+ORD-2024-000966,Cutting Board,16.1,9.7,0.7,in,2,3.9,Kitchen,overnight,zone_5
+ORD-2024-000967,Kitchen Timer,2.9,3.0,1.9,in,2,0.5,Kitchen,overnight,zone_2
+ORD-2024-000968,Cable Organizer,11.1,8.8,1.7,in,3,0.9,Office,standard,zone_4
+ORD-2024-000969,Wireless Keyboard,17.4,6.4,1.3,in,2,2.3,Electronics,express,zone_4
+ORD-2024-000970,Protein Shaker,4.3,4.1,9.3,in,4,0.9,Sports,express,zone_2
+ORD-2024-000971,Desk Mat,36.4,16.7,0.1,in,3,1.5,Office,express,zone_5
+ORD-2024-000972,T-Shirt,12.9,9.1,0.9,in,2,0.7,Fashion,standard,zone_5
+ORD-2024-000973,Portable Humidifier,6.2,6.3,8.5,in,2,1.8,Home,standard,zone_3
+ORD-2024-000974,Watch,2.2,1.9,0.8,in,4,0.2,Fashion,standard,zone_4
+ORD-2024-000975,Protein Shaker,3.9,4.6,10.1,in,1,0.7,Sports,express,zone_4
+ORD-2024-000976,Watch,2.3,1.9,0.8,in,4,0.3,Fashion,overnight,international
+ORD-2024-000977,Belt,18.5,2.0,0.5,in,1,0.7,Fashion,overnight,zone_3
+ORD-2024-000978,Yoga Mat,22.2,6.2,0.2,in,4,2.7,Sports,express,zone_5
+ORD-2024-000979,Kitchen Scale,8.8,6.8,2.0,in,3,3.4,Kitchen,standard,zone_2
+ORD-2024-000980,Laptop,14.3,9.8,1.2,in,2,5.1,Electronics,overnight,zone_5
+ORD-2024-000981,Desk Organizer,14.7,9.0,3.3,in,1,2.4,Office,overnight,zone_4
+ORD-2024-000982,Yoga Mat,23.6,5.7,0.2,in,4,3.1,Sports,overnight,zone_4
+ORD-2024-000983,Desk Calendar,11.1,8.7,0.5,in,2,0.6,Office,overnight,zone_5
+ORD-2024-000984,T-Shirt,11.4,9.5,1.0,in,1,0.7,Fashion,standard,zone_3
+ORD-2024-000985,Picture Frame,11.1,7.6,0.9,in,3,1.4,Home,overnight,zone_5
+ORD-2024-000986,Candle Set,3.4,3.5,4.7,in,4,0.9,Home,standard,international
+ORD-2024-000987,LED Desk Lamp,7.5,6.0,20.3,in,4,2.7,Office,express,zone_3
+ORD-2024-000988,Desk Organizer,12.8,8.8,3.3,in,3,2.1,Office,overnight,zone_5
+ORD-2024-000989,Bluetooth Speaker,9.3,4.5,4.1,in,3,2.3,Electronics,express,zone_2
+ORD-2024-000990,Laptop,16.3,11.6,1.1,in,2,4.9,Electronics,express,international
+ORD-2024-000991,Resistance Bands,8.9,6.0,2.8,in,4,1.1,Sports,overnight,zone_3
+ORD-2024-000992,Jump Rope,10.9,4.1,1.1,in,2,0.5,Sports,express,domestic
+ORD-2024-000993,Wireless Headphones,7.4,5.6,3.1,in,4,0.9,Electronics,express,zone_3
+ORD-2024-000994,Mixing Bowl Set,11.5,10.4,5.8,in,3,2.3,Kitchen,standard,international
+ORD-2024-000995,Handbag,15.3,11.6,5.7,in,4,2.0,Fashion,express,zone_3
+ORD-2024-000996,Water Bottle,9.2,2.8,3.4,in,4,1.1,Sports,standard,domestic
+ORD-2024-000997,Utensil Set,13.1,8.7,2.1,in,2,2.0,Kitchen,standard,international
+ORD-2024-000998,Sunglasses,6.6,5.5,3.0,in,1,0.2,Fashion,overnight,international
+ORD-2024-000999,Desk Calendar,10.3,9.0,0.5,in,4,0.6,Office,standard,international
+ORD-2024-001000,Gaming Mouse,4.5,2.2,1.7,in,3,0.5,Electronics,standard,zone_2

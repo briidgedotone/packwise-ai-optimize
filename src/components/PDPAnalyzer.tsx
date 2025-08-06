@@ -1,11 +1,11 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Upload, Eye, BarChart3, FileImage, Camera, Zap, Target, CheckCircle2, AlertCircle, Info, Sparkles } from 'lucide-react';
+import { Upload, Eye, BarChart3, FileImage, Camera, AlertCircle } from 'lucide-react';
 
 export const PDPAnalyzer = () => {
   const [files, setFiles] = useState<{
@@ -40,83 +40,49 @@ export const PDPAnalyzer = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-indigo-50/30 to-pink-50/20">
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        <div className="bg-white rounded-xl shadow-lg border border-slate-200/60 p-8 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-500/10 to-pink-500/10 rounded-bl-full"></div>
-          <div className="relative">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl shadow-lg">
-                  <Eye className="h-8 w-8 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-3xl font-bold text-slate-800 mb-2">PDP Analyzer</h2>
-                  <p className="text-slate-600 text-lg">
-                    AI-powered visual analysis and competitor benchmarking
-                  </p>
-                </div>
+    <div className="min-h-screen bg-gray-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
+        <div className="bg-white rounded-lg border border-gray-100 p-4 sm:p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
+                <Eye className="h-5 w-5 text-white" />
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-pink-50 border border-pink-200 rounded-lg">
-                <Camera className="h-4 w-4 text-pink-600" />
-                <span className="text-sm font-medium text-pink-700">Visual AI</span>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-medium text-gray-900">PDP Analyzer</h1>
+                <p className="text-xs sm:text-sm text-gray-500 mt-1">
+                  AI-powered visual analysis and competitor benchmarking
+                </p>
               </div>
             </div>
-            
-            <div className="grid md:grid-cols-3 gap-4 mt-6">
-              <div className="flex items-center gap-3 p-4 bg-indigo-50 rounded-lg border border-indigo-200">
-                <div className="p-2 bg-indigo-100 rounded-lg">
-                  <Sparkles className="h-5 w-5 text-indigo-600" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-indigo-800">Visual Analysis</div>
-                  <div className="text-xs text-indigo-600">AI-powered image recognition</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-pink-50 rounded-lg border border-pink-200">
-                <div className="p-2 bg-pink-100 rounded-lg">
-                  <Target className="h-5 w-5 text-pink-600" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-pink-800">Visibility Score</div>
-                  <div className="text-xs text-pink-600">Benchmarked performance</div>
-                </div>
-              </div>
-              <div className="flex items-center gap-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                <div className="p-2 bg-purple-100 rounded-lg">
-                  <Zap className="h-5 w-5 text-purple-600" />
-                </div>
-                <div>
-                  <div className="text-sm font-medium text-purple-800">Smart Recommendations</div>
-                  <div className="text-xs text-purple-600">Actionable design insights</div>
-                </div>
-              </div>
+            <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-pink-50 border border-pink-200 rounded-lg">
+              <Camera className="h-3 w-3 text-pink-600" />
+              <span className="text-xs font-medium text-pink-700">Visual AI</span>
             </div>
           </div>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
           {/* Upload Section */}
-          <div className="space-y-6">
-            <Card className="bg-white border-slate-200/60 shadow-lg hover:shadow-xl transition-shadow duration-300">
-              <CardHeader className="pb-4 bg-gradient-to-r from-slate-50 to-indigo-50/50 rounded-t-lg">
-                <CardTitle className="text-xl flex items-center gap-3 text-slate-800">
-                  <div className="p-2 bg-indigo-100 rounded-lg">
-                    <FileImage className="h-5 w-5 text-indigo-600" />
+          <div className="space-y-4">
+            <Card className="bg-white border-gray-100 shadow-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-3">
+                  <div className="w-8 h-8 bg-indigo-50 rounded-lg flex items-center justify-center">
+                    <FileImage className="h-4 w-4 text-indigo-600" />
                   </div>
                   Your PDP
                 </CardTitle>
-                <div className="mt-2 p-3 bg-indigo-50 border border-indigo-200 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <Info className="h-4 w-4 text-indigo-600" />
-                    <span className="text-sm text-indigo-700">Upload your Principal Display Panel for AI analysis</span>
-                  </div>
-                </div>
+                <CardDescription className="text-xs sm:text-sm text-gray-500 mt-2">
+                  Upload your Principal Display Panel for AI analysis
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="border-2 border-dashed border-slate-200 rounded-lg p-10 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
-                  <Upload className="h-12 w-12 mx-auto mb-4 text-slate-400" />
-                  <p className="text-sm text-slate-600 mb-4">
+                <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
+                  <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                    <Upload className="h-4 w-4 text-gray-600" />
+                  </div>
+                  <p className="text-xs sm:text-sm text-gray-600 mb-2">
                     Upload your Principal Display Panel (JPG, PNG, PDF)
                   </p>
                   <Input
@@ -129,7 +95,7 @@ export const PDPAnalyzer = () => {
                   <Button 
                     variant="outline"
                     onClick={() => document.getElementById('main-pdp')?.click()}
-                    className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                    className="border-gray-200 text-gray-700 hover:bg-gray-50 text-sm"
                   >
                     {files.mainPDP ? files.mainPDP.name : 'Choose File'}
                   </Button>
@@ -137,15 +103,15 @@ export const PDPAnalyzer = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-slate-200/60 shadow-sm">
+            <Card className="bg-white border-gray-100 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-slate-800">Competitor PDPs (Optional)</CardTitle>
-                <CardDescription className="text-slate-600">
+                <CardTitle className="text-base sm:text-lg font-medium text-gray-900">Competitor PDPs (Optional)</CardTitle>
+                <CardDescription className="text-xs sm:text-sm text-gray-500">
                   Upload up to 4 competitor PDPs for benchmarking
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="border-2 border-dashed border-slate-200 rounded-lg p-8 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
+                <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
                   <Input
                     type="file"
                     accept=".jpg,.jpeg,.png,.pdf"
@@ -158,7 +124,7 @@ export const PDPAnalyzer = () => {
                     variant="ghost"
                     onClick={() => document.getElementById('competitor-pdp')?.click()}
                     disabled={files.competitors.length >= 4}
-                    className="text-slate-600 hover:bg-slate-100"
+                    className="text-gray-600 hover:bg-gray-100 text-sm"
                   >
                     Add Competitor ({files.competitors.length}/4)
                   </Button>
@@ -167,13 +133,13 @@ export const PDPAnalyzer = () => {
                 {files.competitors.length > 0 && (
                   <div className="space-y-2">
                     {files.competitors.map((file, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
-                        <span className="text-sm text-slate-700">{file.name}</span>
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                        <span className="text-sm text-gray-700">{file.name}</span>
                         <Button 
                           variant="ghost" 
                           size="sm" 
                           onClick={() => removeCompetitor(index)}
-                          className="text-slate-500 hover:text-slate-700 hover:bg-slate-200"
+                          className="text-gray-500 hover:text-gray-700 hover:bg-gray-200"
                         >
                           Remove
                         </Button>
@@ -184,37 +150,37 @@ export const PDPAnalyzer = () => {
               </CardContent>
             </Card>
 
-            <Card className="bg-white border-slate-200/60 shadow-sm">
+            <Card className="bg-white border-gray-100 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-slate-800">Product Information</CardTitle>
-                <CardDescription className="text-slate-600">
+                <CardTitle className="text-base sm:text-lg font-medium text-gray-900">Product Information</CardTitle>
+                <CardDescription className="text-xs sm:text-sm text-gray-500">
                   Optional details to improve analysis accuracy
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 <div className="space-y-2">
-                  <Label className="text-slate-700 font-medium">Product Category</Label>
+                  <Label className="text-gray-700 font-medium text-xs sm:text-sm">Product Category</Label>
                   <Input
                     placeholder="e.g., snacks, cosmetics, electronics"
-                    className="border-slate-300 focus:border-slate-400 focus:ring-slate-400"
+                    className="border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     value={metaInfo.category}
                     onChange={(e) => setMetaInfo(prev => ({ ...prev, category: e.target.value }))}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-700 font-medium">Intended Shelf Type</Label>
+                  <Label className="text-gray-700 font-medium text-xs sm:text-sm">Intended Shelf Type</Label>
                   <Input
                     placeholder="e.g., vertical peg, laydown box, upright box"
-                    className="border-slate-300 focus:border-slate-400 focus:ring-slate-400"
+                    className="border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     value={metaInfo.shelfType}
                     onChange={(e) => setMetaInfo(prev => ({ ...prev, shelfType: e.target.value }))}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-slate-700 font-medium">Primary Claims</Label>
+                  <Label className="text-gray-700 font-medium text-xs sm:text-sm">Primary Claims</Label>
                   <Textarea
                     placeholder="List the main claims or benefits featured on your package"
-                    className="border-slate-300 focus:border-slate-400 focus:ring-slate-400"
+                    className="border-gray-200 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
                     value={metaInfo.claims}
                     onChange={(e) => setMetaInfo(prev => ({ ...prev, claims: e.target.value }))}
                   />
@@ -223,66 +189,65 @@ export const PDPAnalyzer = () => {
             </Card>
           </div>
 
-          {/* Results Section */}
-          <div className="space-y-6">
-            <Card className="bg-white border-slate-200/60 shadow-sm">
+          {/* Analysis Options */}
+          <div className="space-y-4">
+            <Card className="bg-white border-gray-100 shadow-sm">
               <CardHeader className="pb-4">
-                <CardTitle className="text-lg flex items-center gap-2 text-slate-800">
-                  <BarChart3 className="h-5 w-5 text-slate-600" />
-                  Visibility Scores
+                <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-gray-600" />
+                  Analysis Settings
                 </CardTitle>
+                <CardDescription className="text-xs sm:text-sm text-gray-500">
+                  Configure analysis parameters for better results
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="text-center py-16 text-slate-500">
-                  <Eye className="h-16 w-16 mx-auto mb-4 opacity-40" />
-                  <p className="text-sm">Upload your PDP to see visibility analysis</p>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-gray-700 font-medium text-sm">Analysis Focus</Label>
+                  <select className="w-full px-3 py-2 border border-gray-200 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-xs sm:text-sm">
+                    <option>Overall Visibility</option>
+                    <option>Color Contrast</option>
+                    <option>Text Readability</option>
+                    <option>Brand Recognition</option>
+                  </select>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white border-slate-200/60 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-slate-800">Design Recommendations</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-slate-500">
-                  <p className="text-sm">AI recommendations will appear here</p>
+                <div className="space-y-2">
+                  <Label className="text-gray-700 font-medium text-sm">Target Demographics</Label>
+                  <select className="w-full px-3 py-2 border border-gray-200 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-xs sm:text-sm">
+                    <option>General Consumer</option>
+                    <option>Premium Segment</option>
+                    <option>Budget Conscious</option>
+                    <option>Young Adults (18-35)</option>
+                  </select>
                 </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-white border-slate-200/60 shadow-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-lg text-slate-800">Competitor Comparison</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-12 text-slate-500">
-                  <p className="text-sm">
-                    {files.competitors.length > 0 
-                      ? `Comparing against ${files.competitors.length} competitor${files.competitors.length > 1 ? 's' : ''}`
-                      : 'Upload competitor PDPs for benchmarking'
-                    }
-                  </p>
+                <div className="space-y-2">
+                  <Label className="text-gray-700 font-medium text-sm">Retail Environment</Label>
+                  <select className="w-full px-3 py-2 border border-gray-200 rounded-md focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-xs sm:text-sm">
+                    <option>Grocery Store</option>
+                    <option>Pharmacy/Drug Store</option>
+                    <option>Department Store</option>
+                    <option>Convenience Store</option>
+                  </select>
                 </div>
               </CardContent>
             </Card>
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-center lg:justify-end px-4 sm:px-0">
           <Button 
             size="lg"
             disabled={!files.mainPDP}
-            className="min-w-[160px] bg-gradient-to-r from-indigo-600 to-pink-600 hover:from-indigo-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-semibold py-3 px-8"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white disabled:bg-gray-300 disabled:text-gray-500 min-w-48"
           >
             {!files.mainPDP ? (
               <div className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5" />
+                <AlertCircle className="h-4 w-4" />
                 Upload PDP
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <Eye className="h-5 w-5" />
+                <Eye className="h-4 w-4" />
                 Analyze PDP
               </div>
             )}

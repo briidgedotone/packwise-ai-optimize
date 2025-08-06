@@ -6,48 +6,48 @@ import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/
 const data = [
   {
     month: "Jan",
-    efficiency: 68,
-    fillRate: 72,
+    beforeQuantiPack: 68,
+    afterQuantiPack: 72,
   },
   {
     month: "Feb",
-    efficiency: 70,
-    fillRate: 75,
+    beforeQuantiPack: 70,
+    afterQuantiPack: 75,
   },
   {
     month: "Mar",
-    efficiency: 74,
-    fillRate: 78,
+    beforeQuantiPack: 74,
+    afterQuantiPack: 78,
   },
   {
     month: "Apr",
-    efficiency: 72,
-    fillRate: 76,
+    beforeQuantiPack: 72,
+    afterQuantiPack: 76,
   },
   {
     month: "May",
-    efficiency: 76,
-    fillRate: 79,
+    beforeQuantiPack: 76,
+    afterQuantiPack: 79,
   },
   {
     month: "Jun",
-    efficiency: 79,
-    fillRate: 81,
+    beforeQuantiPack: 79,
+    afterQuantiPack: 81,
   },
   {
     month: "Jul",
-    efficiency: 82,
-    fillRate: 84,
+    beforeQuantiPack: 82,
+    afterQuantiPack: 84,
   },
 ];
 
 const chartConfig = {
-  efficiency: {
-    label: "Efficiency (%)",
+  beforeQuantiPack: {
+    label: "Before QuantiPackAI (%)",
     color: "#4F46E5",
   },
-  fillRate: {
-    label: "Fill Rate (%)",
+  afterQuantiPack: {
+    label: "After QuantiPackAI (%)",
     color: "#10B981",
   },
 };
@@ -84,7 +84,7 @@ export function EfficiencyChart() {
           />
           <Line
             type="monotone"
-            dataKey="efficiency"
+            dataKey="beforeQuantiPack"
             stroke="#4F46E5"
             strokeWidth={3}
             dot={{ fill: "#4F46E5", strokeWidth: 2, r: 4 }}
@@ -92,7 +92,7 @@ export function EfficiencyChart() {
           />
           <Line
             type="monotone"
-            dataKey="fillRate"
+            dataKey="afterQuantiPack"
             stroke="#10B981"
             strokeWidth={3}
             dot={{ fill: "#10B981", strokeWidth: 2, r: 4 }}

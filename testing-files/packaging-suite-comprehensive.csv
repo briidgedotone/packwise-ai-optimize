@@ -1,0 +1,25 @@
+Package Name,Package ID,Length,Width,Height,Unit,Cost per Unit,Package Weight,Max Weight,Material,Type
+Extra Small Box,BOX-XS,4,4,4,in,0.45,0.15,5,Cardboard,box
+Small Box,BOX-SM,6,6,6,in,0.65,0.25,10,Cardboard,box
+Small Flat Box,BOX-SF,8,6,2,in,0.58,0.22,8,Cardboard,box
+Medium Box,BOX-MD,8,8,8,in,0.85,0.35,15,Cardboard,box
+Medium Flat Box,BOX-MF,12,9,3,in,0.78,0.32,12,Cardboard,box
+Large Box,BOX-LG,12,12,12,in,1.25,0.55,25,Cardboard,box
+Large Flat Box,BOX-LF,16,12,4,in,1.15,0.48,20,Cardboard,box
+Extra Large Box,BOX-XL,16,16,16,in,1.85,0.85,35,Cardboard,box
+Jumbo Box,BOX-JB,20,20,20,in,2.45,1.25,50,Cardboard,box
+Long Box,BOX-LONG,24,6,6,in,1.35,0.65,20,Cardboard,box
+Tall Box,BOX-TALL,8,8,16,in,1.05,0.45,18,Cardboard,box
+Wide Box,BOX-WIDE,18,12,6,in,1.45,0.75,25,Cardboard,box
+Small Poly Mailer,POLY-SM,6,9,0.25,in,0.15,0.05,1,Cardboard,envelope
+Medium Poly Mailer,POLY-MD,9,12,0.25,in,0.22,0.08,2,Cardboard,envelope
+Large Poly Mailer,POLY-LG,12,15,0.25,in,0.35,0.12,3,Cardboard,envelope
+Bubble Mailer Small,BUB-SM,4,8,0.5,in,0.45,0.12,1,Cardboard,envelope
+Bubble Mailer Medium,BUB-MD,6,10,0.5,in,0.65,0.18,2,Cardboard,envelope
+Bubble Mailer Large,BUB-LG,8.5,12,0.5,in,0.85,0.25,3,Cardboard,envelope
+Electronics Box,ELEC-STD,10,8,6,in,1.45,0.52,12,Cardboard,box
+Laptop Box,LAPTOP-STD,18,14,3,in,1.75,0.68,8,Cardboard,box
+Fragile Box Small,FRAG-SM,8,6,6,in,1.25,0.45,10,Cardboard,box
+Fragile Box Medium,FRAG-MD,10,8,8,in,1.75,0.65,15,Cardboard,box
+Heavy Duty Small,HD-SM,8,6,4,in,1.65,0.55,20,Cardboard,box
+Heavy Duty Medium,HD-MD,12,10,8,in,2.25,0.85,35,Cardboard,box
