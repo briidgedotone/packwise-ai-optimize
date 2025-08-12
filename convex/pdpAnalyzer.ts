@@ -60,7 +60,7 @@ export const analyzePDP = action({
   },
 });
 
-// Analyze individual image using OpenAI Vision
+// Analyze individual image using OpenAI Vision with enhanced Design Comparator system prompt
 async function analyzeImage(
   imageData: string,
   metaInfo: MetaInfo | undefined,
@@ -74,59 +74,93 @@ async function analyzeImage(
 
   const prompt = buildAnalysisPrompt(metaInfo, label);
   
-  console.log(`Analyzing ${label} with OpenAI Vision`);
+  // Add timeout protection similar to Design Comparator
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    console.error(`OpenAI API timeout (30s) for PDP ${label}`);
+    controller.abort();
+  }, 30000); // 30 second timeout
   
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a packaging design expert specializing in Principal Display Panel (PDP) analysis. You understand retail psychology, shelf visibility, and consumer behavior.'
-        },
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: prompt },
-            { 
-              type: 'image_url', 
-              image_url: { 
-                url: `data:image/jpeg;base64,${imageData}`,
-                detail: 'high'
-              } 
-            }
-          ]
-        }
-      ],
-      temperature: 0.3,
-      max_tokens: 1500,
-      response_format: { type: "json_object" }
-    }),
-  });
+  console.log(`Analyzing ${label} with enhanced GPT-4 Vision`);
   
-  if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`OpenAI Vision API error: ${response.status} - ${errorText}`);
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: `You are GPT-4 Vision with advanced packaging design expertise, specializing in Principal Display Panel (PDP) analysis. You understand retail psychology, shelf visibility, consumer behavior, and the sophisticated 10-criterion scoring methodology used by professional packaging consultants.
+
+You understand:
+- Category-specific design principles and consumer psychology
+- Retail environments and shelf behavior patterns
+- Brand differentiation strategies and positioning
+- Professional packaging assessment methodologies
+- Premium design perception and quality indicators
+- Omni-channel performance (shelf visibility + digital thumbnails)
+
+Provide expert-level analysis with evidence-based reasoning that demonstrates deep packaging science knowledge.`
+          },
+          {
+            role: 'user',
+            content: [
+              { type: 'text', text: prompt },
+              { 
+                type: 'image_url', 
+                image_url: { 
+                  url: `data:image/jpeg;base64,${imageData}`,
+                  detail: 'high'
+                } 
+              }
+            ]
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 2000,
+        response_format: { type: "json_object" }
+      }),
+    });
+    
+    clearTimeout(timeoutId);
+    
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`OpenAI Vision API error: ${response.status} - ${errorText}`);
+    }
+    
+    const data = await response.json();
+    const result = JSON.parse(data.choices[0].message.content);
+    
+    return {
+      label,
+      scores: result.scores,
+      analysis: result.analysis,
+      visualElements: result.visual_elements,
+      strengths: result.strengths || [],
+      risks: result.risks || [],
+      recommendations: result.recommendations || []
+    };
+    
+  } catch (error) {
+    clearTimeout(timeoutId);
+    
+    if (error instanceof Error && error.name === 'AbortError') {
+      throw new Error(`PDP analysis timeout for ${label} - request took longer than 30 seconds`);
+    }
+    
+    throw error;
   }
-  
-  const data = await response.json();
-  const result = JSON.parse(data.choices[0].message.content);
-  
-  return {
-    label,
-    scores: result.scores,
-    analysis: result.analysis,
-    visualElements: result.visual_elements,
-  };
 }
 
-// Build analysis prompt for OpenAI Vision
-function buildAnalysisPrompt(metaInfo: MetaInfo | undefined, label: string): string {
+// Build analysis prompt using Design Comparator's sophisticated 10-criterion system
+function buildAnalysisPrompt(metaInfo: MetaInfo | undefined, _label: string): string {
   const contextInfo = metaInfo ? [
     metaInfo.category && `Product Category: ${metaInfo.category}`,
     metaInfo.description && `Product Description: ${metaInfo.description}`,
@@ -137,78 +171,80 @@ function buildAnalysisPrompt(metaInfo: MetaInfo | undefined, label: string): str
     metaInfo.retailEnvironment && `Retail Environment: ${metaInfo.retailEnvironment}`,
   ].filter(Boolean).join('\n') : '';
 
-  return `You are an expert packaging design consultant with deep knowledge of consumer psychology, retail environments, and category-specific design principles. Analyze this Principal Display Panel (PDP) using advanced packaging science.
+  const category = metaInfo?.category || 'general consumer product';
 
-This image shows the FRONT VIEW of the product packaging - the main display panel that consumers see first on the shelf. Focus your analysis and recommendations specifically on this front-facing view only.
+  return `Analyze this ${category} Principal Display Panel (PDP) packaging using advanced packaging science and consumer psychology expertise.
+
+This image shows the FRONT VIEW of the product packaging - the main display panel that consumers see first on the shelf. Focus your analysis specifically on this front-facing view only.
 
 ${contextInfo ? `CONTEXT:\n${contextInfo}\n\n` : ''}
 
-ADVANCED ANALYSIS FRAMEWORK:
-Use category-specific expertise to evaluate holistic design effectiveness. Consider these research-backed principles:
+EVALUATION CRITERIA (score each 1-10, half points allowed):
 
-CATEGORY-SPECIFIC WEIGHTING:
-- Health/Wellness Products: Prioritize claims communication, transparency, nutritional callouts
-- Beverages: Emphasize emotional appeal, brand recognition, refreshment cues
+1. BRANDING & RECOGNITION (Primary Focus)
+Brand visibility and recognition from a distance - is the brand name easy to find and recognize? Logo distinctiveness, memorability, brand consistency across elements.
+
+2. VISUAL HIERARCHY & READABILITY (Primary Focus)
+Information clarity and layout organization - clean layouts where the eye knows where to look first. Visual flow, headline legibility, type contrast/size/spacing, clutter management.
+
+3. COLOR BLOCKING & CONTRAST (High Impact)
+Color use and impact - strong use of unified color zones and high contrast that makes the design pop on shelf. Professional color coordination and category-appropriate choices.
+
+4. PREMIUM & PROFESSIONAL APPEAL (Quality Perception)
+Premium look and feel - does the design reflect quality and professionalism for the target market? Material choice perception, finishes, refinement, and elevated design execution.
+
+5. KEY BENEFIT/CLAIM COMMUNICATION (Message Priority)
+Message priority - are the most important claims or benefits front and center? Clear communication of primary product value proposition and key differentiators.
+
+6. SIMPLICITY & FOCUS (Clean Design)
+Design simplicity - is the design free from unnecessary clutter that could distract the buyer? Clean, focused approach that prioritizes essential information.
+
+7. IMAGERY QUALITY & INTEGRATION (Visual Appeal)
+Image quality - are photos or graphics sharp, clear, and relevant to the product? Professional imagery that enhances brand perception and product appeal.
+
+8. SKU DIFFERENTIATION (Variant Recognition)
+Variant recognition - can customers easily tell product variations apart while maintaining brand cohesion? Clear flavor/variant communication without confusion.
+
+9. MODERNITY & DESIGN RELEVANCE (Contemporary Appeal)
+Modern style - does the design feel current and competitive in today's market? Contemporary aesthetic that aligns with category trends and consumer expectations.
+
+10. COMPLIANCE & LEGIBILITY (Required Information)
+Required information - are mandatory details (weight, specs, certifications) legible and well-placed? Regulatory compliance without dominating the design.
+
+CATEGORY-SPECIFIC CONSIDERATIONS:
+Apply category expertise for ${category}:
+- Health/Wellness: Prioritize claims communication, transparency, nutritional callouts
+- Beverages: Emphasize emotional appeal, brand recognition, refreshment cues  
 - Cosmetics/Beauty: Focus on luxury perception, aspirational imagery, brand authority
 - Technology: Highlight innovation cues, product features, sophisticated minimalism
 - FMCG/Household: Balance information density with clarity and trust signals
 - Premium/Luxury: Maximize white space, material finish perception, understated elegance
 
-CONSUMER PSYCHOLOGY FACTORS:
-- Subconscious emotional triggers (nostalgia, trust, excitement)
-- Brand familiarity vs. innovation balance
-- Implicit visual preferences (logo placement psychology, color emotional impact)
-- Shelf scanning behavior (3-second attention span, peripheral vision)
-- Cultural and inclusive design sensitivity
-
-Score each metric from 0-10 (10 being excellent):
-
-1. HIERARCHY - Visual flow directing eye to category-relevant elements first
-2. READABILITY - Text clarity optimized for shelf distance AND digital thumbnails  
-3. COLOR_IMPACT - Emotionally appropriate palette with high contrast and category fit
-4. LOGO_VISIBILITY - Brand recognition optimized for both familiarity and distinctiveness
-5. EMOTIONAL_APPEAL - Psychological triggers aligned with category motivations
-6. CLAIMS_COMMUNICATION - Key benefits presented with category-appropriate prominence
-7. FONT_CHOICE - Typography balancing legibility, personality, and premium perception
-8. WHITE_SPACE_BALANCE - Strategic spacing enhancing perceived quality and comprehension
-
-HOLISTIC EVALUATION CRITERIA:
-- Synergy between all elements (not isolated features)
-- Category authenticity vs. creative differentiation
-- Omni-channel performance (shelf + digital)
-- Compliance and accessibility integration
-- Material/finish perception from visual cues
-
-For each score, provide reasoning that demonstrates category expertise and consumer psychology understanding.
-
-Also identify key visual elements:
-- Logo position psychology and brand recognition impact
-- Color palette emotional triggers and category appropriateness
-- Typography personality and legibility balance
-- Claims hierarchy matching consumer priorities
-- Design authenticity vs. differentiation strategy
-
 RESPOND IN THIS EXACT JSON FORMAT:
 {
   "scores": {
+    "branding": 0.0,
     "hierarchy": 0.0,
-    "readability": 0.0,
-    "color_impact": 0.0,
-    "logo_visibility": 0.0,
-    "emotional_appeal": 0.0,
-    "claims_communication": 0.0,
-    "font_choice": 0.0,
-    "white_space_balance": 0.0
+    "color": 0.0,
+    "premium": 0.0,
+    "claims": 0.0,
+    "simplicity": 0.0,
+    "imagery": 0.0,
+    "variant": 0.0,
+    "modernity": 0.0,
+    "compliance": 0.0
   },
   "analysis": {
+    "branding": "Explanation of score...",
     "hierarchy": "Explanation of score...",
-    "readability": "Explanation of score...",
-    "color_impact": "Explanation of score...",
-    "logo_visibility": "Explanation of score...",
-    "emotional_appeal": "Explanation of score...",
-    "claims_communication": "Explanation of score...",
-    "font_choice": "Explanation of score...",
-    "white_space_balance": "Explanation of score..."
+    "color": "Explanation of score...",
+    "premium": "Explanation of score...",
+    "claims": "Explanation of score...",
+    "simplicity": "Explanation of score...",
+    "imagery": "Explanation of score...",
+    "variant": "Explanation of score...",
+    "modernity": "Explanation of score...",
+    "compliance": "Explanation of score..."
   },
   "visual_elements": {
     "logo_position": "Description of logo placement",
@@ -216,18 +252,21 @@ RESPOND IN THIS EXACT JSON FORMAT:
     "text_hierarchy": "Description of text organization",
     "featured_claims": ["claim1", "claim2"],
     "design_style": "Overall style description"
-  }
+  },
+  "strengths": ["Specific strength with evidence", "Another strength"],
+  "risks": ["Potential issue or risk", "Another risk"],
+  "recommendations": ["Actionable improvement", "Another recommendation"]
 }`;
 }
 
-// Calculate Z-scores for competitor comparison
+// Calculate Z-scores for competitor comparison using new 10-criterion system
 function calculateZScores(
   mainAnalysis: PDPAnalysis,
   competitorAnalyses: PDPAnalysis[]
 ): NormalizedScores {
   const metrics = [
-    'hierarchy', 'readability', 'color_impact', 'logo_visibility',
-    'emotional_appeal', 'claims_communication', 'font_choice', 'white_space_balance'
+    'branding', 'hierarchy', 'color', 'premium', 'claims', 
+    'simplicity', 'imagery', 'variant', 'modernity', 'compliance'
   ];
   
   const normalizedScores: Record<string, {
@@ -424,14 +463,16 @@ interface MetaInfo {
 interface PDPAnalysis {
   label: string;
   scores: {
+    branding: number;
     hierarchy: number;
-    readability: number;
-    color_impact: number;
-    logo_visibility: number;
-    emotional_appeal: number;
-    claims_communication: number;
-    font_choice: number;
-    white_space_balance: number;
+    color: number;
+    premium: number;
+    claims: number;
+    simplicity: number;
+    imagery: number;
+    variant: number;
+    modernity: number;
+    compliance: number;
     [key: string]: number;
   };
   analysis: {
@@ -444,6 +485,9 @@ interface PDPAnalysis {
     featured_claims: string[];
     design_style: string;
   };
+  strengths: string[];
+  risks: string[];
+  recommendations: string[];
 }
 
 interface NormalizedScores {
