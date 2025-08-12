@@ -110,7 +110,39 @@ const PDPAnalysisResults = () => {
     );
   }
 
-  const overallScore = Object.values(results.mainAnalysis.scores).reduce((a, b) => a + b, 0) / Object.keys(results.mainAnalysis.scores).length;
+  // Apply Design Comparator's weighted scoring system for business-focused results
+  const criteriaWeights = {
+    branding: 0.20,           // Brand Visibility - most important
+    hierarchy: 0.18,          // Visual Hierarchy & Readability
+    color: 0.14,              // Color Blocking & Contrast
+    premium: 0.12,            // Premium & Professional Appeal
+    claims: 0.10,             // Key Benefit/Claim Communication
+    simplicity: 0.08,         // Simplicity & Focus
+    imagery: 0.06,            // Imagery Quality & Integration
+    variant: 0.05,            // SKU Differentiation
+    modernity: 0.04,          // Modernity & Design Relevance
+    compliance: 0.03          // Compliance & Legibility
+  };
+
+  const calculateWeightedScore = (scores: Record<string, number>) => {
+    let weightedTotal = 0;
+    let usedWeight = 0;
+    
+    Object.entries(scores).forEach(([criterion, score]) => {
+      const weight = criteriaWeights[criterion as keyof typeof criteriaWeights] || 0;
+      if (weight > 0) {
+        weightedTotal += score * weight;
+        usedWeight += weight;
+      }
+    });
+    
+    // Calculate weighted score (individual scores are already 0-10, weights sum to 1.0)
+    const weightedScore = usedWeight > 0 ? weightedTotal / usedWeight : 0;
+    
+    return weightedScore;
+  };
+
+  const overallScore = Math.round(calculateWeightedScore(results.mainAnalysis.scores) * 10) / 10;
   
   const getScoreGradient = (score: number) => {
     if (score >= 8.5) return 'from-green-500 to-emerald-600';
@@ -355,7 +387,7 @@ const PDPAnalysisResults = () => {
                             <div className="flex items-center justify-between">
                               <span className="text-sm text-gray-600">Overall</span>
                               <span className="text-lg font-bold text-indigo-600">
-                                {(Object.values(competitor.scores).reduce((a, b) => a + b, 0) / Object.keys(competitor.scores).length).toFixed(1)}
+                                {(Math.round(calculateWeightedScore(competitor.scores) * 10) / 10).toFixed(1)}
                               </span>
                             </div>
                           </div>
