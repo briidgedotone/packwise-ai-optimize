@@ -36,17 +36,16 @@ export const DesignComparator = () => {
     category: '',
     marketContext: '',
     customWeights: {
-      branding: 0.18,
-      hierarchy: 0.18,
-      variant: 0.12,
-      color: 0.10,
-      imagery: 0.08,
-      claims: 0.08,
-      compliance: 0.07,
-      accessibility: 0.07,
-      feasibility: 0.06,
-      sustainability: 0.06,
-      differentiation: 0.10
+      branding: 0.20,         // Branding & Recognition
+      hierarchy: 0.18,        // Visual Hierarchy & Readability
+      color: 0.14,            // Color Blocking & Contrast
+      premium: 0.12,          // Premium & Professional Appeal
+      claims: 0.10,           // Key Benefit/Claim Communication
+      simplicity: 0.08,       // Simplicity & Focus
+      imagery: 0.06,          // Imagery Quality & Integration
+      variant: 0.05,          // SKU Differentiation
+      modernity: 0.04,        // Modernity & Design Relevance
+      compliance: 0.03        // Compliance & Legibility
     }
   });
 
@@ -369,11 +368,25 @@ export const DesignComparator = () => {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {Object.entries(comparisonSettings.customWeights).map(([key, value]) => (
-              <div key={key}>
-                <Label className="text-sm font-medium text-gray-700 capitalize mb-1 block">
-                  {key === 'differentiation' ? 'Shelf Impact' : key}
-                </Label>
+            {Object.entries(comparisonSettings.customWeights).map(([key, value]) => {
+              const criteriaLabels = {
+                branding: 'Brand Visibility',
+                hierarchy: 'Information Clarity',
+                color: 'Color Use & Impact',
+                premium: 'Premium Look & Feel',
+                claims: 'Message Priority',
+                simplicity: 'Simplicity',
+                imagery: 'Image Quality',
+                variant: 'Variant Recognition',
+                modernity: 'Modern Style',
+                compliance: 'Required Information'
+              };
+              
+              return (
+                <div key={key}>
+                  <Label className="text-sm font-medium text-gray-700 mb-1 block">
+                    {criteriaLabels[key as keyof typeof criteriaLabels] || key}
+                  </Label>
                 <div className="flex items-center gap-2">
                   <Input
                     type="number"
@@ -395,7 +408,8 @@ export const DesignComparator = () => {
                   </span>
                 </div>
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="mt-4 text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">

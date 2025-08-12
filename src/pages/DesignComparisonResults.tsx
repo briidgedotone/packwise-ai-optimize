@@ -322,12 +322,27 @@ const DesignComparisonResults = () => {
                   <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 text-sm">
                     {Object.entries(results.weights_used)
                       .sort((a, b) => b[1] - a[1])
-                      .map(([criterion, weight]) => (
-                        <div key={criterion} className="flex justify-between p-2 bg-gray-50 rounded">
-                          <span className="capitalize font-medium">{criterion}</span>
-                          <span className="text-indigo-600">{Math.round(weight * 100)}%</span>
-                        </div>
-                      ))}
+                      .map(([criterion, weight]) => {
+                        const criteriaLabels = {
+                          branding: 'Brand Visibility',
+                          hierarchy: 'Information Clarity',
+                          color: 'Color Use & Impact',
+                          premium: 'Premium Look & Feel',
+                          claims: 'Message Priority',
+                          simplicity: 'Simplicity',
+                          imagery: 'Image Quality',
+                          variant: 'Variant Recognition',
+                          modernity: 'Modern Style',
+                          compliance: 'Required Information'
+                        };
+                        
+                        return (
+                          <div key={criterion} className="flex justify-between p-2 bg-gray-50 rounded">
+                            <span className="font-medium">{criteriaLabels[criterion as keyof typeof criteriaLabels] || criterion}</span>
+                            <span className="text-indigo-600">{Math.round(weight * 100)}%</span>
+                          </div>
+                        );
+                      })}
                   </div>
                 </div>
 
@@ -364,17 +379,32 @@ const DesignComparisonResults = () => {
 
                         {/* Individual Scores */}
                         <div className="grid gap-3 md:grid-cols-2 mb-6">
-                          {Object.entries(design.scores).map(([criterion, score]) => (
-                            <div key={criterion} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                              <div className="flex items-center gap-2">
-                                {getScoreIcon(score)}
-                                <span className="font-medium capitalize">{criterion}</span>
+                          {Object.entries(design.scores).map(([criterion, score]) => {
+                            const criteriaLabels = {
+                              branding: 'Brand Visibility',
+                              hierarchy: 'Information Clarity',
+                              color: 'Color Use & Impact',
+                              premium: 'Premium Look & Feel',
+                              claims: 'Message Priority',
+                              simplicity: 'Simplicity',
+                              imagery: 'Image Quality',
+                              variant: 'Variant Recognition',
+                              modernity: 'Modern Style',
+                              compliance: 'Required Information'
+                            };
+                            
+                            return (
+                              <div key={criterion} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                                <div className="flex items-center gap-2">
+                                  {getScoreIcon(score)}
+                                  <span className="font-medium">{criteriaLabels[criterion as keyof typeof criteriaLabels] || criterion}</span>
+                                </div>
+                                <div className={`px-2 py-1 rounded text-sm font-medium ${getScoreColor(score)}`}>
+                                  {score.toFixed(1)}
+                                </div>
                               </div>
-                              <div className={`px-2 py-1 rounded text-sm font-medium ${getScoreColor(score)}`}>
-                                {score.toFixed(1)}
-                              </div>
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
 
                         {/* Strengths, Risks, Recommendations */}

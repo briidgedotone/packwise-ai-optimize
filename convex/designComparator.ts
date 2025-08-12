@@ -35,32 +35,30 @@ export const compareDesigns = action({
     weights: v.optional(v.object({
       branding: v.optional(v.number()),
       hierarchy: v.optional(v.number()),
-      variant: v.optional(v.number()),
       color: v.optional(v.number()),
-      imagery: v.optional(v.number()),
+      premium: v.optional(v.number()),
       claims: v.optional(v.number()),
-      compliance: v.optional(v.number()),
-      accessibility: v.optional(v.number()),
-      feasibility: v.optional(v.number()),
-      sustainability: v.optional(v.number()),
-      differentiation: v.optional(v.number())
+      simplicity: v.optional(v.number()),
+      imagery: v.optional(v.number()),
+      variant: v.optional(v.number()),
+      modernity: v.optional(v.number()),
+      compliance: v.optional(v.number())
     }))
   },
   handler: async (_ctx, args) => {
     try {
-      // Normalize weights to sum to 1.0
+      // New 10-criterion scoring system with updated weights
       const defaultWeights = {
-        branding: 0.18,
-        hierarchy: 0.18,
-        variant: 0.12,
-        color: 0.10,
-        imagery: 0.08,
-        claims: 0.08,
-        compliance: 0.07,
-        accessibility: 0.07,
-        feasibility: 0.06,
-        sustainability: 0.06,
-        differentiation: 0.10
+        branding: 0.20,           // Branding & Recognition
+        hierarchy: 0.18,          // Visual Hierarchy & Readability  
+        color: 0.14,              // Color Blocking & Contrast
+        premium: 0.12,            // Premium & Professional Appeal
+        claims: 0.10,             // Key Benefit/Claim Communication
+        simplicity: 0.08,         // Simplicity & Focus
+        imagery: 0.06,            // Imagery Quality & Integration
+        variant: 0.05,            // SKU Differentiation
+        modernity: 0.04,          // Modernity & Design Relevance
+        compliance: 0.03          // Compliance & Legibility of Required Info
       };
 
       const weights = args.weights ? { ...defaultWeights, ...args.weights } : defaultWeights;
@@ -236,38 +234,35 @@ ${contextInfo}
 
 EVALUATION CRITERIA (score each 1-10, half points allowed):
 
-1. BRANDING & RECOGNITION (0.18 weight)
-Logo visibility at 3-6 ft, distinctiveness, memorability, brand codes consistency, SKU navigation system
+1. BRANDING & RECOGNITION (0.20 weight)
+Brand visibility and recognition from a distance - is the brand name easy to find and recognize? Logo distinctiveness, memorability, brand consistency across elements.
 
-2. HIERARCHY & READABILITY (0.18 weight)  
-Visual flow, headline legibility, distance readability, type contrast/size/spacing, clutter management
+2. VISUAL HIERARCHY & READABILITY (0.18 weight)  
+Information clarity and layout organization - clean layouts where the eye knows where to look first. Visual flow, headline legibility, type contrast/size/spacing, clutter management.
 
-3. FLAVOR/VARIANT COMMUNICATION (0.12 weight)
-Clarity of variant (copy + imagery), appetite cues realism, avoidance of confusion
+3. COLOR BLOCKING & CONTRAST (0.14 weight)
+Color use and impact - strong use of unified color zones and high contrast that makes the design pop on shelf. Professional color coordination and category-appropriate choices.
 
-4. COLOR STRATEGY & CONTRAST (0.10 weight)
-Contrast vs background, category signaling, shelf pop, harmony vs noise, color blindness resilience
+4. PREMIUM & PROFESSIONAL APPEAL (0.12 weight)
+Premium look and feel - does the design reflect quality and professionalism for the target market? Material choice perception, finishes, refinement, and elevated design execution.
 
-5. IMAGERY QUALITY (0.08 weight)
-Photo/illustration quality, cropping, lighting, relevance, consistency potential
+5. KEY BENEFIT/CLAIM COMMUNICATION (0.10 weight)
+Message priority - are the most important claims or benefits front and center? Clear communication of primary product value proposition and key differentiators.
 
-6. CLAIMS & PROOF (0.08 weight)
-Clarity and trust of claims, seal/third-party marks, hierarchy, compliance risk assessment
+6. SIMPLICITY & FOCUS (0.08 weight)
+Design simplicity - is the design free from unnecessary clutter that could distract the buyer? Clean, focused approach that prioritizes essential information.
 
-7. COMPLIANCE & MANDATORY INFO (0.07 weight)
-Space and legibility for regulatory marks, net weight, nutrition, recycling, warnings
+7. IMAGERY QUALITY & INTEGRATION (0.06 weight)
+Image quality - are photos or graphics sharp, clear, and relevant to the product? Professional imagery that enhances brand perception and product appeal.
 
-8. ACCESSIBILITY & INCLUSIVITY (0.07 weight)
-Minimum text size, WCAG contrast for key text, icon aids, language clarity
+8. SKU DIFFERENTIATION (0.05 weight)
+Variant recognition - can customers easily tell product variations apart while maintaining brand cohesion? Clear flavor/variant communication without confusion.
 
-9. STRUCTURAL FIT & PRINT FEASIBILITY (0.06 weight)
-Dieline fit, seam/curve distortion risk, ink coverage cost, substrate suitability, barcode zone
+9. MODERNITY & DESIGN RELEVANCE (0.04 weight)
+Modern style - does the design feel current and competitive in today's market? Contemporary aesthetic that aligns with category trends and consumer expectations.
 
-10. SUSTAINABILITY CUES (0.06 weight)
-Honest material/recyclability signaling, greenwashing avoidance, credible icons
-
-11. DIFFERENTIATION & SHELF IMPACT (0.10 weight)
-Distinctiveness vs typical shelf, quick findability, stopping power without sacrificing clarity
+10. COMPLIANCE & LEGIBILITY OF REQUIRED INFO (0.03 weight)
+Required information - are mandatory details (weight, specs, certifications) legible and well-placed? Regulatory compliance without dominating the design.
 
 CATEGORY-SPECIFIC CONSIDERATIONS:
 Apply category expertise for ${category}:
@@ -283,15 +278,14 @@ RESPOND IN THIS EXACT JSON FORMAT:
   "scores": {
     "branding": 0.0,
     "hierarchy": 0.0,
-    "variant": 0.0,
     "color": 0.0,
-    "imagery": 0.0,
+    "premium": 0.0,
     "claims": 0.0,
-    "compliance": 0.0,
-    "accessibility": 0.0,
-    "feasibility": 0.0,
-    "sustainability": 0.0,
-    "differentiation": 0.0
+    "simplicity": 0.0,
+    "imagery": 0.0,
+    "variant": 0.0,
+    "modernity": 0.0,
+    "compliance": 0.0
   },
   "strengths": ["Specific strength with evidence", "Another strength"],
   "risks": ["Potential issue or risk", "Another risk"],
@@ -325,8 +319,8 @@ function determineWinner(designs: DesignResult[]): { id: string; reason: string 
     };
   }
   
-  // Tie-break by Branding & Recognition → Hierarchy & Readability → Differentiation & Shelf Impact
-  const tieBreakers = ['branding', 'hierarchy', 'differentiation'];
+  // Tie-break by Branding & Recognition → Visual Hierarchy & Readability → Color Blocking & Contrast
+  const tieBreakers = ['branding', 'hierarchy', 'color'];
   
   for (const metric of tieBreakers) {
     tied.sort((a, b) => b.scores[metric] - a.scores[metric]);
@@ -338,12 +332,12 @@ function determineWinner(designs: DesignResult[]): { id: string; reason: string 
     }
   }
   
-  // Final tie-break: lowest compliance risk, highest accessibility
-  tied.sort((a, b) => (b.scores.accessibility - b.scores.compliance) - (a.scores.accessibility - a.scores.compliance));
+  // Final tie-break: highest premium appeal, best simplicity
+  tied.sort((a, b) => (b.scores.premium + b.scores.simplicity) - (a.scores.premium + a.scores.simplicity));
   
   return {
     id: tied[0].id,
-    reason: `Won by final tie-break on compliance risk and accessibility after all other ties.`
+    reason: `Won by final tie-break on premium appeal and simplicity after all other ties.`
   };
 }
 
@@ -435,15 +429,14 @@ interface DesignAnalysis {
   scores: {
     branding: number;
     hierarchy: number;
-    variant: number;
     color: number;
-    imagery: number;
+    premium: number;
     claims: number;
+    simplicity: number;
+    imagery: number;
+    variant: number;
+    modernity: number;
     compliance: number;
-    accessibility: number;
-    feasibility: number;
-    sustainability: number;
-    differentiation: number;
   };
   strengths: string[];
   risks: string[];
