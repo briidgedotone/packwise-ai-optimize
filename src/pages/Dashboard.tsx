@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useClerk, useUser, UserButton } from '@clerk/clerk-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -30,15 +30,16 @@ import {
   Calendar,
   Plus,
   ChevronDown,
-  MoreHorizontal
+  MoreHorizontal,
+  Scale
 } from 'lucide-react';
 import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
 import { SpecGenerator } from '@/components/SpecGenerator';
 import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
+import { DesignComparator } from '@/components/DesignComparator';
+import { AIAssistant } from '@/components/AIAssistant';
 import { MonthlyChart, PackagingChart, EfficiencyChart } from '@/components/charts';
-import CUINDemo from '@/components/CUINDemo';
-import Phase2Demo from '@/components/Phase2Demo';
 
 const Dashboard = () => {
   const { signOut } = useClerk();
@@ -46,6 +47,19 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [aiAssistantOpen, setAiAssistantOpen] = useState(false);
+
+  // Listen for custom tab change events (from PDP results navigation)
+  useEffect(() => {
+    const handleSetActiveTab = (event: CustomEvent) => {
+      setActiveTab(event.detail);
+    };
+
+    window.addEventListener('setActiveTab', handleSetActiveTab as EventListener);
+    
+    return () => {
+      window.removeEventListener('setActiveTab', handleSetActiveTab as EventListener);
+    };
+  }, []);
 
   const handleLogout = async () => {
     await signOut();
@@ -57,8 +71,7 @@ const Dashboard = () => {
     { id: 'spec-generator', label: 'Spec Generator', icon: Calculator },
     { id: 'demand-planner', label: 'Demand Planner', icon: TrendingUp },
     { id: 'pdp-analyzer', label: 'PDP Analyzer', icon: Eye },
-    { id: 'cuin-demo', label: 'CUIN Calculator', icon: Calculator },
-    { id: 'phase2-demo', label: 'Core Engines', icon: Package },
+    { id: 'design-comparator', label: 'Design Comparator', icon: Scale },
     { id: 'reports', label: 'Reports', icon: FileText },
   ];
 
@@ -72,10 +85,8 @@ const Dashboard = () => {
         return <PackagingDemandPlanner />;
       case 'pdp-analyzer':
         return <PDPAnalyzer />;
-      case 'cuin-demo':
-        return <CUINDemo />;
-      case 'phase2-demo':
-        return <Phase2Demo />;
+      case 'design-comparator':
+        return <DesignComparator />;
       case 'reports':
         return (
           <div className="min-h-screen bg-gray-50">
@@ -362,7 +373,7 @@ const Dashboard = () => {
                     description: 'Generate realistic packaging specs from product descriptions',
                     icon: Calculator,
                     status: 'Ready',
-                    color: 'emerald',
+                    color: 'purple',
                   },
                   {
                     id: 'demand-planner',
@@ -585,83 +596,12 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        {/* AI Assistant Panel */}
-        {aiAssistantOpen && (
-          <div className="fixed bottom-20 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-80 max-w-sm h-96 bg-white border border-gray-200 rounded-lg shadow-2xl z-40 flex flex-col">
-            {/* Header */}
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <MessageSquare className="h-4 w-4 text-blue-600" />
-                </div>
-                <h3 className="font-medium text-gray-900">AI Assistant</h3>
-              </div>
-              <Button
-                variant="ghost" 
-                size="sm"
-                onClick={() => setAiAssistantOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            {/* Messages Area */}
-            <div className="flex-1 p-4 overflow-y-auto">
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="h-3 w-3 text-blue-600" />
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 flex-1">
-                    <p className="text-sm text-gray-700">
-                      Hi! I'm your AI assistant for packaging optimization. How can I help you today?
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="h-3 w-3 text-blue-600" />
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 flex-1">
-                    <p className="text-sm text-gray-700">
-                      I can help you with:
-                    </p>
-                    <ul className="text-xs text-gray-600 mt-2 space-y-1">
-                      <li>• Suite analysis questions</li>
-                      <li>• Spec generation guidance</li>
-                      <li>• Demand planning insights</li>
-                      <li>• PDP optimization tips</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Input Area */}
-            <div className="p-4 border-t border-gray-100">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Ask me anything about packaging..."
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Send
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Overlay for AI Assistant */}
-        {aiAssistantOpen && (
-          <div 
-            className="fixed inset-0 bg-black/20 z-30"
-            onClick={() => setAiAssistantOpen(false)}
-          />
-        )}
+        {/* Universal AI Assistant */}
+        <AIAssistant 
+          isOpen={aiAssistantOpen}
+          onClose={() => setAiAssistantOpen(false)}
+          currentFeature={activeTab}
+        />
       </div>
     </div>
   );

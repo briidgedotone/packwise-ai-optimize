@@ -1,0 +1,4 @@
+Package Type,Length,Width,Height,Cost per Unit,Weight per Unit
+Small Mailer,10,7,0.25,0.12,0.015
+Medium Box,12,9,4,0.25,0.08
+Large Carton,18,12,8,0.45,0.15

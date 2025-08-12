@@ -1,0 +1,4 @@
+Item,L,W,H,Unit Price ($),Wgt (lbs)
+Small Envelope,10,7,0.25,$0.12,0.015
+Medium Carton,12,9,4,$0.25,0.080
+Large Package,18,12,8,$0.45,0.150

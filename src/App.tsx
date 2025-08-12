@@ -12,6 +12,8 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import SuiteAnalysisResults from "./pages/SuiteAnalysisResults";
 import SuiteAnalysisLoading from "./pages/SuiteAnalysisLoading";
+import PDPAnalysisResults from "./pages/PDPAnalysisResults";
+import DesignComparisonResults from "./pages/DesignComparisonResults";
 import NotFound from "./pages/NotFound";
 
 const App = () => (
@@ -48,6 +50,22 @@ const App = () => (
             element={
               <ProtectedRoute>
                 <SuiteAnalysisLoading />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/pdp-analysis/results" 
+            element={
+              <ProtectedRoute>
+                <PDPAnalysisResults />
+              </ProtectedRoute>
+            } 
+          />
+          <Route 
+            path="/design-comparison/results" 
+            element={
+              <ProtectedRoute>
+                <DesignComparisonResults />
               </ProtectedRoute>
             } 
           />
