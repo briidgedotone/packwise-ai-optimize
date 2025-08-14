@@ -204,11 +204,11 @@ export const SpecGenerator = () => {
     
     if (totalCount <= 50) {
       setProcessingProgress('Processing single batch...');
-      toast.info(`🚀 Processing ${totalCount} products in a single batch`);
+      toast.info(`Processing ${totalCount} products in a single batch`);
     } else {
       const estimatedChunks = Math.ceil(totalCount / 50);
       setProcessingProgress(`Processing large file in ~${estimatedChunks} chunks...`);
-      toast.info(`📊 Large file detected: ${totalCount} products will be processed in ~${estimatedChunks} chunks of 50`);
+      toast.info(`Large file detected: ${totalCount} products will be processed in ~${estimatedChunks} chunks of 50`);
     }
     
     while (hasMoreProducts && processedSoFar < totalCount) {
@@ -248,7 +248,7 @@ export const SpecGenerator = () => {
       
       if (response.hasMoreProducts) {
         toast.success(
-          `✅ Chunk ${chunk} complete: ${response.processedProducts} products analyzed. ` +
+          `Chunk ${chunk} complete: ${response.processedProducts} products analyzed. ` +
           `Progress: ${processedSoFar}/${totalCount} (${progressPercent}%)`
         );
         setProcessingProgress(`Chunk ${chunk} complete. Continuing with next batch...`);
@@ -259,10 +259,10 @@ export const SpecGenerator = () => {
         // Final chunk completed
         if (totalCount > 50) {
           toast.success(
-            `🎉 All chunks complete! Generated specs for ${processedSoFar} products across ${chunk} chunks.`
+            `All chunks complete! Generated specs for ${processedSoFar} products across ${chunk} chunks.`
           );
         } else {
-          toast.success(`✅ Generated specs for ${processedSoFar} products!`);
+          toast.success(`Generated specs for ${processedSoFar} products!`);
         }
         setProcessingProgress(`Complete: ${processedSoFar} products processed`);
         break;
@@ -295,7 +295,7 @@ export const SpecGenerator = () => {
     a.click();
     URL.revokeObjectURL(url);
     
-    toast.success('📊 CSV exported successfully');
+    toast.success('CSV exported successfully');
   };
 
   // Reset form
@@ -330,7 +330,7 @@ export const SpecGenerator = () => {
               <div>
                 <h1 className="text-2xl font-semibold text-gray-900">Spec Generator</h1>
                 <p className="text-sm text-gray-500 mt-1">
-                  🎯 Generate estimated L×W×H and CUIN for product lists using AI
+                  Generate estimated L×W×H and CUIN for product lists using AI
                 </p>
               </div>
             </div>
@@ -464,7 +464,7 @@ export const SpecGenerator = () => {
               <CardHeader>
                 <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-3">
                   <Target className="h-5 w-5 text-orange-600" />
-                  🎯 Bounding Dimensions
+                  Bounding Dimensions
                   <span className="text-red-500">*</span>
                 </CardTitle>
                 <CardDescription className="text-gray-500">
@@ -475,7 +475,7 @@ export const SpecGenerator = () => {
                 {['min', 'avg', 'max'].map((type) => (
                   <div key={type} className="space-y-3">
                     <Label className="text-gray-700 font-medium text-sm">
-                      {type === 'min' ? '📏 Minimum' : type === 'avg' ? '📐 Average' : '📊 Maximum'} Dimensions
+                      {type === 'min' ? 'Minimum' : type === 'avg' ? 'Average' : 'Maximum'} Dimensions
                     </Label>
                     <div className="grid grid-cols-3 gap-3">
                       {['l', 'w', 'h'].map((dim) => (
@@ -506,7 +506,7 @@ export const SpecGenerator = () => {
 
                 <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
                   <p className="text-sm text-orange-700">
-                    <strong>💡 Tip:</strong> These should reflect your smallest, average, and largest products based on outer packaging dimensions
+                    <strong>Tip:</strong> These should reflect your smallest, average, and largest products based on outer packaging dimensions
                   </p>
                 </div>
               </CardContent>
@@ -523,7 +523,7 @@ export const SpecGenerator = () => {
                     Generated Specifications
                   </CardTitle>
                   <CardDescription className="text-gray-500 mt-1">
-                    📊 {results.length} products processed with AI analysis
+                    {results.length} products processed with AI analysis
                     {totalProducts > results.length && (
                       <span className="ml-2 text-blue-600 font-medium">
                         ({results.length}/{totalProducts} total)
@@ -586,7 +586,7 @@ export const SpecGenerator = () => {
                   </div>
                 </div>
                 <div className="text-xs text-gray-500">
-                  💡 Hover over truncated text to see full notes
+                  Hover over truncated text to see full notes
                 </div>
               </div>
 
@@ -767,7 +767,7 @@ export const SpecGenerator = () => {
                     </div>
                     {totalProducts > 50 && currentChunk > 0 && (
                       <p className="text-xs text-gray-500 mt-2">
-                        📦 Large file processing: Chunk {currentChunk} of ~{Math.ceil(totalProducts / 50)}
+                        Large file processing: Chunk {currentChunk} of ~{Math.ceil(totalProducts / 50)}
                       </p>
                     )}
                   </div>
@@ -795,7 +795,7 @@ export const SpecGenerator = () => {
                 ) : (
                   <div className="flex items-center gap-2">
                     <Wand2 className="h-5 w-5" />
-                    🚀 Generate Specs with AI
+                    Generate Specs with AI
                   </div>
                 )}
               </Button>
