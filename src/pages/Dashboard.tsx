@@ -30,7 +30,23 @@ import {
   Calendar,
   Plus,
   ChevronDown,
-  MoreHorizontal
+  MoreHorizontal,
+  ArrowRight,
+  Target,
+  Activity,
+  Zap,
+  Award,
+  TrendingDown,
+  Info,
+  FolderOpen,
+  PlayCircle,
+  RefreshCw,
+  BookOpen,
+  Lightbulb,
+  ChevronRight,
+  ArrowUpRight,
+  Timer,
+  Hash
 } from 'lucide-react';
 import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
 import { SpecGenerator } from '@/components/SpecGenerator';
@@ -88,74 +104,229 @@ const Dashboard = () => {
       default:
         return (
           <div className="space-y-6">
-            {/* Metrics Grid */}
+            {/* Enhanced Metrics Grid with Real Business Value */}
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-              {/* Total Savings */}
-              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                    <DollarSign className="h-4 w-4 text-white" />
+              {/* Total Savings Achieved */}
+              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-all group cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <DollarSign className="h-5 w-5 text-white" />
+                    </div>
+                    <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">
+                      <TrendingUp className="h-3 w-3 mr-1" />
+                      12.3%
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
-                    <TrendingUp className="h-2.5 w-2.5" />
-                    +12.3%
+                  <div className="space-y-1">
+                    <h3 className="text-2xl font-bold text-gray-900">$127,450</h3>
+                    <p className="text-xs text-gray-500">Total Savings Achieved</p>
+                    <div className="flex items-center gap-2 pt-2">
+                      <div className="h-1.5 flex-1 bg-gray-100 rounded-full overflow-hidden">
+                        <div className="h-full w-[75%] bg-emerald-500 rounded-full" />
+                      </div>
+                      <span className="text-xs text-gray-500">YTD</span>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl font-semibold text-gray-900">$34,250</h3>
-                  <p className="text-xs text-gray-500">Total Savings</p>
-                </div>
+                </CardContent>
               </Card>
 
-              {/* Cost Reduction */}
-              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="h-4 w-4 text-white" />
+              {/* Packaging Efficiency Score */}
+              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-all group cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Target className="h-5 w-5 text-white" />
+                    </div>
+                    <Badge className="bg-blue-50 text-blue-700 border-blue-200">
+                      <Award className="h-3 w-3 mr-1" />
+                      A+
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
-                    <TrendingUp className="h-2.5 w-2.5" />
-                    +2.1%
+                  <div className="space-y-1">
+                    <h3 className="text-2xl font-bold text-gray-900">87.5%</h3>
+                    <p className="text-xs text-gray-500">Efficiency Score</p>
+                    <div className="flex items-center gap-1 pt-2">
+                      <span className="text-xs text-gray-400">vs industry avg:</span>
+                      <span className="text-xs font-medium text-emerald-600">+23%</span>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl font-semibold text-gray-900">23.8%</h3>
-                  <p className="text-xs text-gray-500">Cost Reduction</p>
-                </div>
+                </CardContent>
               </Card>
 
-              {/* Waste Reduction */}
-              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                    <Recycle className="h-4 w-4 text-white" />
+              {/* Products Analyzed */}
+              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-all group cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Hash className="h-5 w-5 text-white" />
+                    </div>
+                    <Badge className="bg-purple-50 text-purple-700 border-purple-200">
+                      <Activity className="h-3 w-3 mr-1" />
+                      Active
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
-                    <TrendingUp className="h-2.5 w-2.5" />
-                    +5.7%
+                  <div className="space-y-1">
+                    <h3 className="text-2xl font-bold text-gray-900">3,847</h3>
+                    <p className="text-xs text-gray-500">Products Analyzed</p>
+                    <div className="flex items-center gap-1 pt-2">
+                      <span className="text-xs text-gray-400">This month:</span>
+                      <span className="text-xs font-medium text-purple-600">+248</span>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl font-semibold text-gray-900">19.9%</h3>
-                  <p className="text-xs text-gray-500">Waste Reduction</p>
-                </div>
+                </CardContent>
               </Card>
 
-              {/* Processed Orders */}
-              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                    <Package className="h-4 w-4 text-white" />
+              {/* Active Projects */}
+              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-all group cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Zap className="h-5 w-5 text-white" />
+                    </div>
+                    <Badge className="bg-orange-50 text-orange-700 border-orange-200">
+                      <Clock className="h-3 w-3 mr-1" />
+                      Live
+                    </Badge>
                   </div>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
-                    <TrendingUp className="h-2.5 w-2.5" />
-                    +8.4%
+                  <div className="space-y-1">
+                    <h3 className="text-2xl font-bold text-gray-900">12</h3>
+                    <p className="text-xs text-gray-500">Active Projects</p>
+                    <div className="flex items-center gap-1 pt-2">
+                      <span className="text-xs text-emerald-600">3 completed today</span>
+                    </div>
                   </div>
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl font-semibold text-gray-900">12,847</h3>
-                  <p className="text-xs text-gray-500">Processed Orders</p>
-                </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Quick Actions Hub */}
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
+              {/* Quick Launch */}
+              <Card className="border-gray-100 bg-white shadow-sm lg:col-span-2">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                      <Zap className="h-5 w-5 text-orange-500" />
+                      Quick Actions
+                    </CardTitle>
+                    <Badge variant="outline" className="text-xs">
+                      Frequently Used
+                    </Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button 
+                      variant="outline" 
+                      className="justify-start h-auto p-4 hover:bg-blue-50 hover:border-blue-300 group"
+                      onClick={() => setActiveTab('suite-analyzer-backend')}
+                    >
+                      <div className="flex items-start gap-3 w-full">
+                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+                          <Package className="h-4 w-4 text-blue-600" />
+                        </div>
+                        <div className="text-left flex-1">
+                          <p className="font-medium text-sm text-gray-900">Analyze New Suite</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Upload CSV for optimization</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-blue-600 transition-colors" />
+                      </div>
+                    </Button>
+
+                    <Button 
+                      variant="outline" 
+                      className="justify-start h-auto p-4 hover:bg-purple-50 hover:border-purple-300 group"
+                      onClick={() => setActiveTab('spec-generator')}
+                    >
+                      <div className="flex items-start gap-3 w-full">
+                        <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
+                          <Calculator className="h-4 w-4 text-purple-600" />
+                        </div>
+                        <div className="text-left flex-1">
+                          <p className="font-medium text-sm text-gray-900">Generate Specs</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Quick L×W×H estimation</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-purple-600 transition-colors" />
+                      </div>
+                    </Button>
+
+                    <Button 
+                      variant="outline" 
+                      className="justify-start h-auto p-4 hover:bg-pink-50 hover:border-pink-300 group"
+                      onClick={() => setActiveTab('pdp-analyzer')}
+                    >
+                      <div className="flex items-start gap-3 w-full">
+                        <div className="w-8 h-8 bg-pink-100 rounded-lg flex items-center justify-center group-hover:bg-pink-200 transition-colors">
+                          <Eye className="h-4 w-4 text-pink-600" />
+                        </div>
+                        <div className="text-left flex-1">
+                          <p className="font-medium text-sm text-gray-900">Analyze Design</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Score packaging visuals</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-pink-600 transition-colors" />
+                      </div>
+                    </Button>
+
+                    <Button 
+                      variant="outline" 
+                      className="justify-start h-auto p-4 hover:bg-indigo-50 hover:border-indigo-300 group"
+                      onClick={() => setActiveTab('reports')}
+                    >
+                      <div className="flex items-start gap-3 w-full">
+                        <div className="w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+                          <FileText className="h-4 w-4 text-indigo-600" />
+                        </div>
+                        <div className="text-left flex-1">
+                          <p className="font-medium text-sm text-gray-900">View Reports</p>
+                          <p className="text-xs text-gray-500 mt-0.5">Access all analyses</p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-gray-400 group-hover:text-indigo-600 transition-colors" />
+                      </div>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Smart Recommendations */}
+              <Card className="border-gray-100 bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                    <Lightbulb className="h-5 w-5 text-yellow-500" />
+                    Recommendations
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div className="p-3 bg-blue-50 rounded-lg border border-blue-100 hover:bg-blue-100 transition-colors cursor-pointer">
+                    <div className="flex items-start gap-2">
+                      <Info className="h-4 w-4 text-blue-600 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">Review Q4 Packaging</p>
+                        <p className="text-xs text-gray-600 mt-0.5">15 SKUs haven't been analyzed in 90+ days</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-emerald-50 rounded-lg border border-emerald-100 hover:bg-emerald-100 transition-colors cursor-pointer">
+                    <div className="flex items-start gap-2">
+                      <TrendingUp className="h-4 w-4 text-emerald-600 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">Optimization Found</p>
+                        <p className="text-xs text-gray-600 mt-0.5">Potential $12K savings in beverage line</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="p-3 bg-purple-50 rounded-lg border border-purple-100 hover:bg-purple-100 transition-colors cursor-pointer">
+                    <div className="flex items-start gap-2">
+                      <RefreshCw className="h-4 w-4 text-purple-600 mt-0.5" />
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-gray-900">Update Forecasts</p>
+                        <p className="text-xs text-gray-600 mt-0.5">Run demand planner for holiday season</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
               </Card>
             </div>
 
@@ -278,32 +449,122 @@ const Dashboard = () => {
               </div>
             </div>
 
-            {/* Recent Activity */}
-            <Card className="border-gray-100 bg-white shadow-sm">
-              <CardHeader className="pb-6">
-                <CardTitle className="text-lg font-medium text-gray-900">Recent Activity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
+            {/* Activity Dashboard */}
+            <div className="grid gap-4 grid-cols-1 lg:grid-cols-3">
+              {/* Recent Activity Timeline */}
+              <Card className="border-gray-100 bg-white shadow-sm lg:col-span-2">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                      <Activity className="h-5 w-5 text-blue-500" />
+                      Activity Timeline
+                    </CardTitle>
+                    <Button variant="ghost" size="sm" className="text-xs">
+                      View All
+                      <ChevronRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[
+                      { 
+                        icon: Package, 
+                        color: 'blue',
+                        title: 'Suite Analysis Completed',
+                        description: 'Q4 beverage line - 23.5% cost reduction identified',
+                        time: '2 hours ago',
+                        status: 'success',
+                        value: '$45,200 savings'
+                      },
+                      { 
+                        icon: Calculator, 
+                        color: 'purple',
+                        title: 'Specs Generated',
+                        description: '247 new SKUs processed with 98% accuracy',
+                        time: '5 hours ago',
+                        status: 'completed',
+                        value: '247 products'
+                      },
+                      { 
+                        icon: TrendingUp, 
+                        color: 'orange',
+                        title: 'Demand Forecast Updated',
+                        description: 'Holiday season projections for all categories',
+                        time: '1 day ago',
+                        status: 'info',
+                        value: 'Q1 2025'
+                      },
+                      { 
+                        icon: Eye, 
+                        color: 'pink',
+                        title: 'Design Analysis',
+                        description: 'New packaging scored 92/100 vs competitors',
+                        time: '2 days ago',
+                        status: 'success',
+                        value: 'Score: 92'
+                      },
+                    ].map((activity, index) => (
+                      <div key={index} className="flex gap-4 group cursor-pointer hover:bg-gray-50 -mx-2 px-2 py-2 rounded-lg transition-colors">
+                        <div className={`w-10 h-10 bg-${activity.color}-100 rounded-lg flex items-center justify-center flex-shrink-0 group-hover:bg-${activity.color}-200 transition-colors`}>
+                          <activity.icon className={`h-5 w-5 text-${activity.color}-600`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <p className="font-medium text-sm text-gray-900">{activity.title}</p>
+                              <p className="text-xs text-gray-600 mt-0.5">{activity.description}</p>
+                            </div>
+                            <Badge variant="outline" className="text-xs shrink-0">
+                              {activity.value}
+                            </Badge>
+                          </div>
+                          <p className="text-xs text-gray-400 mt-2">{activity.time}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Tool Usage Stats */}
+              <Card className="border-gray-100 bg-white shadow-sm">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-indigo-500" />
+                    Tool Usage
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
                   {[
-                    { text: 'Suite analysis completed for Q4 orders', time: '10:15 AM', type: 'success' },
-                    { text: 'Generated specs for 247 new products', time: '10:15 AM', type: 'info' },
-                    { text: 'Demand planning report exported', time: '10:15 AM', type: 'warning' },
-                    { text: 'PDP analysis saved to reports', time: '10:15 AM', type: 'success' },
-                  ].map((activity, index) => (
-                    <div key={index} className="flex items-center gap-3 text-sm">
-                      <div className={`w-2 h-2 rounded-full ${
-                        activity.type === 'success' ? 'bg-emerald-500' :
-                        activity.type === 'info' ? 'bg-blue-500' :
-                        activity.type === 'warning' ? 'bg-orange-500' : 'bg-gray-400'
-                      }`} />
-                      <span className="text-gray-700 flex-1">{activity.text}</span>
-                      <span className="text-gray-400 text-xs">{activity.time}</span>
+                    { name: 'Suite Analyzer', usage: 68, count: 34, color: 'blue' },
+                    { name: 'Spec Generator', usage: 45, count: 89, color: 'purple' },
+                    { name: 'Design Analyzer', usage: 32, count: 16, color: 'pink' },
+                    { name: 'Demand Planner', usage: 28, count: 14, color: 'orange' },
+                  ].map((tool, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="font-medium text-gray-700">{tool.name}</span>
+                        <span className="text-xs text-gray-500">{tool.count} uses</span>
+                      </div>
+                      <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full bg-${tool.color}-500 rounded-full transition-all duration-500`}
+                          style={{ width: `${tool.usage}%` }}
+                        />
+                      </div>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
+                  
+                  <div className="pt-4 border-t">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">Total analyses this month</span>
+                      <span className="font-semibold text-gray-900">153</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           </div>
         );
     }
