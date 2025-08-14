@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { 
   MessageSquare, X, Send, Sparkles, Package,
-  Calculator, TrendingUp, Eye, Scale, FileText,
+  Calculator, TrendingUp, Eye, FileText,
   Lightbulb, ArrowRight, Loader2
 } from 'lucide-react';
 import { useAction } from 'convex/react';
@@ -136,7 +136,6 @@ export const AIAssistant = ({
       case 'spec-generator': return Calculator;
       case 'demand-planner': return TrendingUp;
       case 'pdp-analyzer': return Eye;
-      case 'design-comparator': return Scale;
       case 'reports': return FileText;
       default: return Sparkles;
     }
@@ -147,8 +146,7 @@ export const AIAssistant = ({
       case 'suite-analyzer-backend': return 'Suite Analyzer';
       case 'spec-generator': return 'Spec Generator';
       case 'demand-planner': return 'Demand Planner';
-      case 'pdp-analyzer': return 'PDP Analyzer';
-      case 'design-comparator': return 'Design Comparator';
+      case 'pdp-analyzer': return 'Design Analyzer';
       case 'reports': return 'Reports';
       default: return 'General';
     }

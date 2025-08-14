@@ -30,15 +30,14 @@ import {
   Calendar,
   Plus,
   ChevronDown,
-  MoreHorizontal,
-  Scale
+  MoreHorizontal
 } from 'lucide-react';
 import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
 import { SpecGenerator } from '@/components/SpecGenerator';
 import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
-import { DesignComparator } from '@/components/DesignComparator';
 import { AIAssistant } from '@/components/AIAssistant';
+import { Reports } from '@/pages/Reports';
 import { MonthlyChart, PackagingChart, EfficiencyChart } from '@/components/charts';
 
 const Dashboard = () => {
@@ -70,8 +69,7 @@ const Dashboard = () => {
     { id: 'suite-analyzer-backend', label: 'Suite Analyzer', icon: Package },
     { id: 'spec-generator', label: 'Spec Generator', icon: Calculator },
     { id: 'demand-planner', label: 'Demand Planner', icon: TrendingUp },
-    { id: 'pdp-analyzer', label: 'PDP Analyzer', icon: Eye },
-    { id: 'design-comparator', label: 'Design Comparator', icon: Scale },
+    { id: 'pdp-analyzer', label: 'Design Analyzer', icon: Eye },
     { id: 'reports', label: 'Reports', icon: FileText },
   ];
 
@@ -85,147 +83,8 @@ const Dashboard = () => {
         return <PackagingDemandPlanner />;
       case 'pdp-analyzer':
         return <PDPAnalyzer />;
-      case 'design-comparator':
-        return <DesignComparator />;
       case 'reports':
-        return (
-          <div className="min-h-screen bg-gray-50">
-            <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-              {/* Header */}
-              <div className="bg-white rounded-lg border border-gray-100 p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
-                      <FileText className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h1 className="text-2xl font-medium text-gray-900">Reports & Analytics</h1>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Access comprehensive analysis reports and insights
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1 bg-purple-50 border border-purple-200 rounded-lg">
-                    <BarChart3 className="h-3 w-3 text-purple-600" />
-                    <span className="text-xs font-medium text-purple-700">Analytics Hub</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Report Cards */}
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {[
-                  {
-                    title: 'Suite Analysis Report',
-                    description: 'Comprehensive packaging optimization analysis',
-                    icon: Package,
-                    color: 'blue',
-                    status: 'ready'
-                  },
-                  {
-                    title: 'Spec Generation Report',
-                    description: 'AI-generated product specifications',
-                    icon: Calculator,
-                    color: 'purple',
-                    status: 'processing'
-                  },
-                  {
-                    title: 'Demand Planning Report',
-                    description: 'Future packaging quantity forecasts',
-                    icon: TrendingUp,
-                    color: 'emerald',
-                    status: 'pending'
-                  },
-                  {
-                    title: 'PDP Analysis Report',
-                    description: 'Visual analysis and competitor benchmarks',
-                    icon: Eye,
-                    color: 'pink',
-                    status: 'ready'
-                  },
-                  {
-                    title: 'Cost Optimization Report',
-                    description: 'Detailed cost savings analysis',
-                    icon: DollarSign,
-                    color: 'orange',
-                    status: 'ready'
-                  },
-                  {
-                    title: 'Executive Summary',
-                    description: 'High-level insights and recommendations',
-                    icon: BarChart3,
-                    color: 'indigo',
-                    status: 'processing'
-                  }
-                ].map((report, index) => (
-                  <Card key={index} className="bg-white border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className={`w-10 h-10 bg-${report.color}-50 rounded-lg flex items-center justify-center group-hover:bg-${report.color}-100 transition-colors`}>
-                          <report.icon className={`h-5 w-5 text-${report.color}-600`} />
-                        </div>
-                        {report.status === 'ready' && (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            Ready
-                          </Badge>
-                        )}
-                        {report.status === 'processing' && (
-                          <Badge className="bg-blue-50 text-blue-700 border-blue-200">
-                            <Clock className="h-3 w-3 mr-1" />
-                            Processing
-                          </Badge>
-                        )}
-                        {report.status === 'pending' && (
-                          <Badge variant="outline" className="text-slate-600 border-slate-300">
-                            <AlertCircle className="h-3 w-3 mr-1" />
-                            Pending
-                          </Badge>
-                        )}
-                      </div>
-                      <CardTitle className="text-lg font-medium text-gray-900">{report.title}</CardTitle>
-                      <CardDescription className="text-gray-500">
-                        {report.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-3">
-                        {report.status === 'ready' ? (
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm text-gray-500">
-                              <span>Last updated: 2 hours ago</span>
-                              <span>12 pages</span>
-                            </div>
-                            <Button 
-                              className={`w-full bg-${report.color}-600 hover:bg-${report.color}-700 text-white`}
-                            >
-                              <Download className="h-4 w-4 mr-2" />
-                              Download PDF
-                            </Button>
-                          </div>
-                        ) : report.status === 'processing' ? (
-                          <div className="text-center py-4">
-                            <div className="flex items-center justify-center gap-2 text-blue-600">
-                              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                              <span className="text-sm">Generating report...</span>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="text-center py-4">
-                            <p className="text-sm text-gray-500 mb-3">Run analysis to generate report</p>
-                            <Button variant="outline" className="w-full border-gray-200 text-gray-700">
-                              Start Analysis
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
+        return <Reports />;
       default:
         return (
           <div className="space-y-6">
@@ -385,7 +244,7 @@ const Dashboard = () => {
                   },
                   {
                     id: 'pdp-analyzer',
-                    title: 'PDP Analyzer',
+                    title: 'Design Analyzer',
                     description: 'Score and improve your product display panels',
                     icon: Eye,
                     status: 'Ready',

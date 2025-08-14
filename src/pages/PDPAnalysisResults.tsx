@@ -208,7 +208,7 @@ const PDPAnalysisResults = () => {
               <Eye className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-medium text-gray-900">PDP Analysis Results</h1>
+              <h1 className="text-2xl font-medium text-gray-900">Design Analysis Results</h1>
               <p className="text-sm text-gray-500 mt-1">
                 Analysis completed with {results.competitorAnalyses.length} competitor{results.competitorAnalyses.length !== 1 ? 's' : ''} • {new Date(results.timestamp).toLocaleDateString()}
               </p>
@@ -280,7 +280,7 @@ const PDPAnalysisResults = () => {
                   <Package className="h-4 w-4 text-white" />
                 </div>
                 <h2 className="text-lg font-medium text-gray-900">
-                  Principal Display Panel Analysis
+                  Package Design Analysis
                 </h2>
               </div>
 

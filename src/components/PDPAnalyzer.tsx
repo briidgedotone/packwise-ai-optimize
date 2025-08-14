@@ -192,9 +192,9 @@ export const PDPAnalyzer = () => {
               <Eye className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl font-medium text-gray-900">PDP Analyzer</h1>
+              <h1 className="text-2xl font-medium text-gray-900">Design Analyzer</h1>
               <p className="text-sm text-gray-500 mt-1">
-                AI-powered packaging analysis with consumer psychology insights
+                AI-powered packaging design analysis with consumer psychology insights
               </p>
             </div>
           </div>
@@ -212,7 +212,7 @@ export const PDPAnalyzer = () => {
             <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
               <FileImage className="h-4 w-4 text-white" />
             </div>
-            <h2 className="text-lg font-medium text-gray-900">Your Principal Display Panel</h2>
+            <h2 className="text-lg font-medium text-gray-900">Your Packaging Design</h2>
           </div>
 
           <div>
@@ -228,8 +228,8 @@ export const PDPAnalyzer = () => {
                   <div className="w-16 h-16 bg-pink-500 rounded-lg flex items-center justify-center mx-auto mb-4">
                     <Upload className="h-8 w-8 text-white" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Upload Your PDP</h3>
-                  <p className="text-gray-500 mb-4">Drop your package front image here or click to browse</p>
+                  <h3 className="text-lg font-medium text-gray-900 mb-2">Upload Your Design</h3>
+                  <p className="text-gray-500 mb-4">Drop or Upload Your Packaging Design Here</p>
                   <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
                     <Shield className="h-4 w-4" />
                     <span>Secure upload • JPG, PNG, PDF • Max 10MB</span>
@@ -408,6 +408,7 @@ export const PDPAnalyzer = () => {
                   <option value="Color Contrast">Color Contrast</option>
                   <option value="Text Readability">Text Readability</option>
                   <option value="Brand Recognition">Brand Recognition</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               
@@ -422,6 +423,7 @@ export const PDPAnalyzer = () => {
                   <option value="Premium Segment">Premium Segment</option>
                   <option value="Budget Conscious">Budget Conscious</option>
                   <option value="Young Adults (18-35)">Young Adults (18-35)</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
               
@@ -436,6 +438,7 @@ export const PDPAnalyzer = () => {
                   <option value="Pharmacy/Drug Store">Pharmacy/Drug Store</option>
                   <option value="Department Store">Department Store</option>
                   <option value="Convenience Store">Convenience Store</option>
+                  <option value="Other">Other</option>
                 </select>
               </div>
             </div>

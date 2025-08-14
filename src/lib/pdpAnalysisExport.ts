@@ -97,7 +97,7 @@ export const exportPDPAnalysisToPDF = async (
     // Title Page
     pdf.setFontSize(24);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('PDP Analysis Report', pageWidth / 2, yPosition + 20, { align: 'center' });
+    pdf.text('Design Analysis Report', pageWidth / 2, yPosition + 20, { align: 'center' });
     
     yPosition += 40;
     pdf.setFontSize(14);
@@ -135,7 +135,7 @@ export const exportPDPAnalysisToPDF = async (
     const summaryHeight = addWrappedText(summaryText, margin, yPosition, contentWidth);
     yPosition += summaryHeight + 20;
 
-    // Main PDP Analysis
+    // Main Design Analysis
     checkPageBreak(80);
     pdf.addPage();
     yPosition = margin;
