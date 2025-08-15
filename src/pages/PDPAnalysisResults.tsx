@@ -110,18 +110,35 @@ const PDPAnalysisResults = () => {
     );
   }
 
-  // Apply Design Comparator's weighted scoring system for business-focused results
+  // Apply updated 10-criteria packaging artwork scoring system
   const criteriaWeights = {
-    branding: 0.20,           // Brand Visibility - most important
-    hierarchy: 0.18,          // Visual Hierarchy & Readability
-    color: 0.14,              // Color Blocking & Contrast
-    premium: 0.12,            // Premium & Professional Appeal
-    claims: 0.10,             // Key Benefit/Claim Communication
+    hierarchy: 0.15,          // Visual Hierarchy
+    branding: 0.15,           // Brand Prominence & Placement  
+    typography: 0.12,         // Typography & Readability
+    color: 0.12,              // Color Strategy & Contrast
+    imagery: 0.10,            // Imagery Integration & Quality
+    messaging: 0.10,          // Messaging Clarity & Claim Placement
     simplicity: 0.08,         // Simplicity & Focus
-    imagery: 0.06,            // Imagery Quality & Integration
-    variant: 0.05,            // SKU Differentiation
-    modernity: 0.04,          // Modernity & Design Relevance
-    compliance: 0.03          // Compliance & Legibility
+    balance: 0.08,            // Balance & Composition
+    shelf_performance: 0.05,  // Shelf & Omni-Channel Performance
+    consistency: 0.05         // Design Consistency & Cohesion
+  };
+
+  // Map metric keys to proper display names
+  const getMetricDisplayName = (metric: string): string => {
+    const metricNames = {
+      hierarchy: 'Visual Hierarchy',
+      branding: 'Brand Prominence & Placement',
+      typography: 'Typography & Readability', 
+      color: 'Color Strategy & Contrast',
+      imagery: 'Imagery Integration & Quality',
+      messaging: 'Messaging Clarity & Claim Placement',
+      simplicity: 'Simplicity & Focus',
+      balance: 'Balance & Composition',
+      shelf_performance: 'Shelf & Omni-Channel Performance',
+      consistency: 'Design Consistency & Cohesion'
+    };
+    return metricNames[metric as keyof typeof metricNames] || metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
   const calculateWeightedScore = (scores: Record<string, number>) => {
@@ -477,7 +494,7 @@ const PDPAnalysisResults = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div>
                           <h4 className="text-lg font-semibold text-gray-900">
-                            {metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                            {getMetricDisplayName(metric)}
                           </h4>
                           <p className="text-sm text-gray-600 mt-1">
                             {results.mainAnalysis.analysis[metric]}
@@ -550,7 +567,7 @@ const PDPAnalysisResults = () => {
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <h3 className="text-xl font-semibold text-gray-900">
-                          {improvement.metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                          {getMetricDisplayName(improvement.metric)}
                         </h3>
                         <div className="flex items-center gap-4 mt-2">
                           <div className="flex items-center gap-2">

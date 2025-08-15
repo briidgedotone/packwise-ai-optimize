@@ -18,20 +18,35 @@ export const analyzePDP = action({
   },
   handler: async (ctx, args) => {
     try {
-      // Analyze main PDP
-      const mainAnalysis = await analyzeImage(args.mainPDPData, args.metaInfo);
+      // Run main analysis and competitor analyses in parallel with error handling
+      const mainAnalysisPromise = analyzeImage(args.mainPDPData, args.metaInfo);
       
-      // Analyze competitor PDPs if provided
-      const competitorAnalyses = [];
-      if (args.competitorPDPs && args.competitorPDPs.length > 0) {
-        for (let i = 0; i < args.competitorPDPs.length; i++) {
-          const competitorAnalysis = await analyzeImage(
-            args.competitorPDPs[i], 
-            args.metaInfo,
-            `Competitor ${String.fromCharCode(65 + i)}` // A, B, C, D
-          );
-          competitorAnalyses.push(competitorAnalysis);
-        }
+      const competitorAnalysesPromise = args.competitorPDPs && args.competitorPDPs.length > 0
+        ? Promise.allSettled(args.competitorPDPs.map((competitorPDP, i) =>
+            analyzeImage(
+              competitorPDP, 
+              args.metaInfo,
+              `Competitor ${String.fromCharCode(65 + i)}` // A, B, C, D
+            )
+          ))
+        : Promise.resolve([]);
+
+      // Wait for both main and competitor analyses to complete
+      const [mainAnalysis, competitorResults] = await Promise.all([
+        mainAnalysisPromise,
+        competitorAnalysesPromise
+      ]);
+
+      // Filter successful competitor analyses and log failures
+      const competitorAnalyses: PDPAnalysis[] = [];
+      if (Array.isArray(competitorResults)) {
+        competitorResults.forEach((result, index) => {
+          if (result.status === 'fulfilled') {
+            competitorAnalyses.push(result.value);
+          } else {
+            console.warn(`Competitor ${String.fromCharCode(65 + index)} analysis failed:`, result.reason);
+          }
+        });
       }
 
       // Calculate Z-scores if competitors exist
@@ -181,35 +196,35 @@ ${contextInfo ? `CONTEXT:\n${contextInfo}\n\n` : ''}
 
 EVALUATION CRITERIA (score each 1-10, half points allowed):
 
-1. BRANDING & RECOGNITION (Primary Focus)
-Brand visibility and recognition from a distance - is the brand name easy to find and recognize? Logo distinctiveness, memorability, brand consistency across elements.
+1. VISUAL HIERARCHY
+How well the layout guides the eye from the most important element to the least important. Is the brand name, product type, and key benefit ordered logically?
 
-2. VISUAL HIERARCHY & READABILITY (Primary Focus)
-Information clarity and layout organization - clean layouts where the eye knows where to look first. Visual flow, headline legibility, type contrast/size/spacing, clutter management.
+2. BRAND PROMINENCE & PLACEMENT
+Is the brand clearly visible and easy to recognize at shelf distance? Is it positioned consistently for maximum recognition?
 
-3. COLOR BLOCKING & CONTRAST (High Impact)
-Color use and impact - strong use of unified color zones and high contrast that makes the design pop on shelf. Professional color coordination and category-appropriate choices.
+3. TYPOGRAPHY & READABILITY
+Are fonts legible at both close and far distances? Is there a good balance between type sizes, weights, and spacing?
 
-4. PREMIUM & PROFESSIONAL APPEAL (Quality Perception)
-Premium look and feel - does the design reflect quality and professionalism for the target market? Material choice perception, finishes, refinement, and elevated design execution.
+4. COLOR STRATEGY & CONTRAST
+Are colors chosen to stand out on the shelf while staying on-brand? Is contrast used to make key elements pop without clashing?
 
-5. KEY BENEFIT/CLAIM COMMUNICATION (Message Priority)
-Message priority - are the most important claims or benefits front and center? Clear communication of primary product value proposition and key differentiators.
+5. IMAGERY INTEGRATION & QUALITY
+Are product photos or illustrations high-quality and well-lit? Do they feel cohesive with the rest of the design rather than pasted on?
 
-6. SIMPLICITY & FOCUS (Clean Design)
-Design simplicity - is the design free from unnecessary clutter that could distract the buyer? Clean, focused approach that prioritizes essential information.
+6. MESSAGING CLARITY & CLAIM PLACEMENT
+Are key benefits, features, or claims easy to find and read? Are they placed where the customer's eye naturally lands?
 
-7. IMAGERY QUALITY & INTEGRATION (Visual Appeal)
-Image quality - are photos or graphics sharp, clear, and relevant to the product? Professional imagery that enhances brand perception and product appeal.
+7. SIMPLICITY & FOCUS
+Is the artwork free from unnecessary clutter, background noise, or over-detailing? Does each design element serve a clear purpose?
 
-8. SKU DIFFERENTIATION (Variant Recognition)
-Variant recognition - can customers easily tell product variations apart while maintaining brand cohesion? Clear flavor/variant communication without confusion.
+8. BALANCE & COMPOSITION
+Is the artwork visually balanced? Are elements spaced evenly so no area feels too empty or overcrowded?
 
-9. MODERNITY & DESIGN RELEVANCE (Contemporary Appeal)
-Modern style - does the design feel current and competitive in today's market? Contemporary aesthetic that aligns with category trends and consumer expectations.
+9. SHELF & OMNI-CHANNEL PERFORMANCE
+Will the design work well at physical shelf scale and in digital thumbnails? Is it still recognizable and legible when reduced in size or viewed quickly?
 
-10. COMPLIANCE & LEGIBILITY (Required Information)
-Required information - are mandatory details (weight, specs, certifications) legible and well-placed? Regulatory compliance without dominating the design.
+10. DESIGN CONSISTENCY & COHESION
+Do all visual elements (colors, fonts, imagery, icons) feel like part of the same family? Is there a consistent tone and style throughout the design?
 
 CATEGORY-SPECIFIC CONSIDERATIONS:
 Apply category expertise for ${category}:
@@ -223,28 +238,28 @@ Apply category expertise for ${category}:
 RESPOND IN THIS EXACT JSON FORMAT:
 {
   "scores": {
-    "branding": 0.0,
     "hierarchy": 0.0,
+    "branding": 0.0,
+    "typography": 0.0,
     "color": 0.0,
-    "premium": 0.0,
-    "claims": 0.0,
-    "simplicity": 0.0,
     "imagery": 0.0,
-    "variant": 0.0,
-    "modernity": 0.0,
-    "compliance": 0.0
+    "messaging": 0.0,
+    "simplicity": 0.0,
+    "balance": 0.0,
+    "shelf_performance": 0.0,
+    "consistency": 0.0
   },
   "analysis": {
-    "branding": "Explanation of score...",
     "hierarchy": "Explanation of score...",
+    "branding": "Explanation of score...",
+    "typography": "Explanation of score...",
     "color": "Explanation of score...",
-    "premium": "Explanation of score...",
-    "claims": "Explanation of score...",
-    "simplicity": "Explanation of score...",
     "imagery": "Explanation of score...",
-    "variant": "Explanation of score...",
-    "modernity": "Explanation of score...",
-    "compliance": "Explanation of score..."
+    "messaging": "Explanation of score...",
+    "simplicity": "Explanation of score...",
+    "balance": "Explanation of score...",
+    "shelf_performance": "Explanation of score...",
+    "consistency": "Explanation of score..."
   },
   "visual_elements": {
     "logo_position": "Description of logo placement",
@@ -265,8 +280,8 @@ function calculateZScores(
   competitorAnalyses: PDPAnalysis[]
 ): NormalizedScores {
   const metrics = [
-    'branding', 'hierarchy', 'color', 'premium', 'claims', 
-    'simplicity', 'imagery', 'variant', 'modernity', 'compliance'
+    'hierarchy', 'branding', 'typography', 'color', 'imagery',
+    'messaging', 'simplicity', 'balance', 'shelf_performance', 'consistency'
   ];
   
   const normalizedScores: Record<string, {
@@ -463,16 +478,16 @@ interface MetaInfo {
 interface PDPAnalysis {
   label: string;
   scores: {
-    branding: number;
     hierarchy: number;
+    branding: number;
+    typography: number;
     color: number;
-    premium: number;
-    claims: number;
-    simplicity: number;
     imagery: number;
-    variant: number;
-    modernity: number;
-    compliance: number;
+    messaging: number;
+    simplicity: number;
+    balance: number;
+    shelf_performance: number;
+    consistency: number;
     [key: string]: number;
   };
   analysis: {

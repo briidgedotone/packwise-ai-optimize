@@ -7,7 +7,8 @@ import {
   Upload, Eye, FileImage, AlertCircle, 
   Loader2, CheckCircle2, Sparkles,
   ArrowRight, X, Plus, Settings, Package,
-  Layers, Shield
+  Layers, Shield, ChevronRight, ChevronLeft,
+  Check, Calculator
 } from 'lucide-react';
 import { useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
@@ -16,6 +17,11 @@ import { toast } from 'sonner';
 
 export const PDPAnalyzer = () => {
   const navigate = useNavigate();
+  
+  // UI State
+  const [currentStep, setCurrentStep] = useState(1);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  
   const [files, setFiles] = useState<{
     mainPDP: File | null;
     competitors: File[];
@@ -34,12 +40,48 @@ export const PDPAnalyzer = () => {
     retailEnvironment: 'Grocery Store',
   });
 
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [mainPDPPreview, setMainPDPPreview] = useState<string | null>(null);
   const [competitorPreviews, setCompetitorPreviews] = useState<string[]>([]);
 
   // Convex hooks
   const analyzePDP = useAction(api.pdpAnalyzer.analyzePDP);
+
+  // Step validation
+  const isStep1Valid = files.mainPDP !== null;
+  const isStep2Valid = metaInfo.category.trim() !== '' && metaInfo.description.trim() !== '';
+  const isStep3Valid = true; // Competitive benchmarking is optional
+  const isStep4Valid = isStep2Valid; // Analysis still requires step 2
+
+  const steps = [
+    { 
+      number: 1, 
+      title: 'Design Upload', 
+      description: 'Upload your packaging design',
+      isValid: isStep1Valid,
+      isComplete: isStep1Valid && currentStep > 1
+    },
+    { 
+      number: 2, 
+      title: 'Product Context', 
+      description: 'Enter product information',
+      isValid: isStep2Valid,
+      isComplete: isStep2Valid && currentStep > 2
+    },
+    { 
+      number: 3, 
+      title: 'Competitive Benchmarking', 
+      description: 'Add competitor designs (optional)',
+      isValid: true, // Always valid since it's optional
+      isComplete: currentStep > 3
+    },
+    { 
+      number: 4, 
+      title: 'Analysis Settings', 
+      description: 'Configure analysis and generate',
+      isValid: isStep2Valid, // Still requires step 2 to be valid
+      isComplete: false
+    }
+  ];
 
   // File conversion helpers
   const fileToBase64 = (file: File): Promise<string> => {
@@ -182,300 +224,353 @@ export const PDPAnalyzer = () => {
     }
   };
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white rounded-lg border border-gray-100 p-6 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-pink-500 rounded-lg flex items-center justify-center">
-              <Eye className="h-5 w-5 text-white" />
+  const renderStepHeader = () => (
+    <div className="mb-8">
+      {/* Progress Steps */}
+      <div className="flex items-center justify-center mb-6">
+        {steps.map((step, index) => (
+          <div key={step.number} className="flex items-center">
+            <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+              currentStep === step.number
+                ? 'border-pink-500 bg-pink-500 text-white'
+                : step.isComplete
+                  ? 'border-green-500 bg-green-500 text-white'
+                  : step.isValid
+                    ? 'border-pink-300 bg-pink-50 text-pink-600'
+                    : 'border-gray-300 bg-gray-50 text-gray-400'
+            }`}>
+              {step.isComplete ? <Check className="h-5 w-5" /> : step.number}
             </div>
-            <div>
-              <h1 className="text-2xl font-medium text-gray-900">Design Analyzer</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                AI-powered packaging design analysis with consumer psychology insights
-              </p>
+            {index < steps.length - 1 && (
+              <div className={`w-16 h-0.5 transition-all ${
+                step.isComplete ? 'bg-green-500' : 'bg-gray-300'
+              }`} />
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Current Step Info */}
+      <div className="text-center">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+          Step {currentStep}: {steps[currentStep - 1].title}
+        </h2>
+        <p className="text-gray-600">
+          {steps[currentStep - 1].description}
+        </p>
+      </div>
+    </div>
+  );
+
+  const renderStep1 = () => (
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white border border-gray-200 rounded-lg p-8">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
+            <FileImage className="h-4 w-4 text-white" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900">Your Packaging Design</h3>
+        </div>
+
+        {!mainPDPPreview ? (
+          <label className="relative block">
+            <input
+              type="file"
+              accept=".jpg,.jpeg,.png,.pdf"
+              onChange={(e) => handleMainPDPUpload(e.target.files?.[0] || null)}
+              className="hidden"
+            />
+            <div className="border-2 border-dashed border-gray-200 rounded-lg p-16 text-center hover:border-pink-400 hover:bg-pink-50/50 transition-all cursor-pointer group min-h-[400px] flex flex-col justify-center">
+              <div className="w-24 h-24 bg-pink-500 rounded-lg flex items-center justify-center mx-auto mb-6">
+                <Upload className="h-12 w-12 text-white" />
+              </div>
+              <h3 className="text-2xl font-medium text-gray-900 mb-4">Upload Your Design</h3>
+              <p className="text-lg text-gray-500 mb-6">Drop or Upload Your Packaging Design Here</p>
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+                <Shield className="h-4 w-4" />
+                <span>Secure upload • JPG, PNG, PDF • Max 10MB</span>
+              </div>
+            </div>
+          </label>
+        ) : (
+          <div className="relative">
+            <img
+              src={mainPDPPreview}
+              alt="Main PDP"
+              className="w-full max-w-md mx-auto rounded-xl shadow-lg"
+            />
+            <button
+              onClick={() => {
+                setFiles(prev => ({ ...prev, mainPDP: null }));
+                setMainPDPPreview(null);
+              }}
+              className="absolute top-4 right-4 w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+              <div className="flex items-center gap-2 text-green-700">
+                <CheckCircle2 className="h-5 w-5" />
+                <span className="font-medium">Main PDP uploaded successfully</span>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-2 px-3 py-1 bg-pink-50 border border-pink-200 rounded-lg">
-            <Eye className="h-3 w-3 text-pink-600" />
-            <span className="text-xs font-medium text-pink-700">Visual Intelligence</span>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderStep2 = () => (
+    <div className="max-w-4xl mx-auto">
+      {/* Product Information */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+              <Package className="h-4 w-4 text-white" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">Product Context</h3>
+          </div>
+          <span className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded">Required</span>
+        </div>
+
+        <div className="space-y-6">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <Label className="text-gray-700 font-semibold mb-2 flex items-center gap-2">
+                Product Category
+                <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                placeholder="e.g., Soft Drinks, Snacks, Cosmetics"
+                className="h-12 text-base border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                value={metaInfo.category}
+                onChange={(e) => setMetaInfo(prev => ({ ...prev, category: e.target.value }))}
+                required
+              />
+            </div>
+            <div>
+              <Label className="text-gray-700 font-semibold mb-2">Shelf Type</Label>
+              <Input
+                placeholder="e.g., Vertical Peg, Laydown Box"
+                className="h-12 text-base border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+                value={metaInfo.shelfType}
+                onChange={(e) => setMetaInfo(prev => ({ ...prev, shelfType: e.target.value }))}
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-gray-700 font-semibold mb-2 flex items-center gap-2">
+              Product Description
+              <span className="text-red-500">*</span>
+            </Label>
+            <textarea
+              placeholder="Describe your product in 1-2 sentences (e.g., 'A refreshing carbonated cola drink with natural flavors, targeting young adults')"
+              className="w-full px-4 py-3 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 resize-none"
+              rows={3}
+              value={metaInfo.description}
+              onChange={(e) => setMetaInfo(prev => ({ ...prev, description: e.target.value }))}
+              required
+            />
+          </div>
+
+          <div>
+            <Label className="text-gray-700 font-semibold mb-2">Key Claims</Label>
+            <Input
+              placeholder="e.g., Organic, Sugar-Free, Premium Quality"
+              className="h-12 text-base border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              value={metaInfo.claims}
+              onChange={(e) => setMetaInfo(prev => ({ ...prev, claims: e.target.value }))}
+            />
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
-        {/* Main Upload Section */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
-              <FileImage className="h-4 w-4 text-white" />
-            </div>
-            <h2 className="text-lg font-medium text-gray-900">Your Packaging Design</h2>
-          </div>
+    </div>
+  );
 
-          <div>
-            {!mainPDPPreview ? (
-              <label className="relative block">
-                <input
-                  type="file"
-                  accept=".jpg,.jpeg,.png,.pdf"
-                  onChange={(e) => handleMainPDPUpload(e.target.files?.[0] || null)}
-                  className="hidden"
-                />
-                <div className="border-2 border-dashed border-gray-200 rounded-lg p-8 text-center hover:border-pink-400 hover:bg-pink-50/50 transition-all cursor-pointer group">
-                  <div className="w-16 h-16 bg-pink-500 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <Upload className="h-8 w-8 text-white" />
-                  </div>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Upload Your Design</h3>
-                  <p className="text-gray-500 mb-4">Drop or Upload Your Packaging Design Here</p>
-                  <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-                    <Shield className="h-4 w-4" />
-                    <span>Secure upload • JPG, PNG, PDF • Max 10MB</span>
-                  </div>
-                </div>
-              </label>
-            ) : (
-              <div className="relative">
-                <img
-                  src={mainPDPPreview}
-                  alt="Main PDP"
-                  className="w-full max-w-md mx-auto rounded-xl shadow-lg"
-                />
+  const renderStep3 = () => (
+    <div className="max-w-4xl mx-auto">
+      {/* Competitor PDPs */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+              <Layers className="h-4 w-4 text-white" />
+            </div>
+            <h3 className="text-lg font-medium text-gray-900">Competitive Benchmarking</h3>
+          </div>
+          <span className="text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 px-2 py-1 rounded">Optional</span>
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {competitorPreviews.map((preview, index) => (
+            <div key={index} className="relative group">
+              <img
+                src={preview}
+                alt={`Competitor ${String.fromCharCode(65 + index)}`}
+                className="w-full h-32 object-cover rounded-lg"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
-                  onClick={() => {
-                    setFiles(prev => ({ ...prev, mainPDP: null }));
-                    setMainPDPPreview(null);
-                  }}
-                  className="absolute top-4 right-4 w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
+                  onClick={() => removeCompetitor(index)}
+                  className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
-                <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
-                  <div className="flex items-center gap-2 text-green-700">
-                    <CheckCircle2 className="h-5 w-5" />
-                    <span className="font-medium">Main PDP uploaded successfully</span>
-                  </div>
-                </div>
               </div>
-            )}
-          </div>
-        </div>
-
-        {/* Product Information */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                <Package className="h-4 w-4 text-white" />
-              </div>
-              <h2 className="text-lg font-medium text-gray-900">Product Context</h2>
-            </div>
-            <span className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded">Required</span>
-          </div>
-
-          <div className="space-y-6">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div>
-                <Label className="text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                  Product Category
-                  <span className="text-red-500">*</span>
-                </Label>
-                <Input
-                  placeholder="e.g., Soft Drinks, Snacks, Cosmetics"
-                  className="h-12 text-base border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                  value={metaInfo.category}
-                  onChange={(e) => setMetaInfo(prev => ({ ...prev, category: e.target.value }))}
-                  required
-                />
-              </div>
-              <div>
-                <Label className="text-gray-700 font-semibold mb-2">Shelf Type</Label>
-                <Input
-                  placeholder="e.g., Vertical Peg, Laydown Box"
-                  className="h-12 text-base border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                  value={metaInfo.shelfType}
-                  onChange={(e) => setMetaInfo(prev => ({ ...prev, shelfType: e.target.value }))}
-                />
+              <div className="mt-2 text-center text-sm font-medium text-gray-700">
+                Competitor {String.fromCharCode(65 + index)}
               </div>
             </div>
-
-            <div>
-              <Label className="text-gray-700 font-semibold mb-2 flex items-center gap-2">
-                Product Description
-                <span className="text-red-500">*</span>
-              </Label>
-              <textarea
-                placeholder="Describe your product in 1-2 sentences (e.g., 'A refreshing carbonated cola drink with natural flavors, targeting young adults')"
-                className="w-full px-4 py-3 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 resize-none"
-                rows={3}
-                value={metaInfo.description}
-                onChange={(e) => setMetaInfo(prev => ({ ...prev, description: e.target.value }))}
-                required
+          ))}
+          
+          {files.competitors.length < 4 && (
+            <label className="relative">
+              <input
+                type="file"
+                accept=".jpg,.jpeg,.png,.pdf"
+                onChange={(e) => handleCompetitorUpload(e.target.files?.[0] || null)}
+                disabled={files.competitors.length >= 4}
+                className="hidden"
               />
-            </div>
+              <div className="h-32 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-all">
+                <Plus className="h-6 w-6 text-gray-400 mb-1" />
+                <span className="text-sm text-gray-500">Add Competitor</span>
+                <span className="text-xs text-gray-400 mt-1">{files.competitors.length}/4</span>
+              </div>
+            </label>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 
-            <div>
-              <Label className="text-gray-700 font-semibold mb-2">Key Claims</Label>
-              <Input
-                placeholder="e.g., Organic, Sugar-Free, Premium Quality"
-                className="h-12 text-base border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                value={metaInfo.claims}
-                onChange={(e) => setMetaInfo(prev => ({ ...prev, claims: e.target.value }))}
-              />
-            </div>
+  const renderStep4 = () => (
+    <div className="max-w-2xl mx-auto space-y-6">
+      {/* Analysis Settings */}
+      <div className="bg-white border border-gray-200 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+            <Settings className="h-4 w-4 text-white" />
           </div>
+          <h3 className="text-lg font-medium text-gray-900">Analysis Parameters</h3>
         </div>
 
-        {/* Competitor PDPs */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                <Layers className="h-4 w-4 text-white" />
-              </div>
-              <h2 className="text-lg font-medium text-gray-900">Competitive Benchmarking</h2>
-            </div>
-            <span className="text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 px-2 py-1 rounded">Optional</span>
-          </div>
-
+        <div className="grid gap-6 md:grid-cols-1">
           <div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {competitorPreviews.map((preview, index) => (
-                <div
-                  key={index}
-                  className="relative group"
-                >
-                  <img
-                    src={preview}
-                    alt={`Competitor ${String.fromCharCode(65 + index)}`}
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      onClick={() => removeCompetitor(index)}
-                      className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                  <div className="mt-2 text-center text-sm font-medium text-gray-700">
-                    Competitor {String.fromCharCode(65 + index)}
-                  </div>
-                </div>
-              ))}
-              
-              {files.competitors.length < 4 && (
-                <label className="relative">
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.pdf"
-                    onChange={(e) => handleCompetitorUpload(e.target.files?.[0] || null)}
-                    disabled={files.competitors.length >= 4}
-                    className="hidden"
-                  />
-                  <div className="h-32 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-all">
-                    <Plus className="h-6 w-6 text-gray-400 mb-1" />
-                    <span className="text-sm text-gray-500">Add Competitor</span>
-                    <span className="text-xs text-gray-400 mt-1">{files.competitors.length}/4</span>
-                  </div>
-                </label>
-              )}
-            </div>
+            <Label className="text-gray-700 font-semibold mb-2">Analysis Focus</Label>
+            <select 
+              className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              value={metaInfo.analysisFocus}
+              onChange={(e) => setMetaInfo(prev => ({ ...prev, analysisFocus: e.target.value }))}
+            >
+              <option value="Overall Visibility">Overall Visibility</option>
+              <option value="Color Contrast">Color Contrast</option>
+              <option value="Text Readability">Text Readability</option>
+              <option value="Brand Recognition">Brand Recognition</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
-        </div>
-
-        {/* Analysis Settings */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
-              <Settings className="h-4 w-4 text-white" />
-            </div>
-            <h2 className="text-lg font-medium text-gray-900">Analysis Parameters</h2>
-          </div>
-
+          
           <div>
-            <div className="grid gap-6 md:grid-cols-3">
-              <div>
-                <Label className="text-gray-700 font-semibold mb-2">Analysis Focus</Label>
-                <select 
-                  className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                  value={metaInfo.analysisFocus}
-                  onChange={(e) => setMetaInfo(prev => ({ ...prev, analysisFocus: e.target.value }))}
-                >
-                  <option value="Overall Visibility">Overall Visibility</option>
-                  <option value="Color Contrast">Color Contrast</option>
-                  <option value="Text Readability">Text Readability</option>
-                  <option value="Brand Recognition">Brand Recognition</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              
-              <div>
-                <Label className="text-gray-700 font-semibold mb-2">Target Demographics</Label>
-                <select 
-                  className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                  value={metaInfo.targetDemographics}
-                  onChange={(e) => setMetaInfo(prev => ({ ...prev, targetDemographics: e.target.value }))}
-                >
-                  <option value="General Consumer">General Consumer</option>
-                  <option value="Premium Segment">Premium Segment</option>
-                  <option value="Budget Conscious">Budget Conscious</option>
-                  <option value="Young Adults (18-35)">Young Adults (18-35)</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-              
-              <div>
-                <Label className="text-gray-700 font-semibold mb-2">Retail Environment</Label>
-                <select 
-                  className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
-                  value={metaInfo.retailEnvironment}
-                  onChange={(e) => setMetaInfo(prev => ({ ...prev, retailEnvironment: e.target.value }))}
-                >
-                  <option value="Grocery Store">Grocery Store</option>
-                  <option value="Pharmacy/Drug Store">Pharmacy/Drug Store</option>
-                  <option value="Department Store">Department Store</option>
-                  <option value="Convenience Store">Convenience Store</option>
-                  <option value="Other">Other</option>
-                </select>
-              </div>
-            </div>
+            <Label className="text-gray-700 font-semibold mb-2">Target Demographics</Label>
+            <select 
+              className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              value={metaInfo.targetDemographics}
+              onChange={(e) => setMetaInfo(prev => ({ ...prev, targetDemographics: e.target.value }))}
+            >
+              <option value="General Consumer">General Consumer</option>
+              <option value="Premium Segment">Premium Segment</option>
+              <option value="Budget Conscious">Budget Conscious</option>
+              <option value="Young Adults (18-35)">Young Adults (18-35)</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          
+          <div>
+            <Label className="text-gray-700 font-semibold mb-2">Retail Environment</Label>
+            <select 
+              className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              value={metaInfo.retailEnvironment}
+              onChange={(e) => setMetaInfo(prev => ({ ...prev, retailEnvironment: e.target.value }))}
+            >
+              <option value="Grocery Store">Grocery Store</option>
+              <option value="Pharmacy/Drug Store">Pharmacy/Drug Store</option>
+              <option value="Department Store">Department Store</option>
+              <option value="Convenience Store">Convenience Store</option>
+              <option value="Other">Other</option>
+            </select>
           </div>
         </div>
-
-        {/* Analyze Button */}
-        <div className="flex justify-center py-6">
-          <Button 
-            size="lg"
-            disabled={!files.mainPDP || !metaInfo.category.trim() || !metaInfo.description.trim() || isAnalyzing}
+        
+        <div className="mt-6 pt-4 border-t">
+          <Button
             onClick={handleAnalyzePDP}
-            className="relative bg-pink-600 hover:bg-pink-700 text-white disabled:bg-gray-400 px-8 py-3 text-base font-medium rounded-lg transition-colors group"
+            disabled={!isStep4Valid || isAnalyzing}
+            className="w-full bg-pink-600 hover:bg-pink-700 text-white"
+            size="lg"
           >
             {isAnalyzing ? (
-              <div className="flex items-center gap-3">
-                <Loader2 className="h-6 w-6 animate-spin" />
-                <span>Analyzing Your Design...</span>
-              </div>
-            ) : !files.mainPDP ? (
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-6 w-6" />
-                <span>Upload PDP to Begin</span>
-              </div>
-            ) : !metaInfo.category.trim() || !metaInfo.description.trim() ? (
-              <div className="flex items-center gap-3">
-                <AlertCircle className="h-6 w-6" />
-                <span>Complete Required Fields</span>
-              </div>
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                Analyzing Your Design...
+              </>
             ) : (
-              <div className="flex items-center gap-3">
-                <Sparkles className="h-6 w-6" />
-                <span>Analyze with AI Intelligence</span>
-                <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
-              </div>
+              <>
+                <Calculator className="h-4 w-4 mr-2" />
+                Analyze with AI Intelligence
+              </>
             )}
           </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderNavigation = () => (
+    <div className="flex justify-between items-center mt-8">
+      <Button
+        variant="outline"
+        onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+        disabled={currentStep === 1}
+      >
+        <ChevronLeft className="h-4 w-4 mr-2" />
+        Previous
+      </Button>
+
+      <div className="text-sm text-gray-500">
+        Step {currentStep} of {steps.length}
+      </div>
+
+      {currentStep < steps.length ? (
+        <Button
+          onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
+          disabled={!steps[currentStep - 1].isValid}
+          className="bg-pink-600 hover:bg-pink-700 text-white"
+        >
+          Next
+          <ChevronRight className="h-4 w-4 ml-2" />
+        </Button>
+      ) : (
+        <div className="w-20"></div>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 relative">
+          {renderStepHeader()}
+          
+          {currentStep === 1 && renderStep1()}
+          {currentStep === 2 && renderStep2()}
+          {currentStep === 3 && renderStep3()}
+          {currentStep === 4 && renderStep4()}
+          
+          {renderNavigation()}
         </div>
       </div>
     </div>
