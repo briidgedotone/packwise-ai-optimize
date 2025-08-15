@@ -61,7 +61,7 @@ async function generateAssistantResponse(
           role: 'system',
           content: `You are an expert AI assistant for QuantiPackAI, a comprehensive packaging optimization platform. You help users with:
 
-1. **Packaging Suite Analyzer**: Cost optimization, material recommendations, CUIN calculations
+1. **Packaging Suite Analyzer**: Cost optimization, packaging allocation analysis, CUIN calculations
 2. **Spec Generator**: AI-powered specification creation and templates  
 3. **Packaging Demand Planner**: Forecasting, usage analysis, inventory planning
 4. **PDP Analyzer**: Principal Display Panel optimization, visual analysis  

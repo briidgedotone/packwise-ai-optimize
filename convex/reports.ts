@@ -21,12 +21,12 @@ export const getUserReports = query({
       return [];
     }
 
-    // Get all analyses for this user
+    // Get recent analyses for this user (limit to prevent large data reads)
     const analyses = await ctx.db
       .query("analyses")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
       .order("desc")
-      .collect();
+      .take(100); // Limit to recent 100 reports
 
     // Format the analyses with additional metadata
     const formattedReports = analyses.map((analysis) => {
@@ -98,7 +98,7 @@ export const getReportsByStatus = query({
       .withIndex("by_user", (q) => q.eq("userId", user._id))
       .filter((q) => q.eq(q.field("status"), args.status))
       .order("desc")
-      .collect();
+      .take(50); // Limit to recent 50 analyses for filtered results
 
     return analyses;
   },
@@ -160,7 +160,7 @@ export const deleteReport = mutation({
     const reports = await ctx.db
       .query("reports")
       .withIndex("by_analysis", (q) => q.eq("analysisId", args.reportId))
-      .collect();
+      .take(100); // Limit to prevent large data reads during deletion
 
     for (const report of reports) {
       await ctx.db.delete(report._id);
@@ -200,7 +200,8 @@ export const getReportStats = query({
     const analyses = await ctx.db
       .query("analyses")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .collect();
+      .order("desc")
+      .take(1000); // Limit to recent 1000 analyses for stats calculation
 
     const stats = {
       total: analyses.length,

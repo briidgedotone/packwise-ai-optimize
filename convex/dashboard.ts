@@ -10,11 +10,12 @@ export const getDashboardMetrics = query({
       throw new Error("Not authenticated");
     }
 
-    // Get all analyses for the current user
+    // Get recent analyses for the current user (limited to prevent large data reads)
     const analyses = await ctx.db
       .query("analyses")
       .filter((q) => q.eq(q.field("userId"), identity.subject))
-      .collect();
+      .order("desc")
+      .take(100); // Limit to recent 100 analyses to prevent large data reads
 
     // Calculate total savings from suite analyses
     let totalSavings = 0;
@@ -23,7 +24,7 @@ export const getDashboardMetrics = query({
     let efficiencyScores: number[] = [];
 
     for (const analysis of analyses) {
-      if (analysis.type === "suite" && analysis.results) {
+      if (analysis.type === "suite_analyzer" && analysis.results) {
         const results = analysis.results as any;
         
         // Extract savings data
@@ -104,19 +105,26 @@ export const getRecentActivity = query({
       let description = '';
 
       switch (analysis.type) {
-        case 'suite':
+        case 'suite_analyzer':
           value = results?.totalSavings ? `$${Math.round(results.totalSavings).toLocaleString()} savings` : 'Analysis complete';
           description = `${results?.processedCount || 'Multiple'} products analyzed for cost optimization`;
           break;
-        case 'spec':
+        case 'spec_generator':
           value = results?.results?.length ? `${results.results.length} specs` : 'Specs generated';
           description = `Generated specifications with AI analysis`;
           break;
-        case 'pdp':
-          value = results?.mainAnalysis?.scores ? `Score: ${Math.round(Object.values(results.mainAnalysis.scores).reduce((a: number, b: number) => a + b, 0) / Object.keys(results.mainAnalysis.scores).length)}` : 'Design analyzed';
+        case 'pdp_analyzer':
+          const scores = results?.mainAnalysis?.scores;
+          if (scores && typeof scores === 'object') {
+            const scoreValues = Object.values(scores).filter((v): v is number => typeof v === 'number');
+            const avgScore = scoreValues.length > 0 ? scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length : 0;
+            value = `Score: ${Math.round(avgScore)}`;
+          } else {
+            value = 'Design analyzed';
+          }
           description = `Packaging design analysis with competitor benchmarking`;
           break;
-        case 'demand':
+        case 'demand_planner':
           value = 'Forecast updated';
           description = `Demand planning analysis completed`;
           break;
@@ -150,13 +158,14 @@ export const getToolUsageStats = query({
     const analyses = await ctx.db
       .query("analyses")
       .filter((q) => q.eq(q.field("userId"), identity.subject))
-      .collect();
+      .order("desc")
+      .take(1000); // Limit to recent 1000 analyses for stats calculation
 
     const toolCounts = {
-      suite: 0,
-      spec: 0,
-      pdp: 0,
-      demand: 0,
+      suite_analyzer: 0,
+      spec_generator: 0,
+      pdp_analyzer: 0,
+      demand_planner: 0,
     };
 
     analyses.forEach(analysis => {
@@ -170,26 +179,26 @@ export const getToolUsageStats = query({
     return [
       { 
         name: 'Suite Analyzer', 
-        usage: total > 0 ? Math.round((toolCounts.suite / total) * 100) : 0, 
-        count: toolCounts.suite, 
+        usage: total > 0 ? Math.round((toolCounts.suite_analyzer / total) * 100) : 0, 
+        count: toolCounts.suite_analyzer, 
         color: 'blue' 
       },
       { 
         name: 'Spec Generator', 
-        usage: total > 0 ? Math.round((toolCounts.spec / total) * 100) : 0, 
-        count: toolCounts.spec, 
+        usage: total > 0 ? Math.round((toolCounts.spec_generator / total) * 100) : 0, 
+        count: toolCounts.spec_generator, 
         color: 'purple' 
       },
       { 
         name: 'Design Analyzer', 
-        usage: total > 0 ? Math.round((toolCounts.pdp / total) * 100) : 0, 
-        count: toolCounts.pdp, 
+        usage: total > 0 ? Math.round((toolCounts.pdp_analyzer / total) * 100) : 0, 
+        count: toolCounts.pdp_analyzer, 
         color: 'pink' 
       },
       { 
         name: 'Demand Planner', 
-        usage: total > 0 ? Math.round((toolCounts.demand / total) * 100) : 0, 
-        count: toolCounts.demand, 
+        usage: total > 0 ? Math.round((toolCounts.demand_planner / total) * 100) : 0, 
+        count: toolCounts.demand_planner, 
         color: 'orange' 
       },
     ];
@@ -213,13 +222,12 @@ export const getRecentFiles = query({
       .take(5);
 
     return files.map(file => {
-      const metadata = file.metadata as any;
       return {
-        name: file.filename,
-        tool: getToolName(file.uploadType),
+        name: file.name,
+        tool: getToolName(file.purpose),
         time: getRelativeTime(file._creationTime),
         timestamp: file._creationTime,
-        type: file.uploadType,
+        type: file.purpose,
         size: file.size,
       };
     });
@@ -229,20 +237,22 @@ export const getRecentFiles = query({
 // Helper functions
 function getActivityTitle(type: string): string {
   switch (type) {
-    case 'suite': return 'Suite Analysis Completed';
-    case 'spec': return 'Specs Generated';
-    case 'pdp': return 'Design Analysis';
-    case 'demand': return 'Demand Forecast Updated';
+    case 'suite_analyzer': return 'Suite Analysis Completed';
+    case 'spec_generator': return 'Specs Generated';
+    case 'pdp_analyzer': return 'Design Analysis';
+    case 'demand_planner': return 'Demand Forecast Updated';
     default: return 'Analysis Completed';
   }
 }
 
-function getToolName(uploadType: string): string {
-  switch (uploadType) {
-    case 'suite': return 'Suite Analyzer';
-    case 'spec': return 'Spec Generator';
-    case 'pdp': return 'Design Analyzer';
-    case 'demand': return 'Demand Planner';
+function getToolName(purpose: string): string {
+  switch (purpose) {
+    case 'packaging_suite': return 'Suite Analyzer';
+    case 'order_history': return 'Spec Generator';
+    case 'pdp_image': return 'Design Analyzer';
+    case 'competitor_image': return 'Design Analyzer';
+    case 'usage_log': return 'Demand Planner';
+    case 'manual_mix': return 'Suite Analyzer';
     default: return 'Unknown';
   }
 }
