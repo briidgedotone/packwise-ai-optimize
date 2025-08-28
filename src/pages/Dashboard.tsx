@@ -4,69 +4,35 @@ import { Button } from '@/components/ui/button';
 import { 
   Package, 
   BarChart3, 
-  Calculator, 
   Eye, 
   TrendingUp, 
-  DollarSign, 
-  Recycle, 
   FileText,
   MessageSquare,
   Menu,
   X,
-  Download,
-  Clock,
-  CheckCircle,
   AlertCircle,
   Settings as SettingsIcon,
-  Home,
-  Users,
-  HelpCircle,
   LogOut,
-  Bell,
-  Search,
-  Calendar,
-  Plus,
   ChevronDown,
   MoreHorizontal,
   ArrowRight,
-  Target,
   Activity,
   Zap,
-  Award,
-  TrendingDown,
-  Info,
   FolderOpen,
-  PlayCircle,
   RefreshCw,
-  BookOpen,
   Lightbulb,
-  ChevronRight,
-  ArrowUpRight,
-  Timer,
-  Hash,
-  History,
-  Save,
-  Star,
-  Percent,
-  TrendingDown as TrendingDownIcon,
-  Brain,
-  Smartphone,
-  Filter,
-  Copy,
   ExternalLink,
-  Gift,
-  Shield,
-  Sparkles,
-  Upload
+  Sparkles
 } from 'lucide-react';
-import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
+import { toast } from 'sonner';
+import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerStepped';
 import { SpecGenerator } from '@/components/SpecGenerator';
-import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
+import { ImprovedPackagingDemandPlanner } from '@/components/ImprovedPackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
 import { AIAssistant } from '@/components/AIAssistant';
 import { Reports } from '@/pages/Reports';
 import Settings from '@/pages/Settings';
-import { MonthlyChart, PackagingChart, EfficiencyChart } from '@/components/charts';
+import { EmbeddedAIChat } from '@/components/EmbeddedAIChat';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
@@ -78,11 +44,52 @@ const Dashboard = () => {
   const [aiAssistantOpen, setAiAssistantOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
-  // Convex queries for real data
+  // Backend availability state - now available with new Convex account
+  const [isBackendUnavailable, setIsBackendUnavailable] = useState(false);
+  const [isCheckingBackend, setIsCheckingBackend] = useState(false);
+
+  // Function to test backend availability
+  const testBackendConnection = async () => {
+    setIsCheckingBackend(true);
+    try {
+      // If we get here without error, backend might be available
+      // We'll set it as available and let the queries try
+      setIsBackendUnavailable(false);
+      
+      // Refresh the page to reload with queries
+      window.location.reload();
+      
+    } catch (error) {
+      console.log('Backend still unavailable:', error);
+      setIsBackendUnavailable(true);
+      toast.error('Backend is still unavailable. Please try cleaning up data or upgrading your plan.');
+    } finally {
+      setIsCheckingBackend(false);
+    }
+  };
+
+  // Fetch data from Convex backend
   const dashboardMetrics = useQuery(api.dashboard.getDashboardMetrics);
   const recentActivity = useQuery(api.dashboard.getRecentActivity);
   const toolUsageStats = useQuery(api.dashboard.getToolUsageStats);
   const recentFiles = useQuery(api.dashboard.getRecentFiles);
+
+  // Fallback data when backend is unavailable
+  const fallbackMetrics = {
+    tokensUsed: 0,
+    tokensLimit: 10,
+    tokensRemaining: 10,
+  };
+
+  const fallbackActivity = [];
+  const fallbackToolStats = [];
+  const fallbackFiles = [];
+
+  // Use fallback data when backend is unavailable  
+  const safeMetrics = isBackendUnavailable || !dashboardMetrics ? fallbackMetrics : dashboardMetrics;
+  const safeActivity = isBackendUnavailable || !recentActivity ? fallbackActivity : recentActivity;
+  const safeToolStats = isBackendUnavailable || !toolUsageStats ? fallbackToolStats : toolUsageStats;
+  const safeFiles = isBackendUnavailable || !recentFiles ? fallbackFiles : recentFiles;
 
   // Listen for custom tab change events (from PDP results navigation)
   useEffect(() => {
@@ -110,6 +117,13 @@ const Dashboard = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [userDropdownOpen]);
 
+  // Auto-redirect to dashboard if on a disabled feature
+  useEffect(() => {
+    if (isBackendUnavailable && ['suite-analyzer-backend', 'spec-generator', 'demand-planner-v2', 'pdp-analyzer'].includes(activeTab)) {
+      setActiveTab('overview');
+    }
+  }, [isBackendUnavailable, activeTab]);
+
   const handleLogout = async () => {
     await signOut();
   };
@@ -117,21 +131,47 @@ const Dashboard = () => {
   const menuItems = [
     { id: 'overview', label: 'Dashboard', icon: BarChart3 },
     { id: 'suite-analyzer-backend', label: 'Suite Analyzer', icon: Package },
-    { id: 'spec-generator', label: 'Spec Generator', icon: Calculator },
-    { id: 'demand-planner', label: 'Demand Planner', icon: TrendingUp },
+    { id: 'spec-generator', label: 'Spec Generator', icon: Sparkles },
+    { id: 'demand-planner-v2', label: 'Demand Planner', icon: TrendingUp },
     { id: 'pdp-analyzer', label: 'Design Analyzer', icon: Eye },
     { id: 'reports', label: 'Reports', icon: FileText },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   const renderContent = () => {
+    // If backend is unavailable, redirect to settings for cleanup or show offline message
+    if (isBackendUnavailable && ['suite-analyzer-backend', 'spec-generator', 'demand-planner-v2', 'pdp-analyzer'].includes(activeTab)) {
+      return (
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center max-w-md">
+            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Feature Temporarily Unavailable</h3>
+            <p className="text-gray-600 mb-6">
+              This feature requires backend connectivity. Please clean up data or upgrade your plan to restore functionality.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={() => setActiveTab('settings')}>
+                Clean Up Data
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => window.open('https://dashboard.convex.dev', '_blank')}
+              >
+                Upgrade Plan
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case 'suite-analyzer-backend':
         return <PackagingSuiteAnalyzerBackend />;
       case 'spec-generator':
         return <SpecGenerator />;
-      case 'demand-planner':
-        return <PackagingDemandPlanner />;
+      case 'demand-planner-v2':
+        return <ImprovedPackagingDemandPlanner />;
       case 'pdp-analyzer':
         return <PDPAnalyzer />;
       case 'reports':
@@ -141,322 +181,371 @@ const Dashboard = () => {
       default:
         return (
           <div className="min-h-screen bg-gray-50">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-6">
-
-              {/* Enhanced Metrics Cards with Trends */}
-              <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-200 hover:border-emerald-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
-                        <DollarSign className="h-4 w-4 text-emerald-600" />
+            <div className="max-w-7xl mx-auto px-6 py-8">
+              
+              {/* Backend Unavailable Warning */}
+              {isBackendUnavailable && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-6 shadow-sm mb-8">
+                  <div className="flex items-start gap-4">
+                    <AlertCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-red-900 mb-2">Backend Deployments Disabled</h3>
+                      <p className="text-sm text-red-800 mb-4">
+                        Convex free plan limits exceeded. All backend functions are disabled until limits are restored.
+                        The application is running in offline mode with limited functionality.
+                      </p>
+                      <div className="bg-red-100 border border-red-200 rounded-lg p-4 mb-4">
+                        <p className="text-xs text-red-800">
+                          <strong>⚠️ Important:</strong> Data cleanup functions cannot work when backend is disabled. 
+                          The only solution is to <strong>upgrade to Convex Pro plan ($25/month)</strong> to restore full functionality and enable data cleanup.
+                        </p>
                       </div>
-                      <h3 className="text-sm font-semibold text-gray-600">Total Savings</h3>
+                      <div className="flex gap-3 flex-wrap">
+                        <Button
+                          size="sm"
+                          onClick={() => setActiveTab('settings')}
+                          className="bg-red-600 hover:bg-red-700 text-white shadow-sm"
+                        >
+                          Clean Up Data
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={testBackendConnection}
+                          disabled={isCheckingBackend}
+                          variant="outline"
+                          className="border-red-300 text-red-700 hover:bg-red-50"
+                        >
+                          {isCheckingBackend ? 'Testing...' : 'Test Connection'}
+                          <RefreshCw className={`w-3 h-3 ml-1 ${isCheckingBackend ? 'animate-spin' : ''}`} />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => window.open('https://dashboard.convex.dev', '_blank')}
+                          className="border-red-300 text-red-700 hover:bg-red-50"
+                        >
+                          Upgrade Plan
+                          <ExternalLink className="w-3 w-3 ml-1" />
+                        </Button>
+                      </div>
                     </div>
-                    {dashboardMetrics?.totalSavingsTrend && (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 rounded-full">
-                        <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
-                        <span className="text-sm font-semibold text-emerald-700">{dashboardMetrics.totalSavingsTrend}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900 mb-1">
-                      {dashboardMetrics?.totalSavings ? `$${Math.round(dashboardMetrics.totalSavings).toLocaleString()}` : '$0'}
-                    </p>
-                    <p className="text-sm text-gray-500">vs last month</p>
                   </div>
                 </div>
-                
-                <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-200 hover:border-blue-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                        <Target className="h-4 w-4 text-blue-600" />
-                      </div>
-                      <h3 className="text-sm font-semibold text-gray-600">Efficiency Score</h3>
-                    </div>
-                    {dashboardMetrics?.efficiencyTrend && (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 rounded-full">
-                        <TrendingUp className="h-3.5 w-3.5 text-blue-600" />
-                        <span className="text-sm font-semibold text-blue-700">{dashboardMetrics.efficiencyTrend}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900 mb-1">
-                      {dashboardMetrics?.efficiencyScore ? `${dashboardMetrics.efficiencyScore.toFixed(1)}%` : '0%'}
-                    </p>
-                    <p className="text-sm text-gray-500">Packaging optimization</p>
-                  </div>
-                </div>
+              )}
 
-                <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-200 hover:border-purple-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                        <Hash className="h-4 w-4 text-purple-600" />
-                      </div>
-                      <h3 className="text-sm font-semibold text-gray-600">Products Analyzed</h3>
-                    </div>
-                    {dashboardMetrics?.productsAnalyzedTrend && (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 bg-purple-50 rounded-full">
-                        <TrendingUp className="h-3.5 w-3.5 text-purple-600" />
-                        <span className="text-sm font-semibold text-purple-700">{dashboardMetrics.productsAnalyzedTrend}</span>
-                      </div>
-                    )}
-                  </div>
+              {/* Header Section */}
+              <div className="mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-2xl font-bold text-gray-900 mb-1">
-                      {dashboardMetrics?.productsAnalyzed ? dashboardMetrics.productsAnalyzed.toLocaleString() : '0'}
-                    </p>
-                    <p className="text-sm text-gray-500">This month</p>
+                    <h1 className="text-2xl font-semibold text-gray-900 mb-1">Dashboard</h1>
+                    <p className="text-sm text-gray-500">Track optimization metrics and manage your packaging analysis</p>
                   </div>
-                </div>
-
-                <div className="bg-white rounded-xl border border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-200 hover:border-orange-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                        <Zap className="h-4 w-4 text-orange-600" />
-                      </div>
-                      <h3 className="text-sm font-semibold text-gray-600">Active Projects</h3>
-                    </div>
-                    {dashboardMetrics?.activeProjectsTrend && (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 bg-orange-50 rounded-full">
-                        <TrendingUp className="h-3.5 w-3.5 text-orange-600" />
-                        <span className="text-sm font-semibold text-orange-700">{dashboardMetrics.activeProjectsTrend}</span>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-2xl font-bold text-gray-900 mb-1">
-                      {dashboardMetrics?.activeProjects || '0'}
-                    </p>
-                    <p className="text-sm text-gray-500">In progress</p>
+                  <div className="mt-4 sm:mt-0 flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-gray-600 border-gray-200 hover:bg-gray-50"
+                      onClick={() => window.location.reload()}
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
+                    </Button>
                   </div>
                 </div>
               </div>
 
-              {/* Main Content Grid */}
-              <div className="grid gap-6 lg:grid-cols-3">
-                {/* Left Column - Recent Activity & Quick Actions */}
-                <div className="lg:col-span-2 space-y-6">
-                  {/* Quick Actions */}
-                  <div className="bg-white rounded-lg border border-gray-100 p-6 shadow-sm">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                        <Zap className="h-4 w-4 text-white" />
+              {/* Main Dashboard Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+                
+                {/* Key Metrics Cards */}
+                <div className="lg:col-span-4">
+                  <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Token Usage</p>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-2xl font-semibold text-gray-900">
+                            {safeMetrics?.tokensUsed || '0'}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            / {safeMetrics?.tokensLimit || '10'}
+                          </span>
+                        </div>
                       </div>
-                      <h2 className="text-lg font-medium text-gray-900">Quick Actions</h2>
+                      <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <Zap className="h-6 w-6 text-blue-600" />
+                      </div>
                     </div>
-                    <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">Available</span>
+                        <span className="font-medium text-gray-700">
+                          {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-1.5">
+                        <div 
+                          className="bg-blue-600 h-1.5 rounded-full transition-all duration-300" 
+                          style={{ 
+                            width: `${Math.min(100, ((safeMetrics?.tokensUsed || 0) / (safeMetrics?.tokensLimit || 10)) * 100)}%` 
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions - Modern Card Design */}
+                <div className="lg:col-span-8">
+                  <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                    <div className="mb-4">
+                      <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
+                    </div>
+                    <div className="grid gap-4 grid-cols-2">
                       <Button
                         variant="outline"
-                        className="h-16 border-gray-200 hover:bg-gray-50 justify-start"
+                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
-                            <Package className="h-5 w-5 text-blue-600" />
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                            <Package className="h-5 w-5 text-gray-700" />
                           </div>
                           <div className="text-left">
-                            <div className="font-medium text-gray-900">New Analysis</div>
-                            <div className="text-sm text-gray-500">Suite Analyzer</div>
+                            <div className="text-sm font-medium text-gray-900">Suite Analyzer</div>
+                            <div className="text-xs text-gray-500">Optimize packaging</div>
                           </div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-16 border-gray-200 hover:bg-gray-50 justify-start"
+                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        onClick={() => setActiveTab('demand-planner-v2')}
+                      >
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                            <TrendingUp className="h-5 w-5 text-gray-700" />
+                          </div>
+                          <div className="text-left">
+                            <div className="text-sm font-medium text-gray-900">Demand Planner</div>
+                            <div className="text-xs text-gray-500">Forecast needs</div>
+                          </div>
+                        </div>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
                         onClick={() => setActiveTab('spec-generator')}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-purple-50 rounded-lg flex items-center justify-center">
-                            <Calculator className="h-5 w-5 text-purple-600" />
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                            <Sparkles className="h-5 w-5 text-gray-700" />
                           </div>
                           <div className="text-left">
-                            <div className="font-medium text-gray-900">Generate Specs</div>
-                            <div className="text-sm text-gray-500">AI-Powered</div>
+                            <div className="text-sm font-medium text-gray-900">Spec Generator</div>
+                            <div className="text-xs text-gray-500">AI specifications</div>
                           </div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-16 border-gray-200 hover:bg-gray-50 justify-start"
-                        onClick={() => setActiveTab('demand-planner')}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                            <TrendingUp className="h-5 w-5 text-green-600" />
-                          </div>
-                          <div className="text-left">
-                            <div className="font-medium text-gray-900">Plan Demand</div>
-                            <div className="text-sm text-gray-500">Forecasting</div>
-                          </div>
-                        </div>
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="h-16 border-gray-200 hover:bg-gray-50 justify-start"
+                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-pink-50 rounded-lg flex items-center justify-center">
-                            <Eye className="h-5 w-5 text-pink-600" />
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                            <Eye className="h-5 w-5 text-gray-700" />
                           </div>
                           <div className="text-left">
-                            <div className="font-medium text-gray-900">Analyze Design</div>
-                            <div className="text-sm text-gray-500">Visual AI</div>
+                            <div className="text-sm font-medium text-gray-900">Design Analyzer</div>
+                            <div className="text-xs text-gray-500">Visual analysis</div>
                           </div>
                         </div>
                       </Button>
-                    </div>
-                  </div>
-
-                  {/* Recent Activity */}
-                  <div className="bg-white rounded-lg border border-gray-100 p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-500 rounded-lg flex items-center justify-center">
-                          <Activity className="h-4 w-4 text-white" />
-                        </div>
-                        <h2 className="text-lg font-medium text-gray-900">Recent Activity</h2>
-                      </div>
-                      <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
-                        View All
-                        <ArrowRight className="h-4 w-4 ml-1" />
-                      </Button>
-                    </div>
-                    <div className="space-y-4">
-                      {recentActivity && recentActivity.length > 0 ? recentActivity.slice(0, 5).map((activity: any, index: number) => (
-                        <div key={index} className="flex items-center gap-4 p-3 bg-gray-50 rounded-lg">
-                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <FileText className="h-4 w-4 text-blue-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{activity.description}</p>
-                            <p className="text-xs text-gray-500">{activity.timestamp}</p>
-                          </div>
-                          <div className="text-xs text-gray-400">
-                            {activity.type}
-                          </div>
-                        </div>
-                      )) : (
-                        <div className="flex items-center justify-center py-8">
-                          <div className="text-center">
-                            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                              <Activity className="h-6 w-6 text-gray-400" />
-                            </div>
-                            <p className="text-sm text-gray-500">No recent activity</p>
-                            <p className="text-xs text-gray-400 mt-1">Your activity will appear here</p>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Right Column - Insights & Tools */}
-                <div className="space-y-6">
-                  {/* Tool Usage Stats */}
-                  <div className="bg-white rounded-lg border border-gray-100 p-6 shadow-sm">
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                        <BarChart3 className="h-4 w-4 text-white" />
-                      </div>
-                      <h3 className="text-lg font-medium text-gray-900">Tool Usage</h3>
-                    </div>
-                    {toolUsageStats && toolUsageStats.length > 0 && toolUsageStats.some((stat: any) => stat.count > 0) ? (
-                      <div className="space-y-4">
-                        {toolUsageStats.map((stat: any, index: number) => (
-                          <div key={index} className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className="w-6 h-6 bg-blue-100 rounded flex items-center justify-center">
-                                <Package className="h-3 w-3 text-blue-600" />
-                              </div>
-                              <span className="text-sm text-gray-700">{stat.toolName}</span>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-sm font-medium text-gray-900">{stat.count}</div>
-                              <div className="text-xs text-gray-500">{stat.label}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="flex items-center justify-center py-8">
-                        <div className="text-center">
-                          <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                            <BarChart3 className="h-6 w-6 text-gray-400" />
-                          </div>
-                          <p className="text-sm text-gray-500">No tool usage yet</p>
-                          <p className="text-xs text-gray-400 mt-1">Start using tools to see statistics</p>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Recent Files */}
-                  <div className="bg-white rounded-lg border border-gray-100 p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-gray-500 rounded-lg flex items-center justify-center">
-                          <FolderOpen className="h-4 w-4 text-white" />
-                        </div>
-                        <h3 className="text-lg font-medium text-gray-900">Recent Files</h3>
-                      </div>
-                      <Button variant="ghost" size="sm" className="text-gray-500 hover:text-gray-700">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </div>
-                    <div className="space-y-3">
-                      {recentFiles && recentFiles.length > 0 ? recentFiles.slice(0, 4).map((file: any, index: number) => (
-                        <div key={index} className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded-lg cursor-pointer">
-                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                            <FileText className="h-4 w-4 text-blue-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 truncate">{file.name}</p>
-                            <p className="text-xs text-gray-500">{file.timestamp}</p>
-                          </div>
-                          <Button variant="ghost" size="sm" className="opacity-0 group-hover:opacity-100">
-                            <ExternalLink className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      )) : (
-                        <div className="flex items-center justify-center py-8">
-                          <div className="text-center">
-                            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
-                              <FolderOpen className="h-6 w-6 text-gray-400" />
-                            </div>
-                            <p className="text-sm text-gray-500">No recent files</p>
-                            <p className="text-xs text-gray-400 mt-1">Uploaded files will appear here</p>
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Smart Insights - Full Width */}
-              <div className="bg-white rounded-lg border border-gray-100 p-6 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-8 h-8 bg-yellow-500 rounded-lg flex items-center justify-center">
-                    <Lightbulb className="h-4 w-4 text-white" />
+              {/* Analytics and Recent Activity Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                
+                {/* Tool Usage Stats - Enhanced */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium text-gray-900">Tool Analytics</h3>
+                    <BarChart3 className="h-4 w-4 text-gray-400" />
                   </div>
-                  <h3 className="text-lg font-medium text-gray-900">Smart Insights</h3>
-                </div>
-                <div className="flex items-center justify-center py-12">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <Lightbulb className="h-8 w-8 text-gray-400" />
+                  {safeToolStats && safeToolStats.length > 0 && safeToolStats.some((stat: any) => stat.count > 0) ? (
+                    <div className="space-y-4">
+                      {safeToolStats.map((stat: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between py-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                            <span className="text-sm text-gray-600">{stat.name}</span>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1">
+                              <span className="text-sm font-medium text-gray-900">{stat.count}</span>
+                              <span className="text-xs text-gray-500">uses</span>
+                            </div>
+                            <div className="w-16">
+                              <div className="w-full bg-gray-100 rounded-full h-1">
+                                <div 
+                                  className="bg-gray-600 h-1 rounded-full" 
+                                  style={{ width: `${stat.usage}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                    <p className="text-sm text-gray-500 mb-2">No insights available yet</p>
-                    <p className="text-xs text-gray-400">Insights will appear after you perform analyses</p>
+                  ) : (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-center">
+                        <BarChart3 className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+                        <p className="text-sm text-gray-500">No usage data yet</p>
+                        <p className="text-xs text-gray-400 mt-1">Analytics will appear here</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Recent Analyses - Enhanced */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium text-gray-900">Recent Analyses</h3>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs text-gray-500 hover:text-gray-700 -mr-2"
+                      onClick={() => setActiveTab('reports')}
+                    >
+                      View all
+                      <ArrowRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </div>
+                  <div className="space-y-3">
+                    {safeFiles && safeFiles.length > 0 ? safeFiles.slice(0, 4).map((analysis: any, index: number) => (
+                      <div key={index} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                        <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                          {analysis.type === 'suite_analyzer' ? <Package className="h-4 w-4 text-gray-600" /> :
+                           analysis.type === 'pdp_analyzer' ? <Eye className="h-4 w-4 text-gray-600" /> :
+                           analysis.type === 'demand_planner' || analysis.type === 'demand_planner_v2' ? <TrendingUp className="h-4 w-4 text-gray-600" /> :
+                           analysis.type === 'spec_generator' ? <Sparkles className="h-4 w-4 text-gray-600" /> :
+                           <FileText className="h-4 w-4 text-gray-600" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">{analysis.name}</p>
+                          <p className="text-xs text-gray-500">{analysis.time} • {analysis.tool}</p>
+                        </div>
+                        {analysis.status === 'completed' && (
+                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                        )}
+                        {analysis.status === 'processing' && (
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+                        )}
+                        {analysis.status === 'failed' && (
+                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+                        )}
+                      </div>
+                    )) : (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="text-center">
+                          <FolderOpen className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+                          <p className="text-sm text-gray-500">No analyses yet</p>
+                          <p className="text-xs text-gray-400 mt-1">Your work will appear here</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
+              </div>
+
+              {/* AI Chat Interface - Enhanced */}
+              <div className="mb-8">
+                <EmbeddedAIChat />
+              </div>
+
+              {/* Smart Insights - Premium Design */}
+              <div className="bg-white rounded-2xl border border-gray-100/80 p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-sm">
+                    <Lightbulb className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900">Smart Insights</h3>
+                </div>
+                
+                {/* Rotating Insights - Enhanced */}
+                {(() => {
+                  const insights = [
+                    {
+                      title: "Packaging Optimization Opportunity",
+                      description: "Based on your usage patterns, switching to medium boxes for 20% of your shipments could reduce costs by an estimated 15%.",
+                      color: "blue"
+                    },
+                    {
+                      title: "Sustainable Packaging Benefits", 
+                      description: "Implementing eco-friendly packaging materials could improve your sustainability score by 25% while maintaining cost efficiency.",
+                      color: "green"
+                    },
+                    {
+                      title: "Shipping Volume Analysis",
+                      description: "Your peak shipping days are Tuesday-Thursday. Consider bulk packaging preparation on Mondays to optimize workflow.",
+                      color: "purple"
+                    },
+                    {
+                      title: "Material Waste Reduction",
+                      description: "Using right-sized packaging could eliminate 30% of void fill material, reducing both costs and environmental impact.",
+                      color: "orange"
+                    },
+                    {
+                      title: "Seasonal Demand Planning",
+                      description: "Historical data shows 40% increase in demand during Q4. Consider scaling packaging inventory 6 weeks prior.",
+                      color: "indigo"
+                    },
+                    {
+                      title: "Multi-Item Shipping Efficiency",
+                      description: "Consolidating orders with 2-3 items into single packages could reduce shipping costs by 22% on average.",
+                      color: "teal"
+                    },
+                    {
+                      title: "Packaging Performance Metrics",
+                      description: "Your current packaging efficiency is 78%. Implementing automated size selection could boost this to 92%.",
+                      color: "red"
+                    }
+                  ];
+                  
+                  const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
+                  const insight = insights[today];
+                  const colorClasses = {
+                    blue: { bg: "bg-blue-50", border: "border-blue-200", iconBg: "bg-blue-100", iconText: "text-blue-600", title: "text-blue-900", text: "text-blue-700" },
+                    green: { bg: "bg-green-50", border: "border-green-200", iconBg: "bg-green-100", iconText: "text-green-600", title: "text-green-900", text: "text-green-700" },
+                    purple: { bg: "bg-purple-50", border: "border-purple-200", iconBg: "bg-purple-100", iconText: "text-purple-600", title: "text-purple-900", text: "text-purple-700" },
+                    orange: { bg: "bg-orange-50", border: "border-orange-200", iconBg: "bg-orange-100", iconText: "text-orange-600", title: "text-orange-900", text: "text-orange-700" },
+                    indigo: { bg: "bg-indigo-50", border: "border-indigo-200", iconBg: "bg-indigo-100", iconText: "text-indigo-600", title: "text-indigo-900", text: "text-indigo-700" },
+                    teal: { bg: "bg-teal-50", border: "border-teal-200", iconBg: "bg-teal-100", iconText: "text-teal-600", title: "text-teal-900", text: "text-teal-700" },
+                    red: { bg: "bg-red-50", border: "border-red-200", iconBg: "bg-red-100", iconText: "text-red-600", title: "text-red-900", text: "text-red-700" }
+                  };
+                  const colors = colorClasses[insight.color];
+                  
+                  return (
+                    <div className={`${colors.bg} ${colors.border} border-2 rounded-xl p-6`}>
+                      <div className="flex items-start gap-4">
+                        <div className={`w-8 h-8 ${colors.iconBg} rounded-xl flex items-center justify-center flex-shrink-0 mt-1`}>
+                          <Lightbulb className={`h-4 w-4 ${colors.iconText}`} />
+                        </div>
+                        <div>
+                          <h4 className={`font-semibold ${colors.title} text-base mb-2`}>{insight.title}</h4>
+                          <p className={`${colors.text} leading-relaxed`}>
+                            {insight.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           </div>
@@ -491,24 +580,37 @@ const Dashboard = () => {
             </div>
 
             <nav className="space-y-1">
-              {menuItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base ${
-                    activeTab === item.id 
-                      ? "bg-gray-100 text-gray-900 font-medium" 
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setSidebarOpen(false);
-                  }}
-                >
-                  <item.icon className="h-4 w-4 mr-3" />
-                  {item.label}
-                </Button>
-              ))}
+              {menuItems.map((item) => {
+                const isDisabled = isBackendUnavailable && 
+                  ['suite-analyzer-backend', 'demand-planner-v2', 'pdp-analyzer'].includes(item.id);
+                
+                return (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base ${
+                      activeTab === item.id 
+                        ? "bg-gray-100 text-gray-900 font-medium" 
+                        : isDisabled
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        setActiveTab(item.id);
+                        setSidebarOpen(false);
+                      }
+                    }}
+                    disabled={isDisabled}
+                  >
+                    <item.icon className="h-4 w-4 mr-3" />
+                    {item.label}
+                    {isDisabled && (
+                      <span className="ml-auto text-xs text-gray-400">Offline</span>
+                    )}
+                  </Button>
+                );
+              })}
             </nav>
           </div>
 
