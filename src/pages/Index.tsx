@@ -299,39 +299,107 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Hero Visual Placeholder */}
-          <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-5xl mx-auto">
-            <div className="bg-gray-50 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h3 className="text-lg font-semibold">Dashboard Overview</h3>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-600">Tokens:</span>
-                  <Badge style={{ backgroundColor: '#767AFA20', color: '#767AFA' }}>127/150</Badge>
+          {/* Hero Visual */}
+          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-6xl mx-auto relative overflow-hidden">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 opacity-5">
+              <div className="w-full h-full rounded-full" style={{ backgroundColor: '#767AFA' }}></div>
+            </div>
+            
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+              {/* Left Panel */}
+              <div className="lg:col-span-3 space-y-6">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#767AFA20' }}>
+                  <Package className="h-6 w-6" style={{ color: '#767AFA' }} />
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Your packaging costs today
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Optimize costs, reduce waste,<br />
+                    and maximize efficiency<br />
+                    with AI-powered insights.
+                  </p>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {toolSteps.slice(0, 5).map((tool, index) => (
-                  <Card key={index} className="bg-white">
-                    <CardContent className="p-4">
-                      <div className="flex items-center space-x-3 mb-2">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#767AFA20' }}>
-                          <tool.icon className="h-4 w-4" style={{ color: '#767AFA' }} />
-                        </div>
-                        <h4 className="font-medium text-sm">{tool.name}</h4>
-                      </div>
-                      <p className="text-xs text-gray-600">Ready to analyze</p>
-                    </CardContent>
-                  </Card>
-                ))}
-                <Card className="bg-white">
-                  <CardContent className="p-4">
-                    <div className="text-center">
-                      <BarChart3 className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                      <p className="text-xs font-medium">$47,230</p>
-                      <p className="text-xs text-gray-600">Monthly Savings</p>
+
+              {/* Center Panel */}
+              <div className="lg:col-span-6 text-center space-y-6">
+                {/* Company Avatar Placeholder */}
+                <div className="flex items-center justify-center mb-6">
+                  <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg">
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
+                      <Package className="h-8 w-8" style={{ color: '#767AFA' }} />
                     </div>
-                  </CardContent>
-                </Card>
+                  </div>
+                </div>
+
+                {/* Timeline */}
+                <div className="flex items-center justify-center space-x-4 mb-8">
+                  <span className="text-sm text-gray-500">Current</span>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                    <div className="w-8 h-0.5 bg-gray-300"></div>
+                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#767AFA' }}></div>
+                  </div>
+                  <div className="px-3 py-1 rounded-full text-white text-sm font-medium" style={{ backgroundColor: '#767AFA' }}>
+                    2024
+                  </div>
+                </div>
+
+                {/* Main Savings Number */}
+                <div className="space-y-2">
+                  <div className="text-6xl md:text-7xl font-bold text-gray-900">
+                    $147K
+                  </div>
+                  <p className="text-gray-600 text-lg">Annual savings identified</p>
+                </div>
+
+                {/* Bottom Metrics */}
+                <div className="flex items-center justify-center space-x-6 mt-8">
+                  <div className="flex items-center space-x-2 px-4 py-2 bg-green-50 rounded-full">
+                    <BarChart3 className="h-4 w-4 text-green-600" />
+                    <span className="text-sm font-medium text-green-700">35% cost reduction</span>
+                  </div>
+                  <div className="flex items-center space-x-2 px-4 py-2 bg-blue-50 rounded-full">
+                    <Package className="h-4 w-4 text-blue-600" />
+                    <span className="text-sm font-medium text-blue-700">42% less waste</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side Badges */}
+              <div className="lg:col-span-3 space-y-4">
+                <div className="flex flex-col space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-2xl border border-purple-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
+                        <Brain className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">AI-POWERED</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-2xl border border-green-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                        <Zap className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">REAL-TIME</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <Activity className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">DATA-DRIVEN</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
