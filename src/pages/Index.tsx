@@ -300,7 +300,7 @@ const Index = () => {
           </div>
 
           {/* Hero Visual */}
-          <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-6xl mx-auto relative overflow-hidden">
+          <div className="p-8 md:p-12 max-w-6xl mx-auto relative">
             {/* Background decoration */}
             <div className="absolute top-0 right-0 w-64 h-64 opacity-5">
               <div className="w-full h-full rounded-full" style={{ backgroundColor: '#767AFA' }}></div>
@@ -308,7 +308,7 @@ const Index = () => {
             
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
               {/* Left Panel */}
-              <div className="lg:col-span-3 space-y-6">
+              <div className="lg:col-span-3 space-y-6 bg-white rounded-3xl p-6 shadow-lg">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#767AFA20' }}>
                   <Package className="h-6 w-6" style={{ color: '#767AFA' }} />
                 </div>
@@ -326,7 +326,7 @@ const Index = () => {
               </div>
 
               {/* Center Panel */}
-              <div className="lg:col-span-6 text-center space-y-6">
+              <div className="lg:col-span-6 text-center space-y-6 bg-white rounded-3xl p-6 shadow-lg">
                 {/* Company Avatar Placeholder */}
                 <div className="flex items-center justify-center mb-6">
                   <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg">
@@ -371,7 +371,7 @@ const Index = () => {
               </div>
 
               {/* Right Side Badges */}
-              <div className="lg:col-span-3 space-y-4">
+              <div className="lg:col-span-3 space-y-4 bg-white rounded-3xl p-6 shadow-lg">
                 <div className="flex flex-col space-y-3">
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-2xl border border-purple-100">
                     <div className="flex items-center space-x-3">
