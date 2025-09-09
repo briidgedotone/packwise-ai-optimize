@@ -379,15 +379,15 @@ const Index = () => {
                   <p className="text-gray-600 text-lg leading-relaxed">{tool.description}</p>
                 </div>
                 <div className="flex-1">
-                  <Card className="bg-white">
-                    <CardContent className="p-8">
-                      <div className="bg-gray-50 rounded-xl p-6 text-center">
-                        <tool.icon className="h-16 w-16 mx-auto mb-4" style={{ color: '#767AFA' }} />
-                        <h4 className="text-lg font-semibold text-gray-900 mb-2">{tool.name} Interface</h4>
-                        <p className="text-gray-600 text-sm">Screenshot placeholder</p>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden w-96 h-96 mx-auto">
+                    <div className="flex items-center justify-center w-full h-full" style={{ backgroundColor: '#FEFEFB' }}>
+                      <img 
+                        src={`/box-${tool.step}.png`} 
+                        alt={`${tool.name} visualization`}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
