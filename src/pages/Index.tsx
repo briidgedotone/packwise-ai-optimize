@@ -327,23 +327,54 @@ const Index = () => {
 
               {/* Center Panel */}
               <div className="lg:col-span-4 text-center space-y-6 bg-white rounded-3xl p-6 shadow-lg">
-                {/* Main Savings Number */}
-                <div className="space-y-2">
-                  <div className="text-6xl md:text-7xl font-bold text-gray-900">
-                    $147K
+                {/* Impact Visualization */}
+                <div className="space-y-4">
+                  {/* Main Savings Number with Growth Indicator */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center space-x-2">
+                      <TrendingUp className="h-6 w-6 text-green-500" />
+                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">+23% this month</span>
+                    </div>
+                    <div className="text-6xl md:text-7xl font-bold text-gray-900">
+                      $147K
+                    </div>
+                    <p className="text-gray-600 text-lg">Potential annual savings</p>
                   </div>
-                  <p className="text-gray-600 text-lg">Annual savings identified</p>
+
+                  {/* Progress Visualization */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">Current efficiency</span>
+                      <span className="font-medium text-gray-700">67%</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="h-2 rounded-full relative overflow-hidden" 
+                        style={{ backgroundColor: '#767AFA', width: '67%' }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse"></div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center space-x-1">
+                      <span className="text-xs text-gray-500">Target:</span>
+                      <span className="text-xs font-medium" style={{ color: '#767AFA' }}>85% efficiency</span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Bottom Metrics */}
-                <div className="flex items-center justify-center space-x-6 mt-8">
-                  <div className="flex items-center space-x-2 px-4 py-2 bg-green-50 rounded-full">
-                    <BarChart3 className="h-4 w-4 text-green-600" />
-                    <span className="text-sm font-medium text-green-700">35% cost reduction</span>
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                  <div className="flex flex-col items-center justify-center px-4 py-3 bg-green-50 rounded-2xl">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-green-700">35%</div>
+                      <div className="text-xs text-green-600">cost reduction</div>
+                    </div>
                   </div>
-                  <div className="flex items-center space-x-2 px-4 py-2 bg-blue-50 rounded-full">
-                    <Package className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm font-medium text-blue-700">42% less waste</span>
+                  <div className="flex flex-col items-center justify-center px-4 py-3 bg-blue-50 rounded-2xl">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-blue-700">42%</div>
+                      <div className="text-xs text-blue-600">less waste</div>
+                    </div>
                   </div>
                 </div>
               </div>
