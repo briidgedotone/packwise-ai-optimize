@@ -22,9 +22,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import PricingSection from "@/components/ui/pricing";
 
 const Index = () => {
-  const [selectedPlan, setSelectedPlan] = useState("professional");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
@@ -108,56 +108,6 @@ const Index = () => {
     }
   ];
 
-  // Pricing data
-  const pricingPlans = [
-    {
-      name: "Starter",
-      price: "$39.99",
-      period: "/month",
-      tokens: "50 tokens/month",
-      features: [
-        "✓ 50 tokens per month",
-        "✓ All applications included", 
-        "✓ Email support",
-        "✓ Basic analytics",
-        "✓ CSV export"
-      ],
-      cta: "Start Now",
-      popular: false
-    },
-    {
-      name: "Professional",
-      price: "$99.99", 
-      period: "/month",
-      tokens: "150 tokens/month",
-      features: [
-        "✓ 150 tokens per month",
-        "✓ All applications included",
-        "✓ Priority support", 
-        "✓ Advanced analytics",
-        "✓ API access",
-        "✓ Custom reports"
-      ],
-      cta: "Start Now",
-      popular: true
-    },
-    {
-      name: "Enterprise",
-      price: "Contact Us",
-      period: "",
-      tokens: "Custom",
-      features: [
-        "✓ Flexible token bundle and pricing",
-        "✓ All applications included",
-        "✓ Dedicated success manager",
-        "✓ API access and advanced support", 
-        "✓ Custom integrations",
-        "✓ Training and onboarding"
-      ],
-      cta: "Contact Sales", 
-      popular: false
-    }
-  ];
 
   // Testimonials data
   const testimonials = [
@@ -499,53 +449,7 @@ const Index = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Simple, token-based plans for any scale
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Every feature is included. Each time you run an application (Suite Analyzer, Demand Planner, 
-              Spec Generator, Design Analyzer, Chatbot), it uses one token. Choose the token bundle that fits your needs.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {pricingPlans.map((plan, index) => (
-              <Card key={index} className={`relative ${plan.popular ? 'border-2 shadow-xl' : 'border-gray-200'}`} style={plan.popular ? { borderColor: '#767AFA' } : {}}>
-                {plan.popular && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="text-white px-4 py-1" style={{ backgroundColor: '#767AFA' }}>Most Popular</Badge>
-                  </div>
-                )}
-                <CardHeader className="text-center pb-4">
-                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                    <span className="text-gray-600">{plan.period}</span>
-                  </div>
-                  <p className="font-semibold mt-2" style={{ color: '#767AFA' }}>{plan.tokens}</p>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3 mb-8">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="text-gray-700">
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  <Link to={plan.cta === "Contact Sales" ? "/contact" : "/sign-up"} className="block">
-                    <Button className={`w-full rounded-full ${plan.popular ? 'hover:opacity-90' : ''}`} style={plan.popular ? { backgroundColor: '#767AFA' } : {}}>
-                      {plan.cta}
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PricingSection />
 
       {/* Testimonials Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
