@@ -115,69 +115,73 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Navigation Bar */}
-      <header className="backdrop-blur-sm sticky top-0 z-50" style={{ backgroundColor: 'rgba(247, 246, 249, 0.95)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
-                <Package className="h-6 w-6 text-white" />
+      {/* Hero Section with Navigation */}
+      <section className="bg-cover bg-center bg-no-repeat relative" style={{ backgroundColor: '#F7F6F9', backgroundImage: 'url(/bg.png)' }}>
+        {/* Gradient fade overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white pointer-events-none"></div>
+        {/* Navigation Bar */}
+        <header className="backdrop-blur-sm sticky top-0 z-50 relative" style={{ backgroundColor: 'transparent' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              {/* Logo */}
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
+                  <Package className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-2xl font-bold text-gray-900">QuantiPackAI</span>
               </div>
-              <span className="text-2xl font-bold text-gray-900">QuantiPackAI</span>
+
+              {/* Desktop Navigation */}
+              <nav className="hidden md:flex space-x-8">
+                <a href="#product" className="text-gray-600 hover:text-[#767AFA] transition-colors">Product</a>
+                <a href="#how-it-works" className="text-gray-600 hover:text-[#767AFA] transition-colors">How it Works</a>
+                <a href="#pricing" className="text-gray-600 hover:text-[#767AFA] transition-colors">Pricing</a>
+                <a href="#faq" className="text-gray-600 hover:text-[#767AFA] transition-colors">FAQ</a>
+              </nav>
+
+              {/* Desktop CTAs */}
+              <div className="hidden md:flex items-center space-x-4">
+                <Link to="/sign-in">
+                  <Button variant="ghost" className="rounded-full">Login</Button>
+                </Link>
+                <Link to="/sign-up">
+                  <Button style={{ backgroundColor: '#767AFA' }} className="hover:opacity-90 rounded-full">Start Now</Button>
+                </Link>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex space-x-8">
-              <a href="#product" className="text-gray-600 hover:text-[#767AFA] transition-colors">Product</a>
-              <a href="#how-it-works" className="text-gray-600 hover:text-[#767AFA] transition-colors">How it Works</a>
-              <a href="#pricing" className="text-gray-600 hover:text-[#767AFA] transition-colors">Pricing</a>
-              <a href="#faq" className="text-gray-600 hover:text-[#767AFA] transition-colors">FAQ</a>
-            </nav>
-
-            {/* Desktop CTAs */}
-            <div className="hidden md:flex items-center space-x-4">
-              <Link to="/sign-in">
-                <Button variant="ghost" className="rounded-full">Login</Button>
-              </Link>
-              <Link to="/sign-up">
-                <Button style={{ backgroundColor: '#767AFA' }} className="hover:opacity-90 rounded-full">Start Now</Button>
-              </Link>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              className="md:hidden"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-            </button>
-          </div>
-
-          {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="md:hidden bg-white border-t border-gray-200">
-              <div className="px-2 pt-2 pb-3 space-y-1">
-                <a href="#product" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Product</a>
-                <a href="#how-it-works" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">How it Works</a>
-                <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Pricing</a>
-                <a href="#faq" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">FAQ</a>
-                <div className="flex flex-col space-y-2 px-3 pt-4">
-                  <Link to="/sign-in">
-                    <Button variant="ghost" className="w-full rounded-full">Login</Button>
-                  </Link>
-                  <Link to="/sign-up">
-                    <Button className="w-full hover:opacity-90 rounded-full" style={{ backgroundColor: '#767AFA' }}>Start Now</Button>
-                  </Link>
+            {/* Mobile Menu */}
+            {mobileMenuOpen && (
+              <div className="md:hidden bg-white border-t border-gray-200">
+                <div className="px-2 pt-2 pb-3 space-y-1">
+                  <a href="#product" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Product</a>
+                  <a href="#how-it-works" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">How it Works</a>
+                  <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Pricing</a>
+                  <a href="#faq" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">FAQ</a>
+                  <div className="flex flex-col space-y-2 px-3 pt-4">
+                    <Link to="/sign-in">
+                      <Button variant="ghost" className="w-full rounded-full">Login</Button>
+                    </Link>
+                    <Link to="/sign-up">
+                      <Button className="w-full hover:opacity-90 rounded-full" style={{ backgroundColor: '#767AFA' }}>Start Now</Button>
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </div>
-      </header>
+            )}
+          </div>
+        </header>
 
-      {/* Hero Section */}
-      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat" style={{ backgroundColor: '#F7F6F9', backgroundImage: 'url(/bg.png)' }}>
+        {/* Hero Content */}
+        <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.3' }}>
@@ -312,23 +316,9 @@ const Index = () => {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Partners Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
-        <div className="max-w-7xl mx-auto text-center">
-          <h3 className="text-lg font-medium text-gray-600 mb-8">
-            Trusted by packaging professionals at
-          </h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-8 items-center opacity-60">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={i} className="bg-gray-200 h-12 rounded-lg flex items-center justify-center">
-                <span className="text-gray-500 text-sm">Logo {i}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
+
 
       {/* Benefits Section */}
       <section id="product" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
