@@ -212,12 +212,12 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Navigation Bar */}
-      <header className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
+      <header className="backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50" style={{ backgroundColor: 'rgba(247, 246, 249, 0.95)' }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
                 <Package className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold text-gray-900">QuantiPackAI</span>
@@ -225,10 +225,10 @@ const Index = () => {
 
             {/* Desktop Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <a href="#product" className="text-gray-600 hover:text-blue-600 transition-colors">Product</a>
-              <a href="#how-it-works" className="text-gray-600 hover:text-blue-600 transition-colors">How it Works</a>
-              <a href="#pricing" className="text-gray-600 hover:text-blue-600 transition-colors">Pricing</a>
-              <a href="#faq" className="text-gray-600 hover:text-blue-600 transition-colors">FAQ</a>
+              <a href="#product" className="text-gray-600 hover:text-[#767AFA] transition-colors">Product</a>
+              <a href="#how-it-works" className="text-gray-600 hover:text-[#767AFA] transition-colors">How it Works</a>
+              <a href="#pricing" className="text-gray-600 hover:text-[#767AFA] transition-colors">Pricing</a>
+              <a href="#faq" className="text-gray-600 hover:text-[#767AFA] transition-colors">FAQ</a>
             </nav>
 
             {/* Desktop CTAs */}
@@ -237,7 +237,7 @@ const Index = () => {
                 <Button variant="ghost">Login</Button>
               </Link>
               <Link to="/sign-up">
-                <Button className="bg-blue-600 hover:bg-blue-700">Start Now</Button>
+                <Button style={{ backgroundColor: '#767AFA' }} className="hover:opacity-90">Start Now</Button>
               </Link>
             </div>
 
@@ -254,16 +254,16 @@ const Index = () => {
           {mobileMenuOpen && (
             <div className="md:hidden bg-white border-t border-gray-200">
               <div className="px-2 pt-2 pb-3 space-y-1">
-                <a href="#product" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Product</a>
-                <a href="#how-it-works" className="block px-3 py-2 text-gray-600 hover:text-blue-600">How it Works</a>
-                <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-blue-600">Pricing</a>
-                <a href="#faq" className="block px-3 py-2 text-gray-600 hover:text-blue-600">FAQ</a>
+                <a href="#product" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Product</a>
+                <a href="#how-it-works" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">How it Works</a>
+                <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Pricing</a>
+                <a href="#faq" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">FAQ</a>
                 <div className="flex flex-col space-y-2 px-3 pt-4">
                   <Link to="/sign-in">
                     <Button variant="ghost" className="w-full">Login</Button>
                   </Link>
                   <Link to="/sign-up">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-700">Start Now</Button>
+                    <Button className="w-full hover:opacity-90" style={{ backgroundColor: '#767AFA' }}>Start Now</Button>
                   </Link>
                 </div>
               </div>
@@ -273,13 +273,13 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-white">
+      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
               Optimize Your Packaging.
               <br />
-              <span className="text-blue-600">Maximize Your Savings.</span>
+              <span style={{ color: '#767AFA' }}>Maximize Your Savings.</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-4xl mx-auto">
               QuantiPackAI turns your packaging data into profit. Determine your optimal packaging suite, 
@@ -288,7 +288,7 @@ const Index = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/sign-up">
-                <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-4">
+                <Button size="lg" className="text-lg px-8 py-4 hover:opacity-90" style={{ backgroundColor: '#767AFA' }}>
                   Start Now
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -306,7 +306,7 @@ const Index = () => {
                 <h3 className="text-lg font-semibold">Dashboard Overview</h3>
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-600">Tokens:</span>
-                  <Badge className="bg-green-100 text-green-800">127/150</Badge>
+                  <Badge style={{ backgroundColor: '#767AFA20', color: '#767AFA' }}>127/150</Badge>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -314,8 +314,8 @@ const Index = () => {
                   <Card key={index} className="bg-white">
                     <CardContent className="p-4">
                       <div className="flex items-center space-x-3 mb-2">
-                        <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <tool.icon className="h-4 w-4 text-blue-600" />
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#767AFA20' }}>
+                          <tool.icon className="h-4 w-4" style={{ color: '#767AFA' }} />
                         </div>
                         <h4 className="font-medium text-sm">{tool.name}</h4>
                       </div>
@@ -339,7 +339,7 @@ const Index = () => {
       </section>
 
       {/* Partners Section */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
         <div className="max-w-7xl mx-auto text-center">
           <h3 className="text-lg font-medium text-gray-600 mb-8">
             Trusted by packaging professionals at
@@ -355,7 +355,7 @@ const Index = () => {
       </section>
 
       {/* Benefits Section */}
-      <section id="product" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="product" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -380,7 +380,7 @@ const Index = () => {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -397,7 +397,7 @@ const Index = () => {
               <div key={index} className={`flex flex-col ${index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-12`}>
                 <div className="flex-1">
                   <div className="flex items-center space-x-4 mb-4">
-                    <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: '#767AFA' }}>
                       {tool.step}
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900">{tool.name}</h3>
@@ -408,7 +408,7 @@ const Index = () => {
                   <Card className="bg-white shadow-lg">
                     <CardContent className="p-8">
                       <div className="bg-gray-50 rounded-xl p-6 text-center">
-                        <tool.icon className="h-16 w-16 text-blue-600 mx-auto mb-4" />
+                        <tool.icon className="h-16 w-16 mx-auto mb-4" style={{ color: '#767AFA' }} />
                         <h4 className="text-lg font-semibold text-gray-900 mb-2">{tool.name} Interface</h4>
                         <p className="text-gray-600 text-sm">Screenshot placeholder</p>
                       </div>
@@ -422,7 +422,7 @@ const Index = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -436,10 +436,10 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {pricingPlans.map((plan, index) => (
-              <Card key={index} className={`relative ${plan.popular ? 'border-2 border-blue-500 shadow-xl' : 'border-gray-200'}`}>
+              <Card key={index} className={`relative ${plan.popular ? 'border-2 shadow-xl' : 'border-gray-200'}`} style={plan.popular ? { borderColor: '#767AFA' } : {}}>
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-blue-500 text-white px-4 py-1">Most Popular</Badge>
+                    <Badge className="text-white px-4 py-1" style={{ backgroundColor: '#767AFA' }}>Most Popular</Badge>
                   </div>
                 )}
                 <CardHeader className="text-center pb-4">
@@ -448,7 +448,7 @@ const Index = () => {
                     <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
                     <span className="text-gray-600">{plan.period}</span>
                   </div>
-                  <p className="text-blue-600 font-semibold mt-2">{plan.tokens}</p>
+                  <p className="font-semibold mt-2" style={{ color: '#767AFA' }}>{plan.tokens}</p>
                 </CardHeader>
                 <CardContent>
                   <ul className="space-y-3 mb-8">
@@ -459,7 +459,7 @@ const Index = () => {
                     ))}
                   </ul>
                   <Link to={plan.cta === "Contact Sales" ? "/contact" : "/sign-up"} className="block">
-                    <Button className={`w-full ${plan.popular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}>
+                    <Button className={`w-full ${plan.popular ? 'hover:opacity-90' : ''}`} style={plan.popular ? { backgroundColor: '#767AFA' } : {}}>
                       {plan.cta}
                     </Button>
                   </Link>
@@ -471,7 +471,7 @@ const Index = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -503,7 +503,7 @@ const Index = () => {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8 bg-white">
+      <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -535,22 +535,22 @@ const Index = () => {
       </section>
 
       {/* Final CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-blue-600">
+      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#767AFA' }}>
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-white mb-6">
             Ready to make packaging a profit center?
           </h2>
-          <p className="text-xl text-blue-100 mb-8">
+          <p className="text-xl text-white opacity-90 mb-8">
             See how QuantiPackAI finds savings and prevents stockouts in your exact environment.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/sign-up">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-12 py-4">
+              <Button size="lg" className="bg-white hover:bg-gray-100 text-lg px-12 py-4" style={{ color: '#767AFA' }}>
                 Start Now
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-blue-600">
+            <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-[#767AFA]">
               Book a Demo
             </Button>
           </div>
@@ -564,7 +564,7 @@ const Index = () => {
             {/* Column 1 - Company */}
             <div>
               <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
                   <Package className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-xl font-bold">QuantiPackAI</span>
@@ -619,7 +619,7 @@ const Index = () => {
                   placeholder="Enter your email" 
                   className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
                 />
-                <Button className="bg-blue-600 hover:bg-blue-700">Subscribe</Button>
+                <Button style={{ backgroundColor: '#767AFA' }} className="hover:opacity-90">Subscribe</Button>
               </div>
             </div>
           </div>
