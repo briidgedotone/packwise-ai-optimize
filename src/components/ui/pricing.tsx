@@ -105,11 +105,11 @@ const PricingSwitch = ({
 
   return (
     <div className={cn("flex justify-center", className)}>
-      <div className="relative z-10 mx-auto flex w-fit rounded-xl bg-neutral-50 border border-gray-200 p-1">
+      <div className="relative z-10 mx-auto flex w-fit rounded-3xl bg-neutral-50 border border-gray-200 p-1">
         <button
           onClick={() => handleSwitch("0")}
           className={cn(
-            "relative z-10 w-fit cursor-pointer h-12 rounded-xl sm:px-6 px-3 sm:py-2 py-1 font-medium transition-colors sm:text-base text-sm",
+            "relative z-10 w-fit cursor-pointer h-12 rounded-3xl sm:px-6 px-3 sm:py-2 py-1 font-medium transition-colors sm:text-base text-sm",
             selected === "0"
               ? "text-white"
               : "text-muted-foreground hover:text-black",
@@ -118,7 +118,7 @@ const PricingSwitch = ({
           {selected === "0" && (
             <motion.span
               layoutId={"switch"}
-              className="absolute top-0 left-0 h-12 w-full rounded-xl border-4 shadow-sm border-[#767AFA] bg-[#767AFA]"
+              className="absolute top-0 left-0 h-12 w-full rounded-3xl border-4 shadow-sm border-[#767AFA] bg-[#767AFA]"
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
           )}
@@ -128,7 +128,7 @@ const PricingSwitch = ({
         <button
           onClick={() => handleSwitch("1")}
           className={cn(
-            "relative z-10 w-fit cursor-pointer h-12 flex-shrink-0 rounded-xl sm:px-6 px-3 sm:py-2 py-1 font-medium transition-colors sm:text-base text-sm",
+            "relative z-10 w-fit cursor-pointer h-12 flex-shrink-0 rounded-3xl sm:px-6 px-3 sm:py-2 py-1 font-medium transition-colors sm:text-base text-sm",
             selected === "1"
               ? "text-white"
               : "text-muted-foreground hover:text-black",
@@ -137,7 +137,7 @@ const PricingSwitch = ({
           {selected === "1" && (
             <motion.span
               layoutId={"switch"}
-              className="absolute top-0 left-0 h-12 w-full rounded-xl border-4 shadow-sm border-[#767AFA] bg-[#767AFA]"
+              className="absolute top-0 left-0 h-12 w-full rounded-3xl border-4 shadow-sm border-[#767AFA] bg-[#767AFA]"
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
           )}
@@ -233,7 +233,7 @@ export default function PricingSection() {
               customVariants={revealVariants}
             >
               <Card
-                className={`relative border ${
+                className={`relative border rounded-3xl ${
                   plan.popular
                     ? "ring-2 ring-[#767AFA] bg-purple-50"
                     : "bg-white border-gray-200"
@@ -287,7 +287,7 @@ export default function PricingSection() {
                 <CardContent className="pt-0">
                   <Link to={plan.buttonText === "Contact Sales" ? "/contact" : "/sign-up"} className="block mb-6">
                     <button
-                      className={`w-full p-4 text-lg rounded-full font-medium transition-all ${
+                      className={`w-full p-4 text-lg rounded-3xl font-medium transition-all ${
                         plan.popular
                           ? "bg-[#767AFA] hover:opacity-90 shadow-lg shadow-[#767AFA]/30 text-white"
                           : "bg-gray-900 hover:bg-gray-800 shadow-lg shadow-gray-900/30 text-white"
