@@ -1,12 +1,8 @@
 "use client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { TimelineContent } from "@/components/ui/timeline-animation";
-import {VerticalCutReveal} from "@/components/ui/vertical-cut-reveal";
 import { cn } from "@/lib/utils";
-import NumberFlow from "@number-flow/react";
 import { CheckCheck } from "lucide-react";
-import { motion } from "motion/react";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const plans = [
@@ -116,10 +112,8 @@ const PricingSwitch = ({
           )}
         >
           {selected === "0" && (
-            <motion.span
-              layoutId={"switch"}
+            <span
               className="absolute top-0 left-0 h-12 w-full rounded-3xl border-4 border-[#767AFA] bg-[#767AFA]"
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
           )}
           <span className="relative">Monthly Billing</span>
@@ -135,10 +129,8 @@ const PricingSwitch = ({
           )}
         >
           {selected === "1" && (
-            <motion.span
-              layoutId={"switch"}
+            <span
               className="absolute top-0 left-0 h-12 w-full rounded-3xl border-4 border-[#767AFA] bg-[#767AFA]"
-              transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
           )}
           <span className="relative flex items-center gap-2">
@@ -155,83 +147,31 @@ const PricingSwitch = ({
 
 export default function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
-  const pricingRef = useRef<HTMLDivElement>(null);
-
-  const revealVariants = {
-    visible: (i: number) => ({
-      y: 0,
-      opacity: 1,
-      filter: "blur(0px)",
-      transition: {
-        delay: i * 0.4,
-        duration: 0.5,
-      },
-    }),
-    hidden: {
-      filter: "blur(10px)",
-      y: -20,
-      opacity: 0,
-    },
-  };
 
   const togglePricingPeriod = (value: string) =>
     setIsYearly(Number.parseInt(value) === 1);
 
   return (
     <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'transparent' }}>
-      <div
-        className="max-w-7xl mx-auto relative"
-        ref={pricingRef}
-      >
-        <article className="text-center mb-16 space-y-4 max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto relative">
+        <div className="text-center mb-16 space-y-4 max-w-4xl mx-auto">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            <VerticalCutReveal
-              splitBy="words"
-              staggerDuration={0.15}
-              staggerFrom="first"
-              reverse={true}
-              containerClassName="justify-center"
-              transition={{
-                type: "spring",
-                stiffness: 250,
-                damping: 40,
-                delay: 0,
-              }}
-            >
-              Simple, token-based plans for any scale
-            </VerticalCutReveal>
+            Simple, token-based plans for any scale
           </h2>
 
-          <TimelineContent
-            as="p"
-            animationNum={0}
-            timelineRef={pricingRef}
-            customVariants={revealVariants}
-            className="text-xl text-gray-600 max-w-3xl mx-auto"
-          >
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Every feature is included. Each time you run an application (Suite Analyzer, Demand Planner, 
             Spec Generator, Design Analyzer, Chatbot), it uses one token. Choose the token bundle that fits your needs.
-          </TimelineContent>
+          </p>
 
-          <TimelineContent
-            as="div"
-            animationNum={1}
-            timelineRef={pricingRef}
-            customVariants={revealVariants}
-          >
+          <div className="w-fit mx-auto">
             <PricingSwitch onSwitch={togglePricingPeriod} className="w-fit mx-auto" />
-          </TimelineContent>
-        </article>
+          </div>
+        </div>
 
         <div className="grid md:grid-cols-3 gap-8 py-6">
           {plans.map((plan, index) => (
-            <TimelineContent
-              key={plan.name}
-              as="div"
-              animationNum={2 + index}
-              timelineRef={pricingRef}
-              customVariants={revealVariants}
-            >
+            <div key={plan.name}>
               <Card
                 className={`relative border rounded-3xl ${
                   plan.popular
@@ -259,13 +199,7 @@ export default function PricingSection() {
                     {plan.price ? (
                       <>
                         <span className="text-4xl font-bold text-gray-900">
-                          $<NumberFlow
-                            format={{
-                              currency: "USD",
-                            }}
-                            value={isYearly ? plan.yearlyPrice! : plan.price}
-                            className="text-4xl font-bold"
-                          />
+                          ${isYearly ? plan.yearlyPrice! : plan.price}
                         </span>
                         <span className="text-gray-600 ml-1">
                           /{isYearly ? "year" : "month"}
@@ -314,7 +248,7 @@ export default function PricingSection() {
                   </div>
                 </CardContent>
               </Card>
-            </TimelineContent>
+            </div>
           ))}
         </div>
       </div>
