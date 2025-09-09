@@ -178,7 +178,7 @@ export default function PricingSection() {
     setIsYearly(Number.parseInt(value) === 1);
 
   return (
-    <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
+    <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'transparent' }}>
       <div
         className="max-w-7xl mx-auto relative"
         ref={pricingRef}

@@ -114,11 +114,11 @@ const Index = () => {
 
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#F6F6FF' }}>
       {/* Hero Section with Navigation */}
       <section className="bg-cover bg-center bg-no-repeat relative" style={{ backgroundColor: '#F7F6F9', backgroundImage: 'url(/bg.png)' }}>
         {/* Gradient fade overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white pointer-events-none"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, transparent, #F6F6FF)' }}></div>
         {/* Navigation Bar */}
         <header className="backdrop-blur-sm sticky top-0 z-50 relative" style={{ backgroundColor: 'transparent' }}>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -321,7 +321,7 @@ const Index = () => {
 
 
       {/* Benefits Section */}
-      <section id="product" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
+      <section id="product" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'transparent' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -344,7 +344,7 @@ const Index = () => {
       </section>
 
       {/* How It Works Section */}
-      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'transparent' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">

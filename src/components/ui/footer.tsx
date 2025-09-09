@@ -66,7 +66,7 @@ const navigation = {
 
 export default function Footer() {
   return (
-    <footer className="py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
+    <footer className="py-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'transparent' }}>
       <div className="max-w-7xl mx-auto">
         {/* Top Section */}
         <div className="relative mx-auto grid max-w-7xl items-start justify-start gap-8 pb-12 md:grid-cols-2 lg:grid-cols-3">
