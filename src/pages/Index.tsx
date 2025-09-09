@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import PricingSection from "@/components/ui/pricing";
+import TestimonialSection from "@/components/ui/testimonials";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -109,27 +110,6 @@ const Index = () => {
   ];
 
 
-  // Testimonials data
-  const testimonials = [
-    {
-      quote: "QuantiPackAI identified $200K in annual savings we didn't know existed. The Suite Analyzer paid for itself in the first week.",
-      author: "Sarah Chen",
-      title: "VP of Operations, FreshGoods Inc.",
-      rating: 5
-    },
-    {
-      quote: "The Demand Planner eliminated our stockouts completely. We haven't had a packaging shortage in 6 months.",
-      author: "Michael Torres", 
-      title: "Supply Chain Manager, DirectShip Co.",
-      rating: 5
-    },
-    {
-      quote: "The Design Analyzer helped us increase shelf appeal by 40%. Our products finally stand out against competitors.",
-      author: "Emily Watson",
-      title: "Brand Manager, ConsumerFirst", 
-      rating: 5
-    }
-  ];
 
   // FAQ data
   const faqs = [
@@ -447,36 +427,7 @@ const Index = () => {
       <PricingSection />
 
       {/* Testimonials Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Loved by packaging professionals worldwide
-            </h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-white border-0 shadow-lg">
-                <CardContent className="p-8">
-                  <div className="flex mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
-                  <blockquote className="text-gray-700 mb-6 text-lg italic">
-                    "{testimonial.quote}"
-                  </blockquote>
-                  <div>
-                    <p className="font-semibold text-gray-900">{testimonial.author}</p>
-                    <p className="text-gray-600 text-sm">{testimonial.title}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialSection />
 
       {/* FAQ Section */}
       <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
