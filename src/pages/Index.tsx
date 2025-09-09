@@ -58,7 +58,7 @@ const Index = () => {
     },
     {
       icon: Eye,
-      title: "PDP Analyzer",
+      title: "Design Analyzer",
       subtitle: "Win on shelf. Beat the competition.",
       description: "Upload your principal display panel and compare it against competitors. QuantiPackAI scores and explains your design's strengths — and tells you exactly how to improve it.",
       users: "Brand, Creative, Packaging Design, Marketing",
@@ -377,7 +377,7 @@ const Index = () => {
                 <li>Suite Analyzer</li>
                 <li>Spec Generator</li>
                 <li>Demand Planner</li>
-                <li>PDP Analyzer</li>
+                <li>Design Analyzer</li>
               </ul>
             </div>
             <div>

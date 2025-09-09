@@ -1,44 +1,40 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useClerk, useUser, UserButton } from '@clerk/clerk-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { 
   Package, 
   BarChart3, 
-  Calculator, 
   Eye, 
   TrendingUp, 
-  DollarSign, 
-  Recycle, 
   FileText,
   MessageSquare,
   Menu,
   X,
-  Download,
-  Clock,
-  CheckCircle,
   AlertCircle,
-  Settings,
-  Home,
-  Users,
-  HelpCircle,
+  Settings as SettingsIcon,
   LogOut,
-  Bell,
-  Search,
-  Calendar,
-  Plus,
   ChevronDown,
-  MoreHorizontal
+  MoreHorizontal,
+  ArrowRight,
+  Activity,
+  Zap,
+  FolderOpen,
+  RefreshCw,
+  Lightbulb,
+  ExternalLink,
+  Sparkles
 } from 'lucide-react';
-import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
+import { toast } from 'sonner';
+import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerStepped';
 import { SpecGenerator } from '@/components/SpecGenerator';
-import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
+import { ImprovedPackagingDemandPlanner } from '@/components/ImprovedPackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
-import { MonthlyChart, PackagingChart, EfficiencyChart } from '@/components/charts';
-import CUINDemo from '@/components/CUINDemo';
-import Phase2Demo from '@/components/Phase2Demo';
+import { AIAssistant } from '@/components/AIAssistant';
+import { Reports } from '@/pages/Reports';
+import Settings from '@/pages/Settings';
+import { EmbeddedAIChat } from '@/components/EmbeddedAIChat';
+import { useQuery } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 const Dashboard = () => {
   const { signOut } = useClerk();
@@ -46,6 +42,87 @@ const Dashboard = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [aiAssistantOpen, setAiAssistantOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  // Backend availability state - now available with new Convex account
+  const [isBackendUnavailable, setIsBackendUnavailable] = useState(false);
+  const [isCheckingBackend, setIsCheckingBackend] = useState(false);
+
+  // Function to test backend availability
+  const testBackendConnection = async () => {
+    setIsCheckingBackend(true);
+    try {
+      // If we get here without error, backend might be available
+      // We'll set it as available and let the queries try
+      setIsBackendUnavailable(false);
+      
+      // Refresh the page to reload with queries
+      window.location.reload();
+      
+    } catch (error) {
+      console.log('Backend still unavailable:', error);
+      setIsBackendUnavailable(true);
+      toast.error('Backend is still unavailable. Please try cleaning up data or upgrading your plan.');
+    } finally {
+      setIsCheckingBackend(false);
+    }
+  };
+
+  // Fetch data from Convex backend
+  const dashboardMetrics = useQuery(api.dashboard.getDashboardMetrics);
+  const recentActivity = useQuery(api.dashboard.getRecentActivity);
+  const toolUsageStats = useQuery(api.dashboard.getToolUsageStats);
+  const recentFiles = useQuery(api.dashboard.getRecentFiles);
+
+  // Fallback data when backend is unavailable
+  const fallbackMetrics = {
+    tokensUsed: 0,
+    tokensLimit: 10,
+    tokensRemaining: 10,
+  };
+
+  const fallbackActivity = [];
+  const fallbackToolStats = [];
+  const fallbackFiles = [];
+
+  // Use fallback data when backend is unavailable  
+  const safeMetrics = isBackendUnavailable || !dashboardMetrics ? fallbackMetrics : dashboardMetrics;
+  const safeActivity = isBackendUnavailable || !recentActivity ? fallbackActivity : recentActivity;
+  const safeToolStats = isBackendUnavailable || !toolUsageStats ? fallbackToolStats : toolUsageStats;
+  const safeFiles = isBackendUnavailable || !recentFiles ? fallbackFiles : recentFiles;
+
+  // Listen for custom tab change events (from PDP results navigation)
+  useEffect(() => {
+    const handleSetActiveTab = (event: CustomEvent) => {
+      setActiveTab(event.detail);
+    };
+
+    window.addEventListener('setActiveTab', handleSetActiveTab as EventListener);
+    
+    return () => {
+      window.removeEventListener('setActiveTab', handleSetActiveTab as EventListener);
+    };
+  }, []);
+
+  // Close user dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (userDropdownOpen && !target.closest('[data-user-dropdown]')) {
+        setUserDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [userDropdownOpen]);
+
+  // Auto-redirect to dashboard if on a disabled feature
+  useEffect(() => {
+    if (isBackendUnavailable && ['suite-analyzer-backend', 'spec-generator', 'demand-planner-v2', 'pdp-analyzer'].includes(activeTab)) {
+      setActiveTab('overview');
+    }
+  }, [isBackendUnavailable, activeTab]);
 
   const handleLogout = async () => {
     await signOut();
@@ -54,386 +131,423 @@ const Dashboard = () => {
   const menuItems = [
     { id: 'overview', label: 'Dashboard', icon: BarChart3 },
     { id: 'suite-analyzer-backend', label: 'Suite Analyzer', icon: Package },
-    { id: 'spec-generator', label: 'Spec Generator', icon: Calculator },
-    { id: 'demand-planner', label: 'Demand Planner', icon: TrendingUp },
-    { id: 'pdp-analyzer', label: 'PDP Analyzer', icon: Eye },
-    { id: 'cuin-demo', label: 'CUIN Calculator', icon: Calculator },
-    { id: 'phase2-demo', label: 'Core Engines', icon: Package },
+    { id: 'spec-generator', label: 'Spec Generator', icon: Sparkles },
+    { id: 'demand-planner-v2', label: 'Demand Planner', icon: TrendingUp },
+    { id: 'pdp-analyzer', label: 'Design Analyzer', icon: Eye },
     { id: 'reports', label: 'Reports', icon: FileText },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   const renderContent = () => {
+    // If backend is unavailable, redirect to settings for cleanup or show offline message
+    if (isBackendUnavailable && ['suite-analyzer-backend', 'spec-generator', 'demand-planner-v2', 'pdp-analyzer'].includes(activeTab)) {
+      return (
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center max-w-md">
+            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Feature Temporarily Unavailable</h3>
+            <p className="text-gray-600 mb-6">
+              This feature requires backend connectivity. Please clean up data or upgrade your plan to restore functionality.
+            </p>
+            <div className="flex gap-3 justify-center">
+              <Button onClick={() => setActiveTab('settings')}>
+                Clean Up Data
+              </Button>
+              <Button 
+                variant="outline" 
+                onClick={() => window.open('https://dashboard.convex.dev', '_blank')}
+              >
+                Upgrade Plan
+              </Button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case 'suite-analyzer-backend':
         return <PackagingSuiteAnalyzerBackend />;
       case 'spec-generator':
         return <SpecGenerator />;
-      case 'demand-planner':
-        return <PackagingDemandPlanner />;
+      case 'demand-planner-v2':
+        return <ImprovedPackagingDemandPlanner />;
       case 'pdp-analyzer':
         return <PDPAnalyzer />;
-      case 'cuin-demo':
-        return <CUINDemo />;
-      case 'phase2-demo':
-        return <Phase2Demo />;
       case 'reports':
-        return (
-          <div className="min-h-screen bg-gray-50">
-            <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
-              {/* Header */}
-              <div className="bg-white rounded-lg border border-gray-100 p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
-                      <FileText className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <h1 className="text-2xl font-medium text-gray-900">Reports & Analytics</h1>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Access comprehensive analysis reports and insights
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-2 px-3 py-1 bg-purple-50 border border-purple-200 rounded-lg">
-                    <BarChart3 className="h-3 w-3 text-purple-600" />
-                    <span className="text-xs font-medium text-purple-700">Analytics Hub</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Report Cards */}
-              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {[
-                  {
-                    title: 'Suite Analysis Report',
-                    description: 'Comprehensive packaging optimization analysis',
-                    icon: Package,
-                    color: 'blue',
-                    status: 'ready'
-                  },
-                  {
-                    title: 'Spec Generation Report',
-                    description: 'AI-generated product specifications',
-                    icon: Calculator,
-                    color: 'purple',
-                    status: 'processing'
-                  },
-                  {
-                    title: 'Demand Planning Report',
-                    description: 'Future packaging quantity forecasts',
-                    icon: TrendingUp,
-                    color: 'emerald',
-                    status: 'pending'
-                  },
-                  {
-                    title: 'PDP Analysis Report',
-                    description: 'Visual analysis and competitor benchmarks',
-                    icon: Eye,
-                    color: 'pink',
-                    status: 'ready'
-                  },
-                  {
-                    title: 'Cost Optimization Report',
-                    description: 'Detailed cost savings analysis',
-                    icon: DollarSign,
-                    color: 'orange',
-                    status: 'ready'
-                  },
-                  {
-                    title: 'Executive Summary',
-                    description: 'High-level insights and recommendations',
-                    icon: BarChart3,
-                    color: 'indigo',
-                    status: 'processing'
-                  }
-                ].map((report, index) => (
-                  <Card key={index} className="bg-white border-gray-100 shadow-sm hover:shadow-md transition-shadow group">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className={`w-10 h-10 bg-${report.color}-50 rounded-lg flex items-center justify-center group-hover:bg-${report.color}-100 transition-colors`}>
-                          <report.icon className={`h-5 w-5 text-${report.color}-600`} />
-                        </div>
-                        {report.status === 'ready' && (
-                          <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200">
-                            <CheckCircle className="h-3 w-3 mr-1" />
-                            Ready
-                          </Badge>
-                        )}
-                        {report.status === 'processing' && (
-                          <Badge className="bg-blue-50 text-blue-700 border-blue-200">
-                            <Clock className="h-3 w-3 mr-1" />
-                            Processing
-                          </Badge>
-                        )}
-                        {report.status === 'pending' && (
-                          <Badge variant="outline" className="text-slate-600 border-slate-300">
-                            <AlertCircle className="h-3 w-3 mr-1" />
-                            Pending
-                          </Badge>
-                        )}
-                      </div>
-                      <CardTitle className="text-lg font-medium text-gray-900">{report.title}</CardTitle>
-                      <CardDescription className="text-gray-500">
-                        {report.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <div className="space-y-3">
-                        {report.status === 'ready' ? (
-                          <div className="space-y-2">
-                            <div className="flex justify-between text-sm text-gray-500">
-                              <span>Last updated: 2 hours ago</span>
-                              <span>12 pages</span>
-                            </div>
-                            <Button 
-                              className={`w-full bg-${report.color}-600 hover:bg-${report.color}-700 text-white`}
-                            >
-                              <Download className="h-4 w-4 mr-2" />
-                              Download PDF
-                            </Button>
-                          </div>
-                        ) : report.status === 'processing' ? (
-                          <div className="text-center py-4">
-                            <div className="flex items-center justify-center gap-2 text-blue-600">
-                              <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                              <span className="text-sm">Generating report...</span>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="text-center py-4">
-                            <p className="text-sm text-gray-500 mb-3">Run analysis to generate report</p>
-                            <Button variant="outline" className="w-full border-gray-200 text-gray-700">
-                              Start Analysis
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
+        return <Reports />;
+      case 'settings':
+        return <Settings />;
       default:
         return (
-          <div className="space-y-6">
-            {/* Metrics Grid */}
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-              {/* Total Savings */}
-              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                    <DollarSign className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
-                    <TrendingUp className="h-2.5 w-2.5" />
-                    +12.3%
+          <div className="min-h-screen bg-gray-50">
+            <div className="max-w-7xl mx-auto px-6 py-8">
+              
+              {/* Backend Unavailable Warning */}
+              {isBackendUnavailable && (
+                <div className="bg-red-50 border border-red-200 rounded-xl p-6 shadow-sm mb-8">
+                  <div className="flex items-start gap-4">
+                    <AlertCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-red-900 mb-2">Backend Deployments Disabled</h3>
+                      <p className="text-sm text-red-800 mb-4">
+                        Convex free plan limits exceeded. All backend functions are disabled until limits are restored.
+                        The application is running in offline mode with limited functionality.
+                      </p>
+                      <div className="bg-red-100 border border-red-200 rounded-lg p-4 mb-4">
+                        <p className="text-xs text-red-800">
+                          <strong>⚠️ Important:</strong> Data cleanup functions cannot work when backend is disabled. 
+                          The only solution is to <strong>upgrade to Convex Pro plan ($25/month)</strong> to restore full functionality and enable data cleanup.
+                        </p>
+                      </div>
+                      <div className="flex gap-3 flex-wrap">
+                        <Button
+                          size="sm"
+                          onClick={() => setActiveTab('settings')}
+                          className="bg-red-600 hover:bg-red-700 text-white shadow-sm"
+                        >
+                          Clean Up Data
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={testBackendConnection}
+                          disabled={isCheckingBackend}
+                          variant="outline"
+                          className="border-red-300 text-red-700 hover:bg-red-50"
+                        >
+                          {isCheckingBackend ? 'Testing...' : 'Test Connection'}
+                          <RefreshCw className={`w-3 h-3 ml-1 ${isCheckingBackend ? 'animate-spin' : ''}`} />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => window.open('https://dashboard.convex.dev', '_blank')}
+                          className="border-red-300 text-red-700 hover:bg-red-50"
+                        >
+                          Upgrade Plan
+                          <ExternalLink className="w-3 w-3 ml-1" />
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl font-semibold text-gray-900">$34,250</h3>
-                  <p className="text-xs text-gray-500">Total Savings</p>
-                </div>
-              </Card>
+              )}
 
-              {/* Cost Reduction */}
-              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
-                    <BarChart3 className="h-4 w-4 text-white" />
+              {/* Header Section */}
+              <div className="mb-8">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h1 className="text-2xl font-semibold text-gray-900 mb-1">Dashboard</h1>
+                    <p className="text-sm text-gray-500">Track optimization metrics and manage your packaging analysis</p>
                   </div>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
-                    <TrendingUp className="h-2.5 w-2.5" />
-                    +2.1%
-                  </div>
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl font-semibold text-gray-900">23.8%</h3>
-                  <p className="text-xs text-gray-500">Cost Reduction</p>
-                </div>
-              </Card>
-
-              {/* Waste Reduction */}
-              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
-                    <Recycle className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
-                    <TrendingUp className="h-2.5 w-2.5" />
-                    +5.7%
-                  </div>
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl font-semibold text-gray-900">19.9%</h3>
-                  <p className="text-xs text-gray-500">Waste Reduction</p>
-                </div>
-              </Card>
-
-              {/* Processed Orders */}
-              <Card className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
-                    <Package className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="flex items-center gap-1 text-emerald-600 text-xs font-medium">
-                    <TrendingUp className="h-2.5 w-2.5" />
-                    +8.4%
-                  </div>
-                </div>
-                <div className="space-y-0.5">
-                  <h3 className="text-xl font-semibold text-gray-900">12,847</h3>
-                  <p className="text-xs text-gray-500">Processed Orders</p>
-                </div>
-              </Card>
-            </div>
-
-            {/* Performance Section */}
-            <Card className="border-gray-100 bg-white shadow-sm">
-              <CardHeader className="pb-6">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-base sm:text-lg font-medium text-gray-900">Performance</CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm" className="text-xs border-gray-200 text-gray-600 hidden sm:flex">
-                      01-07 May
-                      <ChevronDown className="ml-1 h-3 w-3" />
+                  <div className="mt-4 sm:mt-0 flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-gray-600 border-gray-200 hover:bg-gray-50"
+                      onClick={() => window.location.reload()}
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Refresh
                     </Button>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-80 w-full">
-                  <MonthlyChart />
-                </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Charts Grid */}
-            <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
-              {/* Packaging Distribution */}
-              <Card className="border-gray-100 bg-white shadow-sm">
-                <CardHeader className="pb-6">
-                  <CardTitle className="text-lg font-medium text-gray-900">Packaging Distribution</CardTitle>
-                  <CardDescription className="text-gray-500">
-                    Current packaging type usage
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64 w-full">
-                    <PackagingChart />
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Efficiency Improvements */}
-              <Card className="border-gray-100 bg-white shadow-sm">
-                <CardHeader className="pb-6">
-                  <CardTitle className="text-lg font-medium text-gray-900">Efficiency Improvements</CardTitle>
-                  <CardDescription className="text-gray-500">
-                    Performance comparison before and after QuantiPackAI implementation
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64 w-full">
-                    <EfficiencyChart />
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-
-            {/* Core Features Grid */}
-            <div>
-              <h2 className="text-lg font-medium text-gray-900 mb-4">Core Features</h2>
-              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2">
-                {[
-                  {
-                    id: 'suite-analyzer-backend',
-                    title: 'Packaging Suite Analyzer',
-                    description: 'Optimize your packaging mix and identify cost savings',
-                    icon: Package,
-                    status: 'Ready',
-                    color: 'blue',
-                  },
-                  {
-                    id: 'spec-generator',
-                    title: 'Spec Generator',
-                    description: 'Generate realistic packaging specs from product descriptions',
-                    icon: Calculator,
-                    status: 'Ready',
-                    color: 'emerald',
-                  },
-                  {
-                    id: 'demand-planner',
-                    title: 'Packaging Demand Planner',
-                    description: 'Calculate exact packaging quantities needed',
-                    icon: TrendingUp,
-                    status: 'Ready',
-                    color: 'orange',
-                  },
-                  {
-                    id: 'pdp-analyzer',
-                    title: 'PDP Analyzer',
-                    description: 'Score and improve your product display panels',
-                    icon: Eye,
-                    status: 'Ready',
-                    color: 'purple',
-                  },
-                ].map((feature) => (
-                  <Card key={feature.id} className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-all cursor-pointer group">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className={`h-10 w-10 bg-${feature.color}-50 rounded-lg flex items-center justify-center group-hover:bg-${feature.color}-100 transition-colors`}>
-                          <feature.icon className={`h-5 w-5 text-${feature.color}-600`} />
+              {/* Main Dashboard Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+                
+                {/* Key Metrics Cards */}
+                <div className="lg:col-span-4">
+                  <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Token Usage</p>
+                        <div className="flex items-baseline gap-2 mt-1">
+                          <span className="text-2xl font-semibold text-gray-900">
+                            {safeMetrics?.tokensUsed || '0'}
+                          </span>
+                          <span className="text-sm text-gray-500">
+                            / {safeMetrics?.tokensLimit || '10'}
+                          </span>
                         </div>
-                        <Badge className="bg-emerald-50 text-emerald-700 border-emerald-200 text-xs">
-                          {feature.status}
-                        </Badge>
                       </div>
-                      <CardTitle className="text-base font-medium text-gray-900">{feature.title}</CardTitle>
-                      <CardDescription className="text-sm text-gray-500 mt-1">{feature.description}</CardDescription>
-                    </CardHeader>
-                    <CardContent className="pt-0">
-                      <Button 
-                        variant="outline" 
-                        className="w-full border-gray-200 text-gray-700 hover:bg-gray-50 text-sm"
-                        onClick={() => setActiveTab(feature.id)}
+                      <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
+                        <Zap className="h-6 w-6 text-blue-600" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-xs">
+                        <span className="text-gray-500">Available</span>
+                        <span className="font-medium text-gray-700">
+                          {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
+                        </span>
+                      </div>
+                      <div className="w-full bg-gray-100 rounded-full h-1.5">
+                        <div 
+                          className="bg-blue-600 h-1.5 rounded-full transition-all duration-300" 
+                          style={{ 
+                            width: `${Math.min(100, ((safeMetrics?.tokensUsed || 0) / (safeMetrics?.tokensLimit || 10)) * 100)}%` 
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions - Modern Card Design */}
+                <div className="lg:col-span-8">
+                  <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                    <div className="mb-4">
+                      <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
+                    </div>
+                    <div className="grid gap-4 grid-cols-2">
+                      <Button
+                        variant="outline"
+                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
-                        Launch Tool
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                            <Package className="h-5 w-5 text-gray-700" />
+                          </div>
+                          <div className="text-left">
+                            <div className="text-sm font-medium text-gray-900">Suite Analyzer</div>
+                            <div className="text-xs text-gray-500">Optimize packaging</div>
+                          </div>
+                        </div>
                       </Button>
-                    </CardContent>
-                  </Card>
-                ))}
+                      <Button
+                        variant="outline"
+                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        onClick={() => setActiveTab('demand-planner-v2')}
+                      >
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                            <TrendingUp className="h-5 w-5 text-gray-700" />
+                          </div>
+                          <div className="text-left">
+                            <div className="text-sm font-medium text-gray-900">Demand Planner</div>
+                            <div className="text-xs text-gray-500">Forecast needs</div>
+                          </div>
+                        </div>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        onClick={() => setActiveTab('spec-generator')}
+                      >
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                            <Sparkles className="h-5 w-5 text-gray-700" />
+                          </div>
+                          <div className="text-left">
+                            <div className="text-sm font-medium text-gray-900">Spec Generator</div>
+                            <div className="text-xs text-gray-500">AI specifications</div>
+                          </div>
+                        </div>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        onClick={() => setActiveTab('pdp-analyzer')}
+                      >
+                        <div className="flex items-center gap-3 w-full">
+                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                            <Eye className="h-5 w-5 text-gray-700" />
+                          </div>
+                          <div className="text-left">
+                            <div className="text-sm font-medium text-gray-900">Design Analyzer</div>
+                            <div className="text-xs text-gray-500">Visual analysis</div>
+                          </div>
+                        </div>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Analytics and Recent Activity Grid */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                
+                {/* Tool Usage Stats - Enhanced */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium text-gray-900">Tool Analytics</h3>
+                    <BarChart3 className="h-4 w-4 text-gray-400" />
+                  </div>
+                  {safeToolStats && safeToolStats.length > 0 && safeToolStats.some((stat: any) => stat.count > 0) ? (
+                    <div className="space-y-4">
+                      {safeToolStats.map((stat: any, index: number) => (
+                        <div key={index} className="flex items-center justify-between py-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-gray-400 rounded-full" />
+                            <span className="text-sm text-gray-600">{stat.name}</span>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-1">
+                              <span className="text-sm font-medium text-gray-900">{stat.count}</span>
+                              <span className="text-xs text-gray-500">uses</span>
+                            </div>
+                            <div className="w-16">
+                              <div className="w-full bg-gray-100 rounded-full h-1">
+                                <div 
+                                  className="bg-gray-600 h-1 rounded-full" 
+                                  style={{ width: `${stat.usage}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="text-center">
+                        <BarChart3 className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+                        <p className="text-sm text-gray-500">No usage data yet</p>
+                        <p className="text-xs text-gray-400 mt-1">Analytics will appear here</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Recent Analyses - Enhanced */}
+                <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-medium text-gray-900">Recent Analyses</h3>
+                    <Button 
+                      variant="ghost" 
+                      size="sm" 
+                      className="text-xs text-gray-500 hover:text-gray-700 -mr-2"
+                      onClick={() => setActiveTab('reports')}
+                    >
+                      View all
+                      <ArrowRight className="h-3 w-3 ml-1" />
+                    </Button>
+                  </div>
+                  <div className="space-y-3">
+                    {safeFiles && safeFiles.length > 0 ? safeFiles.slice(0, 4).map((analysis: any, index: number) => (
+                      <div key={index} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                        <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                          {analysis.type === 'suite_analyzer' ? <Package className="h-4 w-4 text-gray-600" /> :
+                           analysis.type === 'pdp_analyzer' ? <Eye className="h-4 w-4 text-gray-600" /> :
+                           analysis.type === 'demand_planner' || analysis.type === 'demand_planner_v2' ? <TrendingUp className="h-4 w-4 text-gray-600" /> :
+                           analysis.type === 'spec_generator' ? <Sparkles className="h-4 w-4 text-gray-600" /> :
+                           <FileText className="h-4 w-4 text-gray-600" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 truncate">{analysis.name}</p>
+                          <p className="text-xs text-gray-500">{analysis.time} • {analysis.tool}</p>
+                        </div>
+                        {analysis.status === 'completed' && (
+                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
+                        )}
+                        {analysis.status === 'processing' && (
+                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
+                        )}
+                        {analysis.status === 'failed' && (
+                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
+                        )}
+                      </div>
+                    )) : (
+                      <div className="flex items-center justify-center py-8">
+                        <div className="text-center">
+                          <FolderOpen className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+                          <p className="text-sm text-gray-500">No analyses yet</p>
+                          <p className="text-xs text-gray-400 mt-1">Your work will appear here</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* AI Chat Interface - Enhanced */}
+              <div className="mb-8">
+                <EmbeddedAIChat />
+              </div>
+
+              {/* Smart Insights - Premium Design */}
+              <div className="bg-white rounded-2xl border border-gray-100/80 p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-sm">
+                    <Lightbulb className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-gray-900">Smart Insights</h3>
+                </div>
+                
+                {/* Rotating Insights - Enhanced */}
+                {(() => {
+                  const insights = [
+                    {
+                      title: "Packaging Optimization Opportunity",
+                      description: "Based on your usage patterns, switching to medium boxes for 20% of your shipments could reduce costs by an estimated 15%.",
+                      color: "blue"
+                    },
+                    {
+                      title: "Sustainable Packaging Benefits", 
+                      description: "Implementing eco-friendly packaging materials could improve your sustainability score by 25% while maintaining cost efficiency.",
+                      color: "green"
+                    },
+                    {
+                      title: "Shipping Volume Analysis",
+                      description: "Your peak shipping days are Tuesday-Thursday. Consider bulk packaging preparation on Mondays to optimize workflow.",
+                      color: "purple"
+                    },
+                    {
+                      title: "Material Waste Reduction",
+                      description: "Using right-sized packaging could eliminate 30% of void fill material, reducing both costs and environmental impact.",
+                      color: "orange"
+                    },
+                    {
+                      title: "Seasonal Demand Planning",
+                      description: "Historical data shows 40% increase in demand during Q4. Consider scaling packaging inventory 6 weeks prior.",
+                      color: "indigo"
+                    },
+                    {
+                      title: "Multi-Item Shipping Efficiency",
+                      description: "Consolidating orders with 2-3 items into single packages could reduce shipping costs by 22% on average.",
+                      color: "teal"
+                    },
+                    {
+                      title: "Packaging Performance Metrics",
+                      description: "Your current packaging efficiency is 78%. Implementing automated size selection could boost this to 92%.",
+                      color: "red"
+                    }
+                  ];
+                  
+                  const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
+                  const insight = insights[today];
+                  const colorClasses = {
+                    blue: { bg: "bg-blue-50", border: "border-blue-200", iconBg: "bg-blue-100", iconText: "text-blue-600", title: "text-blue-900", text: "text-blue-700" },
+                    green: { bg: "bg-green-50", border: "border-green-200", iconBg: "bg-green-100", iconText: "text-green-600", title: "text-green-900", text: "text-green-700" },
+                    purple: { bg: "bg-purple-50", border: "border-purple-200", iconBg: "bg-purple-100", iconText: "text-purple-600", title: "text-purple-900", text: "text-purple-700" },
+                    orange: { bg: "bg-orange-50", border: "border-orange-200", iconBg: "bg-orange-100", iconText: "text-orange-600", title: "text-orange-900", text: "text-orange-700" },
+                    indigo: { bg: "bg-indigo-50", border: "border-indigo-200", iconBg: "bg-indigo-100", iconText: "text-indigo-600", title: "text-indigo-900", text: "text-indigo-700" },
+                    teal: { bg: "bg-teal-50", border: "border-teal-200", iconBg: "bg-teal-100", iconText: "text-teal-600", title: "text-teal-900", text: "text-teal-700" },
+                    red: { bg: "bg-red-50", border: "border-red-200", iconBg: "bg-red-100", iconText: "text-red-600", title: "text-red-900", text: "text-red-700" }
+                  };
+                  const colors = colorClasses[insight.color];
+                  
+                  return (
+                    <div className={`${colors.bg} ${colors.border} border-2 rounded-xl p-6`}>
+                      <div className="flex items-start gap-4">
+                        <div className={`w-8 h-8 ${colors.iconBg} rounded-xl flex items-center justify-center flex-shrink-0 mt-1`}>
+                          <Lightbulb className={`h-4 w-4 ${colors.iconText}`} />
+                        </div>
+                        <div>
+                          <h4 className={`font-semibold ${colors.title} text-base mb-2`}>{insight.title}</h4>
+                          <p className={`${colors.text} leading-relaxed`}>
+                            {insight.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             </div>
-
-            {/* Recent Activity */}
-            <Card className="border-gray-100 bg-white shadow-sm">
-              <CardHeader className="pb-6">
-                <CardTitle className="text-lg font-medium text-gray-900">Recent Activity</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[
-                    { text: 'Suite analysis completed for Q4 orders', time: '10:15 AM', type: 'success' },
-                    { text: 'Generated specs for 247 new products', time: '10:15 AM', type: 'info' },
-                    { text: 'Demand planning report exported', time: '10:15 AM', type: 'warning' },
-                    { text: 'PDP analysis saved to reports', time: '10:15 AM', type: 'success' },
-                  ].map((activity, index) => (
-                    <div key={index} className="flex items-center gap-3 text-sm">
-                      <div className={`w-2 h-2 rounded-full ${
-                        activity.type === 'success' ? 'bg-emerald-500' :
-                        activity.type === 'info' ? 'bg-blue-500' :
-                        activity.type === 'warning' ? 'bg-orange-500' : 'bg-gray-400'
-                      }`} />
-                      <span className="text-gray-700 flex-1">{activity.text}</span>
-                      <span className="text-gray-400 text-xs">{activity.time}</span>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           </div>
         );
     }
@@ -466,24 +580,37 @@ const Dashboard = () => {
             </div>
 
             <nav className="space-y-1">
-              {menuItems.map((item) => (
-                <Button
-                  key={item.id}
-                  variant="ghost"
-                  className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base ${
-                    activeTab === item.id 
-                      ? "bg-gray-100 text-gray-900 font-medium" 
-                      : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
-                  }`}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setSidebarOpen(false);
-                  }}
-                >
-                  <item.icon className="h-4 w-4 mr-3" />
-                  {item.label}
-                </Button>
-              ))}
+              {menuItems.map((item) => {
+                const isDisabled = isBackendUnavailable && 
+                  ['suite-analyzer-backend', 'demand-planner-v2', 'pdp-analyzer'].includes(item.id);
+                
+                return (
+                  <Button
+                    key={item.id}
+                    variant="ghost"
+                    className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base ${
+                      activeTab === item.id 
+                        ? "bg-gray-100 text-gray-900 font-medium" 
+                        : isDisabled
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                    }`}
+                    onClick={() => {
+                      if (!isDisabled) {
+                        setActiveTab(item.id);
+                        setSidebarOpen(false);
+                      }
+                    }}
+                    disabled={isDisabled}
+                  >
+                    <item.icon className="h-4 w-4 mr-3" />
+                    {item.label}
+                    {isDisabled && (
+                      <span className="ml-auto text-xs text-gray-400">Offline</span>
+                    )}
+                  </Button>
+                );
+              })}
             </nav>
           </div>
 
@@ -500,26 +627,55 @@ const Dashboard = () => {
               </Button>
             </div>
 
-            {/* Help Links */}
-            <div className="space-y-2">
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-left text-gray-600 hover:text-gray-900 hover:bg-gray-50 text-sm h-8"
+            {/* User Profile Section */}
+            <div className="relative" data-user-dropdown>
+              <button
+                onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+                className="w-full bg-gray-50 rounded-lg p-4 border border-gray-200 hover:bg-gray-100 transition-colors"
               >
-                <HelpCircle className="h-4 w-4 mr-3" />
-                Help & Information
-              </Button>
-              <Button
-                variant="ghost"
-                className="w-full justify-start text-left text-gray-600 hover:text-gray-900 hover:bg-gray-50 text-sm h-8"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-4 w-4 mr-3" />
-                Log out
-              </Button>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                    {user?.firstName?.[0] || user?.fullName?.[0] || 'U'}
+                  </div>
+                  <div className="flex-1 min-w-0 text-left">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {user?.fullName || user?.firstName || 'User'}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">
+                      {user?.primaryEmailAddress?.emailAddress}
+                    </p>
+                  </div>
+                  <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
+                </div>
+              </button>
+
+              {/* Dropdown Menu */}
+              {userDropdownOpen && (
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg border border-gray-200 shadow-lg py-2 z-50">
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      setActiveTab('settings');
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                  >
+                    <SettingsIcon className="h-4 w-4 text-gray-400" />
+                    Settings
+                  </button>
+                  <button
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      handleLogout();
+                    }}
+                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                  >
+                    <LogOut className="h-4 w-4 text-gray-400" />
+                    Logout
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-
         </div>
 
         {/* Overlay for mobile */}
@@ -532,44 +688,6 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto bg-white">
-          {/* Top Header - Only show on dashboard */}
-          {activeTab === 'overview' && (
-            <div className="border-b border-gray-100 bg-white px-4 sm:px-6 py-4">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
-                  <h1 className="text-xl sm:text-2xl font-medium text-gray-900">
-                    Hello, {user?.firstName || user?.username || 'User'}
-                  </h1>
-                  <p className="text-xs sm:text-sm text-gray-500 mt-1">Track your packaging optimization progress here. You almost reach a goal!</p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-xs sm:text-sm text-gray-500">
-                    {new Date().toLocaleDateString('en-US', { 
-                      day: 'numeric', 
-                      month: 'long', 
-                      year: 'numeric' 
-                    })}
-                  </span>
-                  <div className="w-8 h-8 bg-gray-100 rounded-full hidden sm:flex items-center justify-center">
-                    <Calendar className="h-4 w-4 text-gray-600" />
-                  </div>
-                  <div className="relative">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full absolute top-1 right-1 z-10"></div>
-                    <UserButton 
-                      appearance={{
-                        elements: {
-                          avatarBox: "w-8 h-8",
-                          userButtonPopoverCard: "shadow-lg border border-gray-200",
-                          userButtonPopoverActionButton: "text-gray-700 hover:bg-gray-100",
-                        }
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className={activeTab === 'overview' ? 'p-4 sm:p-6' : 'p-0'}>
             {renderContent()}
           </div>
@@ -585,83 +703,12 @@ const Dashboard = () => {
           </Button>
         </div>
 
-        {/* AI Assistant Panel */}
-        {aiAssistantOpen && (
-          <div className="fixed bottom-20 right-4 sm:right-6 w-[calc(100vw-2rem)] sm:w-80 max-w-sm h-96 bg-white border border-gray-200 rounded-lg shadow-2xl z-40 flex flex-col">
-            {/* Header */}
-            <div className="p-4 border-b border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <MessageSquare className="h-4 w-4 text-blue-600" />
-                </div>
-                <h3 className="font-medium text-gray-900">AI Assistant</h3>
-              </div>
-              <Button
-                variant="ghost" 
-                size="sm"
-                onClick={() => setAiAssistantOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            {/* Messages Area */}
-            <div className="flex-1 p-4 overflow-y-auto">
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="h-3 w-3 text-blue-600" />
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 flex-1">
-                    <p className="text-sm text-gray-700">
-                      Hi! I'm your AI assistant for packaging optimization. How can I help you today?
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex gap-3">
-                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MessageSquare className="h-3 w-3 text-blue-600" />
-                  </div>
-                  <div className="bg-gray-50 rounded-lg p-3 flex-1">
-                    <p className="text-sm text-gray-700">
-                      I can help you with:
-                    </p>
-                    <ul className="text-xs text-gray-600 mt-2 space-y-1">
-                      <li>• Suite analysis questions</li>
-                      <li>• Spec generation guidance</li>
-                      <li>• Demand planning insights</li>
-                      <li>• PDP optimization tips</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Input Area */}
-            <div className="p-4 border-t border-gray-100">
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Ask me anything about packaging..."
-                  className="flex-1 px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white">
-                  Send
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Overlay for AI Assistant */}
-        {aiAssistantOpen && (
-          <div 
-            className="fixed inset-0 bg-black/20 z-30"
-            onClick={() => setAiAssistantOpen(false)}
-          />
-        )}
+        {/* Universal AI Assistant */}
+        <AIAssistant 
+          isOpen={aiAssistantOpen}
+          onClose={() => setAiAssistantOpen(false)}
+          currentFeature={activeTab}
+        />
       </div>
     </div>
   );

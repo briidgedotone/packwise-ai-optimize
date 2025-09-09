@@ -13,7 +13,13 @@ import type {
   FilterApi,
   FunctionReference,
 } from "convex/server";
+import type * as aiAssistant from "../aiAssistant.js";
+import type * as dashboard from "../dashboard.js";
+import type * as demandPlanner from "../demandPlanner.js";
 import type * as files from "../files.js";
+import type * as pdpAnalyzer from "../pdpAnalyzer.js";
+import type * as reports from "../reports.js";
+import type * as specGenerator from "../specGenerator.js";
 import type * as suiteAnalyzer from "../suiteAnalyzer.js";
 import type * as suiteAnalyzerBackend from "../suiteAnalyzerBackend.js";
 import type * as suiteAnalyzerSimple from "../suiteAnalyzerSimple.js";
@@ -28,7 +34,13 @@ import type * as users from "../users.js";
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  aiAssistant: typeof aiAssistant;
+  dashboard: typeof dashboard;
+  demandPlanner: typeof demandPlanner;
   files: typeof files;
+  pdpAnalyzer: typeof pdpAnalyzer;
+  reports: typeof reports;
+  specGenerator: typeof specGenerator;
   suiteAnalyzer: typeof suiteAnalyzer;
   suiteAnalyzerBackend: typeof suiteAnalyzerBackend;
   suiteAnalyzerSimple: typeof suiteAnalyzerSimple;

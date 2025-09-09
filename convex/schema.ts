@@ -49,7 +49,9 @@ export default defineSchema({
       v.literal("failed")
     ),
     inputFiles: v.array(v.id("files")),
+    data: v.optional(v.any()), // Store input data
     results: v.optional(v.any()),
+    error: v.optional(v.string()), // Store error messages
     createdAt: v.number(),
     completedAt: v.optional(v.number()),
   })
@@ -88,9 +90,8 @@ export default defineSchema({
   }).index("by_analysis", ["analysisId"]),
 
   // Usage Logs (for Demand Planner)
-  usageLogs: defineTable({
-    userId: v.id("users"),
-    organizationId: v.optional(v.id("organizations")),
+  demandPlannerUsage: defineTable({
+    userId: v.string(), // Clerk user ID
     date: v.string(), // YYYY-MM-DD
     packageType: v.string(),
     quantityUsed: v.number(),
@@ -98,4 +99,23 @@ export default defineSchema({
   })
     .index("by_user_date", ["userId", "date"])
     .index("by_user", ["userId"]),
+
+  // Demand Planning Analysis Results
+  demandPlannerAnalyses: defineTable({
+    userId: v.string(), // Clerk user ID
+    totalOrders: v.number(),
+    forecastPeriod: v.string(),
+    safetyStockPercent: v.number(),
+    results: v.array(v.object({
+      packageType: v.string(),
+      baseQty: v.number(),
+      usagePercent: v.number(),
+      safetyStockPercent: v.number(),
+      finalQty: v.number(),
+      estimatedCost: v.number(),
+      estimatedWeight: v.number(),
+    })),
+    insights: v.array(v.string()),
+    createdAt: v.number(),
+  }).index("by_user", ["userId"]),
 });

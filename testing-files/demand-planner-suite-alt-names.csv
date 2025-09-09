@@ -1,0 +1,4 @@
+Product Type,Len,Wid,Hgt,Vol (CUIN),Rate,Mass
+Sm Pouch,10,7,0.25,17.5,0.12,0.015
+Med Container,12,9,4,432,0.25,0.08
+Lg Box,18,12,8,1728,0.45,0.15
