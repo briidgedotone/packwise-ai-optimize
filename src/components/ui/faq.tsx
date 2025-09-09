@@ -36,7 +36,7 @@ export default function FAQSection() {
   const [openFAQ, setOpenFAQ] = useState<number | null>(null)
 
   return (
-    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
+    <section id="faq" className="pt-20 pb-2 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -98,7 +98,7 @@ export default function FAQSection() {
         </div>
 
         {/* Contact CTA */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-20">
           <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm">
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
               Still have questions?
