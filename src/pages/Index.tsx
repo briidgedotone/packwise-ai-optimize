@@ -306,7 +306,7 @@ const Index = () => {
               <div className="w-full h-full rounded-full" style={{ backgroundColor: '#767AFA' }}></div>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-center relative z-10">
               {/* Left Panel */}
               <div className="lg:col-span-3 space-y-6 bg-white rounded-3xl p-6 shadow-lg">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#767AFA20' }}>
@@ -326,29 +326,7 @@ const Index = () => {
               </div>
 
               {/* Center Panel */}
-              <div className="lg:col-span-6 text-center space-y-6 bg-white rounded-3xl p-6 shadow-lg">
-                {/* Company Avatar Placeholder */}
-                <div className="flex items-center justify-center mb-6">
-                  <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-white shadow-lg">
-                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center">
-                      <Package className="h-8 w-8" style={{ color: '#767AFA' }} />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Timeline */}
-                <div className="flex items-center justify-center space-x-4 mb-8">
-                  <span className="text-sm text-gray-500">Current</span>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 rounded-full bg-gray-300"></div>
-                    <div className="w-8 h-0.5 bg-gray-300"></div>
-                    <div className="w-2 h-2 rounded-full" style={{ backgroundColor: '#767AFA' }}></div>
-                  </div>
-                  <div className="px-3 py-1 rounded-full text-white text-sm font-medium" style={{ backgroundColor: '#767AFA' }}>
-                    2024
-                  </div>
-                </div>
-
+              <div className="lg:col-span-4 text-center space-y-6 bg-white rounded-3xl p-6 shadow-lg">
                 {/* Main Savings Number */}
                 <div className="space-y-2">
                   <div className="text-6xl md:text-7xl font-bold text-gray-900">
