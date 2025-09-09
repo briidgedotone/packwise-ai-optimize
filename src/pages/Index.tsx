@@ -462,28 +462,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#767AFA' }}>
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to make packaging a profit center?
-          </h2>
-          <p className="text-xl text-white opacity-90 mb-8">
-            See how QuantiPackAI finds savings and prevents stockouts in your exact environment.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/sign-up">
-              <Button size="lg" className="bg-white hover:bg-gray-100 text-lg px-12 py-4 rounded-full" style={{ color: '#767AFA' }}>
-                Start Now
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-[#767AFA] rounded-full">
-              Book a Demo
-            </Button>
-          </div>
-        </div>
-      </section>
 
       {/* Footer */}
       <Footer />
