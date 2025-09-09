@@ -24,6 +24,7 @@ import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import PricingSection from "@/components/ui/pricing";
 import TestimonialSection from "@/components/ui/testimonials";
+import Footer from "@/components/ui/footer";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -485,98 +486,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
-            {/* Column 1 - Company */}
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
-                  <Package className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">QuantiPackAI</span>
-              </div>
-              <p className="text-gray-400 mb-4">AI-powered packaging optimization</p>
-              <p className="text-gray-500 text-sm">© 2024 QuantiPackAI. All rights reserved.</p>
-            </div>
-
-            {/* Column 2 - Product */}
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Suite Analyzer</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Demand Planner</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Spec Generator</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Design Analyzer</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Packaging AI Chatbot</a></li>
-              </ul>
-            </div>
-
-            {/* Column 3 - Company */}
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-              </ul>
-            </div>
-
-            {/* Column 4 - Resources */}
-            <div>
-              <h4 className="font-semibold mb-4">Resources</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API Reference</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Blog</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Case Studies</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Support Center</a></li>
-              </ul>
-            </div>
-
-            {/* Column 5 - Newsletter */}
-            <div>
-              <h4 className="font-semibold mb-4">Stay updated</h4>
-              <p className="text-gray-400 text-sm mb-4">Get packaging optimization tips and product updates</p>
-              <div className="flex flex-col space-y-2">
-                <Input 
-                  type="email" 
-                  placeholder="Enter your email" 
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400"
-                />
-                <Button style={{ backgroundColor: '#767AFA' }} className="hover:opacity-90 rounded-full">Subscribe</Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Bottom Bar */}
-          <div className="border-t border-gray-800 mt-12 pt-8">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="flex space-x-6 text-gray-400 text-sm">
-                <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-                <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
-              </div>
-              <div className="flex space-x-4 mt-4 md:mt-0">
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <span className="sr-only">LinkedIn</span>
-                  LinkedIn
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <span className="sr-only">Twitter</span>
-                  Twitter
-                </a>
-                <a href="#" className="text-gray-400 hover:text-white transition-colors">
-                  <span className="sr-only">YouTube</span>
-                  YouTube
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
