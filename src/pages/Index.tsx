@@ -177,7 +177,7 @@ const Index = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
+      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat" style={{ backgroundColor: '#F7F6F9', backgroundImage: 'url(/bg.png)' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.3' }}>
@@ -366,11 +366,11 @@ const Index = () => {
             </p>
           </div>
           
-          <div className="space-y-16">
+          <div className="space-y-20">
             {toolSteps.map((tool, index) => (
-              <div key={index} className={`flex flex-col ${index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'} items-center gap-12`}>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-4 mb-4">
+              <div key={index} className={`flex flex-col items-center gap-16 ${index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
+                <div className="w-full lg:w-1/2 max-w-lg">
+                  <div className="flex items-center space-x-4 mb-6">
                     <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: '#767AFA' }}>
                       {tool.step}
                     </div>
@@ -378,8 +378,8 @@ const Index = () => {
                   </div>
                   <p className="text-gray-600 text-lg leading-relaxed">{tool.description}</p>
                 </div>
-                <div className="flex-1">
-                  <div className="bg-white rounded-3xl border border-gray-200 overflow-hidden w-96 h-96 mx-auto">
+                <div className="w-full lg:w-1/2 flex justify-center">
+                  <div className="w-80 h-80 bg-white rounded-3xl border border-gray-200 overflow-hidden">
                     <div className="flex items-center justify-center w-full h-full" style={{ backgroundColor: '#FEFEFB' }}>
                       <img 
                         src={`/box-${tool.step}.png`} 
