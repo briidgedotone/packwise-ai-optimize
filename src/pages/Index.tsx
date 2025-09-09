@@ -207,7 +207,7 @@ const Index = () => {
           <div className="p-8 md:p-12 max-w-6xl mx-auto relative">
             <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-center relative z-10">
               {/* Left Panel */}
-              <div className="lg:col-span-3 space-y-6 bg-white rounded-3xl p-6 shadow-lg">
+              <div className="lg:col-span-3 space-y-6 bg-white rounded-3xl p-6">
                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#767AFA20' }}>
                   <Package className="h-6 w-6" style={{ color: '#767AFA' }} />
                 </div>
@@ -225,7 +225,7 @@ const Index = () => {
               </div>
 
               {/* Center Panel */}
-              <div className="lg:col-span-4 text-center space-y-6 bg-white rounded-3xl p-6 shadow-lg">
+              <div className="lg:col-span-4 text-center space-y-6 bg-white rounded-3xl p-6">
                 {/* Impact Visualization */}
                 <div className="space-y-4">
                   {/* Main Savings Number with Growth Indicator */}
@@ -279,7 +279,7 @@ const Index = () => {
               </div>
 
               {/* Right Side Badges */}
-              <div className="lg:col-span-3 space-y-4 bg-white rounded-3xl p-6 shadow-lg">
+              <div className="lg:col-span-3 space-y-4 bg-white rounded-3xl p-6">
                 <div className="flex flex-col space-y-3">
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-2xl border border-purple-100">
                     <div className="flex items-center space-x-3">

@@ -42,7 +42,7 @@ export default function TestimonialSection() {
         {/* 1 col (xs) → 2 cols (sm ≥640px) → 3 cols (lg ≥1024px) */}
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {testimonials.map((t, index) => (
-            <div key={index} className="bg-white rounded-3xl border border-gray-200 p-8 shadow-lg hover:shadow-xl transition-shadow duration-300">
+            <div key={index} className="bg-white rounded-3xl border border-gray-200 p-8">
               <div className="flex gap-1 mb-6" aria-label={`${t.stars} out of 5 stars`}>
                 {Array.from({ length: 5 }).map((_, i) => (
                   <Star

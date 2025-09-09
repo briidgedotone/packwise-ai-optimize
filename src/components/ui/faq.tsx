@@ -37,7 +37,7 @@ export default function FAQSection() {
 
   return (
     <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             Frequently Asked Questions
@@ -47,7 +47,7 @@ export default function FAQSection() {
           </p>
         </div>
         
-        <div className="space-y-4">
+        <div className="space-y-4 max-w-4xl mx-auto">
           {faqs.map((faq, index) => (
             <div
               key={index}
