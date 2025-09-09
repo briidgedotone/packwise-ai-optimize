@@ -25,10 +25,10 @@ import { Link } from "react-router-dom";
 import PricingSection from "@/components/ui/pricing";
 import TestimonialSection from "@/components/ui/testimonials";
 import Footer from "@/components/ui/footer";
+import FAQSection from "@/components/ui/faq";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
   // Benefits data
   const benefits = [
@@ -112,33 +112,6 @@ const Index = () => {
 
 
 
-  // FAQ data
-  const faqs = [
-    {
-      question: "How do tokens work?",
-      answer: "Each time you run a core function (analysis, spec batch, design compare), you use a token. Tokens reset monthly based on your plan."
-    },
-    {
-      question: "Can I bring my historical data?",
-      answer: "Yes. Upload order history and packaging types via CSV/XLSX with our templates. We support most common formats."
-    },
-    {
-      question: "What if I run out of tokens?",
-      answer: "You can add tokens anytime or upgrade your plan. We'll notify you when you're running low."
-    },
-    {
-      question: "Is my data secure?", 
-      answer: "We encrypt your data in transit and at rest. Your data is never shared and you can delete it anytime."
-    },
-    {
-      question: "Do you offer trials?",
-      answer: "We offer a 14-day money-back guarantee on all plans. Book a walkthrough to see the platform in action."
-    },
-    {
-      question: "Can I cancel or change plans?",
-      answer: "Yes, you can change or cancel at the end of any billing cycle. No long-term contracts required."
-    }
-  ];
 
   return (
     <div className="min-h-screen bg-white">
@@ -431,36 +404,7 @@ const Index = () => {
       <TestimonialSection />
 
       {/* FAQ Section */}
-      <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
-            </h2>
-          </div>
-          
-          <div className="space-y-4">
-            {faqs.map((faq, index) => (
-              <Card key={index} className="border border-gray-200">
-                <CardHeader 
-                  className="cursor-pointer"
-                  onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
-                >
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg font-semibold text-gray-900">{faq.question}</CardTitle>
-                    <ChevronDown className={`h-5 w-5 text-gray-500 transition-transform ${openFAQ === index ? 'rotate-180' : ''}`} />
-                  </div>
-                </CardHeader>
-                {openFAQ === index && (
-                  <CardContent className="pt-0">
-                    <p className="text-gray-600">{faq.answer}</p>
-                  </CardContent>
-                )}
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <FAQSection />
 
 
       {/* Footer */}

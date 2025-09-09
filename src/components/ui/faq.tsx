@@ -1,0 +1,119 @@
+'use client'
+
+import { useState } from 'react'
+import { ChevronDown } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { cn } from '@/lib/utils'
+
+const faqs = [
+  {
+    question: "How do tokens work?",
+    answer: "Each time you run a core function (analysis, spec batch, design compare), you use a token. Tokens reset monthly based on your plan."
+  },
+  {
+    question: "Can I bring my historical data?",
+    answer: "Yes. Upload order history and packaging types via CSV/XLSX with our templates. We support most common formats."
+  },
+  {
+    question: "What if I run out of tokens?",
+    answer: "You can add tokens anytime or upgrade your plan. We'll notify you when you're running low."
+  },
+  {
+    question: "Is my data secure?", 
+    answer: "We encrypt your data in transit and at rest. Your data is never shared and you can delete it anytime."
+  },
+  {
+    question: "Do you offer trials?",
+    answer: "We offer a 14-day money-back guarantee on all plans. Book a walkthrough to see the platform in action."
+  },
+  {
+    question: "Can I cancel or change plans?",
+    answer: "Yes, you can change or cancel at the end of any billing cycle. No long-term contracts required."
+  }
+]
+
+export default function FAQSection() {
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null)
+
+  return (
+    <section id="faq" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#F7F6F9' }}>
+      <div className="max-w-4xl mx-auto">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Everything you need to know about QuantiPackAI and how it can transform your packaging operations.
+          </p>
+        </div>
+        
+        <div className="space-y-4">
+          {faqs.map((faq, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+            >
+              <button
+                className="w-full text-left px-8 py-6 focus:outline-none focus:ring-2 focus:ring-[#767AFA] focus:ring-offset-2 rounded-3xl"
+                onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
+                aria-expanded={openFAQ === index}
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-gray-900 pr-4">
+                    {faq.question}
+                  </h3>
+                  <motion.div
+                    animate={{ rotate: openFAQ === index ? 180 : 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="flex-shrink-0"
+                  >
+                    <ChevronDown 
+                      className="h-5 w-5 text-gray-500"
+                      style={{ color: openFAQ === index ? '#767AFA' : undefined }}
+                    />
+                  </motion.div>
+                </div>
+              </button>
+              
+              <AnimatePresence>
+                {openFAQ === index && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-8 pb-6 pt-0">
+                      <div className="h-px bg-gray-100 mb-4"></div>
+                      <p className="text-gray-600 leading-relaxed">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ))}
+        </div>
+
+        {/* Contact CTA */}
+        <div className="text-center mt-12">
+          <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm">
+            <h3 className="text-xl font-semibold text-gray-900 mb-3">
+              Still have questions?
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Our team is here to help you get the most out of QuantiPackAI.
+            </p>
+            <button
+              className="bg-[#767AFA] hover:opacity-90 text-white px-8 py-3 rounded-3xl font-medium transition-opacity"
+            >
+              Contact Support
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

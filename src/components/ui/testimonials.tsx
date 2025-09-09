@@ -50,7 +50,7 @@ export default function TestimonialSection() {
                     className={cn(
                       'h-5 w-5',
                       i < t.stars
-                        ? 'fill-yellow-400 stroke-yellow-400'
+                        ? 'fill-black stroke-black'
                         : 'fill-gray-200 stroke-transparent'
                     )}
                   />
