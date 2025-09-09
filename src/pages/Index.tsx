@@ -341,15 +341,13 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => (
-              <Card key={index} className="border-0">
-                <CardContent className="p-8">
-                  <div className={`w-12 h-12 ${benefit.bgColor} rounded-lg flex items-center justify-center mb-4`}>
-                    <benefit.icon className={`h-6 w-6 ${benefit.color}`} />
-                  </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3">{benefit.title}</h3>
-                  <p className="text-gray-600">{benefit.description}</p>
-                </CardContent>
-              </Card>
+              <div key={index} className="bg-white rounded-3xl p-8 border border-gray-200">
+                <div className={`w-12 h-12 ${benefit.bgColor} rounded-2xl flex items-center justify-center mb-6`}>
+                  <benefit.icon className={`h-6 w-6 ${benefit.color}`} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{benefit.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
+              </div>
             ))}
           </div>
         </div>
