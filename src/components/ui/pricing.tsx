@@ -118,7 +118,7 @@ const PricingSwitch = ({
           {selected === "0" && (
             <motion.span
               layoutId={"switch"}
-              className="absolute top-0 left-0 h-12 w-full rounded-3xl border-4 shadow-sm border-[#767AFA] bg-[#767AFA]"
+              className="absolute top-0 left-0 h-12 w-full rounded-3xl border-4 border-[#767AFA] bg-[#767AFA]"
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
           )}
@@ -137,7 +137,7 @@ const PricingSwitch = ({
           {selected === "1" && (
             <motion.span
               layoutId={"switch"}
-              className="absolute top-0 left-0 h-12 w-full rounded-3xl border-4 shadow-sm border-[#767AFA] bg-[#767AFA]"
+              className="absolute top-0 left-0 h-12 w-full rounded-3xl border-4 border-[#767AFA] bg-[#767AFA]"
               transition={{ type: "spring", stiffness: 500, damping: 30 }}
             />
           )}
@@ -289,8 +289,8 @@ export default function PricingSection() {
                     <button
                       className={`w-full p-4 text-lg rounded-3xl font-medium transition-all ${
                         plan.popular
-                          ? "bg-[#767AFA] hover:opacity-90 shadow-lg shadow-[#767AFA]/30 text-white"
-                          : "bg-gray-900 hover:bg-gray-800 shadow-lg shadow-gray-900/30 text-white"
+                          ? "bg-[#767AFA] hover:opacity-90 text-white"
+                          : "bg-gray-900 hover:bg-gray-800 text-white"
                       }`}
                     >
                       {plan.buttonText}

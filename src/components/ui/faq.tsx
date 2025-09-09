@@ -51,7 +51,7 @@ export default function FAQSection() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-white rounded-3xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300"
+              className="bg-white rounded-3xl border border-gray-200 overflow-hidden"
             >
               <button
                 className="w-full text-left px-8 py-6 focus:outline-none focus:ring-2 focus:ring-[#767AFA] focus:ring-offset-2 rounded-3xl"
@@ -99,7 +99,7 @@ export default function FAQSection() {
 
         {/* Contact CTA */}
         <div className="text-center mt-20">
-          <div className="bg-white rounded-3xl p-8 border border-gray-200 shadow-sm">
+          <div className="bg-white rounded-3xl p-8 border border-gray-200">
             <h3 className="text-xl font-semibold text-gray-900 mb-3">
               Still have questions?
             </h3>

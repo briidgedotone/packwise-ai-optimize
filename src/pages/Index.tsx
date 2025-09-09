@@ -341,7 +341,7 @@ const Index = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card key={index} className="border-0">
                 <CardContent className="p-8">
                   <div className={`w-12 h-12 ${benefit.bgColor} rounded-lg flex items-center justify-center mb-4`}>
                     <benefit.icon className={`h-6 w-6 ${benefit.color}`} />
@@ -381,7 +381,7 @@ const Index = () => {
                   <p className="text-gray-600 text-lg leading-relaxed">{tool.description}</p>
                 </div>
                 <div className="flex-1">
-                  <Card className="bg-white shadow-lg">
+                  <Card className="bg-white">
                     <CardContent className="p-8">
                       <div className="bg-gray-50 rounded-xl p-6 text-center">
                         <tool.icon className="h-16 w-16 mx-auto mb-4" style={{ color: '#767AFA' }} />
