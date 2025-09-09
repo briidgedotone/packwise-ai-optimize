@@ -25,14 +25,13 @@ import {
   Sparkles
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerStepped';
+import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
 import { SpecGenerator } from '@/components/SpecGenerator';
-import { ImprovedPackagingDemandPlanner } from '@/components/ImprovedPackagingDemandPlanner';
+import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
 import { AIAssistant } from '@/components/AIAssistant';
 import { Reports } from '@/pages/Reports';
 import Settings from '@/pages/Settings';
-import { EmbeddedAIChat } from '@/components/EmbeddedAIChat';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 
@@ -171,7 +170,7 @@ const Dashboard = () => {
       case 'spec-generator':
         return <SpecGenerator />;
       case 'demand-planner-v2':
-        return <ImprovedPackagingDemandPlanner />;
+        return <PackagingDemandPlanner />;
       case 'pdp-analyzer':
         return <PDPAnalyzer />;
       case 'reports':
@@ -465,7 +464,7 @@ const Dashboard = () => {
 
               {/* AI Chat Interface - Enhanced */}
               <div className="mb-8">
-                <EmbeddedAIChat />
+                <AIAssistant />
               </div>
 
               {/* Smart Insights - Premium Design */}
