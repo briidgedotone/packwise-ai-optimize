@@ -251,11 +251,6 @@ const Index = () => {
 
           {/* Hero Visual */}
           <div className="p-8 md:p-12 max-w-6xl mx-auto relative">
-            {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 opacity-5">
-              <div className="w-full h-full rounded-full" style={{ backgroundColor: '#767AFA' }}></div>
-            </div>
-            
             <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-center relative z-10">
               {/* Left Panel */}
               <div className="lg:col-span-3 space-y-6 bg-white rounded-3xl p-6 shadow-lg">
