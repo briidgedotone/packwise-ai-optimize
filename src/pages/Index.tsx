@@ -1,409 +1,402 @@
-
 import { useState } from "react";
-import { ArrowRight, Package, Brain, TrendingUp, Eye, Shield, CheckCircle, Upload, BarChart3, Zap, Star } from "lucide-react";
+import { 
+  ArrowRight, 
+  Package, 
+  Brain, 
+  TrendingUp, 
+  Eye, 
+  MessageSquare,
+  DollarSign,
+  BarChart3,
+  Zap,
+  Trophy,
+  HeadphonesIcon,
+  Activity,
+  ChevronDown,
+  Star,
+  Menu,
+  X
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
+import PricingSection from "@/components/ui/pricing";
+import TestimonialSection from "@/components/ui/testimonials";
+import Footer from "@/components/ui/footer";
+import FAQSection from "@/components/ui/faq";
 
 const Index = () => {
-  const [selectedPlan, setSelectedPlan] = useState("core");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const features = [
+  // Benefits data
+  const benefits = [
     {
-      icon: Package,
-      title: "Packaging Suite Analyzer",
-      subtitle: "Fix your packaging mix. Save big.",
-      description: "Upload your order history and packaging types. Instantly see how each order should've been packed, where you're losing money, and what changes would drive efficiency.",
-      users: "Logistics, Operations, Packaging, Procurement",
-      delivers: [
-        "Optimized packaging allocation",
-        "Fill rate analysis", 
-        "Cost, volume, and material savings",
-        "Packaging improvement suggestions",
-        "Executive export (CSV/PDF)"
-      ],
-      color: "text-blue-600",
-      bgColor: "bg-blue-50"
-    },
-    {
-      icon: Brain,
-      title: "Spec Generator",
-      subtitle: "No dimensions? No delay.",
-      description: "Upload a product list. QuantiPackAI uses industry logic + your size range to generate realistic packaging specs instantly.",
-      users: "Packaging, Design, Sourcing, Analytics",
-      delivers: [
-        "AI-estimated L×W×H and CUIN",
-        "Notes on each estimate",
-        "Clean spec table (CSV/PDF)",
-        "Ready for modeling, quoting, planning"
-      ],
+      icon: DollarSign,
+      title: "Eliminate Waste and Slash Packaging Costs",
+      description: "Cut unnecessary material spend, right-size your packaging, and lower overall carrier billing by shipping more efficiently—all while improving sustainability.",
       color: "text-green-600",
       bgColor: "bg-green-50"
     },
     {
-      icon: TrendingUp,
-      title: "Packaging Demand Planner",
-      subtitle: "Know exactly how much packaging you need.",
-      description: "Upload your forecasted product volumes — QuantiPackAI calculates packaging quantities based on fit, volume, and efficiency.",
-      users: "Fulfillment, DCs, 3PLs, Supply Chain",
-      delivers: [
-        "Quantity needed per package type",
-        "Fill rate + cost efficiency",
-        "Packaging waste + material impact",
-        "Forecast-ready demand report"
-      ],
-      color: "text-purple-600",
+      icon: BarChart3,
+      title: "Never Be Caught Short", 
+      description: "Forecast packaging demand with precision so you always have the right materials in stock, avoiding costly delays or over-ordering.",
+      color: "text-blue-600",
+      bgColor: "bg-blue-50"
+    },
+    {
+      icon: Zap,
+      title: "Clean and Accelerate Your Data",
+      description: "Instantly generate accurate product dimensions and volume estimates to replace messy or incomplete data, speeding up vendor handoffs, analysis, and planning.",
+      color: "text-purple-600", 
       bgColor: "bg-purple-50"
     },
     {
-      icon: Eye,
-      title: "Design Analyzer",
-      subtitle: "Win on shelf. Beat the competition.",
-      description: "Upload your principal display panel and compare it against competitors. QuantiPackAI scores and explains your design's strengths — and tells you exactly how to improve it.",
-      users: "Brand, Creative, Packaging Design, Marketing",
-      delivers: [
-        "0–10 visual performance scores",
-        "Competitor benchmarking",
-        "Heatmap + radar visuals",
-        "GPT-backed design fixes",
-        "Shareable PDF report"
-      ],
+      icon: Trophy,
+      title: "Dominate the Shelf",
+      description: "Grade your packaging design and compare it to competitors so your products stand out and win more customers.",
       color: "text-orange-600",
       bgColor: "bg-orange-50"
+    },
+    {
+      icon: HeadphonesIcon,
+      title: "Your Packaging Expert, On-Call",
+      description: "Get instant answers to technical and strategic packaging questions anytime with the built-in Packaging AI Chatbot.",
+      color: "text-indigo-600",
+      bgColor: "bg-indigo-50"
+    },
+    {
+      icon: Activity,
+      title: "Measure Impact Instantly",
+      description: "Track your optimization progress with real-time dashboards showing cost savings, sustainability improvements, and efficiency gains.",
+      color: "text-red-600",
+      bgColor: "bg-red-50"
     }
   ];
 
-  const plans = [
+  // How it works data
+  const toolSteps = [
     {
-      name: "Individual",
-      price: "$49",
-      period: "/month",
-      description: "Perfect for small businesses and startups",
-      features: [
-        "100 orders/month analysis",
-        "Basic packaging optimization",
-        "CSV/PDF exports",
-        "Email support"
-      ]
+      step: 1,
+      name: "Suite Analyzer",
+      description: "Upload your order history and packaging list, and the AI finds your optimal packaging mix, forecasting cost and sustainability savings you can actually measure. It also compares your current packaging mix to a baseline, highlighting gaps and inefficiencies, and recommends improved packaging dimensions to increase fill rates so you can see exactly where to improve and how to pack out more effectively.",
+      icon: Package
     },
     {
-      name: "Corporate",
-      price: "$199",
-      period: "/month",
-      description: "For growing companies with higher volumes",
-      features: [
-        "500 orders/month analysis",
-        "Advanced AI recommendations",
-        "Priority support",
-        "Custom reporting",
-        "API access"
-      ]
+      step: 2, 
+      name: "Demand Planner",
+      description: "Feed in usage data or forecasts (by quantity or percentage). The AI tracks trends, updates demand plans in real time, and helps you order the right packaging at the right time.",
+      icon: TrendingUp
     },
     {
-      name: "Enterprise",
-      price: "Custom",
-      period: "",
-      description: "For large organizations with complex needs",
-      features: [
-        "Unlimited order analysis",
-        "White-label solutions",
-        "Dedicated account manager",
-        "Custom integrations",
-        "SLA guarantees"
-      ]
+      step: 3,
+      name: "Spec Generator", 
+      description: "Simply enter product names or short descriptions. The tool generates estimated product dimensions and volume, along with a note explaining the logic it used, so you can plan packaging more accurately and clean up incomplete data.",
+      icon: Brain
+    },
+    {
+      step: 4,
+      name: "Design Analyzer",
+      description: "Upload artwork, dielines, or competitor packaging. The AI grades your design, highlights strengths and weaknesses, and compares it against competitors or alternative concepts so you can make sure your packaging stands out on the shelf.",
+      icon: Eye
+    },
+    {
+      step: 5,
+      name: "Packaging AI Chatbot",
+      description: "Ask questions about the platform or packaging best practices. It's your on-demand expert for quick answers and training support.",
+      icon: MessageSquare
     }
   ];
+
+
+
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
-                <Package className="h-6 w-6 text-white" />
+    <div className="min-h-screen" style={{ backgroundColor: '#F6F6FF' }}>
+      {/* Hero Section with Navigation */}
+      <section className="bg-cover bg-center bg-no-repeat relative" style={{ backgroundColor: '#F7F6F9', backgroundImage: 'url(/bg.png)' }}>
+        {/* Gradient fade overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent pointer-events-none" style={{ background: 'linear-gradient(to bottom, transparent, transparent, #F6F6FF)' }}></div>
+        {/* Navigation Bar */}
+        <header className="backdrop-blur-sm sticky top-0 z-50 relative" style={{ backgroundColor: 'transparent' }}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              {/* Logo */}
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
+                  <Package className="h-6 w-6 text-white" />
+                </div>
+                <span className="text-2xl font-bold text-gray-900">QuantiPackAI</span>
               </div>
-              <span className="text-2xl font-bold text-gray-900">QuantiPackAI</span>
+
+              {/* Desktop Navigation */}
+              <nav className="hidden md:flex space-x-8">
+                <a href="#product" className="text-gray-600 hover:text-[#767AFA] transition-colors">Product</a>
+                <a href="#how-it-works" className="text-gray-600 hover:text-[#767AFA] transition-colors">How it Works</a>
+                <a href="#pricing" className="text-gray-600 hover:text-[#767AFA] transition-colors">Pricing</a>
+                <a href="#faq" className="text-gray-600 hover:text-[#767AFA] transition-colors">FAQ</a>
+              </nav>
+
+              {/* Desktop CTAs */}
+              <div className="hidden md:flex items-center space-x-4">
+                <Link to="/sign-in">
+                  <Button variant="ghost" className="rounded-full">Login</Button>
+                </Link>
+                <Link to="/sign-up">
+                  <Button style={{ backgroundColor: '#767AFA' }} className="hover:opacity-90 rounded-full">Start Now</Button>
+                </Link>
+              </div>
+
+              {/* Mobile Menu Button */}
+              <button
+                className="md:hidden"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              </button>
             </div>
-            <nav className="hidden md:flex space-x-8">
-              <a href="#features" className="text-gray-600 hover:text-blue-600 transition-colors">Features</a>
-              <a href="#pricing" className="text-gray-600 hover:text-blue-600 transition-colors">Pricing</a>
-              <a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors">About</a>
-            </nav>
-            <div className="flex items-center space-x-4">
-              <Link to="/sign-in">
-                <Button variant="ghost">Login</Button>
-              </Link>
+
+            {/* Mobile Menu */}
+            {mobileMenuOpen && (
+              <div className="md:hidden bg-white border-t border-gray-200">
+                <div className="px-2 pt-2 pb-3 space-y-1">
+                  <a href="#product" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Product</a>
+                  <a href="#how-it-works" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">How it Works</a>
+                  <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Pricing</a>
+                  <a href="#faq" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">FAQ</a>
+                  <div className="flex flex-col space-y-2 px-3 pt-4">
+                    <Link to="/sign-in">
+                      <Button variant="ghost" className="w-full rounded-full">Login</Button>
+                    </Link>
+                    <Link to="/sign-up">
+                      <Button className="w-full hover:opacity-90 rounded-full" style={{ backgroundColor: '#767AFA' }}>Start Now</Button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </header>
+
+        {/* Hero Content */}
+        <div className="pt-20 pb-16 px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-8" style={{ lineHeight: '1.3' }}>
+              Optimize Your Packaging.
+              <br />
+              <span style={{ color: '#767AFA' }}>Maximize Your Savings.</span>
+            </h1>
+            <p className="text-xl text-gray-600 mb-8 max-w-4xl mx-auto">
+              QuantiPackAI turns your packaging data into profit. Determine your optimal packaging suite, 
+              forecast savings, track demand, generate specs, analyze designs, and get answers instantly 
+              with our Packaging AI.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link to="/sign-up">
-                <Button className="bg-blue-600 hover:bg-blue-700">Start Free Trial</Button>
+                <Button size="lg" className="text-lg px-8 py-4 hover:opacity-90 rounded-full" style={{ backgroundColor: '#767AFA' }}>
+                  Start Now
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
               </Link>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-4 rounded-full">
+                View Plans
+              </Button>
+            </div>
+          </div>
+
+          {/* Hero Visual */}
+          <div className="p-8 md:p-12 max-w-6xl mx-auto relative">
+            <div className="grid grid-cols-1 lg:grid-cols-10 gap-8 items-center relative z-10">
+              {/* Left Panel */}
+              <div className="lg:col-span-3 space-y-6 bg-white rounded-3xl p-6">
+                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#767AFA20' }}>
+                  <Package className="h-6 w-6" style={{ color: '#767AFA' }} />
+                </div>
+                
+                <div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Your packaging costs today
+                  </h3>
+                  <p className="text-gray-600 text-sm leading-relaxed">
+                    Optimize costs, reduce waste,<br />
+                    and maximize efficiency<br />
+                    with AI-powered insights.
+                  </p>
+                </div>
+              </div>
+
+              {/* Center Panel */}
+              <div className="lg:col-span-4 text-center space-y-6 bg-white rounded-3xl p-6">
+                {/* Impact Visualization */}
+                <div className="space-y-4">
+                  {/* Main Savings Number with Growth Indicator */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-center space-x-2">
+                      <TrendingUp className="h-6 w-6 text-green-500" />
+                      <span className="text-xs font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">+23% this month</span>
+                    </div>
+                    <div className="text-6xl md:text-7xl font-bold text-gray-900">
+                      $147K
+                    </div>
+                    <p className="text-gray-600 text-lg">Potential annual savings</p>
+                  </div>
+
+                  {/* Progress Visualization */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-gray-500">Current efficiency</span>
+                      <span className="font-medium text-gray-700">67%</span>
+                    </div>
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div 
+                        className="h-2 rounded-full relative overflow-hidden" 
+                        style={{ backgroundColor: '#767AFA', width: '67%' }}
+                      >
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-30 animate-pulse"></div>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center space-x-1">
+                      <span className="text-xs text-gray-500">Target:</span>
+                      <span className="text-xs font-medium" style={{ color: '#767AFA' }}>85% efficiency</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Bottom Metrics */}
+                <div className="grid grid-cols-2 gap-4 mt-8">
+                  <div className="flex flex-col items-center justify-center px-4 py-3 bg-green-50 rounded-2xl">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-green-700">35%</div>
+                      <div className="text-xs text-green-600">cost reduction</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-center justify-center px-4 py-3 bg-blue-50 rounded-2xl">
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-blue-700">42%</div>
+                      <div className="text-xs text-blue-600">less waste</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Side Badges */}
+              <div className="lg:col-span-3 space-y-4 bg-white rounded-3xl p-6">
+                <div className="flex flex-col space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-2xl border border-purple-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
+                        <Brain className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">AI-POWERED</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-2xl border border-green-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                        <Zap className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">REAL-TIME</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-2xl border border-blue-100">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                        <Activity className="h-4 w-4 text-white" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700">DATA-DRIVEN</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </header>
-
-      {/* Hero Section */}
-      <section className="pt-20 pb-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto text-center">
-          <Badge className="mb-6 bg-blue-100 text-blue-800 border-blue-200">
-            The World's First Packaging Analysis AI
-          </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-            The Smartest Packaging
-            <br />
-            <span className="text-blue-600">Decisions You've Ever Made</span>
-          </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            QuantiPackAI uses AI to analyze, generate, and forecast packaging strategies that cut cost, reduce waste, and give you an edge from warehouse to shelf.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/sign-up">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-4">
-                Start Saving Now
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4">
-              Watch Demo
-            </Button>
-          </div>
         </div>
       </section>
 
-      {/* Core Value Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+
+      {/* Benefits Section */}
+      <section id="product" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'transparent' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              One Platform. Four Powerful Functions. All Results.
+              Slash costs. Reduce waste. Stay ahead.
             </h2>
           </div>
           
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {features.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-shadow duration-300">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center space-x-3 mb-3">
-                    <div className={`w-12 h-12 ${feature.bgColor} rounded-lg flex items-center justify-center`}>
-                      <feature.icon className={`h-6 w-6 ${feature.color}`} />
-                    </div>
-                    <CheckCircle className="h-5 w-5 text-green-500" />
-                  </div>
-                  <CardTitle className="text-2xl font-bold text-gray-900">{feature.title}</CardTitle>
-                  <CardDescription className="text-lg font-semibold text-gray-700">
-                    {feature.subtitle}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-gray-600 mb-4">{feature.description}</p>
-                  <div className="mb-4">
-                    <p className="text-sm font-semibold text-gray-900 mb-2">Used by:</p>
-                    <p className="text-sm text-blue-600">{feature.users}</p>
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-gray-900 mb-2">Delivers:</p>
-                    <ul className="text-sm text-gray-600 space-y-1">
-                      {feature.delivers.map((item, i) => (
-                        <li key={i} className="flex items-start">
-                          <span className="text-green-500 mr-2">•</span>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Sustainability Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-green-50">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Make Every Packaging Decision a Sustainability Win
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Reduce excess volume. Cut material waste. Improve fit.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              "Eliminate packaging bloat",
-              "Lower packaging emissions", 
-              "Track real waste reduction in CUIN, lbs, and dollars",
-              "Meet your packaging sustainability goals — with proof"
-            ].map((benefit, index) => (
-              <Card key={index} className="bg-white border-0 shadow-sm">
-                <CardContent className="p-6 text-center">
-                  <CheckCircle className="h-8 w-8 text-green-500 mx-auto mb-3" />
-                  <p className="text-gray-700">{benefit}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Data Privacy Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div>
-              <h2 className="text-4xl font-bold text-gray-900 mb-6">
-                Data Stays Private. Always.
-              </h2>
-              <p className="text-xl text-gray-600 mb-6">
-                Your data is your IP — and we treat it that way.
-              </p>
-              <ul className="space-y-4">
-                {[
-                  "We never sell, share, or scrape your files",
-                  "Every recommendation is explainable and logic-driven",
-                  "We believe in AI that works for you, not behind your back"
-                ].map((item, index) => (
-                  <li key={index} className="flex items-start">
-                    <Shield className="h-6 w-6 text-blue-600 mr-3 mt-1" />
-                    <span className="text-gray-700">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="bg-gradient-to-br from-blue-50 to-purple-50 p-8 rounded-2xl">
-              <div className="text-center">
-                <Shield className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">Smart Enough to Handle Messy Data</h3>
-                <p className="text-gray-600">
-                  Don't have perfect specs? No problem. QuantiPackAI fills in missing fields using industry benchmarks, real-world product logic, and your reference dimensions.
-                </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="bg-white rounded-3xl p-8 border border-gray-200">
+                <div className={`w-12 h-12 ${benefit.bgColor} rounded-2xl flex items-center justify-center mb-6`}>
+                  <benefit.icon className={`h-6 w-6 ${benefit.color}`} />
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{benefit.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'transparent' }}>
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              All-in-one tools, each built for a different job
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              QuantiPackAI isn't one-size-fits-all. Each application works differently to give you 
+              exactly what you need—from analytics to planning to design checks.
+            </p>
+          </div>
+          
+          <div className="space-y-20">
+            {toolSteps.map((tool, index) => (
+              <div key={index} className={`flex flex-col items-center gap-16 ${index % 2 === 1 ? 'lg:flex-row-reverse' : 'lg:flex-row'}`}>
+                <div className="w-full lg:w-1/2 max-w-lg">
+                  <div className="flex items-center space-x-4 mb-6">
+                    <div className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold" style={{ backgroundColor: '#767AFA' }}>
+                      {tool.step}
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-900">{tool.name}</h3>
+                  </div>
+                  <p className="text-gray-600 text-lg leading-relaxed">{tool.description}</p>
+                </div>
+                <div className="w-full lg:w-1/2 flex justify-center">
+                  <div className="w-80 h-80 bg-white rounded-3xl border border-gray-200 overflow-hidden">
+                    <div className="flex items-center justify-center w-full h-full" style={{ backgroundColor: '#FEFEFB' }}>
+                      <img 
+                        src={`/box-${tool.step}.png`} 
+                        alt={`${tool.name} visualization`}
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Smarter Packaging Starts Now
-            </h2>
-            <p className="text-xl text-gray-600">
-              Choose the plan that fits your packaging optimization needs
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {plans.map((plan, index) => (
-              <Card key={index} className={`relative ${plan.name === 'Corporate' ? 'border-2 border-blue-500 shadow-lg' : 'border-gray-200'}`}>
-                {plan.name === 'Corporate' && (
-                  <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                    <Badge className="bg-blue-500 text-white">Most Popular</Badge>
-                  </div>
-                )}
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl font-bold">{plan.name}</CardTitle>
-                  <div className="mt-4">
-                    <span className="text-4xl font-bold text-gray-900">{plan.price}</span>
-                    <span className="text-gray-600">{plan.period}</span>
-                  </div>
-                  <CardDescription className="mt-2">{plan.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="space-y-3">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start">
-                        <CheckCircle className="h-5 w-5 text-green-500 mr-2 mt-0.5" />
-                        <span className="text-gray-700">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                  <Link to="/sign-up" className="block mt-6">
-                    <Button className={`w-full ${plan.name === 'Corporate' ? 'bg-blue-600 hover:bg-blue-700' : ''}`}>
-                      {plan.name === 'Enterprise' ? 'Contact Sales' : 'Start Free Trial'}
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <PricingSection />
 
-      {/* CTA Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-blue-600">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-white mb-6">
-            Ready to Transform Your Packaging Strategy?
-          </h2>
-          <p className="text-xl text-blue-100 mb-8">
-            Join thousands of brands already saving money and reducing waste with QuantiPackAI
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/sign-up">
-              <Button size="lg" className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4">
-                Start Your Free Trial
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-blue-600">
-              Schedule Demo
-            </Button>
-          </div>
-        </div>
-      </section>
+      {/* Testimonials Section */}
+      <TestimonialSection />
+
+      {/* FAQ Section */}
+      <FAQSection />
+
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                  <Package className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-xl font-bold">QuantiPackAI</span>
-              </div>
-              <p className="text-gray-400">
-                The world's first AI-powered packaging analysis platform.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Features</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Suite Analyzer</li>
-                <li>Spec Generator</li>
-                <li>Demand Planner</li>
-                <li>Design Analyzer</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>About</li>
-                <li>Careers</li>
-                <li>Contact</li>
-                <li>Privacy Policy</li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li>Help Center</li>
-                <li>Documentation</li>
-                <li>API Reference</li>
-                <li>Status</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>&copy; 2024 QuantiPackAI. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
