@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useClerk, useUser, UserButton } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
+import { designSystem } from '@/lib/design-system';
 import { 
   Package, 
   BarChart3, 
@@ -179,12 +180,12 @@ const Dashboard = () => {
         return <Settings />;
       default:
         return (
-          <div className="min-h-screen bg-gray-50">
-            <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="min-h-screen bg-white">
+            <div>
               
               {/* Backend Unavailable Warning */}
               {isBackendUnavailable && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-6 shadow-sm mb-8">
+                <div className="bg-red-50 border border-red-200 rounded-3xl p-6 mb-8">
                   <div className="flex items-start gap-4">
                     <AlertCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
@@ -193,7 +194,7 @@ const Dashboard = () => {
                         Convex free plan limits exceeded. All backend functions are disabled until limits are restored.
                         The application is running in offline mode with limited functionality.
                       </p>
-                      <div className="bg-red-100 border border-red-200 rounded-lg p-4 mb-4">
+                      <div className="bg-red-100 border border-red-200 rounded-2xl p-4 mb-4">
                         <p className="text-xs text-red-800">
                           <strong>⚠️ Important:</strong> Data cleanup functions cannot work when backend is disabled. 
                           The only solution is to <strong>upgrade to Convex Pro plan ($25/month)</strong> to restore full functionality and enable data cleanup.
@@ -203,7 +204,7 @@ const Dashboard = () => {
                         <Button
                           size="sm"
                           onClick={() => setActiveTab('settings')}
-                          className="bg-red-600 hover:bg-red-700 text-white shadow-sm"
+                          className="rounded-full" style={{ backgroundColor: designSystem.colors.error, color: 'white' }}
                         >
                           Clean Up Data
                         </Button>
@@ -212,7 +213,7 @@ const Dashboard = () => {
                           onClick={testBackendConnection}
                           disabled={isCheckingBackend}
                           variant="outline"
-                          className="border-red-300 text-red-700 hover:bg-red-50"
+                          className="rounded-full border-red-300 text-red-700 hover:bg-red-50"
                         >
                           {isCheckingBackend ? 'Testing...' : 'Test Connection'}
                           <RefreshCw className={`w-3 h-3 ml-1 ${isCheckingBackend ? 'animate-spin' : ''}`} />
@@ -221,7 +222,7 @@ const Dashboard = () => {
                           size="sm"
                           variant="outline"
                           onClick={() => window.open('https://dashboard.convex.dev', '_blank')}
-                          className="border-red-300 text-red-700 hover:bg-red-50"
+                          className="rounded-full border-red-300 text-red-700 hover:bg-red-50"
                         >
                           Upgrade Plan
                           <ExternalLink className="w-3 w-3 ml-1" />
@@ -258,37 +259,42 @@ const Dashboard = () => {
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Token Usage</p>
-                        <div className="flex items-baseline gap-2 mt-1">
-                          <span className="text-2xl font-semibold text-gray-900">
-                            {safeMetrics?.tokensUsed || '0'}
-                          </span>
-                          <span className="text-sm text-gray-500">
-                            / {safeMetrics?.tokensLimit || '10'}
-                          </span>
+                  <div className="bg-white rounded-3xl border border-gray-200 p-6 transition-all duration-200 h-full flex flex-col">
+                    <div className="mb-4">
+                      <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
+                    </div>
+                    <div className="flex-1 flex flex-col justify-center">
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <div className="flex items-baseline gap-2 mb-1">
+                            <span className="text-3xl font-semibold text-gray-900">
+                              {safeMetrics?.tokensUsed || '0'}
+                            </span>
+                            <span className="text-lg text-gray-500">
+                              / {safeMetrics?.tokensLimit || '10'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 uppercase tracking-wider">Tokens Used</p>
+                        </div>
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                          <Zap className="h-6 w-6" style={{ color: designSystem.colors.primary }} />
                         </div>
                       </div>
-                      <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                        <Zap className="h-6 w-6 text-blue-600" />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Available</span>
-                        <span className="font-medium text-gray-700">
-                          {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-1.5">
-                        <div 
-                          className="bg-blue-600 h-1.5 rounded-full transition-all duration-300" 
-                          style={{ 
-                            width: `${Math.min(100, ((safeMetrics?.tokensUsed || 0) / (safeMetrics?.tokensLimit || 10)) * 100)}%` 
-                          }}
-                        />
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Available</span>
+                          <span className="font-medium text-gray-700">
+                            {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full transition-all duration-300" style={{ backgroundColor: designSystem.colors.primary }} 
+                            style={{ 
+                              width: `${Math.min(100, ((safeMetrics?.tokensUsed || 0) / (safeMetrics?.tokensLimit || 10)) * 100)}%` 
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -296,19 +302,19 @@ const Dashboard = () => {
 
                 {/* Quick Actions - Modern Card Design */}
                 <div className="lg:col-span-8">
-                  <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                  <div className="bg-white rounded-3xl border border-gray-200 p-6 transition-all duration-200">
                     <div className="mb-4">
                       <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
                     </div>
                     <div className="grid gap-4 grid-cols-2">
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        className="h-auto p-4 border border-gray-200 hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
-                            <Package className="h-5 w-5 text-gray-700" />
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                            <Package className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Suite Analyzer</div>
@@ -318,12 +324,12 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        className="h-auto p-4 border border-gray-200 hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('demand-planner-v2')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
-                            <TrendingUp className="h-5 w-5 text-gray-700" />
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                            <TrendingUp className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Demand Planner</div>
@@ -333,11 +339,11 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        className="h-auto p-4 border border-gray-200 hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('spec-generator')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                             <Sparkles className="h-5 w-5 text-gray-700" />
                           </div>
                           <div className="text-left">
@@ -348,11 +354,11 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 justify-start group transition-all duration-150 rounded-lg"
+                        className="h-auto p-4 border border-gray-200 hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 bg-gray-50 group-hover:bg-gray-100 rounded-lg flex items-center justify-center transition-colors">
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                             <Eye className="h-5 w-5 text-gray-700" />
                           </div>
                           <div className="text-left">
@@ -530,10 +536,10 @@ const Dashboard = () => {
                   const colors = colorClasses[insight.color];
                   
                   return (
-                    <div className={`${colors.bg} ${colors.border} border-2 rounded-xl p-6`}>
+                    <div className="bg-white border border-gray-200 rounded-3xl p-6">
                       <div className="flex items-start gap-4">
-                        <div className={`w-8 h-8 ${colors.iconBg} rounded-xl flex items-center justify-center flex-shrink-0 mt-1`}>
-                          <Lightbulb className={`h-4 w-4 ${colors.iconText}`} />
+                        <div className="w-8 h-8 rounded-2xl flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                          <Lightbulb className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
                         </div>
                         <div>
                           <h4 className={`font-semibold ${colors.title} text-base mb-2`}>{insight.title}</h4>
@@ -569,10 +575,10 @@ const Dashboard = () => {
 
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-64 h-full bg-white border-r border-gray-100 transition-transform duration-200 ease-in-out`}>
-          <div className="p-4 sm:p-6">
+        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-64 h-full bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out`}>
+          <div className="p-2 sm:p-3">
             <div className="flex items-center gap-3 mb-6 sm:mb-8">
-              <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-4 w-4 text-white" />
               </div>
               <h1 className="text-base sm:text-lg font-medium text-gray-900">QuantiPackAI</h1>
@@ -587,13 +593,17 @@ const Dashboard = () => {
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base ${
+                    className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base rounded-3xl transition-all duration-200 ${
                       activeTab === item.id 
-                        ? "bg-gray-100 text-gray-900 font-medium" 
+                        ? "font-medium shadow-sm" 
                         : isDisabled
                         ? "text-gray-400 cursor-not-allowed"
                         : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
+                    style={activeTab === item.id ? { 
+                      color: designSystem.colors.primary,
+                      backgroundColor: designSystem.colors.primaryLight 
+                    } : {}}
                     onClick={() => {
                       if (!isDisabled) {
                         setActiveTab(item.id);
@@ -614,14 +624,14 @@ const Dashboard = () => {
           </div>
 
           {/* Bottom Section */}
-          <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 space-y-4">
+          <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 space-y-3">
             {/* Upgrade Card */}
-            <div className="bg-blue-50 rounded-lg p-4 border border-blue-100">
-              <h4 className="font-medium text-blue-900 mb-2">Upgrade to Pro</h4>
-              <p className="text-xs text-blue-700 mb-3">
+            <div className="bg-white rounded-3xl p-3 border border-gray-200">
+              <h4 className="font-medium text-gray-900 mb-2">Upgrade to Pro</h4>
+              <p className="text-xs text-gray-600 mb-3">
                 Get 1 month free and unlock advanced features
               </p>
-              <Button size="sm" className="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs">
+              <Button size="sm" className="w-full text-white text-xs rounded-full" style={{ backgroundColor: designSystem.colors.primary }}>
                 Upgrade
               </Button>
             </div>
@@ -630,7 +640,7 @@ const Dashboard = () => {
             <div className="relative" data-user-dropdown>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="w-full bg-gray-50 rounded-lg p-4 border border-gray-200 hover:bg-gray-100 transition-colors"
+                className="w-full bg-gray-50 rounded-lg p-3 border border-gray-200 hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
@@ -650,7 +660,7 @@ const Dashboard = () => {
 
               {/* Dropdown Menu */}
               {userDropdownOpen && (
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-lg border border-gray-200 shadow-lg py-2 z-50">
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-3xl border border-gray-200 py-2 z-50">
                   <button
                     onClick={() => {
                       setUserDropdownOpen(false);
@@ -687,7 +697,7 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto bg-white">
-          <div className={activeTab === 'overview' ? 'p-4 sm:p-6' : 'p-0'}>
+          <div className="p-4 sm:p-6">
             {renderContent()}
           </div>
         </div>
@@ -696,7 +706,7 @@ const Dashboard = () => {
         <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50">
           <Button
             onClick={() => setAiAssistantOpen(!aiAssistantOpen)}
-            className="h-12 w-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-300"
+            className="h-12 w-12 rounded-full text-white transition-all duration-300 hover:opacity-90" style={{ backgroundColor: designSystem.colors.primary }}
           >
             <MessageSquare className="h-5 w-5" />
           </Button>

@@ -34,6 +34,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
+import { designSystem } from '@/lib/design-system';
 import {
   FileText,
   Download,
@@ -141,8 +142,8 @@ export const Reports = () => {
 
   if (!reports || !stats) {
     return (
-      <div className="min-h-screen bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+      <div className="min-h-screen bg-white">
+        <div className="space-y-6">
           <Skeleton className="h-32 w-full" />
           <div className="grid gap-4 md:grid-cols-3">
             <Skeleton className="h-48" />
@@ -155,13 +156,13 @@ export const Reports = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+    <div className="min-h-screen bg-white">
+      <div className="space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6">
+        <div className="bg-white rounded-3xl border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-indigo-500 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -171,9 +172,9 @@ export const Reports = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1 bg-purple-50 border border-purple-200 rounded-lg">
-              <Activity className="h-3 w-3 text-purple-600" />
-              <span className="text-xs font-medium text-purple-700">
+            <div className="flex items-center gap-2 px-3 py-1 border rounded-full" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
+              <Activity className="h-3 w-3" style={{ color: designSystem.colors.primary }} />
+              <span className="text-xs font-medium" style={{ color: designSystem.colors.primary }}>
                 {stats.total} Total Reports
               </span>
             </div>
@@ -182,7 +183,7 @@ export const Reports = () => {
 
         {/* Stats Cards */}
         <div className="grid gap-4 md:grid-cols-4">
-          <Card className="border-gray-100 bg-white shadow-sm">
+          <Card className="border-gray-200 bg-white rounded-3xl">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -196,7 +197,7 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-100 bg-white shadow-sm">
+          <Card className="border-gray-200 bg-white rounded-3xl">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -210,7 +211,7 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-100 bg-white shadow-sm">
+          <Card className="border-gray-200 bg-white rounded-3xl">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -224,7 +225,7 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-100 bg-white shadow-sm">
+          <Card className="border-gray-200 bg-white rounded-3xl">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -246,7 +247,7 @@ export const Reports = () => {
         </div>
 
         {/* Filters and Search */}
-        <Card className="border-gray-100 bg-white shadow-sm">
+        <Card className="border-gray-200 bg-white rounded-3xl">
           <CardContent className="p-4">
             <div className="flex flex-col sm:flex-row gap-4">
               <div className="flex-1">
@@ -290,7 +291,7 @@ export const Reports = () => {
         {/* Reports List */}
         <div className="space-y-4">
           {filteredReports.length === 0 ? (
-            <Card className="border-gray-100 bg-white shadow-sm">
+            <Card className="border-gray-200 bg-white rounded-3xl">
               <CardContent className="p-12 text-center">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <FileText className="h-8 w-8 text-gray-400" />
@@ -307,7 +308,7 @@ export const Reports = () => {
             filteredReports.map((report) => {
               const TypeIcon = getTypeIcon(report.type);
               return (
-                <Card key={report._id} className="border-gray-100 bg-white shadow-sm hover:shadow-md transition-shadow">
+                <Card key={report._id} className="border-gray-200 bg-white rounded-3xl hover:opacity-95 transition-all">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-4 flex-1">
@@ -424,7 +425,8 @@ export const Reports = () => {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 onClick={handleDelete}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="hover:opacity-90 text-white rounded-full"
+                style={{ backgroundColor: designSystem.colors.error }}
               >
                 Delete
               </AlertDialogAction>

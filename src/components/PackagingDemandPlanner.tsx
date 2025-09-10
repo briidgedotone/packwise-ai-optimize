@@ -15,6 +15,7 @@ import { useAction } from 'convex/react';
 import { useUser } from '@clerk/clerk-react';
 import { api } from '../../convex/_generated/api';
 import { toast } from 'sonner';
+import { designSystem } from '@/lib/design-system';
 import { exportToCSV, exportToPDF } from '@/lib/demandPlannerExport';
 
 interface DemandResult {
@@ -153,12 +154,12 @@ export const PackagingDemandPlanner = () => {
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
-        <div className="bg-white rounded-lg border border-gray-100 p-4 sm:p-6">
+    <div className="min-h-screen bg-white">
+      <div className="space-y-4">
+        <div className="bg-white rounded-3xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-orange-500 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 rounded-3xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -168,9 +169,9 @@ export const PackagingDemandPlanner = () => {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2 px-2 sm:px-3 py-1 bg-orange-50 border border-orange-200 rounded-lg">
-              <BarChart3 className="h-3 w-3 text-orange-600" />
-              <span className="text-xs font-medium text-orange-700">Mix-Based Planning</span>
+            <div className="flex items-center gap-2 px-2 sm:px-3 py-1 border rounded-3xl" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
+              <BarChart3 className="h-3 w-3" style={{ color: designSystem.colors.primary }} />
+              <span className="text-xs font-medium" style={{ color: designSystem.colors.primary }}>Mix-Based Planning</span>
             </div>
           </div>
         </div>
@@ -178,11 +179,11 @@ export const PackagingDemandPlanner = () => {
         <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
           {/* Total Order Forecast */}
           <div className="space-y-4">
-            <Card className="bg-white border-gray-100 shadow-sm">
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-orange-50 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="h-4 w-4 text-orange-600" />
+                  <div className="w-8 h-8 rounded-3xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                    <TrendingUp className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
                   </div>
                   Total Order Forecast
                 </CardTitle>
@@ -197,7 +198,9 @@ export const PackagingDemandPlanner = () => {
                     placeholder="e.g., 40,000"
                     value={totalOrders}
                     onChange={(e) => setTotalOrders(e.target.value)}
-                    className="border-gray-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                    className="border-gray-200 rounded-3xl"
+                    style={{ '--tw-ring-color': designSystem.colors.primary }}
+                    onFocus={(e) => { e.target.style.borderColor = designSystem.colors.primary; e.target.style.boxShadow = `0 0 0 1px ${designSystem.colors.primary}`; }}
                   />
                 </div>
                 <div className="space-y-2">
@@ -206,18 +209,20 @@ export const PackagingDemandPlanner = () => {
                     placeholder="e.g., Q4 2025"
                     value={forecastPeriod}
                     onChange={(e) => setForecastPeriod(e.target.value)}
-                    className="border-gray-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                    className="border-gray-200 rounded-3xl"
+                    style={{ '--tw-ring-color': designSystem.colors.primary }}
+                    onFocus={(e) => { e.target.style.borderColor = designSystem.colors.primary; e.target.style.boxShadow = `0 0 0 1px ${designSystem.colors.primary}`; }}
                   />
                 </div>
               </CardContent>
             </Card>
 
             {/* Packaging Mix Source */}
-            <Card className="bg-white border-gray-100 shadow-sm">
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-blue-50 rounded-lg flex items-center justify-center">
-                    <PieChart className="h-4 w-4 text-blue-600" />
+                  <div className="w-8 h-8 rounded-3xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                    <PieChart className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
                   </div>
                   Packaging Mix Source
                 </CardTitle>
@@ -232,7 +237,7 @@ export const PackagingDemandPlanner = () => {
                     <Button
                       variant={mixSource === 'usage-log' ? 'default' : 'outline'}
                       onClick={() => setMixSource('usage-log')}
-                      className={mixSource === 'usage-log' ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}
+                      className={mixSource === 'usage-log' ? 'hover:opacity-90' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}
                       size="sm"
                     >
                       <FileSpreadsheet className="h-4 w-4 mr-2" />
@@ -241,7 +246,7 @@ export const PackagingDemandPlanner = () => {
                     <Button
                       variant={mixSource === 'manual' ? 'default' : 'outline'}
                       onClick={() => setMixSource('manual')}
-                      className={mixSource === 'manual' ? 'bg-blue-600 hover:bg-blue-700' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}
+                      className={mixSource === 'manual' ? 'hover:opacity-90' : 'border-gray-200 text-gray-700 hover:bg-gray-50'}
                       size="sm"
                     >
                       <Settings className="h-4 w-4 mr-2" />
@@ -250,12 +255,12 @@ export const PackagingDemandPlanner = () => {
                   </div>
                   
                   {mixSource === 'usage-log' && (
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <p className="text-xs text-blue-700 font-medium mb-2">📁 Option A: Usage Log (Recommended)</p>
-                      <p className="text-xs text-blue-600 mb-3">Upload historical data to automatically calculate mix percentages</p>
-                      <div className="border-2 border-dashed border-blue-200 rounded-lg p-4 text-center hover:border-blue-300 hover:bg-blue-25 transition-colors">
-                        <Upload className="h-6 w-6 mx-auto mb-2 text-blue-500" />
-                        <p className="text-xs text-blue-600 mb-2">Date, Package Type, Quantity Used</p>
+                    <div className="border rounded-3xl rounded-3xl p-3">
+                      <p className="text-xs text-gray-700 font-medium mb-2">📁 Option A: Usage Log (Recommended)</p>
+                      <p className="text-xs text-gray-600 mb-3">Upload historical data to automatically calculate mix percentages</p>
+                      <div className="border-2 border-dashed border-blue-200 rounded-3xl p-4 text-center hover:border-blue-300 hover:bg-blue-25 transition-colors">
+                        <Upload className="h-6 w-6 mx-auto mb-2 text-gray-500" />
+                        <p className="text-xs text-gray-600 mb-2">Date, Package Type, Quantity Used</p>
                         <Input
                           type="file"
                           accept=".csv,.xlsx"
@@ -266,7 +271,7 @@ export const PackagingDemandPlanner = () => {
                         <Button 
                           variant="outline"
                           onClick={() => document.getElementById('usage-log-file')?.click()}
-                          className="border-blue-200 text-blue-700 hover:bg-blue-50 text-sm"
+                          className="border-blue-200 text-gray-700 hover:bg-blue-50 text-sm"
                         >
                           {files.usageLog ? files.usageLog.name : 'Upload Usage Log'}
                         </Button>
@@ -275,12 +280,12 @@ export const PackagingDemandPlanner = () => {
                   )}
                   
                   {mixSource === 'manual' && (
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-                      <p className="text-xs text-orange-700 font-medium mb-2">⚙️ Option B: Manual Mix</p>
-                      <p className="text-xs text-orange-600 mb-3">Manually specify packaging mix percentages</p>
-                      <div className="border-2 border-dashed border-orange-200 rounded-lg p-4 text-center hover:border-orange-300 hover:bg-orange-25 transition-colors">
-                        <Upload className="h-6 w-6 mx-auto mb-2 text-orange-500" />
-                        <p className="text-xs text-orange-600 mb-2">Package Type, Usage % (e.g., 35%)</p>
+                    <div className="border rounded-3xl rounded-3xl p-3">
+                      <p className="text-xs text-gray-700 font-medium mb-2">⚙️ Option B: Manual Mix</p>
+                      <p className="text-xs text-gray-600 mb-3">Manually specify packaging mix percentages</p>
+                      <div className="border-2 border-dashed border-orange-200 rounded-3xl p-4 text-center hover:border-orange-300 hover:bg-orange-25 transition-colors">
+                        <Upload className="h-6 w-6 mx-auto mb-2 text-gray-500" />
+                        <p className="text-xs text-gray-600 mb-2">Package Type, Usage % (e.g., 35%)</p>
                         <Input
                           type="file"
                           accept=".csv,.xlsx"
@@ -291,12 +296,12 @@ export const PackagingDemandPlanner = () => {
                         <Button 
                           variant="outline"
                           onClick={() => document.getElementById('manual-mix-file')?.click()}
-                          className="border-orange-200 text-orange-700 hover:bg-orange-50 text-sm"
+                          className="border-orange-200 text-gray-700 hover:bg-orange-50 text-sm"
                         >
                           {files.manualMix ? files.manualMix.name : 'Upload Manual Mix'}
                         </Button>
                       </div>
-                      <div className="mt-2 text-xs text-orange-600">
+                      <div className="mt-2 text-xs text-gray-600">
                         ⚠️ This will override any calculated values from usage logs
                       </div>
                     </div>
@@ -308,10 +313,10 @@ export const PackagingDemandPlanner = () => {
 
           {/* Packaging Suite & Settings */}
           <div className="space-y-4">
-            <Card className="bg-white border-gray-100 shadow-sm">
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-3">
-                  <div className="w-8 h-8 bg-purple-50 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-purple-50 rounded-3xl flex items-center justify-center">
                     <Upload className="h-4 w-4 text-purple-600" />
                   </div>
                   Packaging Suite
@@ -321,8 +326,8 @@ export const PackagingDemandPlanner = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
-                  <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-2">
+                <div className="border-2 border-dashed border-gray-200 rounded-3xl p-4 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
+                  <div className="w-8 h-8 bg-gray-100 rounded-3xl flex items-center justify-center mx-auto mb-2">
                     <Upload className="h-4 w-4 text-gray-600" />
                   </div>
                   <p className="text-xs sm:text-sm text-gray-600 mb-2">
@@ -347,7 +352,7 @@ export const PackagingDemandPlanner = () => {
             </Card>
 
             {/* Safety Stock */}
-            <Card className="bg-white border-gray-100 shadow-sm">
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-2">
                   <Settings className="h-5 w-5 text-gray-600" />
@@ -364,7 +369,9 @@ export const PackagingDemandPlanner = () => {
                     placeholder="e.g., 10"
                     value={safetyStock}
                     onChange={(e) => setSafetyStock(e.target.value)}
-                    className="border-gray-200 focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                    className="border-gray-200 rounded-3xl"
+                    style={{ '--tw-ring-color': designSystem.colors.primary }}
+                    onFocus={(e) => { e.target.style.borderColor = designSystem.colors.primary; e.target.style.boxShadow = `0 0 0 1px ${designSystem.colors.primary}`; }}
                   />
                   <p className="text-xs text-gray-500">Final Quantity = Base Quantity × (1 + Safety Stock %)</p>
                 </div>
@@ -379,7 +386,8 @@ export const PackagingDemandPlanner = () => {
             size="lg"
             disabled={!totalOrders || !forecastPeriod || !files.packagingSuite || (mixSource === 'usage-log' && !files.usageLog) || (mixSource === 'manual' && !files.manualMix) || isAnalyzing}
             onClick={handleGeneratePlan}
-            className="bg-orange-600 hover:bg-orange-700 text-white disabled:bg-gray-300 disabled:text-gray-500 min-w-48"
+            className="hover:opacity-90 text-white disabled:bg-gray-300 disabled:text-gray-500 min-w-48 rounded-full"
+            style={{ backgroundColor: designSystem.colors.primary }}
           >
             {isAnalyzing ? (
               <div className="flex items-center gap-2">
@@ -406,21 +414,21 @@ export const PackagingDemandPlanner = () => {
             {/* Summary Cards */}
             <Card className="bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200">
               <CardHeader>
-                <CardTitle className="text-lg font-medium text-orange-900">📦 Demand Planning Summary</CardTitle>
-                <CardDescription className="text-orange-700">
+                <CardTitle className="text-lg font-medium text-gray-900">📦 Demand Planning Summary</CardTitle>
+                <CardDescription className="text-gray-700">
                   Forecast period: {forecastPeriod} • Total orders: {parseInt(totalOrders.replace(/,/g, '')).toLocaleString()}
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="text-center p-4 bg-white rounded-lg border border-orange-100">
-                    <div className="text-2xl font-bold text-orange-700">
+                  <div className="text-center p-4 bg-white rounded-3xl border border-orange-100">
+                    <div className="text-2xl font-bold text-gray-700">
                       {results.totalPackages.toLocaleString()}
                     </div>
-                    <div className="text-sm text-orange-600">Total Packages</div>
+                    <div className="text-sm text-gray-600">Total Packages</div>
                   </div>
                   {results.totalCost > 0 && (
-                    <div className="text-center p-4 bg-white rounded-lg border border-green-100">
+                    <div className="text-center p-4 bg-white rounded-3xl border border-green-100">
                       <div className="text-2xl font-bold text-green-700">
                         ${results.totalCost.toFixed(2)}
                       </div>
@@ -428,11 +436,11 @@ export const PackagingDemandPlanner = () => {
                     </div>
                   )}
                   {results.totalWeight > 0 && (
-                    <div className="text-center p-4 bg-white rounded-lg border border-blue-100">
-                      <div className="text-2xl font-bold text-blue-700">
+                    <div className="text-center p-4 bg-white rounded-3xl border border-blue-100">
+                      <div className="text-2xl font-bold text-gray-700">
                         {results.totalWeight.toFixed(1)} lbs
                       </div>
-                      <div className="text-sm text-blue-600">Total Weight</div>
+                      <div className="text-sm text-gray-600">Total Weight</div>
                     </div>
                   )}
                 </div>
@@ -440,7 +448,7 @@ export const PackagingDemandPlanner = () => {
             </Card>
 
             {/* Detailed Results Table */}
-            <Card className="bg-white border-gray-100 shadow-sm">
+            <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader>
                 <CardTitle className="text-lg font-medium text-gray-900">📊 Packaging Demand Breakdown</CardTitle>
               </CardHeader>
@@ -490,7 +498,7 @@ export const PackagingDemandPlanner = () => {
             {/* Charts */}
             <div className="grid gap-6 lg:grid-cols-2">
               {/* Pie Chart - Mix Distribution */}
-              <Card className="bg-white border-gray-100 shadow-sm">
+              <Card className="bg-white border-gray-200 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
                     <PieChart className="h-5 w-5" />
@@ -518,7 +526,7 @@ export const PackagingDemandPlanner = () => {
               </Card>
 
               {/* Bar Chart - Cost/Weight */}
-              <Card className="bg-white border-gray-100 shadow-sm">
+              <Card className="bg-white border-gray-200 shadow-sm">
                 <CardHeader>
                   <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
                     <BarChart3 className="h-5 w-5" />
@@ -552,7 +560,7 @@ export const PackagingDemandPlanner = () => {
             {/* AI Insights */}
             <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
               <CardHeader>
-                <CardTitle className="text-lg font-medium text-blue-900 flex items-center gap-2">
+                <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
                   <TrendingUp className="h-5 w-5" />
                   🤖 AI Insights & Recommendations
                 </CardTitle>
@@ -560,9 +568,9 @@ export const PackagingDemandPlanner = () => {
               <CardContent>
                 <div className="space-y-3">
                   {results.insights.map((insight, index) => (
-                    <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-lg border border-blue-100">
-                      <CheckCircle2 className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
-                      <span className="text-sm text-blue-800">{insight}</span>
+                    <div key={index} className="flex items-start gap-3 p-3 bg-white rounded-3xl border border-blue-100">
+                      <CheckCircle2 className="h-4 w-4 text-gray-600 flex-shrink-0 mt-0.5" />
+                      <span className="text-sm text-gray-800">{insight}</span>
                     </div>
                   ))}
                 </div>

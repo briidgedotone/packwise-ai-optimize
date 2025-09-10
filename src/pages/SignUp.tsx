@@ -1,5 +1,6 @@
 import { SignUp } from "@clerk/clerk-react";
 import { Package, CheckCircle, Zap, Shield, BarChart3 } from "lucide-react";
+import { designSystem } from '@/lib/design-system';
 
 export default function SignUpPage() {
   const features = [
@@ -21,12 +22,12 @@ export default function SignUpPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white flex">
+    <div className="min-h-screen flex" style={{ backgroundColor: designSystem.colors.background }}>
       {/* Left Side - Features */}
-      <div className="hidden lg:flex lg:w-1/2 bg-blue-600 text-white p-12 flex-col justify-between">
+      <div className="hidden lg:flex lg:w-1/2 text-white p-12 flex-col justify-between" style={{ backgroundColor: designSystem.colors.primary }}>
         <div>
           <div className="flex items-center space-x-3 mb-12">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-white/20 rounded-2xl flex items-center justify-center">
               <Package className="h-6 w-6 text-white" />
             </div>
             <span className="text-2xl font-bold">QuantiPackAI</span>
@@ -37,7 +38,7 @@ export default function SignUpPage() {
               <h1 className="text-4xl font-bold mb-4">
                 Transform Your Packaging Strategy
               </h1>
-              <p className="text-xl text-blue-100">
+              <p className="text-xl text-white/80">
                 Join thousands of brands using AI to optimize packaging, reduce costs, and improve sustainability.
               </p>
             </div>
@@ -45,12 +46,12 @@ export default function SignUpPage() {
             <div className="space-y-6">
               {features.map((feature, index) => (
                 <div key={index} className="flex items-start space-x-4">
-                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <div className="w-8 h-8 bg-white/20 rounded-2xl flex items-center justify-center flex-shrink-0 mt-1">
                     <feature.icon className="h-4 w-4" />
                   </div>
                   <div>
                     <h3 className="font-semibold mb-1">{feature.title}</h3>
-                    <p className="text-blue-100 text-sm">{feature.description}</p>
+                    <p className="text-white/80 text-sm">{feature.description}</p>
                   </div>
                 </div>
               ))}
@@ -58,7 +59,7 @@ export default function SignUpPage() {
           </div>
         </div>
 
-        <div className="text-sm text-blue-200">
+        <div className="text-sm text-white/80">
           "QuantiPackAI helped us reduce packaging costs by 23% while improving our sustainability metrics."
           <div className="mt-2 font-medium">— Sarah Chen, Head of Operations</div>
         </div>
@@ -69,7 +70,7 @@ export default function SignUpPage() {
         {/* Mobile Header */}
         <header className="lg:hidden p-6 border-b border-gray-200">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
               <Package className="h-6 w-6 text-white" />
             </div>
             <span className="text-2xl font-bold text-gray-900">QuantiPackAI</span>
@@ -88,20 +89,20 @@ export default function SignUpPage() {
               </p>
             </div>
 
-            <div className="bg-white lg:bg-transparent rounded-2xl lg:rounded-none shadow-xl lg:shadow-none p-8 lg:p-0">
+            <div className="bg-white lg:bg-transparent rounded-3xl lg:rounded-none border lg:border-none border-gray-200 p-8 lg:p-0">
               <SignUp 
                 forceRedirectUrl="/dashboard"
                 appearance={{
                   elements: {
-                    formButtonPrimary: "bg-blue-600 hover:bg-blue-700 text-white font-medium",
+                    formButtonPrimary: `bg-[${designSystem.colors.primary}] hover:opacity-90 text-white font-medium rounded-full`,
                     card: "shadow-none",
                     headerTitle: "hidden",
                     headerSubtitle: "hidden",
                     socialButtonsBlockButton: "border-gray-200 hover:bg-gray-50",
                     dividerLine: "bg-gray-200",
                     dividerText: "text-gray-500",
-                    formFieldInput: "border-gray-200 focus:border-blue-500 focus:ring-blue-500",
-                    footerActionLink: "text-blue-600 hover:text-blue-700",
+                    formFieldInput: `border-gray-200 focus:border-[${designSystem.colors.primary}] focus:ring-[${designSystem.colors.primary}] rounded-3xl`,
+                    footerActionLink: `text-[${designSystem.colors.primary}] hover:opacity-90`,
                   },
                   layout: {
                     socialButtonsPlacement: "top",
@@ -113,7 +114,7 @@ export default function SignUpPage() {
             <div className="text-center mt-6">
               <p className="text-sm text-gray-600">
                 Already have an account?{" "}
-                <a href="/sign-in" className="text-blue-600 hover:text-blue-700 font-medium">
+                <a href="/sign-in" className="font-medium hover:opacity-90" style={{ color: designSystem.colors.primary }}>
                   Sign in
                 </a>
               </p>
@@ -121,9 +122,9 @@ export default function SignUpPage() {
 
             <div className="mt-8 text-center text-xs text-gray-500">
               By signing up, you agree to our{" "}
-              <a href="#" className="text-blue-600 hover:text-blue-700">Terms of Service</a>
+              <a href="#" className="hover:opacity-90" style={{ color: designSystem.colors.primary }}>Terms of Service</a>
               {" "}and{" "}
-              <a href="#" className="text-blue-600 hover:text-blue-700">Privacy Policy</a>
+              <a href="#" className="hover:opacity-90" style={{ color: designSystem.colors.primary }}>Privacy Policy</a>
             </div>
           </div>
         </div>
