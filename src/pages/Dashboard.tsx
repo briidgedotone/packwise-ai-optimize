@@ -571,7 +571,7 @@ const Dashboard = () => {
       <div className="flex h-screen">
         {/* Sidebar */}
         <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-64 h-full bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out`}>
-          <div className="p-4 sm:p-6">
+          <div className="p-2 sm:p-3">
             <div className="flex items-center gap-3 mb-6 sm:mb-8">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-4 w-4 text-white" />
@@ -588,13 +588,17 @@ const Dashboard = () => {
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base ${
+                    className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base rounded-3xl transition-all duration-200 ${
                       activeTab === item.id 
-                        ? "text-gray-900 font-medium rounded-3xl" + ` bg-[${designSystem.colors.primaryLight}]` 
+                        ? "font-medium shadow-sm" 
                         : isDisabled
                         ? "text-gray-400 cursor-not-allowed"
-                        : "text-gray-600 hover:text-gray-900 hover:opacity-90 rounded-3xl"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
+                    style={activeTab === item.id ? { 
+                      color: designSystem.colors.primary,
+                      backgroundColor: designSystem.colors.primaryLight 
+                    } : {}}
                     onClick={() => {
                       if (!isDisabled) {
                         setActiveTab(item.id);
@@ -615,9 +619,9 @@ const Dashboard = () => {
           </div>
 
           {/* Bottom Section */}
-          <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 space-y-4">
+          <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 space-y-3">
             {/* Upgrade Card */}
-            <div className="bg-white rounded-3xl p-4 border border-gray-200">
+            <div className="bg-white rounded-3xl p-3 border border-gray-200">
               <h4 className="font-medium text-gray-900 mb-2">Upgrade to Pro</h4>
               <p className="text-xs text-gray-600 mb-3">
                 Get 1 month free and unlock advanced features
@@ -631,7 +635,7 @@ const Dashboard = () => {
             <div className="relative" data-user-dropdown>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="w-full bg-gray-50 rounded-lg p-4 border border-gray-200 hover:bg-gray-100 transition-colors"
+                className="w-full bg-gray-50 rounded-lg p-3 border border-gray-200 hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
