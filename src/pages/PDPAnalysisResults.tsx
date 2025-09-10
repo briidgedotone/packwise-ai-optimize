@@ -102,7 +102,7 @@ const PDPAnalysisResults = () => {
 
   if (!results) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: designSystem.colors.background }}>
+      <div className="min-h-screen flex items-center justify-center" className="bg-white">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4" style={{ color: designSystem.colors.primary }} />
           <p className="text-gray-600">Loading analysis results...</p>
@@ -186,7 +186,7 @@ const PDPAnalysisResults = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: designSystem.colors.background }}>
+    <div className="min-h-screen" className="bg-white">
       {/* Header */}
       <div className="bg-white rounded-3xl border border-gray-200 p-6 mb-6">
         <div className="flex items-center justify-between">
@@ -289,7 +289,7 @@ const PDPAnalysisResults = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+      <div>
         {/* Overview Tab */}
         {activeTab === 'overview' && (
           <div className="space-y-6">

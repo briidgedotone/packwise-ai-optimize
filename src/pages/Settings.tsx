@@ -348,8 +348,8 @@ export const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: designSystem.colors.background }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
+    <div className="min-h-screen bg-white">
+      <div>
         {/* Header */}
         <div className="bg-white rounded-3xl border border-gray-200 p-6 mb-6">
           <div className="flex items-center gap-4">

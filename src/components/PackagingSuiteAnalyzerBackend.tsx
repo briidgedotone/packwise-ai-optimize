@@ -175,8 +175,8 @@ export const PackagingSuiteAnalyzerBackend = () => {
   
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: designSystem.colors.background }}>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4">
+    <div className="min-h-screen bg-white">
+      <div className="space-y-4">
         
         {/* Show placeholder when help modal is open */}
         {showHelpModal && (

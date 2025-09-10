@@ -142,8 +142,8 @@ export const Reports = () => {
 
   if (!reports || !stats) {
     return (
-      <div className="min-h-screen" style={{ backgroundColor: designSystem.colors.background }}>
-        <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+      <div className="min-h-screen bg-white">
+        <div className="space-y-6">
           <Skeleton className="h-32 w-full" />
           <div className="grid gap-4 md:grid-cols-3">
             <Skeleton className="h-48" />
@@ -156,8 +156,8 @@ export const Reports = () => {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: designSystem.colors.background }}>
-      <div className="max-w-7xl mx-auto px-6 py-8 space-y-6">
+    <div className="min-h-screen bg-white">
+      <div className="space-y-6">
         {/* Header */}
         <div className="bg-white rounded-3xl border border-gray-200 p-6">
           <div className="flex items-center justify-between">

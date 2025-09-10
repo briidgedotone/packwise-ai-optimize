@@ -180,8 +180,8 @@ const Dashboard = () => {
         return <Settings />;
       default:
         return (
-          <div className="min-h-screen" style={{ backgroundColor: designSystem.colors.background }}>
-            <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="min-h-screen bg-white">
+            <div>
               
               {/* Backend Unavailable Warning */}
               {isBackendUnavailable && (

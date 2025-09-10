@@ -567,8 +567,8 @@ export const PDPAnalyzer = () => {
   );
 
   return (
-    <div className="min-h-screen py-8" style={{ backgroundColor: designSystem.colors.background }}>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+    <div className="min-h-screen bg-white">
+      <div>
         <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 relative">
           {renderStepHeader()}
           
