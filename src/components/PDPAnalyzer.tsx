@@ -13,6 +13,7 @@ import {
 import { useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { toast } from 'sonner';
+import { designSystem } from '@/lib/design-system';
 // import { motion, AnimatePresence } from 'framer-motion';
 
 export const PDPAnalyzer = () => {
@@ -232,18 +233,22 @@ export const PDPAnalyzer = () => {
           <div key={step.number} className="flex items-center">
             <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
               currentStep === step.number
-                ? 'border-pink-500 bg-pink-500 text-white'
+                ? 'text-white'
+                  + ` border-[${designSystem.colors.primary}]`
+                  + ` bg-[${designSystem.colors.primary}]`
                 : step.isComplete
-                  ? 'border-green-500 bg-green-500 text-white'
+                  ? 'text-white'
+                    + ` border-[${designSystem.colors.primary}] bg-[${designSystem.colors.primary}]`
                   : step.isValid
-                    ? 'border-pink-300 bg-pink-50 text-pink-600'
+                    ? `border-[${designSystem.colors.primary}] text-[${designSystem.colors.primary}]`
+                      + ` bg-[${designSystem.colors.primaryLight}]`
                     : 'border-gray-300 bg-gray-50 text-gray-400'
             }`}>
               {step.isComplete ? <Check className="h-5 w-5" /> : step.number}
             </div>
             {index < steps.length - 1 && (
               <div className={`w-16 h-0.5 transition-all ${
-                step.isComplete ? 'bg-green-500' : 'bg-gray-300'
+                step.isComplete ? `bg-[${designSystem.colors.primary}]` : 'bg-gray-300'
               }`} />
             )}
           </div>
@@ -264,9 +269,9 @@ export const PDPAnalyzer = () => {
 
   const renderStep1 = () => (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-white border border-gray-200 rounded-lg p-8">
+      <div className="bg-white border border-gray-200 rounded-3xl p-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 rounded-3xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
             <FileImage className="h-4 w-4 text-white" />
           </div>
           <h3 className="text-lg font-medium text-gray-900">Your Packaging Design</h3>
@@ -280,8 +285,8 @@ export const PDPAnalyzer = () => {
               onChange={(e) => handleMainPDPUpload(e.target.files?.[0] || null)}
               className="hidden"
             />
-            <div className="border-2 border-dashed border-gray-200 rounded-lg p-16 text-center hover:border-pink-400 hover:bg-pink-50/50 transition-all cursor-pointer group min-h-[400px] flex flex-col justify-center">
-              <div className="w-24 h-24 bg-pink-500 rounded-lg flex items-center justify-center mx-auto mb-6">
+            <div className="border-2 border-dashed border-gray-200 rounded-3xl p-16 text-center transition-all cursor-pointer group min-h-[400px] flex flex-col justify-center" onMouseEnter={(e) => { e.currentTarget.style.borderColor = designSystem.colors.primary; e.currentTarget.style.backgroundColor = designSystem.colors.primaryLight; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.backgroundColor = ''; }}>
+              <div className="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Upload className="h-12 w-12 text-white" />
               </div>
               <h3 className="text-2xl font-medium text-gray-900 mb-4">Upload Your Design</h3>
@@ -308,7 +313,7 @@ export const PDPAnalyzer = () => {
             >
               <X className="h-5 w-5" />
             </button>
-            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-3xl">
               <div className="flex items-center gap-2 text-green-700">
                 <CheckCircle2 className="h-5 w-5" />
                 <span className="font-medium">Main PDP uploaded successfully</span>
@@ -323,15 +328,15 @@ export const PDPAnalyzer = () => {
   const renderStep2 = () => (
     <div className="max-w-4xl mx-auto">
       {/* Product Information */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-gray-200 rounded-3xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 bg-emerald-500 rounded-3xl flex items-center justify-center">
               <Package className="h-4 w-4 text-white" />
             </div>
             <h3 className="text-lg font-medium text-gray-900">Product Context</h3>
           </div>
-          <span className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded">Required</span>
+          <span className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded-full">Required</span>
         </div>
 
         <div className="space-y-6">
@@ -367,7 +372,7 @@ export const PDPAnalyzer = () => {
             </Label>
             <textarea
               placeholder="Describe your product in 1-2 sentences (e.g., 'A refreshing carbonated cola drink with natural flavors, targeting young adults')"
-              className="w-full px-4 py-3 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 resize-none"
+              className="w-full px-4 py-3 text-base border border-gray-200 rounded-3xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 resize-none"
               rows={3}
               value={metaInfo.description}
               onChange={(e) => setMetaInfo(prev => ({ ...prev, description: e.target.value }))}
@@ -393,10 +398,10 @@ export const PDPAnalyzer = () => {
   const renderStep3 = () => (
     <div className="max-w-4xl mx-auto">
       {/* Competitor PDPs */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-gray-200 rounded-3xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+            <div className="w-8 h-8 rounded-3xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
               <Layers className="h-4 w-4 text-white" />
             </div>
             <h3 className="text-lg font-medium text-gray-900">Competitive Benchmarking</h3>
@@ -410,7 +415,7 @@ export const PDPAnalyzer = () => {
               <img
                 src={preview}
                 alt={`Competitor ${String.fromCharCode(65 + index)}`}
-                className="w-full h-32 object-cover rounded-lg"
+                className="w-full h-32 object-cover rounded-3xl"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
@@ -435,7 +440,7 @@ export const PDPAnalyzer = () => {
                 disabled={files.competitors.length >= 4}
                 className="hidden"
               />
-              <div className="h-32 border-2 border-dashed border-gray-200 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-orange-400 hover:bg-orange-50 transition-all">
+              <div className="h-32 border-2 border-dashed border-gray-200 rounded-3xl flex flex-col items-center justify-center cursor-pointer transition-all" onMouseEnter={(e) => { e.currentTarget.style.borderColor = designSystem.colors.primary; e.currentTarget.style.backgroundColor = designSystem.colors.primaryLight; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.backgroundColor = ''; }}>
                 <Plus className="h-6 w-6 text-gray-400 mb-1" />
                 <span className="text-sm text-gray-500">Add Competitor</span>
                 <span className="text-xs text-gray-400 mt-1">{files.competitors.length}/4</span>
@@ -450,9 +455,9 @@ export const PDPAnalyzer = () => {
   const renderStep4 = () => (
     <div className="max-w-2xl mx-auto space-y-6">
       {/* Analysis Settings */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
+      <div className="bg-white border border-gray-200 rounded-3xl p-6">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+          <div className="w-8 h-8 rounded-3xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
             <Settings className="h-4 w-4 text-white" />
           </div>
           <h3 className="text-lg font-medium text-gray-900">Analysis Parameters</h3>
@@ -462,7 +467,7 @@ export const PDPAnalyzer = () => {
           <div>
             <Label className="text-gray-700 font-semibold mb-2">Analysis Focus</Label>
             <select 
-              className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              className="w-full h-12 px-4 text-base border border-gray-200 rounded-3xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               value={metaInfo.analysisFocus}
               onChange={(e) => setMetaInfo(prev => ({ ...prev, analysisFocus: e.target.value }))}
             >
@@ -477,7 +482,7 @@ export const PDPAnalyzer = () => {
           <div>
             <Label className="text-gray-700 font-semibold mb-2">Target Demographics</Label>
             <select 
-              className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              className="w-full h-12 px-4 text-base border border-gray-200 rounded-3xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               value={metaInfo.targetDemographics}
               onChange={(e) => setMetaInfo(prev => ({ ...prev, targetDemographics: e.target.value }))}
             >
@@ -492,7 +497,7 @@ export const PDPAnalyzer = () => {
           <div>
             <Label className="text-gray-700 font-semibold mb-2">Retail Environment</Label>
             <select 
-              className="w-full h-12 px-4 text-base border border-gray-200 rounded-lg focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
+              className="w-full h-12 px-4 text-base border border-gray-200 rounded-3xl focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200"
               value={metaInfo.retailEnvironment}
               onChange={(e) => setMetaInfo(prev => ({ ...prev, retailEnvironment: e.target.value }))}
             >
@@ -509,7 +514,8 @@ export const PDPAnalyzer = () => {
           <Button
             onClick={handleAnalyzePDP}
             disabled={!isStep4Valid || isAnalyzing}
-            className="w-full bg-pink-600 hover:bg-pink-700 text-white"
+            className="w-full hover:opacity-90 text-white rounded-full"
+            style={{ backgroundColor: designSystem.colors.primary }}
             size="lg"
           >
             {isAnalyzing ? (
@@ -548,7 +554,8 @@ export const PDPAnalyzer = () => {
         <Button
           onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
           disabled={!steps[currentStep - 1].isValid}
-          className="bg-pink-600 hover:bg-pink-700 text-white"
+          className="hover:opacity-90 text-white rounded-full"
+          style={{ backgroundColor: designSystem.colors.primary }}
         >
           Next
           <ChevronRight className="h-4 w-4 ml-2" />
@@ -560,9 +567,9 @@ export const PDPAnalyzer = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen py-8" style={{ backgroundColor: designSystem.colors.background }}>
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-8 relative">
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 relative">
           {renderStepHeader()}
           
           {currentStep === 1 && renderStep1()}

@@ -10,6 +10,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import type { Id } from '../../convex/_generated/dataModel';
+import { designSystem } from '@/lib/design-system';
 
 interface ProcessingProgress {
   stage: 'parsing' | 'validation' | 'optimization' | 'analysis' | 'complete';
@@ -45,8 +46,8 @@ const SuiteAnalysisLoading = () => {
   if (analysisData?.status === 'failed') {
     const error = (analysisData.results as any)?.error || 'Analysis failed';
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <Card className="max-w-md">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: designSystem.colors.background }}>
+        <Card className="max-w-md rounded-3xl border-gray-200">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">Analysis Failed</h2>
@@ -63,15 +64,15 @@ const SuiteAnalysisLoading = () => {
 
   // Loading state
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+    <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: designSystem.colors.background }}>
       <div className="max-w-md mx-auto px-6">
-        <Card className="bg-white shadow-sm border border-gray-200">
+        <Card className="bg-white border border-gray-200 rounded-3xl">
           <CardContent className="p-8 text-center">
             {progress ? (
               <div className="space-y-6">
                 {/* Loading Icon */}
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                  <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                  <Loader2 className="h-8 w-8 animate-spin" style={{ color: designSystem.colors.primary }} />
                 </div>
                 
                 {/* Title and Progress */}
@@ -82,7 +83,8 @@ const SuiteAnalysisLoading = () => {
                   {/* Progress Bar */}
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                     <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-500"
+                      className="h-2 rounded-full transition-all duration-500"
+                      style={{ backgroundColor: designSystem.colors.primary }}
                       style={{ width: `${progress.progress}%` }}
                     />
                   </div>
@@ -94,8 +96,8 @@ const SuiteAnalysisLoading = () => {
             ) : (
               // Initial loading state
               <div className="space-y-6">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
-                  <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
+                <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                  <Loader2 className="h-8 w-8 animate-spin" style={{ color: designSystem.colors.primary }} />
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900 mb-2">Starting Analysis</h2>

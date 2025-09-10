@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
+import { designSystem } from '@/lib/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { 
@@ -146,7 +147,8 @@ export const Settings = () => {
         <Button 
           onClick={handleSaveProfile}
           disabled={isLoading}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="hover:opacity-90 text-white rounded-full"
+          style={{ backgroundColor: designSystem.colors.primary }}
         >
           <Save className="h-4 w-4 mr-2" />
           {isLoading ? 'Saving...' : 'Save Changes'}
@@ -170,16 +172,17 @@ export const Settings = () => {
           { key: 'systemUpdates', label: 'System Updates', description: 'Get notified about new features and updates' },
           { key: 'marketingEmails', label: 'Marketing Emails', description: 'Receive tips and product updates' }
         ].map((setting) => (
-          <div key={setting.key} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div key={setting.key} className="flex items-center justify-between p-4 bg-gray-50 rounded-3xl">
             <div>
               <h4 className="font-medium text-gray-900">{setting.label}</h4>
               <p className="text-sm text-gray-500">{setting.description}</p>
             </div>
             <button
               onClick={() => setNotifications(prev => ({ ...prev, [setting.key]: !prev[setting.key as keyof typeof prev] }))}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                notifications[setting.key as keyof typeof notifications] ? 'bg-blue-600' : 'bg-gray-300'
-              }`}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
+              style={{
+                backgroundColor: notifications[setting.key as keyof typeof notifications] ? designSystem.colors.primary : '#D1D5DB'
+              }}
             >
               <span
                 className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
@@ -194,7 +197,8 @@ export const Settings = () => {
       <div className="flex gap-3">
         <Button 
           onClick={handleSaveNotifications}
-          className="bg-blue-600 hover:bg-blue-700 text-white"
+          className="hover:opacity-90 text-white rounded-full"
+          style={{ backgroundColor: designSystem.colors.primary }}
         >
           <Save className="h-4 w-4 mr-2" />
           Save Preferences
@@ -211,30 +215,31 @@ export const Settings = () => {
       </div>
 
       <div className="space-y-4">
-        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+        <div className="p-4 border rounded-3xl" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
           <div className="flex items-center gap-3 mb-3">
-            <Shield className="h-5 w-5 text-blue-600" />
-            <h4 className="font-medium text-blue-900">Account Security</h4>
+            <Shield className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
+            <h4 className="font-medium text-gray-900">Account Security</h4>
           </div>
-          <p className="text-sm text-blue-700 mb-4">
+          <p className="text-sm text-gray-700 mb-4">
             Your account security is managed through Clerk. You can update your password, enable two-factor authentication, and manage connected accounts.
           </p>
           <Button 
             variant="outline" 
-            className="border-blue-300 text-blue-700 hover:bg-blue-100"
+            className="rounded-full hover:opacity-90"
+            style={{ borderColor: designSystem.colors.primary, color: designSystem.colors.primary }}
             onClick={() => window.open('https://clerk.com/docs/authentication/security', '_blank')}
           >
             Manage Security Settings
           </Button>
         </div>
 
-        <div className="p-4 bg-gray-50 rounded-lg">
+        <div className="p-4 bg-gray-50 rounded-3xl">
           <h4 className="font-medium text-gray-900 mb-2">Active Sessions</h4>
           <p className="text-sm text-gray-600 mb-3">You are currently signed in on this device.</p>
           <Button 
             variant="outline" 
             onClick={() => signOut()}
-            className="text-red-600 border-red-300 hover:bg-red-50"
+            className="text-red-600 border-red-300 hover:bg-red-50 rounded-full"
           >
             Sign Out All Sessions
           </Button>
@@ -251,32 +256,36 @@ export const Settings = () => {
       </div>
 
       <div className="space-y-4">
-        <div className="p-4 bg-gray-50 rounded-lg">
+        <div className="p-4 bg-gray-50 rounded-3xl">
           <h4 className="font-medium text-gray-900 mb-3">Theme</h4>
           <div className="grid grid-cols-2 gap-3">
             {['light', 'dark'].map((themeOption) => (
               <button
                 key={themeOption}
                 onClick={() => setTheme(themeOption)}
-                className={`p-3 rounded-lg border-2 transition-colors capitalize ${
+                className={`p-3 rounded-3xl border-2 transition-colors capitalize ${
                   theme === themeOption 
-                    ? 'border-blue-500 bg-blue-50 text-blue-900' 
+                    ? 'text-gray-900' 
                     : 'border-gray-200 hover:border-gray-300'
                 }`}
+                style={theme === themeOption ? {
+                  borderColor: designSystem.colors.primary,
+                  backgroundColor: designSystem.colors.primaryLight
+                } : {}}
               >
-                {themeOption === theme && <Check className="h-4 w-4 float-right text-blue-600" />}
+                {themeOption === theme && <Check className="h-4 w-4 float-right" style={{ color: designSystem.colors.primary }} />}
                 {themeOption} Theme
               </button>
             ))}
           </div>
         </div>
 
-        <div className="p-4 bg-gray-50 rounded-lg">
+        <div className="p-4 bg-gray-50 rounded-3xl">
           <h4 className="font-medium text-gray-900 mb-2">Language & Region</h4>
           <div className="grid gap-3 md:grid-cols-2">
             <div>
               <Label className="text-gray-700">Language</Label>
-              <select className="w-full mt-1 p-2 border border-gray-300 rounded-lg">
+              <select className="w-full mt-1 p-2 border border-gray-300 rounded-3xl">
                 <option>English (US)</option>
                 <option>English (UK)</option>
                 <option>Spanish</option>
@@ -285,7 +294,7 @@ export const Settings = () => {
             </div>
             <div>
               <Label className="text-gray-700">Time Zone</Label>
-              <select className="w-full mt-1 p-2 border border-gray-300 rounded-lg">
+              <select className="w-full mt-1 p-2 border border-gray-300 rounded-3xl">
                 <option>Pacific Time (PT)</option>
                 <option>Mountain Time (MT)</option>
                 <option>Central Time (CT)</option>
@@ -306,20 +315,20 @@ export const Settings = () => {
       </div>
 
       <div className="space-y-4">
-        <div className="p-4 bg-gray-50 rounded-lg">
+        <div className="p-4 bg-gray-50 rounded-3xl">
           <h4 className="font-medium text-gray-900 mb-3">Data Export</h4>
           <p className="text-sm text-gray-600 mb-3">Download all your data including analyses, uploads, and settings.</p>
-          <Button variant="outline">
+          <Button variant="outline" className="rounded-full">
             Download My Data
           </Button>
         </div>
 
-        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div className="p-4 bg-red-50 border border-red-200 rounded-3xl">
           <h4 className="font-medium text-red-900 mb-2">Delete Account</h4>
           <p className="text-sm text-red-700 mb-3">
             Permanently delete your account and all associated data. This action cannot be undone.
           </p>
-          <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-100">
+          <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-100 rounded-full">
             Delete Account
           </Button>
         </div>
@@ -339,12 +348,12 @@ export const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: designSystem.colors.background }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6">
         {/* Header */}
-        <div className="bg-white rounded-lg border border-gray-100 p-6 mb-6 shadow-sm">
+        <div className="bg-white rounded-3xl border border-gray-200 p-6 mb-6">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-gray-500 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
               <SettingsIcon className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -359,7 +368,7 @@ export const Settings = () => {
         <div className="grid gap-6 lg:grid-cols-4">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg border border-gray-100 p-4 shadow-sm">
+            <div className="bg-white rounded-3xl border border-gray-200 p-4">
               <nav className="space-y-1">
                 {settingSections.map((section) => {
                   const Icon = section.icon;
@@ -367,11 +376,15 @@ export const Settings = () => {
                     <button
                       key={section.id}
                       onClick={() => setActiveSection(section.id)}
-                      className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-lg transition-colors ${
+                      className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-3xl transition-colors ${
                         activeSection === section.id
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                          ? 'text-gray-900 border'
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                       }`}
+                      style={activeSection === section.id ? {
+                        backgroundColor: designSystem.colors.primaryLight,
+                        borderColor: designSystem.colors.primary
+                      } : {}}
                     >
                       <Icon className="h-4 w-4" />
                       <span className="text-sm font-medium">{section.label}</span>
@@ -384,7 +397,7 @@ export const Settings = () => {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-lg border border-gray-100 p-6 shadow-sm">
+            <div className="bg-white rounded-3xl border border-gray-200 p-6">
               {renderSection()}
             </div>
           </div>
