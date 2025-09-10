@@ -259,37 +259,42 @@ const Dashboard = () => {
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
-                  <div className="bg-white rounded-3xl border border-gray-200 p-6 transition-all duration-200">
-                    <div className="flex items-center justify-between mb-4">
-                      <div>
-                        <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">Token Usage</p>
-                        <div className="flex items-baseline gap-2 mt-1">
-                          <span className="text-2xl font-semibold text-gray-900">
-                            {safeMetrics?.tokensUsed || '0'}
-                          </span>
-                          <span className="text-sm text-gray-500">
-                            / {safeMetrics?.tokensLimit || '10'}
-                          </span>
+                  <div className="bg-white rounded-3xl border border-gray-200 p-6 transition-all duration-200 h-full flex flex-col">
+                    <div className="mb-4">
+                      <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
+                    </div>
+                    <div className="flex-1 flex flex-col justify-center">
+                      <div className="flex items-center justify-between mb-6">
+                        <div>
+                          <div className="flex items-baseline gap-2 mb-1">
+                            <span className="text-3xl font-semibold text-gray-900">
+                              {safeMetrics?.tokensUsed || '0'}
+                            </span>
+                            <span className="text-lg text-gray-500">
+                              / {safeMetrics?.tokensLimit || '10'}
+                            </span>
+                          </div>
+                          <p className="text-xs text-gray-500 uppercase tracking-wider">Tokens Used</p>
+                        </div>
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                          <Zap className="h-6 w-6" style={{ color: designSystem.colors.primary }} />
                         </div>
                       </div>
-                      <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                        <Zap className="h-6 w-6" style={{ color: designSystem.colors.primary }} />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-xs">
-                        <span className="text-gray-500">Available</span>
-                        <span className="font-medium text-gray-700">
-                          {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
-                        </span>
-                      </div>
-                      <div className="w-full bg-gray-100 rounded-full h-1.5">
-                        <div 
-                          className="h-1.5 rounded-full transition-all duration-300" style={{ backgroundColor: designSystem.colors.primary }} 
-                          style={{ 
-                            width: `${Math.min(100, ((safeMetrics?.tokensUsed || 0) / (safeMetrics?.tokensLimit || 10)) * 100)}%` 
-                          }}
-                        />
+                      <div className="space-y-3">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-500">Available</span>
+                          <span className="font-medium text-gray-700">
+                            {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
+                          </span>
+                        </div>
+                        <div className="w-full bg-gray-100 rounded-full h-2">
+                          <div 
+                            className="h-2 rounded-full transition-all duration-300" style={{ backgroundColor: designSystem.colors.primary }} 
+                            style={{ 
+                              width: `${Math.min(100, ((safeMetrics?.tokensUsed || 0) / (safeMetrics?.tokensLimit || 10)) * 100)}%` 
+                            }}
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -692,7 +697,7 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto bg-white">
-          <div className={activeTab === 'overview' ? 'p-4 sm:p-6' : 'p-0'}>
+          <div className="p-4 sm:p-6">
             {renderContent()}
           </div>
         </div>
