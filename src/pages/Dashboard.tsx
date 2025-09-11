@@ -633,7 +633,7 @@ const Dashboard = () => {
                     }}
                     disabled={isDisabled}
                   >
-                    <item.icon className="h-9 w-9 mr-1" />
+                    <item.icon className="h-5 w-5 mr-0.5" style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px', flex: 'none' }} />
                     {item.label}
                     {isDisabled && (
                       <span className="ml-auto text-xs text-gray-400">Offline</span>
