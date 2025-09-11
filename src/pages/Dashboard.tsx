@@ -4,15 +4,10 @@ import { Button } from '@/components/ui/button';
 import { designSystem } from '@/lib/design-system';
 import { 
   Package, 
-  BarChart3, 
-  Eye, 
-  TrendingUp, 
-  FileText,
   MessageSquare,
   Menu,
   X,
   AlertCircle,
-  Settings as SettingsIcon,
   LogOut,
   ChevronDown,
   MoreHorizontal,
@@ -23,8 +18,22 @@ import {
   RefreshCw,
   Lightbulb,
   ExternalLink,
-  Sparkles
+  Sparkles,
+  TrendingUp,
+  Eye,
+  FileText,
+  BarChart3,
+  Settings as SettingsIcon
 } from 'lucide-react';
+import {
+  HomeIcon,
+  ArchiveBoxIcon,
+  DocumentPlusIcon,
+  ChartBarSquareIcon,
+  EyeIcon,
+  DocumentChartBarIcon,
+  Cog6ToothIcon
+} from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
 import { SpecGenerator } from '@/components/SpecGenerator';
@@ -129,13 +138,13 @@ const Dashboard = () => {
   };
 
   const menuItems = [
-    { id: 'overview', label: 'Dashboard', icon: BarChart3 },
-    { id: 'suite-analyzer-backend', label: 'Suite Analyzer', icon: Package },
-    { id: 'spec-generator', label: 'Spec Generator', icon: Sparkles },
-    { id: 'demand-planner-v2', label: 'Demand Planner', icon: TrendingUp },
-    { id: 'pdp-analyzer', label: 'Design Analyzer', icon: Eye },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'settings', label: 'Settings', icon: SettingsIcon },
+    { id: 'overview', label: 'Dashboard', icon: HomeIcon },
+    { id: 'suite-analyzer-backend', label: 'Suite Analyzer', icon: ArchiveBoxIcon },
+    { id: 'spec-generator', label: 'Spec Generator', icon: DocumentPlusIcon },
+    { id: 'demand-planner-v2', label: 'Demand Planner', icon: ChartBarSquareIcon },
+    { id: 'pdp-analyzer', label: 'Design Analyzer', icon: EyeIcon },
+    { id: 'reports', label: 'Reports', icon: DocumentChartBarIcon },
+    { id: 'settings', label: 'Settings', icon: Cog6ToothIcon },
   ];
 
   // Get current page info
@@ -143,7 +152,7 @@ const Dashboard = () => {
     const currentItem = menuItems.find(item => item.id === activeTab);
     return {
       title: currentItem?.label || 'Dashboard',
-      icon: currentItem?.icon || BarChart3
+      icon: currentItem?.icon || HomeIcon
     };
   };
 
@@ -624,7 +633,7 @@ const Dashboard = () => {
                     }}
                     disabled={isDisabled}
                   >
-                    <item.icon className="h-8 w-8 mr-1" />
+                    <item.icon className="h-9 w-9 mr-1" />
                     {item.label}
                     {isDisabled && (
                       <span className="ml-auto text-xs text-gray-400">Offline</span>
