@@ -584,14 +584,18 @@ const Dashboard = () => {
       <div className="flex h-screen">
         {/* Sidebar */}
         <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out`}>
-          <div className="p-2 sm:p-3">
-            <div className="flex items-center gap-3 mb-6 sm:mb-8">
+          {/* Sidebar Header */}
+          <div className="border-b border-gray-200 px-4 flex items-center" style={{ height: '65px' }}>
+            <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-4 w-4 text-white" />
               </div>
-              <h1 className="text-base sm:text-lg font-medium text-gray-900">QuantiPackAI</h1>
+              <h1 className="text-base font-medium text-gray-900">QuantiPackAI</h1>
             </div>
+          </div>
 
+          {/* Sidebar Content */}
+          <div className="p-2 sm:p-3">
             <nav className="space-y-2">
               {menuItems.map((item) => {
                 const isDisabled = isBackendUnavailable && 
