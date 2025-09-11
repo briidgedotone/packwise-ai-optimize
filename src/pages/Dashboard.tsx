@@ -593,7 +593,7 @@ const Dashboard = () => {
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className={`w-full justify-start text-left h-9 sm:h-10 text-sm sm:text-base rounded-3xl transition-all duration-200 ${
+                    className={`w-full justify-start text-left h-9 sm:h-10 text-xs sm:text-sm rounded-xl transition-all duration-200 ${
                       activeTab === item.id 
                         ? "font-medium shadow-sm" 
                         : isDisabled
@@ -612,7 +612,7 @@ const Dashboard = () => {
                     }}
                     disabled={isDisabled}
                   >
-                    <item.icon className="h-4 w-4 mr-3" />
+                    <item.icon className="h-5 w-5 mr-3" />
                     {item.label}
                     {isDisabled && (
                       <span className="ml-auto text-xs text-gray-400">Offline</span>
