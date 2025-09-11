@@ -149,37 +149,18 @@ const Dashboard = () => {
 
   // Render header component
   const renderHeader = () => {
-    const { title, icon: PageIcon } = getCurrentPageInfo();
-    
     return (
-      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 mb-6">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <PageIcon className="h-6 w-6 text-gray-600" />
-            <div>
-              <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
-              <p className="text-sm text-gray-500 mt-1">
-                {activeTab === 'overview' && 'Track optimization metrics and manage your packaging analysis'}
-                {activeTab === 'suite-analyzer-backend' && 'Optimize your packaging suite with AI-powered analysis'}
-                {activeTab === 'spec-generator' && 'Generate product specifications with AI assistance'}
-                {activeTab === 'demand-planner-v2' && 'Forecast packaging demand and optimize inventory'}
-                {activeTab === 'pdp-analyzer' && 'Analyze and optimize your package design'}
-                {activeTab === 'reports' && 'View and manage your analysis reports'}
-                {activeTab === 'settings' && 'Manage your account and application settings'}
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              size="sm"
-              className="text-gray-600 border-gray-200 hover:bg-gray-50"
-              onClick={() => window.location.reload()}
-            >
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Refresh
-            </Button>
-          </div>
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 mb-6" style={{ height: '65px' }}>
+        <div className="flex items-center justify-end h-full">
+          <UserButton 
+            appearance={{
+              elements: {
+                avatarBox: "h-8 w-8",
+                userButtonPopoverCard: "rounded-xl",
+                userButtonPopoverActionButton: "rounded-lg",
+              }
+            }}
+          />
         </div>
       </div>
     );
