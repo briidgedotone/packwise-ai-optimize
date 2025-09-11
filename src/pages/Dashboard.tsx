@@ -138,6 +138,53 @@ const Dashboard = () => {
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
+  // Get current page info
+  const getCurrentPageInfo = () => {
+    const currentItem = menuItems.find(item => item.id === activeTab);
+    return {
+      title: currentItem?.label || 'Dashboard',
+      icon: currentItem?.icon || BarChart3
+    };
+  };
+
+  // Render header component
+  const renderHeader = () => {
+    const { title, icon: PageIcon } = getCurrentPageInfo();
+    
+    return (
+      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 py-4 mb-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <PageIcon className="h-6 w-6 text-gray-600" />
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900">{title}</h1>
+              <p className="text-sm text-gray-500 mt-1">
+                {activeTab === 'overview' && 'Track optimization metrics and manage your packaging analysis'}
+                {activeTab === 'suite-analyzer-backend' && 'Optimize your packaging suite with AI-powered analysis'}
+                {activeTab === 'spec-generator' && 'Generate product specifications with AI assistance'}
+                {activeTab === 'demand-planner-v2' && 'Forecast packaging demand and optimize inventory'}
+                {activeTab === 'pdp-analyzer' && 'Analyze and optimize your package design'}
+                {activeTab === 'reports' && 'View and manage your analysis reports'}
+                {activeTab === 'settings' && 'Manage your account and application settings'}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-gray-600 border-gray-200 hover:bg-gray-50"
+              onClick={() => window.location.reload()}
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Refresh
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     // If backend is unavailable, redirect to settings for cleanup or show offline message
     if (isBackendUnavailable && ['suite-analyzer-backend', 'spec-generator', 'demand-planner-v2', 'pdp-analyzer'].includes(activeTab)) {
@@ -233,26 +280,6 @@ const Dashboard = () => {
                 </div>
               )}
 
-              {/* Header Section */}
-              <div className="mb-8">
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <h1 className="text-2xl font-semibold text-gray-900 mb-1">Dashboard</h1>
-                    <p className="text-sm text-gray-500">Track optimization metrics and manage your packaging analysis</p>
-                  </div>
-                  <div className="mt-4 sm:mt-0 flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-gray-600 border-gray-200 hover:bg-gray-50"
-                      onClick={() => window.location.reload()}
-                    >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Refresh
-                    </Button>
-                  </div>
-                </div>
-              </div>
 
               {/* Main Dashboard Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
@@ -575,7 +602,7 @@ const Dashboard = () => {
 
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-64 h-full bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out`}>
+        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out`}>
           <div className="p-2 sm:p-3">
             <div className="flex items-center gap-3 mb-6 sm:mb-8">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
@@ -584,7 +611,7 @@ const Dashboard = () => {
               <h1 className="text-base sm:text-lg font-medium text-gray-900">QuantiPackAI</h1>
             </div>
 
-            <nav className="space-y-1">
+            <nav className="space-y-2">
               {menuItems.map((item) => {
                 const isDisabled = isBackendUnavailable && 
                   ['suite-analyzer-backend', 'demand-planner-v2', 'pdp-analyzer'].includes(item.id);
@@ -593,7 +620,7 @@ const Dashboard = () => {
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className={`w-full justify-start text-left h-9 sm:h-10 text-xs sm:text-sm rounded-xl transition-all duration-200 ${
+                    className={`w-full justify-start text-left h-8 text-sm rounded-lg transition-all duration-200 px-3 ${
                       activeTab === item.id 
                         ? "font-medium shadow-sm" 
                         : isDisabled
@@ -601,8 +628,8 @@ const Dashboard = () => {
                         : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
                     }`}
                     style={activeTab === item.id ? { 
-                      color: designSystem.colors.primary,
-                      backgroundColor: designSystem.colors.primaryLight 
+                      color: '#000000',
+                      backgroundColor: '#F5F7F9' 
                     } : {}}
                     onClick={() => {
                       if (!isDisabled) {
@@ -612,7 +639,7 @@ const Dashboard = () => {
                     }}
                     disabled={isDisabled}
                   >
-                    <item.icon className="h-5 w-5 mr-3" />
+                    <item.icon className="h-6 w-6 mr-3" />
                     {item.label}
                     {isDisabled && (
                       <span className="ml-auto text-xs text-gray-400">Offline</span>
@@ -697,7 +724,8 @@ const Dashboard = () => {
 
         {/* Main Content */}
         <div className="flex-1 overflow-auto" style={{ backgroundColor: '#F9FBFC' }}>
-          <div className="p-4 sm:p-6">
+          {renderHeader()}
+          <div className="px-4 sm:px-6 pb-6">
             {renderContent()}
           </div>
         </div>
