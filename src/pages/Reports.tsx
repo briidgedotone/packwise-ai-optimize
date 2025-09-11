@@ -142,7 +142,7 @@ export const Reports = () => {
 
   if (!reports || !stats) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
         <div className="space-y-6">
           <Skeleton className="h-32 w-full" />
           <div className="grid gap-4 md:grid-cols-3">
@@ -156,7 +156,7 @@ export const Reports = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
       <div className="space-y-6">
         {/* Header */}
         <div className="bg-white rounded-3xl border border-gray-200 p-6">

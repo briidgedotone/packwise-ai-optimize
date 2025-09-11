@@ -9,7 +9,7 @@ export const designSystem = {
     primaryDark: '#6366F1',
     
     // Background colors
-    background: '#F6F6FF', // Main app background
+    background: '#F9FBFC', // Main app background (dashboard pages)
     backgroundSection: 'transparent', // Section backgrounds
     backgroundCard: '#FFFFFF', // Card backgrounds
     backgroundHero: '#F7F6F9', // Hero section fallback

@@ -180,7 +180,7 @@ const Dashboard = () => {
         return <Settings />;
       default:
         return (
-          <div className="min-h-screen bg-white">
+          <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
             <div>
               
               {/* Backend Unavailable Warning */}
@@ -559,7 +559,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-100">
         <h1 className="text-xl font-medium text-gray-900">QuantiPackAI</h1>
@@ -696,7 +696,7 @@ const Dashboard = () => {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto bg-white">
+        <div className="flex-1 overflow-auto" style={{ backgroundColor: '#F9FBFC' }}>
           <div className="p-4 sm:p-6">
             {renderContent()}
           </div>
