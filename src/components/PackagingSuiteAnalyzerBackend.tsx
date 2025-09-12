@@ -186,7 +186,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
   
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div className="space-y-4">
         
         {/* Show placeholder when help modal is open */}

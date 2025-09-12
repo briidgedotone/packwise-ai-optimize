@@ -332,7 +332,7 @@ export const SpecGenerator = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div className="space-y-4">
         {/* Header */}
         <div className="bg-white rounded-xl border border-gray-200 p-4">

@@ -117,7 +117,7 @@ const PDPAnalysisResults = () => {
 
   if (!results) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9FBFC' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFBFC' }}>
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4" style={{ color: designSystem.colors.primary }} />
           <p className="text-gray-600">Loading analysis results...</p>
@@ -201,7 +201,7 @@ const PDPAnalysisResults = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       {/* Header */}
       <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
         <div className="flex items-center justify-between">

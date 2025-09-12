@@ -348,7 +348,7 @@ export const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div>
         {/* Header */}
         <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">

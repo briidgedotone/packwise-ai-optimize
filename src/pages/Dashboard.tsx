@@ -218,7 +218,7 @@ const Dashboard = () => {
         return <Settings />;
       default:
         return (
-          <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
+          <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
             <div>
               
               {/* Backend Unavailable Warning */}
@@ -281,7 +281,7 @@ const Dashboard = () => {
                       <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
-                      <div className="flex items-center justify-between mb-6">
+                      <div className="mb-6">
                         <div>
                           <div className="flex items-baseline gap-2 mb-0.5">
                             <span className="text-3xl font-semibold text-gray-900">
@@ -292,9 +292,6 @@ const Dashboard = () => {
                             </span>
                           </div>
                           <p className="text-xs text-gray-500 uppercase tracking-wider">Tokens Used</p>
-                        </div>
-                        <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                          <Zap className="h-6 w-6" style={{ color: designSystem.colors.primary }} />
                         </div>
                       </div>
                       <div className="space-y-3">
@@ -503,7 +500,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-[#E3E7EA]">
         <h1 className="text-xl font-medium text-gray-900">QuantiPackAI</h1>
@@ -644,7 +641,7 @@ const Dashboard = () => {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#F9FBFC' }}>
+        <div className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#FAFBFC' }}>
           {renderHeader()}
           <div className="flex-1 overflow-auto px-3 sm:px-4 pb-4 pt-3">
             {renderContent()}

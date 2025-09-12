@@ -163,7 +163,7 @@ export const PackagingDemandPlanner = () => {
   const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div className="space-y-3">
         <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4">
           <div className="flex items-center justify-between">

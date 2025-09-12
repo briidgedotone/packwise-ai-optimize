@@ -196,7 +196,7 @@ const SuiteAnalysisResults = () => {
   // NOW WE CAN HAVE EARLY RETURNS AFTER ALL HOOKS ARE CALLED
   if (!analysisId) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9FBFC' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFBFC' }}>
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
@@ -214,7 +214,7 @@ const SuiteAnalysisResults = () => {
 
   if (!analysisData) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9FBFC' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFBFC' }}>
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -229,7 +229,7 @@ const SuiteAnalysisResults = () => {
   if (analysisData.status === 'failed') {
     const error = (analysisData.results as any)?.error || 'Analysis failed';
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9FBFC' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFBFC' }}>
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
@@ -247,7 +247,7 @@ const SuiteAnalysisResults = () => {
 
   if (analysisData.status !== 'completed') {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9FBFC' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFBFC' }}>
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
@@ -717,7 +717,7 @@ const SuiteAnalysisResults = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div className="max-w-[1400px] mx-auto px-6 py-6">
         
         {/* Header */}
