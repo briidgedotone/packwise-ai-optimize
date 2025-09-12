@@ -166,8 +166,8 @@ const Dashboard = () => {
             appearance={{
               elements: {
                 avatarBox: "h-8 w-8",
-                userButtonPopoverCard: "rounded-xl",
-                userButtonPopoverActionButton: "rounded-lg",
+                userButtonPopoverCard: "rounded-3xl",
+                userButtonPopoverActionButton: "rounded-2xl",
               }
             }}
           />
@@ -223,7 +223,7 @@ const Dashboard = () => {
               
               {/* Backend Unavailable Warning */}
               {isBackendUnavailable && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-3">
+                <div className="bg-red-50 border border-red-200 rounded-3xl p-4 mb-3">
                   <div className="flex items-start gap-4">
                     <AlertCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
@@ -232,7 +232,7 @@ const Dashboard = () => {
                         Convex free plan limits exceeded. All backend functions are disabled until limits are restored.
                         The application is running in offline mode with limited functionality.
                       </p>
-                      <div className="bg-red-100 border border-red-200 rounded-lg p-3 mb-3">
+                      <div className="bg-red-100 border border-red-200 rounded-2xl p-3 mb-3">
                         <p className="text-xs text-red-800">
                           <strong>⚠️ Important:</strong> Data cleanup functions cannot work when backend is disabled. 
                           The only solution is to <strong>upgrade to Convex Pro plan ($25/month)</strong> to restore full functionality and enable data cleanup.
@@ -276,7 +276,7 @@ const Dashboard = () => {
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
-                  <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 transition-all duration-200 h-full flex flex-col">
+                  <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 transition-all duration-200 h-full flex flex-col">
                     <div className="mb-3">
                       <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
                     </div>
@@ -316,18 +316,18 @@ const Dashboard = () => {
 
                 {/* Quick Actions - Modern Card Design */}
                 <div className="lg:col-span-8">
-                  <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 transition-all duration-200">
+                  <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 transition-all duration-200">
                     <div className="mb-3">
                       <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
                     </div>
                     <div className="grid gap-3 grid-cols-2">
                       <Button
                         variant="outline"
-                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
+                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-gradient-to-br from-purple-500 via-blue-500 to-indigo-600">
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors bg-gradient-to-br from-purple-500 via-blue-500 to-indigo-600">
                             <PackageSolid className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-left">
@@ -338,11 +338,11 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
+                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('demand-planner-v2')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600">
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600">
                             <TrendingUpSolid className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-left">
@@ -353,11 +353,11 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
+                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('spec-generator')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500">
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500">
                             <SparklesSolid className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-left">
@@ -368,11 +368,11 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
+                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-gradient-to-br from-pink-500 via-rose-500 to-fuchsia-600">
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors bg-gradient-to-br from-pink-500 via-rose-500 to-fuchsia-600">
                             <EyeSolid className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-left">
@@ -387,9 +387,9 @@ const Dashboard = () => {
               </div>
 
               {/* AI Chat Interface - Inline */}
-              <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 shadow-sm mb-4">
+              <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 shadow-sm mb-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                  <div className="w-8 h-8 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                     <MessageSquare className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
@@ -401,7 +401,7 @@ const Dashboard = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 
                 {/* Tool Usage Stats - Enhanced */}
-                <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
+                <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-medium text-gray-900">Tool Analytics</h3>
                     <BarChart3 className="h-4 w-4 text-gray-400" />
@@ -443,7 +443,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Recent Analyses - Enhanced */}
-                <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
+                <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
                   <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-medium text-gray-900">Recent Analyses</h3>
                     <Button 
@@ -459,7 +459,7 @@ const Dashboard = () => {
                   <div className="space-y-3">
                     {safeFiles && safeFiles.length > 0 ? safeFiles.slice(0, 4).map((analysis: any, index: number) => (
                       <div key={index} className="flex items-center gap-3 py-1 border-b border-[#E3E7EA] last:border-0">
-                        <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <div className="w-8 h-8 bg-gray-50 rounded-2xl flex items-center justify-center flex-shrink-0">
                           {analysis.type === 'suite_analyzer' ? <Package className="h-4 w-4 text-gray-600" /> :
                            analysis.type === 'pdp_analyzer' ? <Eye className="h-4 w-4 text-gray-600" /> :
                            analysis.type === 'demand_planner' || analysis.type === 'demand_planner_v2' ? <TrendingUp className="h-4 w-4 text-gray-600" /> :
@@ -520,7 +520,7 @@ const Dashboard = () => {
           {/* Sidebar Header */}
           <div className="border-b border-[#E3E7EA] px-3 flex items-center" style={{ height: '60px' }}>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+              <div className="w-8 h-8 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-4 w-4 text-white" />
               </div>
               <h1 className="text-base font-medium text-gray-900">QuantiPackAI</h1>
@@ -538,7 +538,7 @@ const Dashboard = () => {
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className={`w-full justify-start text-left h-10 text-sm rounded-lg transition-all duration-200 px-3 ${
+                    className={`w-full justify-start text-left h-10 text-sm rounded-2xl transition-all duration-200 px-3 ${
                       activeTab === item.id 
                         ? "font-medium shadow-sm" 
                         : isDisabled
@@ -571,7 +571,7 @@ const Dashboard = () => {
           {/* Bottom Section */}
           <div className="absolute bottom-2 left-2 right-2 space-y-1">
             {/* Upgrade Card */}
-            <div className="bg-white rounded-xl p-2 border border-[#E3E7EA]">
+            <div className="bg-white rounded-3xl p-2 border border-[#E3E7EA]">
               <h4 className="font-medium text-gray-900 mb-1">Upgrade to Pro</h4>
               <p className="text-xs text-gray-600 mb-1">
                 Get 1 month free and unlock advanced features
@@ -585,7 +585,7 @@ const Dashboard = () => {
             <div className="relative" data-user-dropdown>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="w-full bg-gray-50 rounded-lg p-2 border border-[#E3E7EA] hover:bg-gray-100 transition-colors"
+                className="w-full bg-gray-50 rounded-2xl p-2 border border-[#E3E7EA] hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
@@ -605,7 +605,7 @@ const Dashboard = () => {
 
               {/* Dropdown Menu */}
               {userDropdownOpen && (
-                <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl border border-[#E3E7EA] py-2 z-50">
+                <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-3xl border border-[#E3E7EA] py-2 z-50">
                   <button
                     onClick={() => {
                       setUserDropdownOpen(false);

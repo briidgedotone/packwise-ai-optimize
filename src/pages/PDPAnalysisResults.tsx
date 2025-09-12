@@ -203,7 +203,7 @@ const PDPAnalysisResults = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       {/* Header */}
-      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
+      <div className="bg-white rounded-3xl border border-gray-200 p-4 mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
@@ -238,7 +238,7 @@ const PDPAnalysisResults = () => {
 
         <div className="mt-4">
           <div className="flex items-center gap-3 mb-3">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
               <Eye className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -250,7 +250,7 @@ const PDPAnalysisResults = () => {
           </div>
 
           {/* Overall Score */}
-          <div className="rounded-xl p-4 border border-gray-200" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+          <div className="rounded-3xl p-4 border border-gray-200" style={{ backgroundColor: designSystem.colors.primaryLight }}>
             <div className="text-center">
               <div className="text-4xl font-bold text-gray-900 mb-2">{overallScore.toFixed(1)}</div>
               <div className="text-gray-600 text-lg mb-4">Overall Performance Score</div>
@@ -280,7 +280,7 @@ const PDPAnalysisResults = () => {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-xl border border-gray-200 p-3 mb-4">
+      <div className="bg-white rounded-3xl border border-gray-200 p-3 mb-4">
         <div className="flex items-center gap-2">
           {[
             { id: 'overview', label: 'Visual Overview', icon: ImageIcon },
@@ -309,9 +309,9 @@ const PDPAnalysisResults = () => {
         {activeTab === 'overview' && (
           <div className="space-y-4">
             {/* PDP Visual Comparison */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4">
+            <div className="bg-white rounded-3xl border border-gray-200 p-4">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-pink-500 rounded-2xl flex items-center justify-center">
                   <Package className="h-4 w-4 text-white" />
                 </div>
                 <h2 className="text-lg font-medium text-gray-900">
@@ -329,10 +329,10 @@ const PDPAnalysisResults = () => {
                         <img
                           src={imageData.mainPDP.dataUrl}
                           alt="Main PDP"
-                          className="w-full rounded-xl shadow-lg"
+                          className="w-full rounded-3xl shadow-lg"
                         />
                       ) : (
-                        <div className="w-full h-96 bg-gray-100 rounded-xl flex items-center justify-center">
+                        <div className="w-full h-96 bg-gray-100 rounded-3xl flex items-center justify-center">
                           <div className="text-center">
                             <ImageIcon className="h-16 w-16 text-gray-400 mx-auto mb-2" />
                             <p className="text-gray-500">PDP Image</p>
@@ -347,7 +347,7 @@ const PDPAnalysisResults = () => {
                         {Object.entries(results.mainAnalysis.scores)
                           .slice(0, 4)
                           .map(([metric, score]) => (
-                            <div key={metric} className="bg-gray-50 rounded-xl p-4">
+                            <div key={metric} className="bg-gray-50 rounded-3xl p-4">
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-sm font-medium text-gray-600">
                                   {metric.replace(/_/g, ' ')}
@@ -367,7 +367,7 @@ const PDPAnalysisResults = () => {
                       </div>
 
                       {/* Visual Elements */}
-                      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-4">
+                      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-4">
                         <h4 className="font-semibold text-gray-900 mb-3">Visual Elements</h4>
                         <div className="space-y-3">
                           <div className="flex items-start gap-3">
@@ -404,7 +404,7 @@ const PDPAnalysisResults = () => {
                       {results.competitorAnalyses.map((competitor, index) => (
                         <div
                           key={index}
-                          className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-200"
+                          className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-200"
                         >
                           {imageData?.competitors[index] ? (
                             <img
@@ -437,9 +437,9 @@ const PDPAnalysisResults = () => {
             {/* Quick Insights */}
             <div className="grid md:grid-cols-3 gap-3">
               {/* Strengths */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="bg-white rounded-3xl border border-gray-200 p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-green-500 rounded-2xl flex items-center justify-center">
                     <CheckCircle className="h-4 w-4 text-white" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900">Key Strengths</h3>
@@ -455,9 +455,9 @@ const PDPAnalysisResults = () => {
               </div>
 
               {/* Improvements */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="bg-white rounded-3xl border border-gray-200 p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-orange-500 rounded-2xl flex items-center justify-center">
                     <AlertTriangle className="h-4 w-4 text-white" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900">Priority Areas</h3>
@@ -473,9 +473,9 @@ const PDPAnalysisResults = () => {
               </div>
 
               {/* Quick Wins */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="bg-white rounded-3xl border border-gray-200 p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-purple-500 rounded-2xl flex items-center justify-center">
                     <Zap className="h-4 w-4 text-white" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900">Quick Wins</h3>
@@ -497,9 +497,9 @@ const PDPAnalysisResults = () => {
         {activeTab === 'detailed' && (
           <div className="space-y-6">
             {/* Comprehensive Scores */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white rounded-3xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-blue-500 rounded-2xl flex items-center justify-center">
                   <BarChart3 className="h-4 w-4 text-white" />
                 </div>
                 <h2 className="text-lg font-medium text-gray-900">Comprehensive Score Analysis</h2>
@@ -557,9 +557,9 @@ const PDPAnalysisResults = () => {
         {activeTab === 'recommendations' && (
           <div className="space-y-6">
             {/* Overall Strategy */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white rounded-3xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-indigo-500 rounded-2xl flex items-center justify-center">
                   <Target className="h-4 w-4 text-white" />
                 </div>
                 <h2 className="text-lg font-medium text-gray-900">Strategic Recommendations</h2>
@@ -568,9 +568,9 @@ const PDPAnalysisResults = () => {
             </div>
 
             {/* Priority Improvements */}
-            <div className="bg-white rounded-xl border border-gray-200 p-6">
+            <div className="bg-white rounded-3xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-orange-500 rounded-2xl flex items-center justify-center">
                   <TrendingUp className="h-4 w-4 text-white" />
                 </div>
                 <h2 className="text-lg font-medium text-gray-900">Priority Improvements</h2>
@@ -580,7 +580,7 @@ const PDPAnalysisResults = () => {
                 {results.recommendations.priority_improvements.map((improvement, index) => (
                   <div
                     key={index}
-                    className="bg-gray-50 rounded-lg p-6 border border-gray-200"
+                    className="bg-gray-50 rounded-2xl p-6 border border-gray-200"
                   >
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -599,14 +599,14 @@ const PDPAnalysisResults = () => {
                           </div>
                         </div>
                       </div>
-                      <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+                      <div className="w-12 h-12 bg-orange-500 rounded-3xl flex items-center justify-center">
                         <TrendingUp className="h-6 w-6 text-white" />
                       </div>
                     </div>
                     
                     <p className="text-gray-700 mb-4">{improvement.recommendation}</p>
                     
-                    <div className="bg-white rounded-lg p-4">
+                    <div className="bg-white rounded-2xl p-4">
                       <h4 className="text-sm font-medium text-gray-600 mb-2">Example:</h4>
                       <p className="text-sm text-gray-700 italic">{improvement.example}</p>
                     </div>
@@ -617,9 +617,9 @@ const PDPAnalysisResults = () => {
 
             {/* Quick Wins */}
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="bg-white rounded-3xl border border-gray-200 p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-green-500 rounded-2xl flex items-center justify-center">
                     <Zap className="h-4 w-4 text-white" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900">Quick Wins</h3>
@@ -638,9 +638,9 @@ const PDPAnalysisResults = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-xl border border-gray-200 p-4">
+              <div className="bg-white rounded-3xl border border-gray-200 p-4">
                 <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-blue-500 rounded-2xl flex items-center justify-center">
                     <Award className="h-4 w-4 text-white" />
                   </div>
                   <h3 className="text-base font-medium text-gray-900">Competitive Advantages</h3>

@@ -159,7 +159,7 @@ export const Reports = () => {
     <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div className="space-y-4">
         {/* Header */}
-        <div className="bg-white rounded-xl border border-gray-200 p-4">
+        <div className="bg-white rounded-3xl border border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
@@ -183,7 +183,7 @@ export const Reports = () => {
 
         {/* Stats Cards */}
         <div className="grid gap-3 md:grid-cols-4">
-          <Card className="border-gray-200 bg-white rounded-xl">
+          <Card className="border-gray-200 bg-white rounded-3xl">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -197,7 +197,7 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-white rounded-xl">
+          <Card className="border-gray-200 bg-white rounded-3xl">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -211,7 +211,7 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-white rounded-xl">
+          <Card className="border-gray-200 bg-white rounded-3xl">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -225,7 +225,7 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-white rounded-xl">
+          <Card className="border-gray-200 bg-white rounded-3xl">
             <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
@@ -247,7 +247,7 @@ export const Reports = () => {
         </div>
 
         {/* Filters and Search */}
-        <Card className="border-gray-200 bg-white rounded-xl">
+        <Card className="border-gray-200 bg-white rounded-3xl">
           <CardContent className="p-3">
             <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
@@ -291,7 +291,7 @@ export const Reports = () => {
         {/* Reports List */}
         <div className="space-y-3">
           {filteredReports.length === 0 ? (
-            <Card className="border-gray-200 bg-white rounded-xl">
+            <Card className="border-gray-200 bg-white rounded-3xl">
               <CardContent className="p-8 text-center">
                 <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <FileText className="h-8 w-8 text-gray-400" />
@@ -308,7 +308,7 @@ export const Reports = () => {
             filteredReports.map((report) => {
               const TypeIcon = getTypeIcon(report.type);
               return (
-                <Card key={report._id} className="border-gray-200 bg-white rounded-xl hover:opacity-95 transition-all">
+                <Card key={report._id} className="border-gray-200 bg-white rounded-3xl hover:opacity-95 transition-all">
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between">
                       <div className="flex items-start gap-3 flex-1">

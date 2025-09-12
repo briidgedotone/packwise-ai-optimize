@@ -763,7 +763,7 @@ const SuiteAnalysisResults = () => {
 
         {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-6 mb-6">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Orders Processed</p>
@@ -776,7 +776,7 @@ const SuiteAnalysisResults = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Average Fill Rate</p>
@@ -789,7 +789,7 @@ const SuiteAnalysisResults = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Success Rate</p>
@@ -802,7 +802,7 @@ const SuiteAnalysisResults = () => {
             </div>
           </div>
           
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Processing Speed</p>
@@ -821,7 +821,7 @@ const SuiteAnalysisResults = () => {
           
           {/* Package Distribution */}
           <div className="col-span-6">
-            <Card className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <Card className="bg-white rounded-3xl shadow-sm border border-gray-100">
               <CardHeader className="border-b border-gray-100 pb-4">
                 <CardTitle className="text-lg font-semibold text-gray-900">Package Distribution</CardTitle>
                 <CardDescription className="text-sm text-gray-600">
@@ -1049,7 +1049,7 @@ const SuiteAnalysisResults = () => {
 
           {/* Package Details */}
           <div className="col-span-6">
-            <Card className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <Card className="bg-white rounded-3xl shadow-sm border border-gray-100">
               <CardHeader className="border-b border-gray-100 pb-4">
                 <CardTitle className="text-lg font-semibold text-gray-900">Package Details</CardTitle>
                 <CardDescription className="text-sm text-gray-600">
@@ -1145,7 +1145,7 @@ const SuiteAnalysisResults = () => {
         {!hasDefaultCosts && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
             {/* Cost Comparison Chart */}
-            <Card className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <Card className="bg-white rounded-3xl shadow-sm border border-gray-100">
               <CardHeader className="border-b border-gray-100 pb-4">
                 <CardTitle className="text-lg font-semibold text-gray-900">Cost Analysis</CardTitle>
                 <CardDescription className="text-sm text-gray-600">
@@ -1277,7 +1277,7 @@ const SuiteAnalysisResults = () => {
             </Card>
 
             {/* Usage Comparison Chart */}
-            <Card className="bg-white rounded-xl shadow-sm border border-gray-100">
+            <Card className="bg-white rounded-3xl shadow-sm border border-gray-100">
               <CardHeader className="border-b border-gray-100 pb-4">
                 <CardTitle className="text-lg font-semibold text-gray-900">Material Usage</CardTitle>
                 <CardDescription className="text-sm text-gray-600">
@@ -1415,7 +1415,7 @@ const SuiteAnalysisResults = () => {
 
 
         {/* Package Optimization Recommendations */}
-        <Card className="bg-white rounded-xl shadow-sm border border-gray-100 mt-6">
+        <Card className="bg-white rounded-3xl shadow-sm border border-gray-100 mt-6">
           <CardHeader className="border-b border-gray-100 pb-4">
             <div className="flex items-start justify-between">
               <div>
@@ -1723,7 +1723,7 @@ const SuiteAnalysisResults = () => {
         {/* Help Modal */}
         {showHelpModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-xl shadow-2xl max-w-4xl max-h-[90vh] overflow-y-auto m-4">
+            <div className="bg-white rounded-3xl shadow-2xl max-w-4xl max-h-[90vh] overflow-y-auto m-4">
               <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
                 <h2 className="text-xl font-semibold text-gray-900">Suite Analysis Results Guide</h2>
                 <Button
