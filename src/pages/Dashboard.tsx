@@ -16,7 +16,6 @@ import {
   Zap,
   FolderOpen,
   RefreshCw,
-  Lightbulb,
   ExternalLink,
   Sparkles,
   TrendingUp,
@@ -488,86 +487,6 @@ const Dashboard = () => {
               {/* AI Chat Interface - Enhanced */}
               <div className="mb-8">
                 <AIAssistant />
-              </div>
-
-              {/* Smart Insights - Premium Design */}
-              <div className="bg-white rounded-lg border border-[#E3E7EA]/80 p-4 shadow-sm hover:shadow-lg transition-all duration-300">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center shadow-sm">
-                    <Lightbulb className="h-5 w-5 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">Smart Insights</h3>
-                </div>
-                
-                {/* Rotating Insights - Enhanced */}
-                {(() => {
-                  const insights = [
-                    {
-                      title: "Packaging Optimization Opportunity",
-                      description: "Based on your usage patterns, switching to medium boxes for 20% of your shipments could reduce costs by an estimated 15%.",
-                      color: "blue"
-                    },
-                    {
-                      title: "Sustainable Packaging Benefits", 
-                      description: "Implementing eco-friendly packaging materials could improve your sustainability score by 25% while maintaining cost efficiency.",
-                      color: "green"
-                    },
-                    {
-                      title: "Shipping Volume Analysis",
-                      description: "Your peak shipping days are Tuesday-Thursday. Consider bulk packaging preparation on Mondays to optimize workflow.",
-                      color: "purple"
-                    },
-                    {
-                      title: "Material Waste Reduction",
-                      description: "Using right-sized packaging could eliminate 30% of void fill material, reducing both costs and environmental impact.",
-                      color: "orange"
-                    },
-                    {
-                      title: "Seasonal Demand Planning",
-                      description: "Historical data shows 40% increase in demand during Q4. Consider scaling packaging inventory 6 weeks prior.",
-                      color: "indigo"
-                    },
-                    {
-                      title: "Multi-Item Shipping Efficiency",
-                      description: "Consolidating orders with 2-3 items into single packages could reduce shipping costs by 22% on average.",
-                      color: "teal"
-                    },
-                    {
-                      title: "Packaging Performance Metrics",
-                      description: "Your current packaging efficiency is 78%. Implementing automated size selection could boost this to 92%.",
-                      color: "red"
-                    }
-                  ];
-                  
-                  const today = new Date().getDay(); // 0 = Sunday, 1 = Monday, etc.
-                  const insight = insights[today];
-                  const colorClasses = {
-                    blue: { bg: "bg-blue-50", border: "border-blue-200", iconBg: "bg-blue-100", iconText: "text-blue-600", title: "text-blue-900", text: "text-blue-700" },
-                    green: { bg: "bg-green-50", border: "border-green-200", iconBg: "bg-green-100", iconText: "text-green-600", title: "text-green-900", text: "text-green-700" },
-                    purple: { bg: "bg-purple-50", border: "border-purple-200", iconBg: "bg-purple-100", iconText: "text-purple-600", title: "text-purple-900", text: "text-purple-700" },
-                    orange: { bg: "bg-orange-50", border: "border-orange-200", iconBg: "bg-orange-100", iconText: "text-orange-600", title: "text-orange-900", text: "text-orange-700" },
-                    indigo: { bg: "bg-indigo-50", border: "border-indigo-200", iconBg: "bg-indigo-100", iconText: "text-indigo-600", title: "text-indigo-900", text: "text-indigo-700" },
-                    teal: { bg: "bg-teal-50", border: "border-teal-200", iconBg: "bg-teal-100", iconText: "text-teal-600", title: "text-teal-900", text: "text-teal-700" },
-                    red: { bg: "bg-red-50", border: "border-red-200", iconBg: "bg-red-100", iconText: "text-red-600", title: "text-red-900", text: "text-red-700" }
-                  };
-                  const colors = colorClasses[insight.color];
-                  
-                  return (
-                    <div className="bg-white border border-[#E3E7EA] rounded-xl p-4">
-                      <div className="flex items-start gap-4">
-                        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                          <Lightbulb className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
-                        </div>
-                        <div>
-                          <h4 className={`font-semibold ${colors.title} text-base mb-2`}>{insight.title}</h4>
-                          <p className={`${colors.text} leading-relaxed`}>
-                            {insight.description}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })()}
               </div>
             </div>
           </div>
