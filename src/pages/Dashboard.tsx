@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useClerk, useUser, UserButton } from '@clerk/clerk-react';
+import { useClerk, useUser } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { designSystem } from '@/lib/design-system';
 import {
@@ -162,15 +162,14 @@ const Dashboard = () => {
     return (
       <div className="sticky top-0 z-40 bg-white border-b border-[#E3E7EA] px-3 sm:px-4" style={{ height: '60px' }}>
         <div className="flex items-center justify-end h-full">
-          <UserButton 
-            appearance={{
-              elements: {
-                avatarBox: "h-8 w-8",
-                userButtonPopoverCard: "rounded-3xl",
-                userButtonPopoverActionButton: "rounded-2xl",
-              }
-            }}
-          />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => window.location.reload()}
+            className="text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-2xl"
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
         </div>
       </div>
     );
