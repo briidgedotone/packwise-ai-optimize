@@ -320,9 +320,9 @@ export const SpecGenerator = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="space-y-6">
+      <div className="space-y-4">
         {/* Header */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
@@ -358,7 +358,7 @@ export const SpecGenerator = () => {
           <Alert className="bg-blue-50 border-blue-200">
             <Info className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
             <AlertDescription className="text-sm text-gray-700">
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div>
                   <strong className="text-gray-900">📥 INPUTS:</strong>
                   <ul className="mt-1 space-y-1 text-xs">
@@ -383,7 +383,7 @@ export const SpecGenerator = () => {
         )}
 
         {!results ? (
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-4 lg:grid-cols-2">
             {/* File Upload Section */}
             <Card className="bg-white border-gray-200 shadow-sm">
               <CardHeader>
@@ -395,9 +395,9 @@ export const SpecGenerator = () => {
                   Upload product list or order file (CSV format)
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {/* File Upload */}
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-blue-300 hover:bg-blue-50/50 transition-colors">
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-blue-300 hover:bg-blue-50/50 transition-colors">
                   <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                     <Upload className="h-5 w-5 text-blue-600" />
                   </div>
@@ -434,7 +434,7 @@ export const SpecGenerator = () => {
                 )}
 
                 {/* Optional Fields */}
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label className="text-gray-700 font-medium">Optional Information</Label>
                   <div className="grid gap-3">
                     <Input
@@ -478,9 +478,9 @@ export const SpecGenerator = () => {
                   Set min/avg/max dimensions to calibrate AI estimates (inches)
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-5">
+              <CardContent className="space-y-4">
                 {['min', 'avg', 'max'].map((type) => (
-                  <div key={type} className="space-y-3">
+                  <div key={type} className="space-y-2">
                     <Label className="text-gray-700 font-medium text-sm">
                       {type === 'min' ? 'Minimum' : type === 'avg' ? 'Average' : 'Maximum'} Dimensions
                     </Label>
@@ -562,7 +562,7 @@ export const SpecGenerator = () => {
             </CardHeader>
             <CardContent>
               {/* Notes Display Options */}
-              <div className="mb-4 flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+              <div className="mb-3 flex items-center justify-between p-2 bg-gray-50 rounded-xl">
                 <div className="flex items-center gap-2">
                   <Label className="text-sm font-medium text-gray-700">Notes Display:</Label>
                   <div className="flex gap-1">
@@ -675,7 +675,7 @@ export const SpecGenerator = () => {
               </div>
 
               {/* Summary Statistics */}
-              <div className="mt-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-3">
                 <div className="rounded-xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                   <p className="text-sm font-medium text-gray-900">Total Products</p>
                   <p className="text-2xl font-bold" style={{ color: designSystem.colors.primary }}>{results.length}</p>
@@ -749,8 +749,8 @@ export const SpecGenerator = () => {
           <div className="space-y-4">
             {/* Progress Display */}
             {isProcessing && (
-              <div className="bg-white rounded-xl border border-gray-200 p-6">
-                <div className="flex items-center gap-4 mb-4">
+              <div className="bg-white rounded-xl border border-gray-200 p-4">
+                <div className="flex items-center gap-3 mb-3">
                   <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                     <Loader2 className="h-5 w-5 animate-spin text-white" />
                   </div>

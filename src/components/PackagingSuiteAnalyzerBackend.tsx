@@ -191,7 +191,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
         {!showHelpModal && (
           <>
             {/* Header */}
-            <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
@@ -236,11 +236,11 @@ export const PackagingSuiteAnalyzerBackend = () => {
                   Upload your data files to get started with backend analysis
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {/* Order Data Upload */}
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label htmlFor="order-history" className="text-gray-700 font-medium">Order Data File *</Label>
-                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
                     <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-2">
                       <Upload className="h-4 w-4 text-gray-600" />
                     </div>
@@ -275,7 +275,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 </div>
 
                 {/* Packaging Suite Upload */}
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="packaging-suite" className="text-slate-700 font-medium">Packaging Suite File *</Label>
                     <Button
@@ -290,7 +290,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                   </div>
                   
                   {!useManualPackageInput ? (
-                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
+                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
                       <Upload className="h-10 w-10 mx-auto mb-3 text-slate-400" />
                       <p className="text-sm text-slate-600 mb-3">
                         Required fields: Package types, L×W×H (inches) | Recommended fields: Price ($), weight (lbs), usage (%)
@@ -311,9 +311,9 @@ export const PackagingSuiteAnalyzerBackend = () => {
                       </Button>
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {manualPackages.map((pkg, index) => (
-                        <div key={index} className="border border-gray-200 rounded-xl p-4 space-y-3">
+                        <div key={index} className="border border-gray-200 rounded-xl p-3 space-y-2">
                           <div className="flex items-center justify-between">
                             <h4 className="text-sm font-medium text-gray-700">Package {index + 1}</h4>
                             {manualPackages.length > 1 && (
@@ -446,7 +446,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
         {/* Error Display */}
         {(error || analysisError) && (
           <Card className="bg-red-50 border-red-200">
-            <CardContent className="p-4">
+            <CardContent className="p-3">
               <div className="flex items-center gap-2 text-red-800">
                 <AlertCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
@@ -458,7 +458,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
         )}
 
 
-            <div className="flex justify-center lg:justify-end px-4 sm:px-0">
+            <div className="flex justify-center lg:justify-end px-3 sm:px-0">
           <Button 
             size="lg"
             disabled={!files.orderHistory || (!files.packagingSuite && !useManualPackageInput) || isAnalyzing}
@@ -503,9 +503,9 @@ export const PackagingSuiteAnalyzerBackend = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-6 mt-6">
+          <div className="space-y-4 mt-6">
             {/* What is Suite Analyzer */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: designSystem.colors.primary }}></div>
                 What is Suite Analyzer?
@@ -518,7 +518,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
             </div>
 
             {/* How it Works */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: designSystem.colors.primary }}></div>
                 How It Works

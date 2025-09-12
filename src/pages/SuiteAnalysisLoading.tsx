@@ -65,11 +65,11 @@ const SuiteAnalysisLoading = () => {
   // Loading state
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F9FBFC' }}>
-      <div className="max-w-md mx-auto px-6">
+      <div className="max-w-md mx-auto px-4">
         <Card className="bg-white border border-gray-200 rounded-xl">
-          <CardContent className="p-8 text-center">
+          <CardContent className="p-6 text-center">
             {progress ? (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Loading Icon */}
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                   <Loader2 className="h-8 w-8 animate-spin" style={{ color: designSystem.colors.primary }} />
@@ -95,7 +95,7 @@ const SuiteAnalysisLoading = () => {
               </div>
             ) : (
               // Initial loading state
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                   <Loader2 className="h-8 w-8 animate-spin" style={{ color: designSystem.colors.primary }} />
                 </div>

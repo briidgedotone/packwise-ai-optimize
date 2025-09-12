@@ -269,8 +269,8 @@ export const PDPAnalyzer = () => {
 
   const renderStep1 = () => (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-white border border-gray-200 rounded-xl p-8">
-        <div className="flex items-center gap-3 mb-6">
+      <div className="bg-white border border-gray-200 rounded-xl p-6">
+        <div className="flex items-center gap-3 mb-4">
           <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
             <FileImage className="h-4 w-4 text-white" />
           </div>
@@ -285,12 +285,12 @@ export const PDPAnalyzer = () => {
               onChange={(e) => handleMainPDPUpload(e.target.files?.[0] || null)}
               className="hidden"
             />
-            <div className="border-2 border-dashed border-gray-200 rounded-xl p-16 text-center transition-all cursor-pointer group min-h-[400px] flex flex-col justify-center" onMouseEnter={(e) => { e.currentTarget.style.borderColor = designSystem.colors.primary; e.currentTarget.style.backgroundColor = designSystem.colors.primaryLight; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.backgroundColor = ''; }}>
-              <div className="w-24 h-24 rounded-xl flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: designSystem.colors.primary }}>
+            <div className="border-2 border-dashed border-gray-200 rounded-xl p-12 text-center transition-all cursor-pointer group min-h-[400px] flex flex-col justify-center" onMouseEnter={(e) => { e.currentTarget.style.borderColor = designSystem.colors.primary; e.currentTarget.style.backgroundColor = designSystem.colors.primaryLight; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = ''; e.currentTarget.style.backgroundColor = ''; }}>
+              <div className="w-24 h-24 rounded-xl flex items-center justify-center mx-auto mb-4" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Upload className="h-12 w-12 text-white" />
               </div>
-              <h3 className="text-2xl font-medium text-gray-900 mb-4">Upload Your Design</h3>
-              <p className="text-lg text-gray-500 mb-6">Drop or Upload Your Packaging Design Here</p>
+              <h3 className="text-2xl font-medium text-gray-900 mb-3">Upload Your Design</h3>
+              <p className="text-lg text-gray-500 mb-4">Drop or Upload Your Packaging Design Here</p>
               <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
                 <Shield className="h-4 w-4" />
                 <span>Secure upload • JPG, PNG, PDF • Max 10MB</span>
@@ -313,7 +313,7 @@ export const PDPAnalyzer = () => {
             >
               <X className="h-5 w-5" />
             </button>
-            <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-xl">
               <div className="flex items-center gap-2 text-green-700">
                 <CheckCircle2 className="h-5 w-5" />
                 <span className="font-medium">Main PDP uploaded successfully</span>
@@ -328,8 +328,8 @@ export const PDPAnalyzer = () => {
   const renderStep2 = () => (
     <div className="max-w-4xl mx-auto">
       {/* Product Information */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="bg-white border border-gray-200 rounded-xl p-4">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-emerald-500 rounded-xl flex items-center justify-center">
               <Package className="h-4 w-4 text-white" />
@@ -339,8 +339,8 @@ export const PDPAnalyzer = () => {
           <span className="text-xs font-medium text-red-600 bg-red-50 border border-red-200 px-2 py-1 rounded-full">Required</span>
         </div>
 
-        <div className="space-y-6">
-          <div className="grid gap-6 md:grid-cols-2">
+        <div className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2">
             <div>
               <Label className="text-gray-700 font-semibold mb-2 flex items-center gap-2">
                 Product Category
@@ -409,7 +409,7 @@ export const PDPAnalyzer = () => {
           <span className="text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200 px-2 py-1 rounded">Optional</span>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {competitorPreviews.map((preview, index) => (
             <div key={index} className="relative group">
               <img
@@ -463,7 +463,7 @@ export const PDPAnalyzer = () => {
           <h3 className="text-lg font-medium text-gray-900">Analysis Parameters</h3>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-1">
+        <div className="grid gap-4 md:grid-cols-1">
           <div>
             <Label className="text-gray-700 font-semibold mb-2">Analysis Focus</Label>
             <select 
@@ -510,7 +510,7 @@ export const PDPAnalyzer = () => {
           </div>
         </div>
         
-        <div className="mt-6 pt-4 border-t">
+        <div className="mt-4 pt-3 border-t">
           <Button
             onClick={handleAnalyzePDP}
             disabled={!isStep4Valid || isAnalyzing}
@@ -536,7 +536,7 @@ export const PDPAnalyzer = () => {
   );
 
   const renderNavigation = () => (
-    <div className="flex justify-between items-center mt-8">
+    <div className="flex justify-between items-center mt-6">
       <Button
         variant="outline"
         onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}

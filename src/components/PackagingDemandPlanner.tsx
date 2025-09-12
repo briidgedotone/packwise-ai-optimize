@@ -155,8 +155,8 @@ export const PackagingDemandPlanner = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="space-y-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4 sm:p-6">
+      <div className="space-y-3">
+        <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
@@ -176,7 +176,7 @@ export const PackagingDemandPlanner = () => {
           </div>
         </div>
 
-        <div className="grid gap-4 grid-cols-1 lg:grid-cols-2">
+        <div className="grid gap-3 grid-cols-1 lg:grid-cols-2">
           {/* Total Order Forecast */}
           <div className="space-y-4">
             <Card className="bg-white border-gray-200 shadow-sm">
@@ -381,7 +381,7 @@ export const PackagingDemandPlanner = () => {
         </div>
 
         {/* Generate Plan Button */}
-        <div className="flex justify-center lg:justify-end px-4 sm:px-0">
+        <div className="flex justify-center lg:justify-end px-3 sm:px-0">
           <Button 
             size="lg"
             disabled={!totalOrders || !forecastPeriod || !files.packagingSuite || (mixSource === 'usage-log' && !files.usageLog) || (mixSource === 'manual' && !files.manualMix) || isAnalyzing}
@@ -410,7 +410,7 @@ export const PackagingDemandPlanner = () => {
 
         {/* Results Section */}
         {results && (
-          <div className="space-y-6 mt-8">
+          <div className="space-y-4 mt-6">
             {/* Summary Cards */}
             <Card className="bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200">
               <CardHeader>
@@ -496,7 +496,7 @@ export const PackagingDemandPlanner = () => {
             </Card>
 
             {/* Charts */}
-            <div className="grid gap-6 lg:grid-cols-2">
+            <div className="grid gap-4 lg:grid-cols-2">
               {/* Pie Chart - Mix Distribution */}
               <Card className="bg-white border-gray-200 shadow-sm">
                 <CardHeader>

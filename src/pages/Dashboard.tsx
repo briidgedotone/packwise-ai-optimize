@@ -159,7 +159,7 @@ const Dashboard = () => {
   // Render header component
   const renderHeader = () => {
     return (
-      <div className="bg-white border-b border-[#E3E7EA] px-4 sm:px-6 mb-6" style={{ height: '65px' }}>
+      <div className="bg-white border-b border-[#E3E7EA] px-3 sm:px-4 mb-4" style={{ height: '60px' }}>
         <div className="flex items-center justify-end h-full">
           <UserButton 
             appearance={{
@@ -222,7 +222,7 @@ const Dashboard = () => {
               
               {/* Backend Unavailable Warning */}
               {isBackendUnavailable && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
                   <div className="flex items-start gap-4">
                     <AlertCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
@@ -231,7 +231,7 @@ const Dashboard = () => {
                         Convex free plan limits exceeded. All backend functions are disabled until limits are restored.
                         The application is running in offline mode with limited functionality.
                       </p>
-                      <div className="bg-red-100 border border-red-200 rounded-lg p-4 mb-4">
+                      <div className="bg-red-100 border border-red-200 rounded-lg p-3 mb-3">
                         <p className="text-xs text-red-800">
                           <strong>⚠️ Important:</strong> Data cleanup functions cannot work when backend is disabled. 
                           The only solution is to <strong>upgrade to Convex Pro plan ($25/month)</strong> to restore full functionality and enable data cleanup.
@@ -276,7 +276,7 @@ const Dashboard = () => {
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
-                  <div className="bg-white rounded-xl border border-[#E3E7EA] p-6 transition-all duration-200 h-full flex flex-col">
+                  <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 transition-all duration-200 h-full flex flex-col">
                     <div className="mb-4">
                       <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
                     </div>
@@ -319,14 +319,14 @@ const Dashboard = () => {
 
                 {/* Quick Actions - Modern Card Design */}
                 <div className="lg:col-span-8">
-                  <div className="bg-white rounded-xl border border-[#E3E7EA] p-6 transition-all duration-200">
+                  <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 transition-all duration-200">
                     <div className="mb-4">
                       <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
                     </div>
                     <div className="grid gap-4 grid-cols-2">
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
+                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
                         <div className="flex items-center gap-3 w-full">
@@ -341,7 +341,7 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
+                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
                         onClick={() => setActiveTab('demand-planner-v2')}
                       >
                         <div className="flex items-center gap-3 w-full">
@@ -356,7 +356,7 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
+                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
                         onClick={() => setActiveTab('spec-generator')}
                       >
                         <div className="flex items-center gap-3 w-full">
@@ -371,7 +371,7 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
+                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
                         <div className="flex items-center gap-3 w-full">
@@ -393,7 +393,7 @@ const Dashboard = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 
                 {/* Tool Usage Stats - Enhanced */}
-                <div className="bg-white rounded-xl border border-[#E3E7EA] p-6 hover:shadow-sm transition-shadow duration-200">
+                <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium text-gray-900">Tool Analytics</h3>
                     <BarChart3 className="h-4 w-4 text-gray-400" />
@@ -435,7 +435,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Recent Analyses - Enhanced */}
-                <div className="bg-white rounded-xl border border-[#E3E7EA] p-6 hover:shadow-sm transition-shadow duration-200">
+                <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium text-gray-900">Recent Analyses</h3>
                     <Button 
@@ -491,7 +491,7 @@ const Dashboard = () => {
               </div>
 
               {/* Smart Insights - Premium Design */}
-              <div className="bg-white rounded-lg border border-[#E3E7EA]/80 p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-lg border border-[#E3E7EA]/80 p-4 shadow-sm hover:shadow-lg transition-all duration-300">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center shadow-sm">
                     <Lightbulb className="h-5 w-5 text-white" />
@@ -553,7 +553,7 @@ const Dashboard = () => {
                   const colors = colorClasses[insight.color];
                   
                   return (
-                    <div className="bg-white border border-[#E3E7EA] rounded-xl p-6">
+                    <div className="bg-white border border-[#E3E7EA] rounded-xl p-4">
                       <div className="flex items-start gap-4">
                         <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                           <Lightbulb className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
@@ -594,7 +594,7 @@ const Dashboard = () => {
         {/* Sidebar */}
         <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-white border-r border-[#E3E7EA] transition-transform duration-200 ease-in-out`}>
           {/* Sidebar Header */}
-          <div className="border-b border-[#E3E7EA] px-4 flex items-center" style={{ height: '65px' }}>
+          <div className="border-b border-[#E3E7EA] px-3 flex items-center" style={{ height: '60px' }}>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-4 w-4 text-white" />
@@ -604,7 +604,7 @@ const Dashboard = () => {
           </div>
 
           {/* Sidebar Content */}
-          <div className="p-2 sm:p-3">
+          <div className="p-2">
             <nav className="space-y-2">
               {menuItems.map((item) => {
                 const isDisabled = isBackendUnavailable && 
@@ -645,11 +645,11 @@ const Dashboard = () => {
           </div>
 
           {/* Bottom Section */}
-          <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 space-y-3">
+          <div className="absolute bottom-2 left-2 right-2 space-y-2">
             {/* Upgrade Card */}
-            <div className="bg-white rounded-xl p-3 border border-[#E3E7EA]">
+            <div className="bg-white rounded-xl p-2 border border-[#E3E7EA]">
               <h4 className="font-medium text-gray-900 mb-2">Upgrade to Pro</h4>
-              <p className="text-xs text-gray-600 mb-3">
+              <p className="text-xs text-gray-600 mb-2">
                 Get 1 month free and unlock advanced features
               </p>
               <Button size="sm" className="w-full text-white text-xs rounded-full" style={{ backgroundColor: designSystem.colors.primary }}>
@@ -661,7 +661,7 @@ const Dashboard = () => {
             <div className="relative" data-user-dropdown>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="w-full bg-gray-50 rounded-lg p-3 border border-[#E3E7EA] hover:bg-gray-100 transition-colors"
+                className="w-full bg-gray-50 rounded-lg p-2 border border-[#E3E7EA] hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
@@ -719,7 +719,7 @@ const Dashboard = () => {
         {/* Main Content */}
         <div className="flex-1 overflow-auto" style={{ backgroundColor: '#F9FBFC' }}>
           {renderHeader()}
-          <div className="px-4 sm:px-6 pb-6">
+          <div className="px-3 sm:px-4 pb-4">
             {renderContent()}
           </div>
         </div>
