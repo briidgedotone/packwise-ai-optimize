@@ -268,7 +268,6 @@ const Dashboard = () => {
                 </div>
               )}
 
-
               {/* Main Dashboard Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
                 
@@ -387,6 +386,17 @@ const Dashboard = () => {
                 </div>
               </div>
 
+              {/* AI Chat Interface - Inline */}
+              <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 shadow-sm mb-4">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                    <MessageSquare className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
+                </div>
+                <InlineAIAssistant currentFeature={activeTab} />
+              </div>
+
               {/* Analytics and Recent Activity Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 
@@ -483,16 +493,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* AI Chat Interface - Inline */}
-              <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 shadow-sm">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                    <MessageSquare className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
-                </div>
-                <InlineAIAssistant currentFeature={activeTab} />
-              </div>
             </div>
           </div>
         );
