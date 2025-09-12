@@ -159,7 +159,7 @@ const Dashboard = () => {
   // Render header component
   const renderHeader = () => {
     return (
-      <div className="bg-white border-b border-gray-200 px-4 sm:px-6 mb-6" style={{ height: '65px' }}>
+      <div className="bg-white border-b border-[#E3E7EA] px-4 sm:px-6 mb-6" style={{ height: '65px' }}>
         <div className="flex items-center justify-end h-full">
           <UserButton 
             appearance={{
@@ -276,7 +276,7 @@ const Dashboard = () => {
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
-                  <div className="bg-white rounded-3xl border border-gray-200 p-6 transition-all duration-200 h-full flex flex-col">
+                  <div className="bg-white rounded-3xl border border-[#E3E7EA] p-6 transition-all duration-200 h-full flex flex-col">
                     <div className="mb-4">
                       <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
                     </div>
@@ -319,14 +319,14 @@ const Dashboard = () => {
 
                 {/* Quick Actions - Modern Card Design */}
                 <div className="lg:col-span-8">
-                  <div className="bg-white rounded-3xl border border-gray-200 p-6 transition-all duration-200">
+                  <div className="bg-white rounded-3xl border border-[#E3E7EA] p-6 transition-all duration-200">
                     <div className="mb-4">
                       <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
                     </div>
                     <div className="grid gap-4 grid-cols-2">
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-gray-200 hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
                         <div className="flex items-center gap-3 w-full">
@@ -341,7 +341,7 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-gray-200 hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('demand-planner-v2')}
                       >
                         <div className="flex items-center gap-3 w-full">
@@ -356,7 +356,7 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-gray-200 hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('spec-generator')}
                       >
                         <div className="flex items-center gap-3 w-full">
@@ -371,7 +371,7 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-gray-200 hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
                         <div className="flex items-center gap-3 w-full">
@@ -393,7 +393,7 @@ const Dashboard = () => {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
                 
                 {/* Tool Usage Stats - Enhanced */}
-                <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                <div className="bg-white rounded-xl border border-[#E3E7EA] p-6 hover:shadow-sm transition-shadow duration-200">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium text-gray-900">Tool Analytics</h3>
                     <BarChart3 className="h-4 w-4 text-gray-400" />
@@ -435,7 +435,7 @@ const Dashboard = () => {
                 </div>
 
                 {/* Recent Analyses - Enhanced */}
-                <div className="bg-white rounded-xl border border-gray-200 p-6 hover:shadow-sm transition-shadow duration-200">
+                <div className="bg-white rounded-xl border border-[#E3E7EA] p-6 hover:shadow-sm transition-shadow duration-200">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium text-gray-900">Recent Analyses</h3>
                     <Button 
@@ -450,7 +450,7 @@ const Dashboard = () => {
                   </div>
                   <div className="space-y-3">
                     {safeFiles && safeFiles.length > 0 ? safeFiles.slice(0, 4).map((analysis: any, index: number) => (
-                      <div key={index} className="flex items-center gap-3 py-2 border-b border-gray-100 last:border-0">
+                      <div key={index} className="flex items-center gap-3 py-2 border-b border-[#E3E7EA] last:border-0">
                         <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
                           {analysis.type === 'suite_analyzer' ? <Package className="h-4 w-4 text-gray-600" /> :
                            analysis.type === 'pdp_analyzer' ? <Eye className="h-4 w-4 text-gray-600" /> :
@@ -491,7 +491,7 @@ const Dashboard = () => {
               </div>
 
               {/* Smart Insights - Premium Design */}
-              <div className="bg-white rounded-2xl border border-gray-100/80 p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-2xl border border-[#E3E7EA]/80 p-6 shadow-sm hover:shadow-lg transition-all duration-300">
                 <div className="flex items-center gap-3 mb-6">
                   <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-sm">
                     <Lightbulb className="h-5 w-5 text-white" />
@@ -553,7 +553,7 @@ const Dashboard = () => {
                   const colors = colorClasses[insight.color];
                   
                   return (
-                    <div className="bg-white border border-gray-200 rounded-3xl p-6">
+                    <div className="bg-white border border-[#E3E7EA] rounded-3xl p-6">
                       <div className="flex items-start gap-4">
                         <div className="w-8 h-8 rounded-2xl flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                           <Lightbulb className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
@@ -578,7 +578,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
       {/* Mobile Header */}
-      <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-gray-100">
+      <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-[#E3E7EA]">
         <h1 className="text-xl font-medium text-gray-900">QuantiPackAI</h1>
         <Button
           variant="ghost"
@@ -592,9 +592,9 @@ const Dashboard = () => {
 
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-white border-r border-gray-200 transition-transform duration-200 ease-in-out`}>
+        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-white border-r border-[#E3E7EA] transition-transform duration-200 ease-in-out`}>
           {/* Sidebar Header */}
-          <div className="border-b border-gray-200 px-4 flex items-center" style={{ height: '65px' }}>
+          <div className="border-b border-[#E3E7EA] px-4 flex items-center" style={{ height: '65px' }}>
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-4 w-4 text-white" />
@@ -647,7 +647,7 @@ const Dashboard = () => {
           {/* Bottom Section */}
           <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 space-y-3">
             {/* Upgrade Card */}
-            <div className="bg-white rounded-3xl p-3 border border-gray-200">
+            <div className="bg-white rounded-3xl p-3 border border-[#E3E7EA]">
               <h4 className="font-medium text-gray-900 mb-2">Upgrade to Pro</h4>
               <p className="text-xs text-gray-600 mb-3">
                 Get 1 month free and unlock advanced features
@@ -661,7 +661,7 @@ const Dashboard = () => {
             <div className="relative" data-user-dropdown>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="w-full bg-gray-50 rounded-lg p-3 border border-gray-200 hover:bg-gray-100 transition-colors"
+                className="w-full bg-gray-50 rounded-lg p-3 border border-[#E3E7EA] hover:bg-gray-100 transition-colors"
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
@@ -681,7 +681,7 @@ const Dashboard = () => {
 
               {/* Dropdown Menu */}
               {userDropdownOpen && (
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-3xl border border-gray-200 py-2 z-50">
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-3xl border border-[#E3E7EA] py-2 z-50">
                   <button
                     onClick={() => {
                       setUserDropdownOpen(false);
