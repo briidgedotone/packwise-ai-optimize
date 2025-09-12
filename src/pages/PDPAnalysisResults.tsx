@@ -1,13 +1,28 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { 
-  Eye, Download, ArrowLeft, RefreshCw, TrendingUp, Award,
-  Target, Zap, Package,
-  AlertTriangle, CheckCircle, Star, BarChart3,
-  Palette, Type, Image as ImageIcon, ArrowRight, ArrowUpRight, Sparkles,
-  Loader2
-} from 'lucide-react';
+import {
+  EyeIcon as Eye,
+  ArrowDownTrayIcon as Download,
+  ArrowLeftIcon as ArrowLeft,
+  ArrowPathIcon as RefreshCw,
+  ArrowTrendingUpIcon as TrendingUp,
+  TrophyIcon as Award,
+  RectangleGroupIcon as Target,
+  BoltIcon as Zap,
+  ArchiveBoxIcon as Package,
+  ExclamationTriangleIcon as AlertTriangle,
+  CheckCircleIcon as CheckCircle,
+  StarIcon as Star,
+  ChartBarIcon as BarChart3,
+  PaintBrushIcon as Palette,
+  DocumentTextIcon as Type,
+  PhotoIcon as ImageIcon,
+  ArrowRightIcon as ArrowRight,
+  ArrowTopRightOnSquareIcon as ArrowUpRight,
+  SparklesIcon as Sparkles,
+  ArrowPathIcon as Loader2
+} from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import { exportPDPAnalysisToPDF } from '@/lib/pdpAnalysisExport';
 import { designSystem } from '@/lib/design-system';

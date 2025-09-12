@@ -4,12 +4,25 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
-  Upload, Wand2, Target, CheckCircle2, 
-  AlertCircle, Download, FileText, Info,
-  HelpCircle, Loader2, RotateCcw, Play, Package,
-  Eye, EyeOff, Maximize2, X
-} from 'lucide-react';
+import {
+  ArrowUpTrayIcon as Upload,
+  SparklesIcon as Wand2,
+  RectangleGroupIcon as Target,
+  CheckCircleIcon as CheckCircle2,
+  ExclamationCircleIcon as AlertCircle,
+  ArrowDownTrayIcon as Download,
+  DocumentTextIcon as FileText,
+  InformationCircleIcon as Info,
+  QuestionMarkCircleIcon as HelpCircle,
+  ArrowPathIcon as Loader2,
+  ArrowPathIcon as RotateCcw,
+  PlayIcon as Play,
+  ArchiveBoxIcon as Package,
+  EyeIcon as Eye,
+  EyeSlashIcon as EyeOff,
+  MagnifyingGlassIcon as Maximize2,
+  XMarkIcon as X
+} from '@heroicons/react/24/outline';
 import { useAction, useMutation, useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Id } from '../../convex/_generated/dataModel';

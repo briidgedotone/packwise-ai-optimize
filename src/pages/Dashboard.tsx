@@ -2,28 +2,28 @@ import React, { useState, useEffect } from 'react';
 import { useClerk, useUser, UserButton } from '@clerk/clerk-react';
 import { Button } from '@/components/ui/button';
 import { designSystem } from '@/lib/design-system';
-import { 
-  Package, 
-  MessageSquare,
-  Menu,
-  X,
-  AlertCircle,
-  LogOut,
-  ChevronDown,
-  MoreHorizontal,
-  ArrowRight,
-  Activity,
-  Zap,
-  FolderOpen,
-  RefreshCw,
-  ExternalLink,
-  Sparkles,
-  TrendingUp,
-  Eye,
-  FileText,
-  BarChart3,
-  Settings as SettingsIcon
-} from 'lucide-react';
+import {
+  ArchiveBoxIcon as Package,
+  ChatBubbleLeftRightIcon as MessageSquare,
+  Bars3Icon as Menu,
+  XMarkIcon as X,
+  ExclamationCircleIcon as AlertCircle,
+  ArrowLeftOnRectangleIcon as LogOut,
+  ChevronDownIcon as ChevronDown,
+  EllipsisHorizontalIcon as MoreHorizontal,
+  ArrowRightIcon as ArrowRight,
+  BoltIcon as Activity,
+  BoltIcon as Zap,
+  FolderOpenIcon as FolderOpen,
+  ArrowPathIcon as RefreshCw,
+  ArrowTopRightOnSquareIcon as ExternalLink,
+  SparklesIcon as Sparkles,
+  ArrowTrendingUpIcon as TrendingUp,
+  EyeIcon as Eye,
+  DocumentTextIcon as FileText,
+  ChartBarIcon as BarChart3,
+  Cog6ToothIcon as SettingsIcon
+} from '@heroicons/react/24/outline';
 import {
   HomeIcon,
   ArchiveBoxIcon,

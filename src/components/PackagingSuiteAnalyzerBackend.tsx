@@ -4,7 +4,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, FileSpreadsheet, BarChart3, Package, TrendingUp, CheckCircle2, AlertCircle, Loader2, Info, X } from 'lucide-react';
+import {
+  ArrowUpTrayIcon as Upload,
+  DocumentIcon as FileSpreadsheet,
+  ChartBarIcon as BarChart3,
+  ArchiveBoxIcon as Package,
+  ArrowTrendingUpIcon as TrendingUp,
+  CheckCircleIcon as CheckCircle2,
+  ExclamationCircleIcon as AlertCircle,
+  ArrowPathIcon as Loader2,
+  InformationCircleIcon as Info,
+  XMarkIcon as X
+} from '@heroicons/react/24/outline';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import type { Id } from '../../convex/_generated/dataModel';

@@ -6,10 +6,19 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Upload, PieChart, Settings, AlertCircle, TrendingUp, BarChart3, 
-  FileSpreadsheet, Loader2, CheckCircle2, Download, DollarSign
-} from 'lucide-react';
+import {
+  ArrowUpTrayIcon as Upload,
+  ChartPieIcon as PieChart,
+  Cog6ToothIcon as Settings,
+  ExclamationCircleIcon as AlertCircle,
+  ArrowTrendingUpIcon as TrendingUp,
+  ChartBarIcon as BarChart3,
+  DocumentIcon as FileSpreadsheet,
+  ArrowPathIcon as Loader2,
+  CheckCircleIcon as CheckCircle2,
+  ArrowDownTrayIcon as Download,
+  CurrencyDollarIcon as DollarSign
+} from '@heroicons/react/24/outline';
 import { PieChart as RechartsPie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { useAction } from 'convex/react';
 import { useUser } from '@clerk/clerk-react';
