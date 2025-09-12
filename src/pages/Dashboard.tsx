@@ -38,7 +38,7 @@ import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyz
 import { SpecGenerator } from '@/components/SpecGenerator';
 import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
-import { AIAssistant } from '@/components/AIAssistant';
+import { InlineAIAssistant } from '@/components/InlineAIAssistant';
 import { Reports } from '@/pages/Reports';
 import Settings from '@/pages/Settings';
 import { useQuery } from 'convex/react';
@@ -49,7 +49,6 @@ const Dashboard = () => {
   const { user } = useUser();
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [aiAssistantOpen, setAiAssistantOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
 
   // Backend availability state - now available with new Convex account
@@ -484,9 +483,15 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* AI Chat Interface - Enhanced */}
-              <div className="mb-8">
-                <AIAssistant />
+              {/* AI Chat Interface - Inline */}
+              <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 shadow-sm">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                    <MessageSquare className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
+                </div>
+                <InlineAIAssistant currentFeature={activeTab} />
               </div>
             </div>
           </div>
@@ -643,22 +648,6 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Floating AI Assistant Button */}
-        <div className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50">
-          <Button
-            onClick={() => setAiAssistantOpen(!aiAssistantOpen)}
-            className="h-12 w-12 rounded-full text-white transition-all duration-300 hover:opacity-90" style={{ backgroundColor: designSystem.colors.primary }}
-          >
-            <MessageSquare className="h-5 w-5" />
-          </Button>
-        </div>
-
-        {/* Universal AI Assistant */}
-        <AIAssistant 
-          isOpen={aiAssistantOpen}
-          onClose={() => setAiAssistantOpen(false)}
-          currentFeature={activeTab}
-        />
       </div>
     </div>
   );
