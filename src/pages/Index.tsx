@@ -114,7 +114,7 @@ const Index = () => {
 
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F6F6FF' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#F6F6FF', fontFamily: 'Plus Jakarta Sans, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif' }}>
       {/* Hero Section with Navigation */}
       <section className="bg-cover bg-center bg-no-repeat relative" style={{ backgroundColor: '#F7F6F9', backgroundImage: 'url(/bg.png)' }}>
         {/* Gradient fade overlay */}

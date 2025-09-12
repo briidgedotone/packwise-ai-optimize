@@ -70,13 +70,13 @@ export const Settings = () => {
   };
 
   const renderProfileSection = () => (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Profile Information</h2>
         <p className="text-sm text-gray-500">Update your personal information and contact details.</p>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <div>
           <Label htmlFor="firstName" className="text-gray-700 font-medium">First Name</Label>
           <Input
@@ -158,13 +158,13 @@ export const Settings = () => {
   );
 
   const renderNotificationsSection = () => (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Notification Preferences</h2>
         <p className="text-sm text-gray-500">Manage how you receive notifications about your account and analyses.</p>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
         {[
           { key: 'emailNotifications', label: 'Email Notifications', description: 'Receive notifications via email' },
           { key: 'analysisComplete', label: 'Analysis Complete', description: 'Get notified when analyses finish' },
@@ -172,7 +172,7 @@ export const Settings = () => {
           { key: 'systemUpdates', label: 'System Updates', description: 'Get notified about new features and updates' },
           { key: 'marketingEmails', label: 'Marketing Emails', description: 'Receive tips and product updates' }
         ].map((setting) => (
-          <div key={setting.key} className="flex items-center justify-between p-4 bg-gray-50 rounded-3xl">
+          <div key={setting.key} className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
             <div>
               <h4 className="font-medium text-gray-900">{setting.label}</h4>
               <p className="text-sm text-gray-500">{setting.description}</p>
@@ -208,14 +208,14 @@ export const Settings = () => {
   );
 
   const renderSecuritySection = () => (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Security Settings</h2>
         <p className="text-sm text-gray-500">Manage your account security and authentication.</p>
       </div>
 
-      <div className="space-y-4">
-        <div className="p-4 border rounded-3xl" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
+      <div className="space-y-3">
+        <div className="p-3 border rounded-xl" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
           <div className="flex items-center gap-3 mb-3">
             <Shield className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
             <h4 className="font-medium text-gray-900">Account Security</h4>
@@ -233,7 +233,7 @@ export const Settings = () => {
           </Button>
         </div>
 
-        <div className="p-4 bg-gray-50 rounded-3xl">
+        <div className="p-3 bg-gray-50 rounded-xl">
           <h4 className="font-medium text-gray-900 mb-2">Active Sessions</h4>
           <p className="text-sm text-gray-600 mb-3">You are currently signed in on this device.</p>
           <Button 
@@ -249,21 +249,21 @@ export const Settings = () => {
   );
 
   const renderPreferencesSection = () => (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Preferences</h2>
         <p className="text-sm text-gray-500">Customize your experience with QuantiPackAI.</p>
       </div>
 
-      <div className="space-y-4">
-        <div className="p-4 bg-gray-50 rounded-3xl">
+      <div className="space-y-3">
+        <div className="p-3 bg-gray-50 rounded-xl">
           <h4 className="font-medium text-gray-900 mb-3">Theme</h4>
           <div className="grid grid-cols-2 gap-3">
             {['light', 'dark'].map((themeOption) => (
               <button
                 key={themeOption}
                 onClick={() => setTheme(themeOption)}
-                className={`p-3 rounded-3xl border-2 transition-colors capitalize ${
+                className={`p-3 rounded-xl border-2 transition-colors capitalize ${
                   theme === themeOption 
                     ? 'text-gray-900' 
                     : 'border-gray-200 hover:border-gray-300'
@@ -280,12 +280,12 @@ export const Settings = () => {
           </div>
         </div>
 
-        <div className="p-4 bg-gray-50 rounded-3xl">
+        <div className="p-3 bg-gray-50 rounded-xl">
           <h4 className="font-medium text-gray-900 mb-2">Language & Region</h4>
           <div className="grid gap-3 md:grid-cols-2">
             <div>
               <Label className="text-gray-700">Language</Label>
-              <select className="w-full mt-1 p-2 border border-gray-300 rounded-3xl">
+              <select className="w-full mt-1 p-2 border border-gray-300 rounded-xl">
                 <option>English (US)</option>
                 <option>English (UK)</option>
                 <option>Spanish</option>
@@ -294,7 +294,7 @@ export const Settings = () => {
             </div>
             <div>
               <Label className="text-gray-700">Time Zone</Label>
-              <select className="w-full mt-1 p-2 border border-gray-300 rounded-3xl">
+              <select className="w-full mt-1 p-2 border border-gray-300 rounded-xl">
                 <option>Pacific Time (PT)</option>
                 <option>Mountain Time (MT)</option>
                 <option>Central Time (CT)</option>
@@ -308,14 +308,14 @@ export const Settings = () => {
   );
 
   const renderDataSection = () => (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="text-xl font-semibold text-gray-900 mb-2">Data & Privacy</h2>
         <p className="text-sm text-gray-500">Manage your data and privacy settings.</p>
       </div>
 
-      <div className="space-y-4">
-        <div className="p-4 bg-gray-50 rounded-3xl">
+      <div className="space-y-3">
+        <div className="p-3 bg-gray-50 rounded-xl">
           <h4 className="font-medium text-gray-900 mb-3">Data Export</h4>
           <p className="text-sm text-gray-600 mb-3">Download all your data including analyses, uploads, and settings.</p>
           <Button variant="outline" className="rounded-full">
@@ -323,7 +323,7 @@ export const Settings = () => {
           </Button>
         </div>
 
-        <div className="p-4 bg-red-50 border border-red-200 rounded-3xl">
+        <div className="p-3 bg-red-50 border border-red-200 rounded-xl">
           <h4 className="font-medium text-red-900 mb-2">Delete Account</h4>
           <p className="text-sm text-red-700 mb-3">
             Permanently delete your account and all associated data. This action cannot be undone.
@@ -348,10 +348,10 @@ export const Settings = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div>
         {/* Header */}
-        <div className="bg-white rounded-3xl border border-gray-200 p-6 mb-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
               <SettingsIcon className="h-5 w-5 text-white" />
@@ -365,10 +365,10 @@ export const Settings = () => {
           </div>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-4">
+        <div className="grid gap-4 lg:grid-cols-4">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-3xl border border-gray-200 p-4">
+            <div className="bg-white rounded-xl border border-gray-200 p-3">
               <nav className="space-y-1">
                 {settingSections.map((section) => {
                   const Icon = section.icon;
@@ -376,7 +376,7 @@ export const Settings = () => {
                     <button
                       key={section.id}
                       onClick={() => setActiveSection(section.id)}
-                      className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-3xl transition-colors ${
+                      className={`w-full flex items-center gap-3 px-3 py-2 text-left rounded-xl transition-colors ${
                         activeSection === section.id
                           ? 'text-gray-900 border'
                           : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -397,7 +397,7 @@ export const Settings = () => {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-3xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-4">
               {renderSection()}
             </div>
           </div>

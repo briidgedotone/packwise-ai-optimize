@@ -4,7 +4,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Upload, FileSpreadsheet, BarChart3, Package, TrendingUp, CheckCircle2, AlertCircle, Loader2, Info, X } from 'lucide-react';
+import {
+  ArrowUpTrayIcon as Upload,
+  DocumentIcon as FileSpreadsheet,
+  ChartBarIcon as BarChart3,
+  ArchiveBoxIcon as Package,
+  ArrowTrendingUpIcon as TrendingUp,
+  CheckCircleIcon as CheckCircle2,
+  ExclamationCircleIcon as AlertCircle,
+  ArrowPathIcon as Loader2,
+  InformationCircleIcon as Info,
+  XMarkIcon as X
+} from '@heroicons/react/24/outline';
 import { useMutation, useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import type { Id } from '../../convex/_generated/dataModel';
@@ -175,7 +186,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
   
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div className="space-y-4">
         
         {/* Show placeholder when help modal is open */}
@@ -191,10 +202,10 @@ export const PackagingSuiteAnalyzerBackend = () => {
         {!showHelpModal && (
           <>
             {/* Header */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-4 sm:p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -224,10 +235,10 @@ export const PackagingSuiteAnalyzerBackend = () => {
         <div className="max-w-4xl mx-auto">
           {/* File Uploads */}
           <div className="space-y-4">
-            <Card className="bg-white border-gray-200 rounded-3xl">
+            <Card className="bg-white border-gray-200 rounded-xl">
               <CardHeader className="pb-4">
                 <CardTitle className="text-base sm:text-lg font-medium text-gray-900 flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                  <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                     <FileSpreadsheet className="h-4 w-4 text-blue-600" />
                   </div>
                   Required Files
@@ -236,12 +247,12 @@ export const PackagingSuiteAnalyzerBackend = () => {
                   Upload your data files to get started with backend analysis
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3">
                 {/* Order Data Upload */}
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <Label htmlFor="order-history" className="text-gray-700 font-medium">Order Data File *</Label>
-                  <div className="border-2 border-dashed border-gray-200 rounded-3xl p-4 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
-                    <div className="w-8 h-8 bg-gray-100 rounded-2xl flex items-center justify-center mx-auto mb-2">
+                  <div className="border-2 border-dashed border-gray-200 rounded-xl p-3 text-center hover:border-gray-300 hover:bg-gray-50 transition-colors">
+                    <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-2">
                       <Upload className="h-4 w-4 text-gray-600" />
                     </div>
                     <p className="text-sm text-gray-600 mb-2">
@@ -275,7 +286,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 </div>
 
                 {/* Packaging Suite Upload */}
-                <div className="space-y-3">
+                <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="packaging-suite" className="text-slate-700 font-medium">Packaging Suite File *</Label>
                     <Button
@@ -290,7 +301,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                   </div>
                   
                   {!useManualPackageInput ? (
-                    <div className="border-2 border-dashed border-slate-200 rounded-3xl p-8 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
+                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center hover:border-slate-300 transition-colors bg-slate-50/50">
                       <Upload className="h-10 w-10 mx-auto mb-3 text-slate-400" />
                       <p className="text-sm text-slate-600 mb-3">
                         Required fields: Package types, L×W×H (inches) | Recommended fields: Price ($), weight (lbs), usage (%)
@@ -311,9 +322,9 @@ export const PackagingSuiteAnalyzerBackend = () => {
                       </Button>
                     </div>
                   ) : (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {manualPackages.map((pkg, index) => (
-                        <div key={index} className="border border-gray-200 rounded-3xl p-4 space-y-3">
+                        <div key={index} className="border border-gray-200 rounded-xl p-3 space-y-2">
                           <div className="flex items-center justify-between">
                             <h4 className="text-sm font-medium text-gray-700">Package {index + 1}</h4>
                             {manualPackages.length > 1 && (
@@ -446,7 +457,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
         {/* Error Display */}
         {(error || analysisError) && (
           <Card className="bg-red-50 border-red-200">
-            <CardContent className="p-4">
+            <CardContent className="p-3">
               <div className="flex items-center gap-2 text-red-800">
                 <AlertCircle className="h-4 w-4" />
                 <span className="text-sm font-medium">
@@ -458,7 +469,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
         )}
 
 
-            <div className="flex justify-center lg:justify-end px-4 sm:px-0">
+            <div className="flex justify-center lg:justify-end px-3 sm:px-0">
           <Button 
             size="lg"
             disabled={!files.orderHistory || (!files.packagingSuite && !useManualPackageInput) || isAnalyzing}
@@ -493,7 +504,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
         <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-5 w-5 text-white" />
               </div>
               Suite Analyzer Manual
@@ -503,9 +514,9 @@ export const PackagingSuiteAnalyzerBackend = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-6 mt-6">
+          <div className="space-y-4 mt-6">
             {/* What is Suite Analyzer */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: designSystem.colors.primary }}></div>
                 What is Suite Analyzer?
@@ -518,7 +529,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
             </div>
 
             {/* How it Works */}
-            <div className="space-y-3">
+            <div className="space-y-2">
               <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ backgroundColor: designSystem.colors.primary }}></div>
                 How It Works
@@ -539,7 +550,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 Required Fields
               </h3>
               
-              <div className="bg-red-50 p-4 rounded-3xl border border-red-200">
+              <div className="bg-red-50 p-4 rounded-xl border border-red-200">
                 <h4 className="font-semibold text-red-900 mb-2">Order Data File</h4>
                 <ul className="space-y-2 text-sm text-red-800">
                   <li><strong>Order ID:</strong> Unique identifier for each order</li>
@@ -550,7 +561,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 </p>
               </div>
 
-              <div className="bg-red-50 p-4 rounded-3xl border border-red-200">
+              <div className="bg-red-50 p-4 rounded-xl border border-red-200">
                 <h4 className="font-semibold text-red-900 mb-2">Packaging Suite File</h4>
                 <ul className="space-y-2 text-sm text-red-800">
                   <li><strong>Package Types:</strong> Name/ID of each package option</li>
@@ -562,7 +573,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 </p>
               </div>
 
-              <div className="p-4 rounded-3xl border" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
+              <div className="p-4 rounded-xl border" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
                 <h4 className="font-semibold text-blue-900 mb-2">How Volume-Based Classification Works</h4>
                 <p className="text-sm text-blue-800 mb-2">
                   When only Total Order Volume is provided (no individual L×W×H):
@@ -585,7 +596,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 Optional Fields
               </h3>
               
-              <div className="bg-green-50 p-4 rounded-3xl border border-green-200">
+              <div className="bg-green-50 p-4 rounded-xl border border-green-200">
                 <h4 className="font-semibold text-green-900 mb-2">Order Data - Product Dimensions</h4>
                 <p className="text-sm text-green-800 mb-2">
                   Individual product dimensions (L×W×H) for each item in the order
@@ -597,7 +608,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 </p>
               </div>
 
-              <div className="bg-green-50 p-4 rounded-3xl border border-green-200">
+              <div className="bg-green-50 p-4 rounded-xl border border-green-200">
                 <h4 className="font-semibold text-green-900 mb-2">Packaging Suite - Additional Data</h4>
                 <ul className="space-y-2 text-sm text-green-800">
                   <li><strong>Package Price:</strong> Cost per package unit</li>
@@ -646,7 +657,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 File Format Examples
               </h3>
               
-              <div className="bg-gray-50 p-4 rounded-3xl border border-gray-200">
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
                 <h4 className="font-semibold text-gray-900 mb-2">Order Data CSV Format</h4>
                 <pre className="text-xs bg-white p-3 rounded border border-gray-300 overflow-x-auto">
 {`Order ID,Total Order Volume,Product Length,Product Width,Product Height
@@ -657,7 +668,7 @@ ORD-003,275.8,7.0,6.5,6.0`}
                 <p className="text-xs text-gray-600 mt-2">Note: Product dimensions are optional</p>
               </div>
 
-              <div className="bg-gray-50 p-4 rounded-3xl border border-gray-200">
+              <div className="bg-gray-50 p-4 rounded-xl border border-gray-200">
                 <h4 className="font-semibold text-gray-900 mb-2">Packaging Suite CSV Format</h4>
                 <pre className="text-xs bg-white p-3 rounded border border-gray-300 overflow-x-auto">
 {`Package Name,Length,Width,Height,Price,Weight,Usage %

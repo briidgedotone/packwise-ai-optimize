@@ -142,7 +142,7 @@ export const Reports = () => {
 
   if (!reports || !stats) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
         <div className="space-y-6">
           <Skeleton className="h-32 w-full" />
           <div className="grid gap-4 md:grid-cols-3">
@@ -156,13 +156,13 @@ export const Reports = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="space-y-6">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
+      <div className="space-y-4">
         {/* Header */}
-        <div className="bg-white rounded-3xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <FileText className="h-5 w-5 text-white" />
               </div>
               <div>
@@ -182,9 +182,9 @@ export const Reports = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid gap-4 md:grid-cols-4">
-          <Card className="border-gray-200 bg-white rounded-3xl">
-            <CardContent className="p-4">
+        <div className="grid gap-3 md:grid-cols-4">
+          <Card className="border-gray-200 bg-white rounded-xl">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500">Completed</p>
@@ -197,8 +197,8 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-white rounded-3xl">
-            <CardContent className="p-4">
+          <Card className="border-gray-200 bg-white rounded-xl">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500">Processing</p>
@@ -211,8 +211,8 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-white rounded-3xl">
-            <CardContent className="p-4">
+          <Card className="border-gray-200 bg-white rounded-xl">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500">Failed</p>
@@ -225,8 +225,8 @@ export const Reports = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-gray-200 bg-white rounded-3xl">
-            <CardContent className="p-4">
+          <Card className="border-gray-200 bg-white rounded-xl">
+            <CardContent className="p-3">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500">This Month</p>
@@ -247,9 +247,9 @@ export const Reports = () => {
         </div>
 
         {/* Filters and Search */}
-        <Card className="border-gray-200 bg-white rounded-3xl">
-          <CardContent className="p-4">
-            <div className="flex flex-col sm:flex-row gap-4">
+        <Card className="border-gray-200 bg-white rounded-xl">
+          <CardContent className="p-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <div className="flex-1">
                 <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -289,11 +289,11 @@ export const Reports = () => {
         </Card>
 
         {/* Reports List */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {filteredReports.length === 0 ? (
-            <Card className="border-gray-200 bg-white rounded-3xl">
-              <CardContent className="p-12 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Card className="border-gray-200 bg-white rounded-xl">
+              <CardContent className="p-8 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
                   <FileText className="h-8 w-8 text-gray-400" />
                 </div>
                 <h3 className="text-lg font-medium text-gray-900 mb-2">No reports found</h3>
@@ -308,10 +308,10 @@ export const Reports = () => {
             filteredReports.map((report) => {
               const TypeIcon = getTypeIcon(report.type);
               return (
-                <Card key={report._id} className="border-gray-200 bg-white rounded-3xl hover:opacity-95 transition-all">
-                  <CardContent className="p-6">
+                <Card key={report._id} className="border-gray-200 bg-white rounded-xl hover:opacity-95 transition-all">
+                  <CardContent className="p-4">
                     <div className="flex items-start justify-between">
-                      <div className="flex items-start gap-4 flex-1">
+                      <div className="flex items-start gap-3 flex-1">
                         <div className={`w-10 h-10 bg-${report.typeColor}-50 rounded-lg flex items-center justify-center flex-shrink-0`}>
                           <TypeIcon className={`h-5 w-5 text-${report.typeColor}-600`} />
                         </div>
@@ -351,7 +351,7 @@ export const Reports = () => {
                             <p className="text-sm text-red-600 mb-3">{report.error}</p>
                           )}
 
-                          <div className="flex items-center gap-4 text-xs text-gray-500">
+                          <div className="flex items-center gap-3 text-xs text-gray-500">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-3 w-3" />
                               {formatDate(report.createdAt)}
