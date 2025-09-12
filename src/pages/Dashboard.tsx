@@ -157,7 +157,7 @@ const Dashboard = () => {
   // Render header component
   const renderHeader = () => {
     return (
-      <div className="bg-white border-b border-[#E3E7EA] px-3 sm:px-4 mb-4" style={{ height: '60px' }}>
+      <div className="bg-white border-b border-[#E3E7EA] px-3 sm:px-4 mb-3" style={{ height: '60px' }}>
         <div className="flex items-center justify-end h-full">
           <UserButton 
             appearance={{
@@ -180,7 +180,7 @@ const Dashboard = () => {
         <div className="flex items-center justify-center h-96">
           <div className="text-center max-w-md">
             <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">Feature Temporarily Unavailable</h3>
+            <h3 className="text-xl font-semibold text-gray-900 mb-1">Feature Temporarily Unavailable</h3>
             <p className="text-gray-600 mb-6">
               This feature requires backend connectivity. Please clean up data or upgrade your plan to restore functionality.
             </p>
@@ -220,12 +220,12 @@ const Dashboard = () => {
               
               {/* Backend Unavailable Warning */}
               {isBackendUnavailable && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-3">
                   <div className="flex items-start gap-4">
                     <AlertCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
                       <h3 className="font-semibold text-red-900 mb-2">Backend Deployments Disabled</h3>
-                      <p className="text-sm text-red-800 mb-4">
+                      <p className="text-sm text-red-800 mb-3">
                         Convex free plan limits exceeded. All backend functions are disabled until limits are restored.
                         The application is running in offline mode with limited functionality.
                       </p>
@@ -270,18 +270,18 @@ const Dashboard = () => {
 
 
               {/* Main Dashboard Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
                   <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 transition-all duration-200 h-full flex flex-col">
-                    <div className="mb-4">
+                    <div className="mb-3">
                       <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
                       <div className="flex items-center justify-between mb-6">
                         <div>
-                          <div className="flex items-baseline gap-2 mb-1">
+                          <div className="flex items-baseline gap-2 mb-0.5">
                             <span className="text-3xl font-semibold text-gray-900">
                               {safeMetrics?.tokensUsed || '0'}
                             </span>
@@ -296,7 +296,7 @@ const Dashboard = () => {
                         </div>
                       </div>
                       <div className="space-y-3">
-                        <div className="flex justify-between text-sm">
+                        <div className="flex justify-between text-sm mb-0.5">
                           <span className="text-gray-500">Available</span>
                           <span className="font-medium text-gray-700">
                             {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
@@ -318,10 +318,10 @@ const Dashboard = () => {
                 {/* Quick Actions - Modern Card Design */}
                 <div className="lg:col-span-8">
                   <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 transition-all duration-200">
-                    <div className="mb-4">
+                    <div className="mb-3">
                       <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
                     </div>
-                    <div className="grid gap-4 grid-cols-2">
+                    <div className="grid gap-3 grid-cols-2">
                       <Button
                         variant="outline"
                         className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
@@ -388,18 +388,18 @@ const Dashboard = () => {
               </div>
 
               {/* Analytics and Recent Activity Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 
                 {/* Tool Usage Stats - Enhanced */}
                 <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-medium text-gray-900">Tool Analytics</h3>
                     <BarChart3 className="h-4 w-4 text-gray-400" />
                   </div>
                   {safeToolStats && safeToolStats.length > 0 && safeToolStats.some((stat: any) => stat.count > 0) ? (
                     <div className="space-y-4">
                       {safeToolStats.map((stat: any, index: number) => (
-                        <div key={index} className="flex items-center justify-between py-2">
+                        <div key={index} className="flex items-center justify-between py-1">
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-gray-400 rounded-full" />
                             <span className="text-sm text-gray-600">{stat.name}</span>
@@ -424,7 +424,7 @@ const Dashboard = () => {
                   ) : (
                     <div className="flex items-center justify-center py-8">
                       <div className="text-center">
-                        <BarChart3 className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+                        <BarChart3 className="h-8 w-8 text-gray-300 mx-auto mb-2" />
                         <p className="text-sm text-gray-500">No usage data yet</p>
                         <p className="text-xs text-gray-400 mt-1">Analytics will appear here</p>
                       </div>
@@ -434,7 +434,7 @@ const Dashboard = () => {
 
                 {/* Recent Analyses - Enhanced */}
                 <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-3">
                     <h3 className="text-sm font-medium text-gray-900">Recent Analyses</h3>
                     <Button 
                       variant="ghost" 
@@ -448,7 +448,7 @@ const Dashboard = () => {
                   </div>
                   <div className="space-y-3">
                     {safeFiles && safeFiles.length > 0 ? safeFiles.slice(0, 4).map((analysis: any, index: number) => (
-                      <div key={index} className="flex items-center gap-3 py-2 border-b border-[#E3E7EA] last:border-0">
+                      <div key={index} className="flex items-center gap-3 py-1 border-b border-[#E3E7EA] last:border-0">
                         <div className="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center flex-shrink-0">
                           {analysis.type === 'suite_analyzer' ? <Package className="h-4 w-4 text-gray-600" /> :
                            analysis.type === 'pdp_analyzer' ? <Eye className="h-4 w-4 text-gray-600" /> :
@@ -473,7 +473,7 @@ const Dashboard = () => {
                     )) : (
                       <div className="flex items-center justify-center py-8">
                         <div className="text-center">
-                          <FolderOpen className="h-8 w-8 text-gray-300 mx-auto mb-3" />
+                          <FolderOpen className="h-8 w-8 text-gray-300 mx-auto mb-2" />
                           <p className="text-sm text-gray-500">No analyses yet</p>
                           <p className="text-xs text-gray-400 mt-1">Your work will appear here</p>
                         </div>
@@ -485,7 +485,7 @@ const Dashboard = () => {
 
               {/* AI Chat Interface - Inline */}
               <div className="bg-white rounded-xl border border-[#E3E7EA] p-4 shadow-sm">
-                <div className="flex items-center gap-3 mb-4">
+                <div className="flex items-center gap-3 mb-3">
                   <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                     <MessageSquare className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
                   </div>
@@ -569,11 +569,11 @@ const Dashboard = () => {
           </div>
 
           {/* Bottom Section */}
-          <div className="absolute bottom-2 left-2 right-2 space-y-2">
+          <div className="absolute bottom-2 left-2 right-2 space-y-1">
             {/* Upgrade Card */}
             <div className="bg-white rounded-xl p-2 border border-[#E3E7EA]">
-              <h4 className="font-medium text-gray-900 mb-2">Upgrade to Pro</h4>
-              <p className="text-xs text-gray-600 mb-2">
+              <h4 className="font-medium text-gray-900 mb-1">Upgrade to Pro</h4>
+              <p className="text-xs text-gray-600 mb-1">
                 Get 1 month free and unlock advanced features
               </p>
               <Button size="sm" className="w-full text-white text-xs rounded-full" style={{ backgroundColor: designSystem.colors.primary }}>
@@ -605,7 +605,7 @@ const Dashboard = () => {
 
               {/* Dropdown Menu */}
               {userDropdownOpen && (
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl border border-[#E3E7EA] py-2 z-50">
+                <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-xl border border-[#E3E7EA] py-2 z-50">
                   <button
                     onClick={() => {
                       setUserDropdownOpen(false);
