@@ -157,7 +157,7 @@ const Dashboard = () => {
   // Render header component
   const renderHeader = () => {
     return (
-      <div className="bg-white border-b border-[#E3E7EA] px-3 sm:px-4 mb-3" style={{ height: '60px' }}>
+      <div className="sticky top-0 z-40 bg-white border-b border-[#E3E7EA] px-3 sm:px-4" style={{ height: '60px' }}>
         <div className="flex items-center justify-end h-full">
           <UserButton 
             appearance={{
@@ -641,9 +641,9 @@ const Dashboard = () => {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 overflow-auto" style={{ backgroundColor: '#F9FBFC' }}>
+        <div className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#F9FBFC' }}>
           {renderHeader()}
-          <div className="px-3 sm:px-4 pb-4">
+          <div className="flex-1 overflow-auto px-3 sm:px-4 pb-4 pt-3">
             {renderContent()}
           </div>
         </div>
