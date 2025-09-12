@@ -326,8 +326,8 @@ const Dashboard = () => {
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors bg-gradient-to-br from-purple-500 via-blue-500 to-indigo-600">
-                            <PackageSolid className="h-8 w-8 text-white" />
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                            <PackageSolid className="h-8 w-8" style={{ color: designSystem.colors.primary }} />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Suite Analyzer</div>
@@ -341,8 +341,8 @@ const Dashboard = () => {
                         onClick={() => setActiveTab('demand-planner-v2')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600">
-                            <TrendingUpSolid className="h-8 w-8 text-white" />
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                            <TrendingUpSolid className="h-8 w-8" style={{ color: designSystem.colors.primary }} />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Demand Planner</div>
@@ -356,8 +356,8 @@ const Dashboard = () => {
                         onClick={() => setActiveTab('spec-generator')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500">
-                            <SparklesSolid className="h-8 w-8 text-white" />
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                            <SparklesSolid className="h-8 w-8" style={{ color: designSystem.colors.primary }} />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Spec Generator</div>
@@ -371,8 +371,8 @@ const Dashboard = () => {
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors bg-gradient-to-br from-pink-500 via-rose-500 to-fuchsia-600">
-                            <EyeSolid className="h-8 w-8 text-white" />
+                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                            <EyeSolid className="h-8 w-8" style={{ color: designSystem.colors.primary }} />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Design Analyzer</div>
