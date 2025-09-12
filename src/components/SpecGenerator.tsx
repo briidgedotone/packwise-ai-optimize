@@ -322,10 +322,10 @@ export const SpecGenerator = () => {
     <div className="min-h-screen bg-white">
       <div className="space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-3xl border border-gray-200 p-6">
+        <div className="bg-white rounded-xl border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-3xl flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-xl flex items-center justify-center">
                 <Wand2 className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -345,7 +345,7 @@ export const SpecGenerator = () => {
                 <HelpCircle className="h-4 w-4 mr-2" />
                 Help
               </Button>
-              <div className="flex items-center gap-2 px-3 py-2 border rounded-3xl" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
+              <div className="flex items-center gap-2 px-3 py-2 border rounded-xl" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
                 <Package className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
                 <span className="text-sm font-medium" style={{ color: designSystem.colors.primary }}>AI Powered</span>
               </div>
@@ -397,8 +397,8 @@ export const SpecGenerator = () => {
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* File Upload */}
-                <div className="border-2 border-dashed border-gray-200 rounded-3xl p-6 text-center hover:border-blue-300 hover:bg-blue-50/50 transition-colors">
-                  <div className="w-10 h-10 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto mb-3">
+                <div className="border-2 border-dashed border-gray-200 rounded-xl p-6 text-center hover:border-blue-300 hover:bg-blue-50/50 transition-colors">
+                  <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
                     <Upload className="h-5 w-5 text-blue-600" />
                   </div>
                   <p className="text-sm text-gray-600 mb-3">
@@ -425,7 +425,7 @@ export const SpecGenerator = () => {
 
                 {/* File Success */}
                 {productFile && (
-                  <div className="bg-green-50 border border-green-200 rounded-3xl p-4">
+                  <div className="bg-green-50 border border-green-200 rounded-xl p-4">
                     <div className="flex items-center gap-2">
                       <CheckCircle2 className="h-4 w-4 text-green-600" />
                       <span className="text-sm font-medium text-green-700">File loaded successfully</span>
@@ -439,7 +439,7 @@ export const SpecGenerator = () => {
                   <div className="grid gap-3">
                     <Input
                       placeholder="Category (e.g., Electronics, Cosmetics)"
-                      className="border-gray-200 rounded-3xl"
+                      className="border-gray-200 rounded-xl"
                       style={{ '--tw-ring-color': designSystem.colors.primary }}
                       onFocus={(e) => e.target.style.borderColor = designSystem.colors.primary}
                       value={additionalInfo.category}
@@ -447,7 +447,7 @@ export const SpecGenerator = () => {
                     />
                     <Input
                       placeholder="Material Type (e.g., plastic, metal)"
-                      className="border-gray-200 rounded-3xl"
+                      className="border-gray-200 rounded-xl"
                       style={{ '--tw-ring-color': designSystem.colors.primary }}
                       onFocus={(e) => e.target.style.borderColor = designSystem.colors.primary}
                       value={additionalInfo.material}
@@ -455,7 +455,7 @@ export const SpecGenerator = () => {
                     />
                     <Input
                       placeholder="Size Range (e.g., S, M, L, XL)"
-                      className="border-gray-200 rounded-3xl"
+                      className="border-gray-200 rounded-xl"
                       style={{ '--tw-ring-color': designSystem.colors.primary }}
                       onFocus={(e) => e.target.style.borderColor = designSystem.colors.primary}
                       value={additionalInfo.size}
@@ -495,7 +495,7 @@ export const SpecGenerator = () => {
                             step="0.1"
                             min="0.1"
                             placeholder="0.0"
-                            className="border-gray-200 rounded-3xl"
+                            className="border-gray-200 rounded-xl"
                       style={{ '--tw-ring-color': designSystem.colors.primary }}
                       onFocus={(e) => e.target.style.borderColor = designSystem.colors.primary}
                             value={boundingDimensions[type as keyof typeof boundingDimensions][dim as 'l' | 'w' | 'h']}
@@ -513,7 +513,7 @@ export const SpecGenerator = () => {
                   </div>
                 ))}
 
-                <div className="border rounded-3xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
+                <div className="border rounded-xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
                   <p className="text-sm" style={{ color: designSystem.colors.primary }}>
                     <strong>Tip:</strong> These should reflect your smallest, average, and largest products based on outer packaging dimensions
                   </p>
@@ -562,7 +562,7 @@ export const SpecGenerator = () => {
             </CardHeader>
             <CardContent>
               {/* Notes Display Options */}
-              <div className="mb-4 flex items-center justify-between p-3 bg-gray-50 rounded-3xl">
+              <div className="mb-4 flex items-center justify-between p-3 bg-gray-50 rounded-xl">
                 <div className="flex items-center gap-2">
                   <Label className="text-sm font-medium text-gray-700">Notes Display:</Label>
                   <div className="flex gap-1">
@@ -676,23 +676,23 @@ export const SpecGenerator = () => {
 
               {/* Summary Statistics */}
               <div className="mt-6 grid grid-cols-1 sm:grid-cols-4 gap-4">
-                <div className="rounded-3xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                <div className="rounded-xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                   <p className="text-sm font-medium text-gray-900">Total Products</p>
                   <p className="text-2xl font-bold" style={{ color: designSystem.colors.primary }}>{results.length}</p>
                 </div>
-                <div className="bg-green-50 rounded-3xl p-4">
+                <div className="bg-green-50 rounded-xl p-4">
                   <p className="text-sm font-medium text-green-900">High Confidence</p>
                   <p className="text-2xl font-bold text-green-700">
                     {results.filter(r => r.confidence === 'high').length}
                   </p>
                 </div>
-                <div className="bg-yellow-50 rounded-3xl p-4">
+                <div className="bg-yellow-50 rounded-xl p-4">
                   <p className="text-sm font-medium text-yellow-900">Medium Confidence</p>
                   <p className="text-2xl font-bold text-yellow-700">
                     {results.filter(r => r.confidence === 'medium').length}
                   </p>
                 </div>
-                <div className="rounded-3xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                <div className="rounded-xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                   <p className="text-sm font-medium text-gray-900">Avg CUIN</p>
                   <p className="text-2xl font-bold" style={{ color: designSystem.colors.primary }}>
                     {(results.reduce((sum, r) => sum + r.totalCUIN, 0) / results.length).toFixed(1)}
@@ -706,7 +706,7 @@ export const SpecGenerator = () => {
         {/* Notes Modal */}
         {selectedNote && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div className="bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h3 className="text-lg font-semibold text-gray-900">
                   AI Analysis Notes: {selectedNote.product}
@@ -749,9 +749,9 @@ export const SpecGenerator = () => {
           <div className="space-y-4">
             {/* Progress Display */}
             {isProcessing && (
-              <div className="bg-white rounded-3xl border border-gray-200 p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-4 mb-4">
-                  <div className="w-10 h-10 rounded-3xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                     <Loader2 className="h-5 w-5 animate-spin text-white" />
                   </div>
                   <div>

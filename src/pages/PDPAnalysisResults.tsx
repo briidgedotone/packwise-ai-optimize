@@ -188,7 +188,7 @@ const PDPAnalysisResults = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F9FBFC' }}>
       {/* Header */}
-      <div className="bg-white rounded-3xl border border-gray-200 p-6 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-6">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
@@ -223,7 +223,7 @@ const PDPAnalysisResults = () => {
 
         <div className="mt-6">
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-10 h-10 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+            <div className="w-10 h-10 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
               <Eye className="h-5 w-5 text-white" />
             </div>
             <div>
@@ -235,7 +235,7 @@ const PDPAnalysisResults = () => {
           </div>
 
           {/* Overall Score */}
-          <div className="rounded-3xl p-6 border border-gray-200" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+          <div className="rounded-xl p-6 border border-gray-200" style={{ backgroundColor: designSystem.colors.primaryLight }}>
             <div className="text-center">
               <div className="text-4xl font-bold text-gray-900 mb-2">{overallScore.toFixed(1)}</div>
               <div className="text-gray-600 text-lg mb-4">Overall Performance Score</div>
@@ -265,7 +265,7 @@ const PDPAnalysisResults = () => {
       </div>
 
       {/* Tabs */}
-      <div className="bg-white rounded-3xl border border-gray-200 p-4 mb-6">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
         <div className="flex items-center gap-2">
           {[
             { id: 'overview', label: 'Visual Overview', icon: ImageIcon },
@@ -294,7 +294,7 @@ const PDPAnalysisResults = () => {
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {/* PDP Visual Comparison */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-8 bg-pink-500 rounded-lg flex items-center justify-center">
                   <Package className="h-4 w-4 text-white" />
@@ -422,7 +422,7 @@ const PDPAnalysisResults = () => {
             {/* Quick Insights */}
             <div className="grid md:grid-cols-3 gap-4">
               {/* Strengths */}
-              <div className="bg-white rounded-3xl border border-gray-200 p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                     <CheckCircle className="h-4 w-4 text-white" />
@@ -440,7 +440,7 @@ const PDPAnalysisResults = () => {
               </div>
 
               {/* Improvements */}
-              <div className="bg-white rounded-3xl border border-gray-200 p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                     <AlertTriangle className="h-4 w-4 text-white" />
@@ -458,7 +458,7 @@ const PDPAnalysisResults = () => {
               </div>
 
               {/* Quick Wins */}
-              <div className="bg-white rounded-3xl border border-gray-200 p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-purple-500 rounded-lg flex items-center justify-center">
                     <Zap className="h-4 w-4 text-white" />
@@ -482,7 +482,7 @@ const PDPAnalysisResults = () => {
         {activeTab === 'detailed' && (
           <div className="space-y-6">
             {/* Comprehensive Scores */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                   <BarChart3 className="h-4 w-4 text-white" />
@@ -542,7 +542,7 @@ const PDPAnalysisResults = () => {
         {activeTab === 'recommendations' && (
           <div className="space-y-6">
             {/* Overall Strategy */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">
                   <Target className="h-4 w-4 text-white" />
@@ -553,7 +553,7 @@ const PDPAnalysisResults = () => {
             </div>
 
             {/* Priority Improvements */}
-            <div className="bg-white rounded-3xl border border-gray-200 p-6">
+            <div className="bg-white rounded-xl border border-gray-200 p-6">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-8 h-8 bg-orange-500 rounded-lg flex items-center justify-center">
                   <TrendingUp className="h-4 w-4 text-white" />
@@ -602,7 +602,7 @@ const PDPAnalysisResults = () => {
 
             {/* Quick Wins */}
             <div className="grid md:grid-cols-2 gap-4">
-              <div className="bg-white rounded-3xl border border-gray-200 p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
                     <Zap className="h-4 w-4 text-white" />
@@ -623,7 +623,7 @@ const PDPAnalysisResults = () => {
                 </div>
               </div>
 
-              <div className="bg-white rounded-3xl border border-gray-200 p-6">
+              <div className="bg-white rounded-xl border border-gray-200 p-6">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center">
                     <Award className="h-4 w-4 text-white" />

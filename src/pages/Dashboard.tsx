@@ -222,7 +222,7 @@ const Dashboard = () => {
               
               {/* Backend Unavailable Warning */}
               {isBackendUnavailable && (
-                <div className="bg-red-50 border border-red-200 rounded-3xl p-6 mb-8">
+                <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-8">
                   <div className="flex items-start gap-4">
                     <AlertCircle className="w-6 h-6 text-red-600 mt-0.5 flex-shrink-0" />
                     <div className="flex-1">
@@ -231,7 +231,7 @@ const Dashboard = () => {
                         Convex free plan limits exceeded. All backend functions are disabled until limits are restored.
                         The application is running in offline mode with limited functionality.
                       </p>
-                      <div className="bg-red-100 border border-red-200 rounded-2xl p-4 mb-4">
+                      <div className="bg-red-100 border border-red-200 rounded-lg p-4 mb-4">
                         <p className="text-xs text-red-800">
                           <strong>⚠️ Important:</strong> Data cleanup functions cannot work when backend is disabled. 
                           The only solution is to <strong>upgrade to Convex Pro plan ($25/month)</strong> to restore full functionality and enable data cleanup.
@@ -276,7 +276,7 @@ const Dashboard = () => {
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
-                  <div className="bg-white rounded-3xl border border-[#E3E7EA] p-6 transition-all duration-200 h-full flex flex-col">
+                  <div className="bg-white rounded-xl border border-[#E3E7EA] p-6 transition-all duration-200 h-full flex flex-col">
                     <div className="mb-4">
                       <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
                     </div>
@@ -293,7 +293,7 @@ const Dashboard = () => {
                           </div>
                           <p className="text-xs text-gray-500 uppercase tracking-wider">Tokens Used</p>
                         </div>
-                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                        <div className="w-12 h-12 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                           <Zap className="h-6 w-6" style={{ color: designSystem.colors.primary }} />
                         </div>
                       </div>
@@ -319,18 +319,18 @@ const Dashboard = () => {
 
                 {/* Quick Actions - Modern Card Design */}
                 <div className="lg:col-span-8">
-                  <div className="bg-white rounded-3xl border border-[#E3E7EA] p-6 transition-all duration-200">
+                  <div className="bg-white rounded-xl border border-[#E3E7EA] p-6 transition-all duration-200">
                     <div className="mb-4">
                       <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
                     </div>
                     <div className="grid gap-4 grid-cols-2">
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                             <Package className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
                           </div>
                           <div className="text-left">
@@ -341,11 +341,11 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
                         onClick={() => setActiveTab('demand-planner-v2')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                             <TrendingUp className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
                           </div>
                           <div className="text-left">
@@ -356,11 +356,11 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
                         onClick={() => setActiveTab('spec-generator')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                             <Sparkles className="h-5 w-5 text-gray-700" />
                           </div>
                           <div className="text-left">
@@ -371,11 +371,11 @@ const Dashboard = () => {
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-xl"
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                             <Eye className="h-5 w-5 text-gray-700" />
                           </div>
                           <div className="text-left">
@@ -491,9 +491,9 @@ const Dashboard = () => {
               </div>
 
               {/* Smart Insights - Premium Design */}
-              <div className="bg-white rounded-2xl border border-[#E3E7EA]/80 p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+              <div className="bg-white rounded-lg border border-[#E3E7EA]/80 p-6 shadow-sm hover:shadow-lg transition-all duration-300">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center shadow-sm">
+                  <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center shadow-sm">
                     <Lightbulb className="h-5 w-5 text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-gray-900">Smart Insights</h3>
@@ -553,9 +553,9 @@ const Dashboard = () => {
                   const colors = colorClasses[insight.color];
                   
                   return (
-                    <div className="bg-white border border-[#E3E7EA] rounded-3xl p-6">
+                    <div className="bg-white border border-[#E3E7EA] rounded-xl p-6">
                       <div className="flex items-start gap-4">
-                        <div className="w-8 h-8 rounded-2xl flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-1" style={{ backgroundColor: designSystem.colors.primaryLight }}>
                           <Lightbulb className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
                         </div>
                         <div>
@@ -596,7 +596,7 @@ const Dashboard = () => {
           {/* Sidebar Header */}
           <div className="border-b border-[#E3E7EA] px-4 flex items-center" style={{ height: '65px' }}>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
                 <Package className="h-4 w-4 text-white" />
               </div>
               <h1 className="text-base font-medium text-gray-900">QuantiPackAI</h1>
@@ -647,7 +647,7 @@ const Dashboard = () => {
           {/* Bottom Section */}
           <div className="absolute bottom-2 sm:bottom-3 left-2 sm:left-3 right-2 sm:right-3 space-y-3">
             {/* Upgrade Card */}
-            <div className="bg-white rounded-3xl p-3 border border-[#E3E7EA]">
+            <div className="bg-white rounded-xl p-3 border border-[#E3E7EA]">
               <h4 className="font-medium text-gray-900 mb-2">Upgrade to Pro</h4>
               <p className="text-xs text-gray-600 mb-3">
                 Get 1 month free and unlock advanced features
@@ -681,7 +681,7 @@ const Dashboard = () => {
 
               {/* Dropdown Menu */}
               {userDropdownOpen && (
-                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-3xl border border-[#E3E7EA] py-2 z-50">
+                <div className="absolute bottom-full left-0 right-0 mb-2 bg-white rounded-xl border border-[#E3E7EA] py-2 z-50">
                   <button
                     onClick={() => {
                       setUserDropdownOpen(false);
