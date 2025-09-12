@@ -17,13 +17,16 @@ import {
   FolderOpenIcon as FolderOpen,
   ArrowPathIcon as RefreshCw,
   ArrowTopRightOnSquareIcon as ExternalLink,
-  SparklesIcon as Sparkles,
-  ArrowTrendingUpIcon as TrendingUp,
-  EyeIcon as Eye,
   DocumentTextIcon as FileText,
   ChartBarIcon as BarChart3,
   Cog6ToothIcon as SettingsIcon
 } from '@heroicons/react/24/outline';
+import {
+  ArchiveBoxIcon as PackageSolid,
+  SparklesIcon as SparklesSolid,
+  ArrowTrendingUpIcon as TrendingUpSolid,
+  EyeIcon as EyeSolid
+} from '@heroicons/react/24/solid';
 import {
   HomeIcon,
   ArchiveBoxIcon,
@@ -327,8 +330,8 @@ const Dashboard = () => {
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                            <Package className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-gradient-to-br from-purple-500 via-blue-500 to-indigo-600">
+                            <PackageSolid className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Suite Analyzer</div>
@@ -342,8 +345,8 @@ const Dashboard = () => {
                         onClick={() => setActiveTab('demand-planner-v2')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                            <TrendingUp className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-600">
+                            <TrendingUpSolid className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Demand Planner</div>
@@ -357,8 +360,8 @@ const Dashboard = () => {
                         onClick={() => setActiveTab('spec-generator')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                            <Sparkles className="h-5 w-5 text-gray-700" />
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-gradient-to-br from-yellow-400 via-orange-500 to-red-500">
+                            <SparklesSolid className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Spec Generator</div>
@@ -372,8 +375,8 @@ const Dashboard = () => {
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                            <Eye className="h-5 w-5 text-gray-700" />
+                          <div className="w-10 h-10 rounded-lg flex items-center justify-center transition-colors bg-gradient-to-br from-pink-500 via-rose-500 to-fuchsia-600">
+                            <EyeSolid className="h-8 w-8 text-white" />
                           </div>
                           <div className="text-left">
                             <div className="text-sm font-medium text-gray-900">Design Analyzer</div>
