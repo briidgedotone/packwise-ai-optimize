@@ -407,7 +407,7 @@ const Dashboard = () => {
                     <BarChart3 className="h-4 w-4 text-gray-400" />
                   </div>
                   {safeToolStats && safeToolStats.length > 0 && safeToolStats.some((stat: any) => stat.count > 0) ? (
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {safeToolStats.map((stat: any, index: number) => (
                         <div key={index} className="flex items-center justify-between py-1">
                           <div className="flex items-center gap-2">
