@@ -47,7 +47,7 @@ const SuiteAnalysisLoading = () => {
     const error = (analysisData.results as any)?.error || 'Analysis failed';
     return (
       <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFBFC' }}>
-        <Card className="max-w-md rounded-xl border-gray-200">
+        <Card className="max-w-md rounded-3xl border-gray-200">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-semibold mb-2">Analysis Failed</h2>
@@ -66,7 +66,7 @@ const SuiteAnalysisLoading = () => {
   return (
     <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#FAFBFC' }}>
       <div className="max-w-md mx-auto px-4">
-        <Card className="bg-white border border-gray-200 rounded-xl">
+        <Card className="bg-white border border-gray-200 rounded-3xl">
           <CardContent className="p-6 text-center">
             {progress ? (
               <div className="space-y-4">

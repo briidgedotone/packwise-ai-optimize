@@ -36,15 +36,15 @@ export const designSystem = {
     infoLight: '#DBEAFE',
   },
   
-  // Border radius values
+  // Border radius values - Extra rounded for modern look
   borderRadius: {
     none: '0',
-    sm: '0.25rem', // 4px
-    md: '0.375rem', // 6px
-    lg: '0.5rem', // 8px
-    xl: '0.625rem', // 10px
-    '2xl': '0.75rem', // 12px
-    '3xl': '1rem', // 16px - Our primary radius (reduced from 24px)
+    sm: '0.5rem', // 8px (increased more)
+    md: '0.75rem', // 12px (increased more)
+    lg: '1rem', // 16px (increased more)
+    xl: '1.5rem', // 24px (increased more)
+    '2xl': '2rem', // 32px (increased more)
+    '3xl': '2.5rem', // 40px - Our primary radius (increased significantly)
     full: '9999px',
   },
   
@@ -102,7 +102,7 @@ export const designSystem = {
 
 // Utility function to apply design system classes
 export const getCardClasses = (variant: 'default' | 'primary' | 'transparent' = 'default') => {
-  const baseClasses = 'rounded-xl border border-gray-200 overflow-hidden';
+  const baseClasses = 'rounded-3xl border border-gray-200 overflow-hidden';
   
   switch (variant) {
     case 'primary':
