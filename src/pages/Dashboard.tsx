@@ -580,17 +580,6 @@ const Dashboard = () => {
 
           {/* Bottom Section */}
           <div className="absolute bottom-2 left-2 right-2 space-y-1">
-            {/* Upgrade Card */}
-            <div className="bg-white rounded-3xl p-2 border border-[#E3E7EA]">
-              <h4 className="font-medium text-gray-900 mb-1">Upgrade to Pro</h4>
-              <p className="text-xs text-gray-600 mb-1">
-                Get 1 month free and unlock advanced features
-              </p>
-              <Button size="sm" className="w-full text-white text-xs rounded-full" style={{ backgroundColor: designSystem.colors.primary }}>
-                Upgrade
-              </Button>
-            </div>
-
             {/* User Profile Section */}
             <div className="relative" data-user-dropdown>
               <button
