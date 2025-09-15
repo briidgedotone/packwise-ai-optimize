@@ -14,10 +14,12 @@ import { useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { toast } from 'sonner';
 import { designSystem } from '@/lib/design-system';
+import { useTokenGuard } from '@/hooks/useTokenGuard';
 // import { motion, AnimatePresence } from 'framer-motion';
 
 export const PDPAnalyzer = () => {
   const navigate = useNavigate();
+  const { canUseToken, checkAndConsumeToken } = useTokenGuard();
   
   // UI State
   const [currentStep, setCurrentStep] = useState(1);
@@ -157,65 +159,72 @@ export const PDPAnalyzer = () => {
     setIsAnalyzing(true);
     
     try {
-      // Convert main PDP to base64
-      const mainPDPData = await fileToBase64(files.mainPDP);
-      
-      // Convert competitor PDPs to base64
-      const competitorPDPs = await Promise.all(
-        files.competitors.map(file => fileToBase64(file))
-      );
-
-      // Store images for results page
-      const imageData: any = {
-        competitors: []
-      };
-
-      if (files.mainPDP) {
-        imageData.mainPDP = {
-          file: {
-            name: files.mainPDP.name,
-            size: files.mainPDP.size,
-            type: files.mainPDP.type
-          },
-          dataUrl: await fileToDataUrl(files.mainPDP)
-        };
-      }
-
-      if (files.competitors.length > 0) {
-        imageData.competitors = await Promise.all(
-          files.competitors.map(async (file) => ({
-            file: {
-              name: file.name,
-              size: file.size,
-              type: file.type
-            },
-            dataUrl: await fileToDataUrl(file)
-          }))
+      const result = await checkAndConsumeToken('pdp_analyzer', async () => {
+        // Convert main PDP to base64
+        const mainPDPData = await fileToBase64(files.mainPDP);
+        
+        // Convert competitor PDPs to base64
+        const competitorPDPs = await Promise.all(
+          files.competitors.map(file => fileToBase64(file))
         );
-      }
 
-      const response = await analyzePDP({
-        mainPDPData,
-        competitorPDPs: competitorPDPs.length > 0 ? competitorPDPs : undefined,
-        metaInfo: {
-          category: metaInfo.category,
-          description: metaInfo.description,
-          shelfType: metaInfo.shelfType || undefined,
-          claims: metaInfo.claims || undefined,
-          analysisFocus: metaInfo.analysisFocus,
-          targetDemographics: metaInfo.targetDemographics,
-          retailEnvironment: metaInfo.retailEnvironment,
-        },
+        // Store images for results page
+        const imageData: any = {
+          competitors: []
+        };
+
+        if (files.mainPDP) {
+          imageData.mainPDP = {
+            file: {
+              name: files.mainPDP.name,
+              size: files.mainPDP.size,
+              type: files.mainPDP.type
+            },
+            dataUrl: await fileToDataUrl(files.mainPDP)
+          };
+        }
+
+        if (files.competitors.length > 0) {
+          imageData.competitors = await Promise.all(
+            files.competitors.map(async (file) => ({
+              file: {
+                name: file.name,
+                size: file.size,
+                type: file.type
+              },
+              dataUrl: await fileToDataUrl(file)
+            }))
+          );
+        }
+
+        const response = await analyzePDP({
+          mainPDPData,
+          competitorPDPs: competitorPDPs.length > 0 ? competitorPDPs : undefined,
+          metaInfo: {
+            category: metaInfo.category,
+            description: metaInfo.description,
+            shelfType: metaInfo.shelfType || undefined,
+            claims: metaInfo.claims || undefined,
+            analysisFocus: metaInfo.analysisFocus,
+            targetDemographics: metaInfo.targetDemographics,
+            retailEnvironment: metaInfo.retailEnvironment,
+          },
+        });
+
+        // Store results and images in session storage
+        sessionStorage.setItem('pdpAnalysisResults', JSON.stringify(response));
+        sessionStorage.setItem('pdpAnalysisMetaInfo', JSON.stringify(metaInfo));
+        sessionStorage.setItem('pdpAnalysisImages', JSON.stringify(imageData));
+        
+        return response;
       });
 
-      // Store results and images in session storage
-      sessionStorage.setItem('pdpAnalysisResults', JSON.stringify(response));
-      sessionStorage.setItem('pdpAnalysisMetaInfo', JSON.stringify(metaInfo));
-      sessionStorage.setItem('pdpAnalysisImages', JSON.stringify(imageData));
-      
-      navigate('/pdp-analysis/results');
-      
-      toast.success('PDP analysis completed successfully!');
+      if (result.success) {
+        navigate('/pdp-analysis/results');
+        toast.success('PDP analysis completed successfully!');
+      } else if (result.error === 'NO_TOKENS') {
+        navigate('/onboarding');
+      }
       
     } catch (error) {
       console.error('Error analyzing PDP:', error);
@@ -513,7 +522,7 @@ export const PDPAnalyzer = () => {
         <div className="mt-4 pt-3 border-t">
           <Button
             onClick={handleAnalyzePDP}
-            disabled={!isStep4Valid || isAnalyzing}
+            disabled={!canUseToken || !isStep4Valid || isAnalyzing}
             className="w-full hover:opacity-90 text-white rounded-full"
             style={{ backgroundColor: designSystem.colors.primary }}
             size="lg"
@@ -522,6 +531,11 @@ export const PDPAnalyzer = () => {
               <>
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                 Analyzing Your Design...
+              </>
+            ) : !canUseToken ? (
+              <>
+                <AlertCircle className="h-4 w-4 mr-2" />
+                No Tokens Available
               </>
             ) : (
               <>

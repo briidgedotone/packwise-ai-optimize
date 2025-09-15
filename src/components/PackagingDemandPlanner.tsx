@@ -26,6 +26,7 @@ import { api } from '../../convex/_generated/api';
 import { toast } from 'sonner';
 import { designSystem } from '@/lib/design-system';
 import { exportToCSV, exportToPDF } from '@/lib/demandPlannerExport';
+import { useTokenGuard } from '@/hooks/useTokenGuard';
 
 interface DemandResult {
   packageType: string;
@@ -40,6 +41,7 @@ interface DemandResult {
 export const PackagingDemandPlanner = () => {
   const navigate = useNavigate();
   const { user } = useUser();
+  const { canUseToken, checkAndConsumeToken } = useTokenGuard();
   const [totalOrders, setTotalOrders] = useState('');
   const [forecastPeriod, setForecastPeriod] = useState('');
   const [mixSource, setMixSource] = useState<'usage-log' | 'manual'>('usage-log');
@@ -103,27 +105,35 @@ export const PackagingDemandPlanner = () => {
     setIsAnalyzing(true);
     
     try {
-      // Convert files to strings
-      const packagingSuiteData = await fileToString(files.packagingSuite);
-      const usageLogData = mixSource === 'usage-log' && files.usageLog 
-        ? await fileToString(files.usageLog) 
-        : undefined;
-      const manualMixData = mixSource === 'manual' && files.manualMix 
-        ? await fileToString(files.manualMix) 
-        : undefined;
+      const result = await checkAndConsumeToken('demand_planner', async () => {
+        // Convert files to strings
+        const packagingSuiteData = await fileToString(files.packagingSuite);
+        const usageLogData = mixSource === 'usage-log' && files.usageLog 
+          ? await fileToString(files.usageLog) 
+          : undefined;
+        const manualMixData = mixSource === 'manual' && files.manualMix 
+          ? await fileToString(files.manualMix) 
+          : undefined;
 
-      const response = await calculateDemandPlanning({
-        totalOrders: parseInt(totalOrders.replace(/,/g, '')) || 0,
-        forecastPeriod,
-        usageLogData,
-        manualMixData,
-        packagingSuiteData,
-        safetyStockPercent: safetyStock ? parseFloat(safetyStock) : undefined,
-        userId: user.id,
+        const response = await calculateDemandPlanning({
+          totalOrders: parseInt(totalOrders.replace(/,/g, '')) || 0,
+          forecastPeriod,
+          usageLogData,
+          manualMixData,
+          packagingSuiteData,
+          safetyStockPercent: safetyStock ? parseFloat(safetyStock) : undefined,
+          userId: user.id,
+        });
+
+        return response;
       });
 
-      setResults(response);
-      toast.success(`✅ Demand plan generated for ${response.totalPackages.toLocaleString()} packages!`);
+      if (result.success) {
+        setResults(result.result);
+        toast.success(`✅ Demand plan generated for ${result.result.totalPackages.toLocaleString()} packages!`);
+      } else if (result.error === 'NO_TOKENS') {
+        navigate('/onboarding');
+      }
       
     } catch (error) {
       console.error('Error generating demand plan:', error);
@@ -393,7 +403,7 @@ export const PackagingDemandPlanner = () => {
         <div className="flex justify-center lg:justify-end px-3 sm:px-0">
           <Button 
             size="lg"
-            disabled={!totalOrders || !forecastPeriod || !files.packagingSuite || (mixSource === 'usage-log' && !files.usageLog) || (mixSource === 'manual' && !files.manualMix) || isAnalyzing}
+            disabled={!canUseToken || !totalOrders || !forecastPeriod || !files.packagingSuite || (mixSource === 'usage-log' && !files.usageLog) || (mixSource === 'manual' && !files.manualMix) || isAnalyzing}
             onClick={handleGeneratePlan}
             className="hover:opacity-90 text-white disabled:bg-gray-300 disabled:text-gray-500 min-w-48 rounded-full"
             style={{ backgroundColor: designSystem.colors.primary }}
@@ -402,6 +412,11 @@ export const PackagingDemandPlanner = () => {
               <div className="flex items-center gap-2">
                 <Loader2 className="h-5 w-5 animate-spin" />
                 Generating Plan...
+              </div>
+            ) : (!canUseToken) ? (
+              <div className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4" />
+                No Tokens Available
               </div>
             ) : (!totalOrders || !forecastPeriod || !files.packagingSuite || (mixSource === 'usage-log' && !files.usageLog) || (mixSource === 'manual' && !files.manualMix)) ? (
               <div className="flex items-center gap-2">
