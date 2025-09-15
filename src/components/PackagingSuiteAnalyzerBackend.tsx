@@ -27,10 +27,12 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { designSystem } from '@/lib/design-system';
+import { useTokenGuard } from '@/hooks/useTokenGuard';
 
 
 export const PackagingSuiteAnalyzerBackend = () => {
   const navigate = useNavigate();
+  const { checkAndConsumeToken, tokenBalance } = useTokenGuard();
   const [showHelpModal, setShowHelpModal] = useState(true); // Show automatically on load
   const [files, setFiles] = useState<{
     orderHistory: File | null;
@@ -146,26 +148,35 @@ export const PackagingSuiteAnalyzerBackend = () => {
       
 
 
-      // Start backend analysis
+      // Start backend analysis with token check
       console.log('Starting backend analysis...');
       
-      const analysisId = await startAnalysis({
-        name: `Suite Analysis - ${new Date().toLocaleString()}`,
-        orderHistoryCSV,
-        packagingSuiteCSV,
-        config: {
-          allowRotation: true,
-          allowStacking: true,
-          includeShippingCosts: false,
-          minimumFillRate: 30
-        }
+      const result = await checkAndConsumeToken('suite_analyzer', async () => {
+        const analysisId = await startAnalysis({
+          name: `Suite Analysis - ${new Date().toLocaleString()}`,
+          orderHistoryCSV,
+          packagingSuiteCSV,
+          config: {
+            allowRotation: true,
+            allowStacking: true,
+            includeShippingCosts: false,
+            minimumFillRate: 30
+          }
+        });
+        
+        return { analysisId };
       });
+      
+      if (!result.success) {
+        console.error('Analysis failed or no tokens available');
+        return;
+      }
 
-      console.log('Analysis started with ID:', analysisId);
-      setCurrentAnalysisId(analysisId);
+      console.log('Analysis started with ID:', result.result.analysisId);
+      setCurrentAnalysisId(result.result.analysisId);
       
       // Navigate to loading page
-      navigate(`/suite-analysis/${analysisId}/loading`);
+      navigate(`/suite-analysis/${result.result.analysisId}/loading`);
 
     } catch (err) {
       console.error('Analysis failed:', err);
