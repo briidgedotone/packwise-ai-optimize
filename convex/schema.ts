@@ -118,4 +118,35 @@ export default defineSchema({
     insights: v.array(v.string()),
     createdAt: v.number(),
   }).index("by_user", ["userId"]),
+
+  // Stripe Subscriptions (minimal implementation)
+  subscriptions: defineTable({
+    userId: v.id("users"),
+    stripeCustomerId: v.string(),
+    stripeSubscriptionId: v.optional(v.string()),
+    status: v.string(), // active, trialing, canceled, etc.
+    planType: v.union(
+      v.literal("free"),
+      v.literal("starter"),
+      v.literal("professional"),
+      v.literal("enterprise")
+    ),
+    tokensPerMonth: v.number(),
+    currentPeriodEnd: v.optional(v.number()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_stripe_customer", ["stripeCustomerId"]),
+
+  // Token Balance (simple tracking)
+  tokenBalance: defineTable({
+    userId: v.id("users"),
+    monthlyTokens: v.number(), // Allocated from subscription
+    additionalTokens: v.number(), // Purchased separately
+    usedTokens: v.number(), // Used this period
+    resetDate: v.number(), // Next reset date
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"]),
 });

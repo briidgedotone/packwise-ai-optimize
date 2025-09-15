@@ -91,7 +91,7 @@ export default function SignUpPage() {
 
             <div className="bg-white lg:bg-transparent rounded-3xl lg:rounded-none border lg:border-none border-gray-200 p-8 lg:p-0">
               <SignUp 
-                forceRedirectUrl="/dashboard"
+                forceRedirectUrl="/onboarding"
                 appearance={{
                   elements: {
                     formButtonPrimary: `bg-[${designSystem.colors.primary}] hover:opacity-90 text-white font-medium rounded-full`,

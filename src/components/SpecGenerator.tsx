@@ -28,6 +28,7 @@ import { api } from '../../convex/_generated/api';
 import { Id } from '../../convex/_generated/dataModel';
 import { toast } from 'sonner';
 import { designSystem } from '@/lib/design-system';
+import { useTokenGuard } from '@/hooks/useTokenGuard';
 
 interface SpecResult {
   orderId?: string;
@@ -58,6 +59,8 @@ interface SpecGenerationResponse {
 }
 
 export const SpecGenerator = () => {
+  const { checkAndConsumeToken } = useTokenGuard();
+  
   // State
   const [productFile, setProductFile] = useState<File | null>(null);
   const [csvContent, setCsvContent] = useState<string>('');
@@ -167,26 +170,34 @@ export const SpecGenerator = () => {
     setTotalProducts(totalCount);
     
     try {
-      const bounds = {
-        min: {
-          l: parseFloat(boundingDimensions.min.l),
-          w: parseFloat(boundingDimensions.min.w),
-          h: parseFloat(boundingDimensions.min.h),
-        },
-        avg: {
-          l: parseFloat(boundingDimensions.avg.l),
-          w: parseFloat(boundingDimensions.avg.w),
-          h: parseFloat(boundingDimensions.avg.h),
-        },
-        max: {
-          l: parseFloat(boundingDimensions.max.l),
-          w: parseFloat(boundingDimensions.max.w),
-          h: parseFloat(boundingDimensions.max.h),
-        },
-      };
+      // Check token before starting
+      const tokenResult = await checkAndConsumeToken('spec_generator', async () => {
+        const bounds = {
+          min: {
+            l: parseFloat(boundingDimensions.min.l),
+            w: parseFloat(boundingDimensions.min.w),
+            h: parseFloat(boundingDimensions.min.h),
+          },
+          avg: {
+            l: parseFloat(boundingDimensions.avg.l),
+            w: parseFloat(boundingDimensions.avg.w),
+            h: parseFloat(boundingDimensions.avg.h),
+          },
+          max: {
+            l: parseFloat(boundingDimensions.max.l),
+            w: parseFloat(boundingDimensions.max.w),
+            h: parseFloat(boundingDimensions.max.h),
+          },
+        };
 
-      await processChunkedSpecs(bounds, totalCount);
+        await processChunkedSpecs(bounds, totalCount);
+        return { success: true };
+      });
       
+      if (!tokenResult.success) {
+        setIsProcessing(false);
+        return;
+      }
     } catch (error) {
       console.error('Error generating specs:', error);
       

@@ -32,6 +32,30 @@ export const createOrUpdateUser = mutation({
         createdAt: Date.now(),
         lastLoginAt: Date.now(),
       });
+      
+      // Initialize free trial subscription
+      await ctx.db.insert("subscriptions", {
+        userId,
+        stripeCustomerId: "", // Will be set when they subscribe
+        stripeSubscriptionId: undefined,
+        status: "trialing",
+        planType: "free",
+        tokensPerMonth: 5, // Free trial tokens
+        currentPeriodEnd: Date.now() + 14 * 24 * 60 * 60 * 1000, // 14 days trial
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+      
+      // Initialize token balance
+      await ctx.db.insert("tokenBalance", {
+        userId,
+        monthlyTokens: 5, // Free trial tokens
+        additionalTokens: 0,
+        usedTokens: 0,
+        resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000, // Reset in 30 days
+        updatedAt: Date.now(),
+      });
+      
       return userId;
     }
   },

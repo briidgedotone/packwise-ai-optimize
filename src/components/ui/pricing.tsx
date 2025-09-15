@@ -22,12 +22,12 @@ const plans = [
       "CSV export"
     ],
     includes: [
-      "Free includes:",
-      "Unlimited CSV uploads",
-      "Basic reporting & analytics",
+      "Starter includes:",
+      "50 tokens per month",
+      "All applications included",
       "Email support",
-      "Up to 1 organization",
-      "Standard templates"
+      "Basic analytics",
+      "CSV export"
     ],
   },
   {
@@ -48,13 +48,13 @@ const plans = [
       "Custom reports"
     ],
     includes: [
-      "Everything in Starter, plus:",
-      "Advanced analytics dashboard",
-      "Custom report generation",
-      "Priority email support",
-      "API access for integrations",
-      "Up to 5 organizations",
-      "Advanced templates"
+      "Professional includes:",
+      "150 tokens per month",
+      "All applications included",
+      "Priority support",
+      "Advanced analytics",
+      "API access",
+      "Custom reports"
     ],
   },
   {
@@ -74,13 +74,13 @@ const plans = [
       "Training and onboarding"
     ],
     includes: [
-      "Everything in Professional, plus:",
-      "Unlimited organizations",
+      "Enterprise includes:",
+      "Flexible token bundle and pricing",
+      "All applications included",
       "Dedicated success manager",
+      "API access and advanced support",
       "Custom integrations",
-      "Priority phone support",
-      "Advanced security features",
-      "Custom training sessions"
+      "Training and onboarding"
     ],
   },
 ];

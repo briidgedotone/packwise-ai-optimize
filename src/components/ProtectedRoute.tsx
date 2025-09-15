@@ -1,27 +1,27 @@
 import { useUser } from "@clerk/clerk-react";
 import { Loader2, Package } from "lucide-react";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import { Navigate } from "react-router-dom";
+import { useMutation } from "convex/react";
+import { api } from "../../convex/_generated/api";
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isLoaded, isSignedIn } = useUser();
-
-  // TODO: Add Convex user sync when backend deployment is working
-  // const createOrUpdateUser = useMutation(api.users.createOrUpdateUser);
+  const { isLoaded, isSignedIn, user } = useUser();
+  const createOrUpdateUser = useMutation(api.users.createOrUpdateUser);
   
-  // useEffect(() => {
-  //   if (isLoaded && isSignedIn && user) {
-  //     createOrUpdateUser({
-  //       clerkId: user.id,
-  //       email: user.emailAddresses[0]?.emailAddress || "",
-  //       name: user.fullName || user.username || "Anonymous User",
-  //     }).catch(console.error);
-  //   }
-  // }, [isLoaded, isSignedIn, user]);
+  useEffect(() => {
+    if (isLoaded && isSignedIn && user) {
+      createOrUpdateUser({
+        clerkId: user.id,
+        email: user.emailAddresses[0]?.emailAddress || "",
+        name: user.fullName || user.username || "Anonymous User",
+      }).catch(console.error);
+    }
+  }, [isLoaded, isSignedIn, user, createOrUpdateUser]);
 
   if (!isLoaded) {
     return (
