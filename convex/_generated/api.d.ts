@@ -25,6 +25,7 @@ import type * as stripe from "../stripe.js";
 import type * as suiteAnalyzer from "../suiteAnalyzer.js";
 import type * as suiteAnalyzerBackend from "../suiteAnalyzerBackend.js";
 import type * as suiteAnalyzerSimple from "../suiteAnalyzerSimple.js";
+import type * as tokens from "../tokens.js";
 import type * as users from "../users.js";
 import type * as webhooks from "../webhooks.js";
 
@@ -49,6 +50,7 @@ declare const fullApi: ApiFromModules<{
   suiteAnalyzer: typeof suiteAnalyzer;
   suiteAnalyzerBackend: typeof suiteAnalyzerBackend;
   suiteAnalyzerSimple: typeof suiteAnalyzerSimple;
+  tokens: typeof tokens;
   users: typeof users;
   webhooks: typeof webhooks;
 }>;
