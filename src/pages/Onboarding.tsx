@@ -5,7 +5,7 @@ import { useQuery, useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Check, Package, Zap, ArrowRight } from 'lucide-react';
+import { Check, Package, Zap, ArrowRight, CheckCheck } from 'lucide-react';
 import { designSystem } from '@/lib/design-system';
 import { PRICING_CONFIG, isStripeConfigured } from '@/lib/stripe';
 import { toast } from 'sonner';
@@ -32,48 +32,57 @@ export default function Onboarding() {
     {
       id: 'free',
       name: 'Free Trial',
+      description: 'Perfect for trying out QuantiPackAI with sample analyses',
       price: 'Free',
-      period: '14 days',
+      period: '5 tokens',
       tokens: 5,
-      features: [
-        '5 analysis tokens',
-        'All features included',
-        'Email support',
-        '14-day trial period'
-      ],
       cta: 'Start Free Trial',
-      popular: false
+      popular: false,
+      includes: [
+        'Free includes:',
+        '5 analysis tokens',
+        'All applications included',
+        'Email support',
+        'Basic analytics',
+        'CSV export'
+      ]
     },
     {
       id: 'starter',
       name: 'Starter',
-      price: '$39.99',
+      description: 'Great for small businesses and startups looking to get started with AI',
+      price: 39.99,
       period: '/month',
       tokens: 50,
-      features: [
-        '50 tokens per month',
-        'All features included',
-        'Priority support',
-        'CSV exports'
-      ],
-      cta: 'Subscribe Now',
-      popular: false
+      cta: 'Start Now',
+      popular: false,
+      includes: [
+        'Free includes:',
+        'Unlimited CSV uploads',
+        'Basic reporting & analytics',
+        'Email support',
+        'Up to 1 organization',
+        'Standard templates'
+      ]
     },
     {
       id: 'professional',
       name: 'Professional',
-      price: '$99.99',
+      description: 'Best value for growing businesses that need more advanced features',
+      price: 99.99,
       period: '/month',
       tokens: 150,
-      features: [
-        '150 tokens per month',
-        'All features included',
-        'Priority support',
-        'API access',
-        'Custom reports'
-      ],
-      cta: 'Subscribe Now',
-      popular: true
+      cta: 'Start Now',
+      popular: true,
+      includes: [
+        'Everything in Starter, plus:',
+        'Advanced analytics dashboard',
+        'Custom report generation',
+        'Priority email support',
+        'API access for integrations',
+        'Up to 5 organizations',
+        'Advanced templates'
+      ]
     }
   ];
 
@@ -136,93 +145,113 @@ export default function Onboarding() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ backgroundColor: '#F6F6FF' }}>
       <div className="max-w-7xl mx-auto px-4 py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
+        <div className="text-center mb-16 space-y-4 max-w-4xl mx-auto">
+          <div className="flex justify-center mb-6">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
               <Package className="h-8 w-8 text-white" />
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Welcome to QuantiPackAI, {user?.firstName || 'there'}!
           </h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Choose your plan to start optimizing your packaging with AI-powered insights.
             Each analysis uses one token.
           </p>
         </div>
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-3 gap-8 py-6 mb-12">
           {plans.map((plan) => (
-            <Card 
-              key={plan.id}
-              className={`relative ${plan.popular ? 'ring-2 ring-blue-600' : ''} ${selectedPlan === plan.id ? 'bg-blue-50' : ''}`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    Most Popular
-                  </span>
-                </div>
-              )}
-              <CardHeader>
-                <CardTitle className="text-2xl">{plan.name}</CardTitle>
-                <div className="mt-4">
-                  <span className="text-3xl font-bold">{plan.price}</span>
-                  <span className="text-gray-600">{plan.period}</span>
-                </div>
-                <div className="mt-2 text-blue-600 font-medium">
-                  {plan.tokens} tokens {plan.id === 'free' ? 'total' : 'per month'}
-                </div>
-              </CardHeader>
-              <CardContent>
-                <ul className="space-y-3 mb-6">
-                  {plan.features.map((feature, idx) => (
-                    <li key={idx} className="flex items-start">
-                      <Check className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-                      <span className="text-gray-700">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Button 
-                  className="w-full"
-                  variant={plan.popular ? 'default' : 'outline'}
-                  onClick={() => handlePlanSelection(plan.id)}
-                  disabled={loading}
-                >
-                  {loading && selectedPlan === plan.id ? (
-                    'Processing...'
-                  ) : (
-                    <>
-                      {plan.cta}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
+            <div key={plan.id}>
+              <Card
+                className={`relative border rounded-3xl ${
+                  plan.popular
+                    ? "ring-2 ring-[#767AFA] bg-purple-50"
+                    : "bg-white border-gray-200"
+                }`}
+              >
+                <CardHeader className="text-left">
+                  <div className="flex justify-between items-start">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                      {plan.name}
+                    </h3>
+                    {plan.popular && (
+                      <div className="">
+                        <span className="bg-[#767AFA] text-white px-3 py-1 rounded-full text-sm font-medium">
+                          Most Popular
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-gray-600 mb-4">
+                    {plan.description}
+                  </p>
+                  <div className="flex items-baseline">
+                    {typeof plan.price === 'number' ? (
+                      <>
+                        <span className="text-4xl font-bold text-gray-900">
+                          ${plan.price}
+                        </span>
+                        <span className="text-gray-600 ml-1">
+                          {plan.period}
+                        </span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-4xl font-bold text-gray-900">
+                          {plan.price}
+                        </span>
+                        <span className="text-gray-600 ml-1">
+                          {plan.period}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  {plan.tokens && (
+                    <p className="font-semibold mt-2 text-[#767AFA]">
+                      {plan.tokens} tokens {plan.id === 'free' ? 'total' : 'per month'}
+                    </p>
                   )}
-                </Button>
-              </CardContent>
-            </Card>
+                </CardHeader>
+
+                <CardContent className="pt-0">
+                  <button
+                    onClick={() => handlePlanSelection(plan.id)}
+                    disabled={loading && selectedPlan === plan.id}
+                    className={`w-full p-4 text-lg rounded-3xl font-medium transition-all mb-6 ${
+                      plan.popular
+                        ? "bg-[#767AFA] hover:opacity-90 text-white"
+                        : "bg-gray-900 hover:bg-gray-800 text-white"
+                    } ${loading && selectedPlan === plan.id ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  >
+                    {loading && selectedPlan === plan.id ? 'Processing...' : plan.cta}
+                  </button>
+
+                  <div className="space-y-3 pt-4 border-t border-gray-200">
+                    <h4 className="font-semibold text-gray-900 mb-3">
+                      {plan.includes[0]}
+                    </h4>
+                    <ul className="space-y-2">
+                      {plan.includes.slice(1).map((feature, featureIndex) => (
+                        <li key={featureIndex} className="flex items-start">
+                          <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
+                            <CheckCheck className="h-3 w-3 text-[#767AFA]" />
+                          </span>
+                          <span className="text-sm text-gray-700">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
           ))}
         </div>
 
-        {/* Info Section */}
-        <div className="bg-white rounded-2xl p-8 text-center">
-          <div className="flex justify-center mb-4">
-            <Zap className="h-12 w-12 text-yellow-500" />
-          </div>
-          <h2 className="text-2xl font-bold mb-4">How Tokens Work</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-6">
-            Each time you run an analysis (Suite Analyzer, Spec Generator, Demand Planner, or PDP Analyzer), 
-            it uses one token. Tokens reset monthly on paid plans. Start with a free trial to explore all features!
-          </p>
-          <div className="flex justify-center gap-4">
-            <Button variant="outline" onClick={() => navigate('/dashboard')}>
-              Skip for now
-            </Button>
-          </div>
-        </div>
       </div>
     </div>
   );
