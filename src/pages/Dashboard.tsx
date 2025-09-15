@@ -86,9 +86,8 @@ const Dashboard = () => {
   const toolUsageStats = useQuery(api.dashboard.getToolUsageStats);
   const recentFiles = useQuery(api.dashboard.getRecentFiles);
   
-  // Token and subscription data
+  // Token data
   const tokenBalance = useQuery(api.tokens.getTokenBalance);
-  const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus);
 
   // Fallback data when backend is unavailable
   const fallbackMetrics = {
@@ -396,53 +395,6 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Subscription Status */}
-              {subscriptionStatus && (
-                <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 mb-4 hover:shadow-sm transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-medium text-gray-900">Subscription Status</h3>
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      subscriptionStatus.isActive 
-                        ? subscriptionStatus.planType === 'free' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {subscriptionStatus.status === 'trialing' ? 'Free Trial' : 
-                       subscriptionStatus.planType === 'free' ? 'Free Trial' :
-                       subscriptionStatus.planType.charAt(0).toUpperCase() + subscriptionStatus.planType.slice(1)}
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-gray-900">{safeMetrics.tokensRemaining}</div>
-                      <div className="text-xs text-gray-500">Tokens Remaining</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-gray-900">{safeMetrics.tokensLimit}</div>
-                      <div className="text-xs text-gray-500">Total Tokens</div>
-                    </div>
-                    <div className="text-center">
-                      {subscriptionStatus.planType === 'free' ? (
-                        <Button 
-                          size="sm" 
-                          onClick={() => navigate('/onboarding')}
-                          className="w-full rounded-full text-white hover:opacity-90"
-                          style={{ backgroundColor: designSystem.colors.primary }}
-                        >
-                          Upgrade Plan
-                        </Button>
-                      ) : subscriptionStatus.currentPeriodEnd ? (
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString()}
-                          </div>
-                          <div className="text-xs text-gray-500">Next Billing</div>
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* AI Chat Interface - Inline */}
               <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 shadow-sm mb-4">
@@ -628,17 +580,6 @@ const Dashboard = () => {
 
           {/* Bottom Section */}
           <div className="absolute bottom-2 left-2 right-2 space-y-1">
-            {/* Upgrade Card */}
-            <div className="bg-white rounded-3xl p-2 border border-[#E3E7EA]">
-              <h4 className="font-medium text-gray-900 mb-1">Upgrade to Pro</h4>
-              <p className="text-xs text-gray-600 mb-1">
-                Get 1 month free and unlock advanced features
-              </p>
-              <Button size="sm" className="w-full text-white text-xs rounded-full" style={{ backgroundColor: designSystem.colors.primary }}>
-                Upgrade
-              </Button>
-            </div>
-
             {/* User Profile Section */}
             <div className="relative" data-user-dropdown>
               <button
