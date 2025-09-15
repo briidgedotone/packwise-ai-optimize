@@ -25,6 +25,18 @@ export function DashboardProtectedRoute({ children }: DashboardProtectedRoutePro
     }
   }, [isLoaded, isSignedIn, user, createOrUpdateUser]);
 
+  // Check if user is returning from successful payment - if so, redirect to dashboard immediately
+  const isReturningFromPayment = searchParams.get('payment') === 'success';
+  
+  useEffect(() => {
+    if (isReturningFromPayment) {
+      // Immediately redirect to dashboard without payment parameter
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('payment');
+      window.location.replace(newUrl.pathname + newUrl.search);
+    }
+  }, [isReturningFromPayment]);
+
   if (!isLoaded) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -63,30 +75,9 @@ export function DashboardProtectedRoute({ children }: DashboardProtectedRoutePro
     );
   }
 
-  // Check if user is returning from successful payment
-  const isReturningFromPayment = searchParams.get('payment') === 'success';
-
   // If user has no active subscription (not even free trial) and is not returning from payment, redirect to onboarding
   if (subscriptionStatus && !subscriptionStatus.isActive && !isReturningFromPayment) {
     return <Navigate to="/onboarding" replace />;
-  }
-
-  // If user is returning from payment but still no active subscription, wait a bit for webhook to process
-  if (subscriptionStatus && !subscriptionStatus.isActive && isReturningFromPayment) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-green-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Package className="h-8 w-8 text-white" />
-          </div>
-          <div className="flex items-center justify-center space-x-2">
-            <Loader2 className="h-5 w-5 animate-spin text-green-600" />
-            <span className="text-gray-600">Processing your payment...</span>
-          </div>
-          <p className="text-sm text-gray-500 mt-2">Please wait while we activate your subscription</p>
-        </div>
-      </div>
-    );
   }
 
   return <>{children}</>;
