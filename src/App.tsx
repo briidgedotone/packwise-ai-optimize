@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ConvexClerkProvider } from "@/providers/ConvexClerkProvider";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { DashboardProtectedRoute } from "@/components/DashboardProtectedRoute";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
@@ -40,33 +41,33 @@ const App = () => (
           <Route 
             path="/dashboard" 
             element={
-              <ProtectedRoute>
+              <DashboardProtectedRoute>
                 <Dashboard />
-              </ProtectedRoute>
+              </DashboardProtectedRoute>
             } 
           />
           <Route 
             path="/suite-analysis/:analysisId" 
             element={
-              <ProtectedRoute>
+              <DashboardProtectedRoute>
                 <SuiteAnalysisResults />
-              </ProtectedRoute>
+              </DashboardProtectedRoute>
             } 
           />
           <Route 
             path="/suite-analysis/:analysisId/loading" 
             element={
-              <ProtectedRoute>
+              <DashboardProtectedRoute>
                 <SuiteAnalysisLoading />
-              </ProtectedRoute>
+              </DashboardProtectedRoute>
             } 
           />
           <Route 
             path="/pdp-analysis/results" 
             element={
-              <ProtectedRoute>
+              <DashboardProtectedRoute>
                 <PDPAnalysisResults />
-              </ProtectedRoute>
+              </DashboardProtectedRoute>
             } 
           />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
