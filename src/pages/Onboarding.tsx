@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
-import { useQuery } from 'convex/react';
+import { useQuery, useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check, Package, Zap, ArrowRight } from 'lucide-react';
 import { designSystem } from '@/lib/design-system';
-import { stripePromise, PRICING_CONFIG, isStripeConfigured } from '@/lib/stripe';
+import { PRICING_CONFIG, isStripeConfigured } from '@/lib/stripe';
 import { toast } from 'sonner';
 
 export default function Onboarding() {
@@ -15,6 +15,9 @@ export default function Onboarding() {
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<'free' | 'starter' | 'professional'>('free');
+  
+  // Convex actions
+  const createCheckoutSession = useAction(api.stripe.createCheckoutSession);
   
   // Check if user already has a subscription
   const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus);
@@ -76,6 +79,7 @@ export default function Onboarding() {
 
   const handlePlanSelection = async (planId: string) => {
     setLoading(true);
+    setSelectedPlan(planId as any);
     
     try {
       if (planId === 'free') {
@@ -90,17 +94,39 @@ export default function Onboarding() {
           return;
         }
 
-        const stripe = await stripePromise;
-        if (!stripe) {
-          toast.error('Failed to load payment system');
+        if (!user) {
+          toast.error('User not found');
           setLoading(false);
           return;
         }
 
-        // For now, just show a message
-        // TODO: Implement actual Stripe checkout
-        toast.info('Stripe checkout will be implemented in the next step');
-        setLoading(false);
+        // Get the price ID based on plan
+        const priceId = planId === 'starter' 
+          ? import.meta.env.VITE_STRIPE_STARTER_PRICE_ID
+          : import.meta.env.VITE_STRIPE_PROFESSIONAL_PRICE_ID;
+
+        if (!priceId) {
+          toast.error('Price configuration is missing');
+          setLoading(false);
+          return;
+        }
+
+        // Create Stripe checkout session
+        const session = await createCheckoutSession({
+          priceId,
+          userId: user.id,
+          userEmail: user.emailAddresses[0]?.emailAddress || '',
+          successUrl: `${window.location.origin}/dashboard?payment=success`,
+          cancelUrl: `${window.location.origin}/onboarding`,
+        });
+
+        if (session.url) {
+          // Redirect to Stripe checkout
+          window.location.href = session.url;
+        } else {
+          toast.error('Failed to create checkout session');
+          setLoading(false);
+        }
       }
     } catch (error) {
       console.error('Error selecting plan:', error);

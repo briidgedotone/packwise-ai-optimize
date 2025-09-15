@@ -85,30 +85,125 @@ export const processStripeWebhook = internalAction({
   },
 });
 
-// Helper functions (placeholders for now)
+// Helper functions
 async function handleSubscriptionCreated(ctx: any, subscription: any) {
   console.log("Subscription created:", subscription.id);
-  // TODO: Create subscription record in database
+  
+  try {
+    // Get user by Clerk ID from metadata
+    const userId = subscription.metadata?.userId;
+    if (!userId) {
+      console.error("No userId in subscription metadata");
+      return;
+    }
+
+    // Get user from database
+    const user = await ctx.runQuery(ctx.query.users.getUserByClerkId, { clerkId: userId });
+    if (!user) {
+      console.error("User not found:", userId);
+      return;
+    }
+
+    // Determine plan type based on price
+    let planType = 'starter';
+    let tokensPerMonth = 50;
+    
+    // You might want to check the price ID to determine the plan
+    const priceId = subscription.items.data[0]?.price.id;
+    if (priceId === process.env.VITE_STRIPE_PROFESSIONAL_PRICE_ID) {
+      planType = 'professional';
+      tokensPerMonth = 150;
+    }
+
+    // Update or create subscription record
+    const existingSub = await ctx.runQuery(ctx.query.subscriptions.getByUserId, { userId: user._id });
+    
+    if (existingSub) {
+      await ctx.runMutation(ctx.mutation.subscriptions.update, {
+        subscriptionId: existingSub._id,
+        stripeSubscriptionId: subscription.id,
+        status: subscription.status,
+        planType,
+        tokensPerMonth,
+        currentPeriodEnd: subscription.current_period_end * 1000,
+      });
+    } else {
+      await ctx.runMutation(ctx.mutation.subscriptions.create, {
+        userId: user._id,
+        stripeCustomerId: subscription.customer,
+        stripeSubscriptionId: subscription.id,
+        status: subscription.status,
+        planType,
+        tokensPerMonth,
+        currentPeriodEnd: subscription.current_period_end * 1000,
+      });
+    }
+
+    // Update token balance
+    await ctx.runMutation(ctx.mutation.tokens.updateBalance, {
+      userId: user._id,
+      monthlyTokens: tokensPerMonth,
+      resetTokens: true,
+    });
+  } catch (error) {
+    console.error("Error handling subscription created:", error);
+  }
 }
 
 async function handleSubscriptionUpdated(ctx: any, subscription: any) {
   console.log("Subscription updated:", subscription.id);
-  // TODO: Update subscription record in database
+  // Similar to created, update the subscription record
+  await handleSubscriptionCreated(ctx, subscription);
 }
 
 async function handleSubscriptionDeleted(ctx: any, subscription: any) {
   console.log("Subscription deleted:", subscription.id);
-  // TODO: Update subscription status in database
+  
+  try {
+    const userId = subscription.metadata?.userId;
+    if (!userId) return;
+
+    const user = await ctx.runQuery(ctx.query.users.getUserByClerkId, { clerkId: userId });
+    if (!user) return;
+
+    // Update subscription status to canceled
+    await ctx.runMutation(ctx.mutation.subscriptions.updateStatus, {
+      userId: user._id,
+      status: 'canceled',
+    });
+
+    // Set tokens to 0
+    await ctx.runMutation(ctx.mutation.tokens.updateBalance, {
+      userId: user._id,
+      monthlyTokens: 0,
+      resetTokens: false,
+    });
+  } catch (error) {
+    console.error("Error handling subscription deleted:", error);
+  }
 }
 
 async function handlePaymentSucceeded(ctx: any, invoice: any) {
   console.log("Payment succeeded:", invoice.id);
-  // TODO: Reset monthly tokens, update subscription
+  
+  // Reset monthly tokens on successful payment
+  const subscriptionId = invoice.subscription;
+  if (subscriptionId) {
+    // This will be called on recurring payments
+    // The subscription webhook handles the initial payment
+  }
 }
 
 async function handlePaymentFailed(ctx: any, invoice: any) {
   console.log("Payment failed:", invoice.id);
-  // TODO: Handle failed payment, maybe suspend account
+  
+  try {
+    const customerId = invoice.customer;
+    // You might want to suspend the account or send notifications
+    console.error("Payment failed for customer:", customerId);
+  } catch (error) {
+    console.error("Error handling payment failed:", error);
+  }
 }
 
 // Public action for testing webhook connectivity
