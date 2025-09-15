@@ -2,7 +2,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Loader2, Package } from "lucide-react";
 import { ReactNode, useEffect } from "react";
 import { Navigate, useSearchParams } from "react-router-dom";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 interface DashboardProtectedRouteProps {
@@ -12,7 +12,6 @@ interface DashboardProtectedRouteProps {
 export function DashboardProtectedRoute({ children }: DashboardProtectedRouteProps) {
   const { isLoaded, isSignedIn, user } = useUser();
   const createOrUpdateUser = useMutation(api.users.createOrUpdateUser);
-  const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus);
   const [searchParams] = useSearchParams();
   
   useEffect(() => {
@@ -56,28 +55,6 @@ export function DashboardProtectedRoute({ children }: DashboardProtectedRoutePro
   if (!isSignedIn) {
     // Redirect to sign in page using React Router
     return <Navigate to="/sign-in" replace />;
-  }
-
-  // If subscription status is loading, show loading state
-  if (subscriptionStatus === undefined) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-            <Package className="h-8 w-8 text-white" />
-          </div>
-          <div className="flex items-center justify-center space-x-2">
-            <Loader2 className="h-5 w-5 animate-spin text-blue-600" />
-            <span className="text-gray-600">Checking subscription...</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // If user has no active subscription (not even free trial) and is not returning from payment, redirect to onboarding
-  if (subscriptionStatus && !subscriptionStatus.isActive && !isReturningFromPayment) {
-    return <Navigate to="/onboarding" replace />;
   }
 
   return <>{children}</>;
