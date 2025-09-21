@@ -77,7 +77,7 @@ export const canUseToken = query({
 export const consumeToken = mutation({
   args: {
     analysisType: v.string(),
-    analysisId: v.optional(v.union(v.id("analyses"), v.null())),
+    analysisId: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -179,6 +179,82 @@ export const syncSubscriptionFromStripe = action({
         message: error.message || "Failed to sync subscription"
       };
     }
+  },
+});
+
+// Debug function to check user's database records
+export const debugUserRecords = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) return { error: "Not authenticated" };
+
+    // Get user record
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) return { error: "User not found" };
+
+    // Get subscription record
+    const subscription = await ctx.db
+      .query("subscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .first();
+
+    // Get token balance record
+    const tokenBalance = await ctx.db
+      .query("tokenBalance")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .first();
+
+    // Get analyses records
+    const analyses = await ctx.db
+      .query("analyses")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .order("desc")
+      .take(5);
+
+    // Get files records
+    const files = await ctx.db
+      .query("files")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .order("desc")
+      .take(5);
+
+    return {
+      user: {
+        id: user._id,
+        email: user.email,
+        name: user.name,
+        clerkId: user.clerkId
+      },
+      subscription: subscription ? {
+        status: subscription.status,
+        planType: subscription.planType,
+        tokensPerMonth: subscription.tokensPerMonth,
+        currentPeriodEnd: subscription.currentPeriodEnd
+      } : null,
+      tokenBalance: tokenBalance ? {
+        monthlyTokens: tokenBalance.monthlyTokens,
+        additionalTokens: tokenBalance.additionalTokens,
+        usedTokens: tokenBalance.usedTokens,
+        resetDate: tokenBalance.resetDate
+      } : null,
+      analyses: analyses.map(a => ({
+        id: a._id,
+        type: a.type,
+        name: a.name,
+        status: a.status,
+        createdAt: a.createdAt
+      })),
+      files: files.map(f => ({
+        id: f._id,
+        name: f.name,
+        purpose: f.purpose
+      }))
+    };
   },
 });
 

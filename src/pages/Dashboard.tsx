@@ -85,10 +85,16 @@ const Dashboard = () => {
   const recentActivity = useQuery(api.dashboard.getRecentActivity);
   const toolUsageStats = useQuery(api.dashboard.getToolUsageStats);
   const recentFiles = useQuery(api.dashboard.getRecentFiles);
-  
+
   // Token and subscription data
   const tokenBalance = useQuery(api.tokens.getTokenBalance);
   const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus);
+
+  // Get current user from database
+  const currentUser = useQuery(api.users.getCurrentUser);
+
+
+
 
   // Fallback data when backend is unavailable
   const fallbackMetrics = {
@@ -110,6 +116,8 @@ const Dashboard = () => {
   const safeActivity = isBackendUnavailable || !recentActivity ? fallbackActivity : recentActivity;
   const safeToolStats = isBackendUnavailable || !toolUsageStats ? fallbackToolStats : toolUsageStats;
   const safeFiles = isBackendUnavailable || !recentFiles ? fallbackFiles : recentFiles;
+  // Use recentActivity for analyses (not safeFiles which is for file uploads)
+  const safeAnalyses = isBackendUnavailable || !recentActivity ? [] : recentActivity;
 
   // Listen for custom tab change events (from PDP results navigation)
   useEffect(() => {
@@ -117,10 +125,19 @@ const Dashboard = () => {
       setActiveTab(event.detail);
     };
 
+    const handleAnalysisCreated = (event: CustomEvent) => {
+      console.log('Analysis created event received:', event.detail);
+      // Force refresh of dashboard queries by triggering a re-render
+      // This will cause useQuery hooks to re-fetch data
+      window.location.reload();
+    };
+
     window.addEventListener('setActiveTab', handleSetActiveTab as EventListener);
-    
+    window.addEventListener('analysisCreated', handleAnalysisCreated as EventListener);
+
     return () => {
       window.removeEventListener('setActiveTab', handleSetActiveTab as EventListener);
+      window.removeEventListener('analysisCreated', handleAnalysisCreated as EventListener);
     };
   }, []);
 
@@ -143,6 +160,23 @@ const Dashboard = () => {
       setActiveTab('overview');
     }
   }, [isBackendUnavailable, activeTab]);
+
+  // Listen for token consumption events to refresh token display
+  useEffect(() => {
+    const handleTokenConsumed = (event: CustomEvent) => {
+      console.log('Dashboard received token consumption event:', event.detail);
+      // Force a small re-render to refresh token queries
+      setTimeout(() => {
+        window.dispatchEvent(new Event('focus'));
+      }, 100);
+    };
+
+    window.addEventListener('tokenConsumed', handleTokenConsumed as EventListener);
+
+    return () => {
+      window.removeEventListener('tokenConsumed', handleTokenConsumed as EventListener);
+    };
+  }, []);
 
   const handleLogout = async () => {
     await signOut();
@@ -326,6 +360,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                   </div>
+
                 </div>
 
                 {/* Quick Actions - Modern Card Design */}
@@ -421,100 +456,51 @@ const Dashboard = () => {
               {/* Analytics and Recent Activity Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
                 
-                {/* Tool Usage Stats - Enhanced */}
-                <div className="bg-gradient-to-br from-white to-orange-50 rounded-2xl border border-orange-100 p-4 shadow-md hover:shadow-lg transition-all duration-300">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-md">
-                      <BarChart3 className="h-4 w-4 text-white" />
-                    </div>
-                    <h3 className="text-sm font-semibold text-gray-900">Tool Analytics</h3>
+                {/* Tool Analytics - New Simple Version */}
+                <div className="bg-white rounded-lg border p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <BarChart3 className="h-5 w-5 text-orange-500" />
+                    <h3 className="font-semibold text-gray-900">Tool Analytics</h3>
                   </div>
-                  {safeToolStats && safeToolStats.length > 0 && safeToolStats.some((stat: any) => stat.count > 0) ? (
-                    <div className="space-y-3">
-                      {safeToolStats.map((stat: any, index: number) => (
-                        <div key={index} className="flex items-center justify-between py-1">
-                          <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-gray-400 rounded-full" />
-                            <span className="text-sm text-gray-600">{stat.name}</span>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <div className="flex items-center gap-1">
-                              <span className="text-sm font-medium text-gray-900">{stat.count}</span>
-                              <span className="text-xs text-gray-500">uses</span>
-                            </div>
-                            <div className="w-16">
-                              <div className="w-full bg-gray-100 rounded-full h-1">
-                                <div 
-                                  className="bg-gray-600 h-1 rounded-full" 
-                                  style={{ width: `${stat.usage}%` }}
-                                />
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Suite Analyzer</span>
+                      <span className="text-sm font-medium text-gray-900">0 uses</span>
                     </div>
-                  ) : (
-                    <div className="flex items-center justify-center py-8">
-                      <div className="text-center">
-                        <BarChart3 className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                        <p className="text-sm text-gray-500">No usage data yet</p>
-                        <p className="text-xs text-gray-400 mt-1">Analytics will appear here</p>
-                      </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Spec Generator</span>
+                      <span className="text-sm font-medium text-gray-900">0 uses</span>
                     </div>
-                  )}
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Design Analyzer</span>
+                      <span className="text-sm font-medium text-gray-900">0 uses</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Demand Planner</span>
+                      <span className="text-sm font-medium text-gray-900">0 uses</span>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Recent Analyses - Enhanced */}
-                <div className="bg-gradient-to-br from-white to-green-50 rounded-2xl border border-green-100 p-4 shadow-md hover:shadow-lg transition-all duration-300">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-md">
-                      <Activity className="h-4 w-4 text-white" />
-                    </div>
-                    <h3 className="text-sm font-semibold text-gray-900">Recent Analyses</h3>
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-xs text-gray-500 hover:text-gray-700 ml-auto bg-green-100 hover:bg-green-200 rounded-full px-3 py-1 transition-all duration-200"
+                {/* Recent Analyses - New Simple Version */}
+                <div className="bg-white rounded-lg border p-6">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Activity className="h-5 w-5 text-green-500" />
+                    <h3 className="font-semibold text-gray-900">Recent Analyses</h3>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-xs text-gray-500 hover:text-gray-700 ml-auto"
                       onClick={() => setActiveTab('reports')}
                     >
                       View all
                       <ArrowRight className="h-3 w-3 ml-1" />
                     </Button>
                   </div>
-                  <div className="space-y-3">
-                    {safeFiles && safeFiles.length > 0 ? safeFiles.slice(0, 4).map((analysis: any, index: number) => (
-                      <div key={index} className="flex items-center gap-3 py-1 border-b border-[#E3E7EA] last:border-0">
-                        <div className="w-8 h-8 bg-gray-50 rounded-2xl flex items-center justify-center flex-shrink-0">
-                          {analysis.type === 'suite_analyzer' ? <Package className="h-4 w-4 text-gray-600" /> :
-                           analysis.type === 'pdp_analyzer' ? <Eye className="h-4 w-4 text-gray-600" /> :
-                           analysis.type === 'demand_planner' || analysis.type === 'demand_planner_v2' ? <TrendingUp className="h-4 w-4 text-gray-600" /> :
-                           analysis.type === 'spec_generator' ? <Sparkles className="h-4 w-4 text-gray-600" /> :
-                           <FileText className="h-4 w-4 text-gray-600" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">{analysis.name}</p>
-                          <p className="text-xs text-gray-500">{analysis.time} • {analysis.tool}</p>
-                        </div>
-                        {analysis.status === 'completed' && (
-                          <div className="w-1.5 h-1.5 bg-green-500 rounded-full" />
-                        )}
-                        {analysis.status === 'processing' && (
-                          <div className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
-                        )}
-                        {analysis.status === 'failed' && (
-                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full" />
-                        )}
-                      </div>
-                    )) : (
-                      <div className="flex items-center justify-center py-8">
-                        <div className="text-center">
-                          <FolderOpen className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                          <p className="text-sm text-gray-500">No analyses yet</p>
-                          <p className="text-xs text-gray-400 mt-1">Your work will appear here</p>
-                        </div>
-                      </div>
-                    )}
+                  <div className="text-center py-8">
+                    <FolderOpen className="h-8 w-8 text-gray-300 mx-auto mb-2" />
+                    <p className="text-sm text-gray-500">No analyses yet</p>
+                    <p className="text-xs text-gray-400">Your work will appear here</p>
                   </div>
                 </div>
               </div>
@@ -601,14 +587,14 @@ const Dashboard = () => {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-xs">
-                    {user?.firstName?.[0] || user?.fullName?.[0] || 'U'}
+                    {(currentUser?.name || user?.firstName || user?.fullName || 'U')[0].toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0 text-left">
                     <p className="text-xs font-medium text-gray-900 truncate">
-                      {user?.fullName || user?.firstName || 'User'}
+                      {currentUser?.name || user?.fullName || user?.firstName || 'User'}
                     </p>
                     <p className="text-xs text-gray-500 truncate">
-                      {user?.primaryEmailAddress?.emailAddress}
+                      {currentUser?.email || user?.primaryEmailAddress?.emailAddress}
                     </p>
                   </div>
                   <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />

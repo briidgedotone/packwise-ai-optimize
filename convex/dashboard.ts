@@ -10,10 +10,20 @@ export const getDashboardMetrics = query({
       throw new Error("Not authenticated");
     }
 
+    // Get user record first
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     // Get recent analyses for the current user (limited to prevent large data reads)
     const analyses = await ctx.db
       .query("analyses")
-      .filter((q) => q.eq(q.field("userId"), identity.subject))
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
       .order("desc")
       .take(100); // Limit to recent 100 analyses to prevent large data reads
 
@@ -92,10 +102,20 @@ export const getRecentActivity = query({
       throw new Error("Not authenticated");
     }
 
+    // Get user record first
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     // Get recent analyses (last 10)
     const analyses = await ctx.db
       .query("analyses")
-      .filter((q) => q.eq(q.field("userId"), identity.subject))
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
       .order("desc")
       .take(10);
 
@@ -155,9 +175,19 @@ export const getToolUsageStats = query({
       throw new Error("Not authenticated");
     }
 
+    // Get user record first
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     const analyses = await ctx.db
       .query("analyses")
-      .filter((q) => q.eq(q.field("userId"), identity.subject))
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
       .order("desc")
       .take(1000); // Limit to recent 1000 analyses for stats calculation
 
@@ -214,10 +244,20 @@ export const getRecentFiles = query({
       throw new Error("Not authenticated");
     }
 
+    // Get user record first
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
     // Get recent file uploads
     const files = await ctx.db
       .query("files")
-      .filter((q) => q.eq(q.field("userId"), identity.subject))
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
       .order("desc")
       .take(5);
 
