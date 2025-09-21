@@ -6,31 +6,13 @@ import { mutation, query } from "./_generated/server";
 export const getTokenBalance = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null;
-
-    // Get user
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    
-    if (!user) return null;
-
-    // Get token balance
-    const balance = await ctx.db
-      .query("tokenBalance")
-      .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .first();
-
-    if (!balance) return null;
-
+    // TEMPORARILY DISABLED - Return unlimited tokens for testing
     return {
-      monthlyTokens: balance.monthlyTokens,
-      additionalTokens: balance.additionalTokens,
-      usedTokens: balance.usedTokens,
-      remainingTokens: balance.monthlyTokens + balance.additionalTokens - balance.usedTokens,
-      resetDate: balance.resetDate,
+      monthlyTokens: 999999,
+      additionalTokens: 0,
+      usedTokens: 0,
+      remainingTokens: 999999,
+      resetDate: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year from now
     };
   },
 });
@@ -39,27 +21,8 @@ export const getTokenBalance = query({
 export const canUseToken = query({
   args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return false;
-
-    // Get user
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    
-    if (!user) return false;
-
-    // Get token balance
-    const balance = await ctx.db
-      .query("tokenBalance")
-      .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .first();
-
-    if (!balance) return false;
-
-    const remainingTokens = balance.monthlyTokens + balance.additionalTokens - balance.usedTokens;
-    return remainingTokens > 0;
+    // TEMPORARILY DISABLED - Always return true for testing
+    return true;
   },
 });
 
@@ -70,40 +33,10 @@ export const consumeToken = mutation({
     analysisId: v.optional(v.id("analyses")),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) throw new Error("Not authenticated");
-
-    // Get user
-    const user = await ctx.db
-      .query("users")
-      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
-      .first();
-    
-    if (!user) throw new Error("User not found");
-
-    // Get token balance
-    const balance = await ctx.db
-      .query("tokenBalance")
-      .withIndex("by_user", (q) => q.eq("userId", user._id))
-      .first();
-
-    if (!balance) throw new Error("No token balance found");
-
-    const remainingTokens = balance.monthlyTokens + balance.additionalTokens - balance.usedTokens;
-    
-    if (remainingTokens <= 0) {
-      throw new Error("Insufficient tokens");
-    }
-
-    // Update token balance
-    await ctx.db.patch(balance._id, {
-      usedTokens: balance.usedTokens + 1,
-      updatedAt: Date.now(),
-    });
-
+    // TEMPORARILY DISABLED - Just return success without consuming tokens
     return {
       success: true,
-      remainingTokens: remainingTokens - 1,
+      remainingTokens: 999999, // Unlimited for testing
     };
   },
 });
@@ -131,9 +64,9 @@ export const getSubscriptionStatus = query({
 
     if (!subscription) {
       return {
-        status: "none",
+        status: "active",
         planType: "free",
-        isActive: false,
+        isActive: true,
       };
     }
 

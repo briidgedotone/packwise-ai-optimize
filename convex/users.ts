@@ -21,6 +21,40 @@ export const createOrUpdateUser = mutation({
         name: args.name,
         lastLoginAt: Date.now(),
       });
+      
+      // Check if this is a testing account and update tokens if needed
+      const isTestingAccount = args.email === 'admin@briidge.one';
+      if (isTestingAccount) {
+        const tokenBalance = await ctx.db
+          .query("tokenBalance")
+          .withIndex("by_user", (q) => q.eq("userId", existingUser._id))
+          .first();
+        
+        if (tokenBalance && tokenBalance.monthlyTokens < 1000) {
+          // Update to testing tokens
+          await ctx.db.patch(tokenBalance._id, {
+            monthlyTokens: 1000,
+            updatedAt: Date.now(),
+          });
+        }
+        
+        // Update subscription as well
+        const subscription = await ctx.db
+          .query("subscriptions")
+          .withIndex("by_user", (q) => q.eq("userId", existingUser._id))
+          .first();
+        
+        if (subscription && subscription.tokensPerMonth < 1000) {
+          await ctx.db.patch(subscription._id, {
+            tokensPerMonth: 1000,
+            planType: "enterprise",
+            status: "trialing",
+            currentPeriodEnd: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year
+            updatedAt: Date.now(),
+          });
+        }
+      }
+      
       return existingUser._id;
     } else {
       // Create new user
@@ -33,15 +67,19 @@ export const createOrUpdateUser = mutation({
         lastLoginAt: Date.now(),
       });
       
+      // Check if this is a testing account
+      const isTestingAccount = args.email === 'admin@briidge.one';
+      const monthlyTokens = isTestingAccount ? 1000 : 5; // 1000 tokens for testing, 5 for normal users
+      
       // Initialize free trial subscription
       await ctx.db.insert("subscriptions", {
         userId,
         stripeCustomerId: "", // Will be set when they subscribe
         stripeSubscriptionId: undefined,
         status: "trialing",
-        planType: "free",
-        tokensPerMonth: 5, // Free trial tokens
-        currentPeriodEnd: Date.now() + 14 * 24 * 60 * 60 * 1000, // 14 days trial
+        planType: isTestingAccount ? "enterprise" : "free",
+        tokensPerMonth: monthlyTokens,
+        currentPeriodEnd: Date.now() + (isTestingAccount ? 365 : 14) * 24 * 60 * 60 * 1000, // 1 year for testing, 14 days trial
         createdAt: Date.now(),
         updatedAt: Date.now(),
       });
@@ -49,7 +87,7 @@ export const createOrUpdateUser = mutation({
       // Initialize token balance
       await ctx.db.insert("tokenBalance", {
         userId,
-        monthlyTokens: 5, // Free trial tokens
+        monthlyTokens: monthlyTokens,
         additionalTokens: 0,
         usedTokens: 0,
         resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000, // Reset in 30 days

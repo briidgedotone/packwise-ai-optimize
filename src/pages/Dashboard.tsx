@@ -40,7 +40,7 @@ import {
 import { toast } from 'sonner';
 import { PackagingSuiteAnalyzerBackend } from '@/components/PackagingSuiteAnalyzerBackend';
 import { SpecGenerator } from '@/components/SpecGenerator';
-import { PackagingDemandPlanner } from '@/components/PackagingDemandPlanner';
+import { ImprovedPackagingDemandPlanner } from '@/components/ImprovedPackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
 import { InlineAIAssistant } from '@/components/InlineAIAssistant';
 import { Reports } from '@/pages/Reports';
@@ -218,7 +218,7 @@ const Dashboard = () => {
       case 'spec-generator':
         return <SpecGenerator />;
       case 'demand-planner-v2':
-        return <PackagingDemandPlanner />;
+        return <ImprovedPackagingDemandPlanner />;
       case 'pdp-analyzer':
         return <PDPAnalyzer />;
       case 'reports':
@@ -227,7 +227,7 @@ const Dashboard = () => {
         return <Settings />;
       default:
         return (
-          <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
             <div>
               
               {/* Backend Unavailable Warning */}
@@ -281,22 +281,25 @@ const Dashboard = () => {
               )}
 
               {/* Main Dashboard Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3 mt-8">
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
-                  <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 transition-all duration-200 h-full flex flex-col">
-                    <div className="mb-3">
-                      <h2 className="text-sm font-medium text-gray-900">Token Usage</h2>
+                  <div className="bg-gradient-to-br from-white to-blue-50 rounded-2xl border border-blue-100 p-4 transition-all duration-300 h-full flex flex-col shadow-md hover:shadow-lg hover:scale-[1.01]">
+                    <div className="mb-3 flex items-center gap-2">
+                      <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+                        <Zap className="h-4 w-4 text-white" />
+                      </div>
+                      <h2 className="text-sm font-semibold text-gray-900">Token Usage</h2>
                     </div>
                     <div className="flex-1 flex flex-col justify-center">
-                      <div className="mb-6">
+                      <div className="mb-3">
                         <div>
-                          <div className="flex items-baseline gap-2 mb-0.5">
-                            <span className="text-3xl font-semibold text-gray-900">
+                          <div className="flex items-baseline gap-2 mb-1">
+                            <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                               {safeMetrics?.tokensUsed || '0'}
                             </span>
-                            <span className="text-lg text-gray-500">
+                            <span className="text-sm text-gray-600 font-medium">
                               / {safeMetrics?.tokensLimit || '10'}
                             </span>
                           </div>
@@ -310,14 +313,15 @@ const Dashboard = () => {
                             {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
                           </span>
                         </div>
-                        <div className="w-full bg-gray-100 rounded-full h-2">
+                        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
                           <div 
-                            className="h-2 rounded-full transition-all duration-300"
+                            className="h-2 rounded-full transition-all duration-500 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 relative"
                             style={{ 
-                              backgroundColor: designSystem.colors.primary,
                               width: `${Math.min(100, ((safeMetrics?.tokensUsed || 0) / (safeMetrics?.tokensLimit || 10)) * 100)}%` 
                             }}
-                          />
+                          >
+                            <div className="absolute inset-0 bg-white bg-opacity-30 animate-pulse"></div>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -326,68 +330,71 @@ const Dashboard = () => {
 
                 {/* Quick Actions - Modern Card Design */}
                 <div className="lg:col-span-8">
-                  <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 transition-all duration-200">
-                    <div className="mb-3">
-                      <h2 className="text-sm font-medium text-gray-900">Quick Actions</h2>
+                  <div className="bg-gradient-to-br from-white to-indigo-50 rounded-3xl border border-indigo-100 p-6 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <div className="mb-4 flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center">
+                        <Zap className="h-5 w-5 text-white" />
+                      </div>
+                      <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
                     </div>
-                    <div className="grid gap-3 grid-cols-2">
+                    <div className="grid gap-2 grid-cols-2">
                       <Button
                         variant="outline"
-                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border-0 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 justify-start group transition-all duration-300 rounded-3xl shadow-md hover:shadow-lg hover:scale-105 transform"
                         onClick={() => setActiveTab('suite-analyzer-backend')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                            <PackageSolid className="h-8 w-8" style={{ color: designSystem.colors.primary }} />
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-blue-500 to-blue-600 group-hover:from-blue-600 group-hover:to-blue-700 shadow-lg">
+                            <PackageSolid className="h-6 w-6 text-white" />
                           </div>
                           <div className="text-left">
-                            <div className="text-sm font-medium text-gray-900">Suite Analyzer</div>
-                            <div className="text-xs text-gray-500">Optimize packaging</div>
+                            <div className="text-sm font-semibold text-gray-900 group-hover:text-blue-900 transition-colors">Suite Analyzer</div>
+                            <div className="text-xs text-gray-600 group-hover:text-blue-700 transition-colors">Optimize packaging</div>
                           </div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border-0 bg-gradient-to-r from-green-50 to-emerald-100 hover:from-green-100 hover:to-emerald-200 justify-start group transition-all duration-300 rounded-3xl shadow-md hover:shadow-lg hover:scale-105 transform"
                         onClick={() => setActiveTab('demand-planner-v2')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                            <TrendingUpSolid className="h-8 w-8" style={{ color: designSystem.colors.primary }} />
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-green-500 to-emerald-600 group-hover:from-green-600 group-hover:to-emerald-700 shadow-lg">
+                            <TrendingUpSolid className="h-6 w-6 text-white" />
                           </div>
                           <div className="text-left">
-                            <div className="text-sm font-medium text-gray-900">Demand Planner</div>
-                            <div className="text-xs text-gray-500">Forecast needs</div>
+                            <div className="text-sm font-semibold text-gray-900 group-hover:text-green-900 transition-colors">Demand Planner</div>
+                            <div className="text-xs text-gray-600 group-hover:text-green-700 transition-colors">Forecast needs</div>
                           </div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border-0 bg-gradient-to-r from-purple-50 to-violet-100 hover:from-purple-100 hover:to-violet-200 justify-start group transition-all duration-300 rounded-3xl shadow-md hover:shadow-lg hover:scale-105 transform"
                         onClick={() => setActiveTab('spec-generator')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                            <SparklesSolid className="h-8 w-8" style={{ color: designSystem.colors.primary }} />
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-purple-500 to-violet-600 group-hover:from-purple-600 group-hover:to-violet-700 shadow-lg">
+                            <SparklesSolid className="h-6 w-6 text-white" />
                           </div>
                           <div className="text-left">
-                            <div className="text-sm font-medium text-gray-900">Spec Generator</div>
-                            <div className="text-xs text-gray-500">AI specifications</div>
+                            <div className="text-sm font-semibold text-gray-900 group-hover:text-purple-900 transition-colors">Spec Generator</div>
+                            <div className="text-xs text-gray-600 group-hover:text-purple-700 transition-colors">AI specifications</div>
                           </div>
                         </div>
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-auto p-3 border border-[#E3E7EA] hover:opacity-90 justify-start group transition-all duration-150 rounded-3xl"
+                        className="h-auto p-4 border-0 bg-gradient-to-r from-pink-50 to-rose-100 hover:from-pink-100 hover:to-rose-200 justify-start group transition-all duration-300 rounded-3xl shadow-md hover:shadow-lg hover:scale-105 transform"
                         onClick={() => setActiveTab('pdp-analyzer')}
                       >
                         <div className="flex items-center gap-3 w-full">
-                          <div className="w-10 h-10 rounded-2xl flex items-center justify-center transition-colors" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                            <EyeSolid className="h-8 w-8" style={{ color: designSystem.colors.primary }} />
+                          <div className="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 bg-gradient-to-r from-pink-500 to-rose-600 group-hover:from-pink-600 group-hover:to-rose-700 shadow-lg">
+                            <EyeSolid className="h-6 w-6 text-white" />
                           </div>
                           <div className="text-left">
-                            <div className="text-sm font-medium text-gray-900">Design Analyzer</div>
-                            <div className="text-xs text-gray-500">Visual analysis</div>
+                            <div className="text-sm font-semibold text-gray-900 group-hover:text-pink-900 transition-colors">Design Analyzer</div>
+                            <div className="text-xs text-gray-600 group-hover:text-pink-700 transition-colors">Visual analysis</div>
                           </div>
                         </div>
                       </Button>
@@ -396,73 +403,31 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              {/* Subscription Status */}
-              {subscriptionStatus && (
-                <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 mb-4 hover:shadow-sm transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-sm font-medium text-gray-900">Subscription Status</h3>
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      subscriptionStatus.isActive 
-                        ? subscriptionStatus.planType === 'free' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
-                        : 'bg-yellow-100 text-yellow-700'
-                    }`}>
-                      {subscriptionStatus.status === 'trialing' ? 'Free Trial' : 
-                       subscriptionStatus.planType === 'free' ? 'Free Trial' :
-                       subscriptionStatus.planType.charAt(0).toUpperCase() + subscriptionStatus.planType.slice(1)}
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-gray-900">{safeMetrics.tokensRemaining}</div>
-                      <div className="text-xs text-gray-500">Tokens Remaining</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-gray-900">{safeMetrics.tokensLimit}</div>
-                      <div className="text-xs text-gray-500">Total Tokens</div>
-                    </div>
-                    <div className="text-center">
-                      {subscriptionStatus.planType === 'free' ? (
-                        <Button 
-                          size="sm" 
-                          onClick={() => navigate('/onboarding')}
-                          className="w-full rounded-full text-white hover:opacity-90"
-                          style={{ backgroundColor: designSystem.colors.primary }}
-                        >
-                          Upgrade Plan
-                        </Button>
-                      ) : subscriptionStatus.currentPeriodEnd ? (
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
-                            {new Date(subscriptionStatus.currentPeriodEnd).toLocaleDateString()}
-                          </div>
-                          <div className="text-xs text-gray-500">Next Billing</div>
-                        </div>
-                      ) : null}
-                    </div>
-                  </div>
-                </div>
-              )}
 
               {/* AI Chat Interface - Inline */}
-              <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 shadow-sm mb-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-8 h-8 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primaryLight }}>
-                    <MessageSquare className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
+              <div className="bg-gradient-to-br from-white via-indigo-50 to-purple-50 rounded-2xl border border-purple-100 p-4 shadow-md hover:shadow-lg transition-all duration-300 mb-3">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-gradient-to-r from-purple-500 via-indigo-500 to-blue-500 shadow-md">
+                    <MessageSquare className="h-4 w-4 text-white" />
                   </div>
-                  <h3 className="text-lg font-semibold text-gray-900">AI Assistant</h3>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent">AI Assistant</h3>
+                    <p className="text-xs text-gray-600">Your intelligent packaging optimization companion</p>
+                  </div>
                 </div>
                 <InlineAIAssistant currentFeature={activeTab} />
               </div>
 
               {/* Analytics and Recent Activity Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
                 
                 {/* Tool Usage Stats - Enhanced */}
-                <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-gray-900">Tool Analytics</h3>
-                    <BarChart3 className="h-4 w-4 text-gray-400" />
+                <div className="bg-gradient-to-br from-white to-orange-50 rounded-2xl border border-orange-100 p-4 shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center shadow-md">
+                      <BarChart3 className="h-4 w-4 text-white" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-gray-900">Tool Analytics</h3>
                   </div>
                   {safeToolStats && safeToolStats.length > 0 && safeToolStats.some((stat: any) => stat.count > 0) ? (
                     <div className="space-y-3">
@@ -501,13 +466,16 @@ const Dashboard = () => {
                 </div>
 
                 {/* Recent Analyses - Enhanced */}
-                <div className="bg-white rounded-3xl border border-[#E3E7EA] p-4 hover:shadow-sm transition-shadow duration-200">
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-medium text-gray-900">Recent Analyses</h3>
+                <div className="bg-gradient-to-br from-white to-green-50 rounded-2xl border border-green-100 p-4 shadow-md hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-md">
+                      <Activity className="h-4 w-4 text-white" />
+                    </div>
+                    <h3 className="text-sm font-semibold text-gray-900">Recent Analyses</h3>
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="text-xs text-gray-500 hover:text-gray-700 -mr-2"
+                      className="text-xs text-gray-500 hover:text-gray-700 ml-auto bg-green-100 hover:bg-green-200 rounded-full px-3 py-1 transition-all duration-200"
                       onClick={() => setActiveTab('reports')}
                     >
                       View all
@@ -558,7 +526,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-[#E3E7EA]">
         <h1 className="text-xl font-medium text-gray-900">QuantiPackAI</h1>
@@ -574,20 +542,20 @@ const Dashboard = () => {
 
       <div className="flex h-screen">
         {/* Sidebar */}
-        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-white border-r border-[#E3E7EA] transition-transform duration-200 ease-in-out`}>
+        <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-gradient-to-b from-white via-blue-50 to-indigo-100 border-r border-indigo-200 transition-transform duration-200 ease-in-out shadow-xl`}>
           {/* Sidebar Header */}
-          <div className="border-b border-[#E3E7EA] px-3 flex items-center" style={{ height: '60px' }}>
+          <div className="border-b border-gray-200 px-3 flex items-center bg-white" style={{ height: '50px' }}>
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-2xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
-                <Package className="h-4 w-4 text-white" />
+              <div className="w-7 h-7 rounded-xl flex items-center justify-center bg-blue-600">
+                <Package className="h-3.5 w-3.5 text-white" />
               </div>
-              <h1 className="text-base font-medium text-gray-900">QuantiPackAI</h1>
+              <h1 className="text-sm font-medium text-gray-900">QuantiPackAI</h1>
             </div>
           </div>
 
           {/* Sidebar Content */}
-          <div className="p-2">
-            <nav className="space-y-2">
+          <div className="p-1.5">
+            <nav className="space-y-1.5">
               {menuItems.map((item) => {
                 const isDisabled = isBackendUnavailable && 
                   ['suite-analyzer-backend', 'demand-planner-v2', 'pdp-analyzer'].includes(item.id);
@@ -596,17 +564,13 @@ const Dashboard = () => {
                   <Button
                     key={item.id}
                     variant="ghost"
-                    className={`w-full justify-start text-left h-10 text-sm rounded-2xl transition-all duration-200 px-3 ${
+                    className={`w-full justify-start text-left h-10 text-sm rounded-xl transition-all duration-300 px-2.5 ${
                       activeTab === item.id 
-                        ? "font-medium shadow-sm" 
+                        ? "font-medium text-blue-600 bg-white/60" 
                         : isDisabled
                         ? "text-gray-400 cursor-not-allowed"
-                        : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                        : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
                     }`}
-                    style={activeTab === item.id ? { 
-                      color: '#000000',
-                      backgroundColor: '#F5F7F9' 
-                    } : {}}
                     onClick={() => {
                       if (!isDisabled) {
                         setActiveTab(item.id);
@@ -615,7 +579,7 @@ const Dashboard = () => {
                     }}
                     disabled={isDisabled}
                   >
-                    <item.icon className="h-5 w-5 mr-0.5" style={{ width: '20px', height: '20px', minWidth: '20px', minHeight: '20px', flex: 'none' }} />
+                    <item.icon className="h-4 w-4 mr-1" style={{ width: '16px', height: '16px', minWidth: '16px', minHeight: '16px', flex: 'none' }} />
                     {item.label}
                     {isDisabled && (
                       <span className="ml-auto text-xs text-gray-400">Offline</span>
@@ -627,51 +591,41 @@ const Dashboard = () => {
           </div>
 
           {/* Bottom Section */}
-          <div className="absolute bottom-2 left-2 right-2 space-y-1">
-            {/* Upgrade Card */}
-            <div className="bg-white rounded-3xl p-2 border border-[#E3E7EA]">
-              <h4 className="font-medium text-gray-900 mb-1">Upgrade to Pro</h4>
-              <p className="text-xs text-gray-600 mb-1">
-                Get 1 month free and unlock advanced features
-              </p>
-              <Button size="sm" className="w-full text-white text-xs rounded-full" style={{ backgroundColor: designSystem.colors.primary }}>
-                Upgrade
-              </Button>
-            </div>
+          <div className="absolute bottom-1.5 left-1.5 right-1.5 space-y-1">
 
             {/* User Profile Section */}
             <div className="relative" data-user-dropdown>
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="w-full bg-gray-50 rounded-2xl p-2 border border-[#E3E7EA] hover:bg-gray-100 transition-colors"
+                className="w-full bg-white/50 backdrop-blur rounded-xl p-1.5 border border-white/20 hover:bg-white/70 transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                  <div className="w-7 h-7 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-xs">
                     {user?.firstName?.[0] || user?.fullName?.[0] || 'U'}
                   </div>
                   <div className="flex-1 min-w-0 text-left">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-xs font-medium text-gray-900 truncate">
                       {user?.fullName || user?.firstName || 'User'}
                     </p>
                     <p className="text-xs text-gray-500 truncate">
                       {user?.primaryEmailAddress?.emailAddress}
                     </p>
                   </div>
-                  <ChevronDown className={`h-4 w-4 text-gray-400 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`h-3 w-3 text-gray-400 transition-transform ${userDropdownOpen ? 'rotate-180' : ''}`} />
                 </div>
               </button>
 
               {/* Dropdown Menu */}
               {userDropdownOpen && (
-                <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-3xl border border-[#E3E7EA] py-2 z-50">
+                <div className="absolute bottom-full left-0 right-0 mb-1 bg-white rounded-2xl border border-gray-200 py-1.5 z-50 shadow-lg">
                   <button
                     onClick={() => {
                       setUserDropdownOpen(false);
                       setActiveTab('settings');
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                    className="w-full px-3 py-1.5 text-left text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                   >
-                    <SettingsIcon className="h-4 w-4 text-gray-400" />
+                    <SettingsIcon className="h-3 w-3 text-gray-400" />
                     Settings
                   </button>
                   <button
@@ -679,9 +633,9 @@ const Dashboard = () => {
                       setUserDropdownOpen(false);
                       handleLogout();
                     }}
-                    className="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3"
+                    className="w-full px-3 py-1.5 text-left text-xs text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                   >
-                    <LogOut className="h-4 w-4 text-gray-400" />
+                    <LogOut className="h-3 w-3 text-gray-400" />
                     Logout
                   </button>
                 </div>
@@ -699,9 +653,8 @@ const Dashboard = () => {
         )}
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden" style={{ backgroundColor: '#FAFBFC' }}>
-          {renderHeader()}
-          <div className="flex-1 overflow-auto px-3 sm:px-4 pb-4 pt-3">
+        <div className="flex-1 flex flex-col overflow-hidden bg-gradient-to-br from-slate-50/50 via-blue-50/50 to-indigo-100/50">
+          <div className="flex-1 overflow-auto px-3 sm:px-4 pb-4 pt-4">
             {renderContent()}
           </div>
         </div>

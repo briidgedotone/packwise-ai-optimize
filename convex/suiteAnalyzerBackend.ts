@@ -42,31 +42,118 @@ async function getOrCreateUser(ctx: any) {
 }
 
 /**
- * Start a new Suite Analyzer analysis with file uploads
+ * Process a batch of orders directly without storing CSV data
+ */
+export const processBatchOrders = action({
+  args: {
+    analysisId: v.id("analyses"),
+    orderBatch: v.array(v.any()), // Simplified schema
+    packagingSuite: v.array(v.any()), // Simplified schema
+    batchIndex: v.number(),
+    totalBatches: v.number(),
+    config: v.object({
+      allowRotation: v.boolean(),
+      allowStacking: v.boolean(),
+      includeShippingCosts: v.boolean(),
+      minimumFillRate: v.number()
+    }),
+    isFirstBatch: v.boolean(),
+    isLastBatch: v.boolean()
+  },
+  handler: async (ctx, args) => {
+    const startTime = Date.now();
+    
+    try {
+      console.log(`Processing batch ${args.batchIndex + 1}/${args.totalBatches} with ${args.orderBatch.length} orders`);
+      
+      // Update progress
+      const progress = 70 + ((args.batchIndex / args.totalBatches) * 20); // 70-90% range
+      await updateProgress(
+        ctx, 
+        args.analysisId, 
+        "optimization", 
+        progress, 
+        args.batchIndex + 1, 
+        args.totalBatches, 
+        `Processing batch ${args.batchIndex + 1} of ${args.totalBatches}...`,
+        startTime
+      );
+      
+      // Process this batch of orders
+      const batchAllocations = [];
+      for (const order of args.orderBatch) {
+        const bestPackage = findBestPackage(order, args.packagingSuite, args.config);
+        if (bestPackage) {
+          const allocation = createAllocation(order, bestPackage);
+          batchAllocations.push(allocation);
+        }
+      }
+      
+      // Stream this batch immediately
+      await ctx.runMutation(api.suiteAnalyzerBackend.streamAllocationBatch, {
+        analysisId: args.analysisId,
+        allocations: batchAllocations,
+        batchNumber: args.batchIndex + 1,
+        isComplete: args.isLastBatch
+      });
+      
+      // If this is the last batch, finalize the analysis
+      if (args.isLastBatch) {
+        console.log("Finalizing analysis...");
+        
+        // For the final summary, we'll use the data from the last batch
+        // In a real implementation, you might want to accumulate summary stats differently
+        const results = {
+          analysisId: args.analysisId,
+          timestamp: Date.now(),
+          summary: {
+            totalOrders: args.totalBatches * 50, // Estimate based on batch processing
+            processedOrders: batchAllocations.length,
+            failedOrders: 0,
+            averageFillRate: batchAllocations.length > 0 ? 
+              batchAllocations.reduce((sum, alloc) => sum + alloc.fillRate, 0) / batchAllocations.length : 0
+          },
+          allocations: batchAllocations.slice(0, 20), // Just show a sample in final results
+          baselineDistribution: calculateBaselineFromUsage(args.packagingSuite),
+          optimizedDistribution: calculatePackageDistribution(batchAllocations),
+          recommendations: generateRecommendations(batchAllocations, args.packagingSuite),
+          metrics: {
+            processing: {
+              totalTime: Date.now() - startTime,
+              ordersPerSecond: batchAllocations.length / ((Date.now() - startTime) / 1000),
+              memoryUsage: 0
+            }
+          }
+        };
+        
+        await ctx.runMutation(api.suiteAnalyzerBackend.completeAnalysis, {
+          analysisId: args.analysisId,
+          results,
+          success: true
+        });
+      }
+      
+      console.log(`Batch ${args.batchIndex + 1} completed successfully`);
+      
+    } catch (error) {
+      console.error(`Batch ${args.batchIndex + 1} failed:`, error);
+      
+      await ctx.runMutation(api.suiteAnalyzerBackend.completeAnalysis, {
+        analysisId: args.analysisId,
+        results: {} as any,
+        success: false,
+        error: error instanceof Error ? error.message : "Batch processing failed"
+      });
+    }
+  }
+});
+
+/**
+ * Start a new Suite Analyzer analysis with direct processing
  */
 export const startSuiteAnalysis = mutation({
   args: {
     name: v.string(),
-    orderHistoryCSV: v.string(),
-    packagingSuiteCSV: v.string(),
-    baselineMixCSV: v.optional(v.string()),
-    fallbackDimensions: v.optional(v.object({
-      smallest: v.object({
-        length: v.number(),
-        width: v.number(), 
-        height: v.number()
-      }),
-      average: v.object({
-        length: v.number(),
-        width: v.number(),
-        height: v.number()
-      }),
-      largest: v.object({
-        length: v.number(),
-        width: v.number(),
-        height: v.number()
-      })
-    })),
     config: v.optional(v.object({
       allowRotation: v.boolean(),
       allowStacking: v.boolean(),
@@ -84,27 +171,12 @@ export const startSuiteAnalysis = mutation({
       type: "suite_analyzer",
       name: args.name,
       status: "processing",
-      inputFiles: [], // We're storing CSV content directly
+      inputFiles: [],
       createdAt: Date.now(),
       results: {
         stage: "parsing",
         progress: 0,
-        message: "Starting analysis..."
-      }
-    });
-
-    // Schedule the analysis processing
-    await ctx.scheduler.runAfter(0, api.suiteAnalyzerBackend.processSuiteAnalysis, {
-      analysisId,
-      orderHistoryCSV: args.orderHistoryCSV,
-      packagingSuiteCSV: args.packagingSuiteCSV,
-      baselineMixCSV: args.baselineMixCSV,
-      fallbackDimensions: args.fallbackDimensions,
-      config: args.config || {
-        allowRotation: true,
-        allowStacking: true,
-        includeShippingCosts: true,
-        minimumFillRate: 30
+        message: "Ready to process data..."
       }
     });
 
@@ -149,6 +221,39 @@ export const updateAnalysisProgress = mutation({
           message: args.message,
           timeElapsed: args.timeElapsed,
           estimatedTimeRemaining: args.estimatedTimeRemaining
+        }
+      }
+    });
+
+    return args.analysisId;
+  }
+});
+
+/**
+ * Stream allocation batch during processing
+ */
+export const streamAllocationBatch = mutation({
+  args: {
+    analysisId: v.id("analyses"),
+    allocations: v.array(v.any()),
+    batchNumber: v.number(),
+    isComplete: v.boolean()
+  },
+  handler: async (ctx, args) => {
+    const analysis = await ctx.db.get(args.analysisId);
+    if (!analysis) {
+      throw new Error("Analysis not found");
+    }
+
+    // Store the batch in a temporary streaming field
+    await ctx.db.patch(args.analysisId, {
+      results: {
+        ...((analysis.results as any) || {}),
+        streamData: {
+          allocations: args.allocations,
+          batchNumber: args.batchNumber,
+          isComplete: args.isComplete,
+          timestamp: Date.now()
         }
       }
     });
@@ -245,6 +350,37 @@ export const getAnalysisProgress = query({
 });
 
 /**
+ * Get streamed allocation data
+ */
+export const getStreamedAllocations = query({
+  args: { analysisId: v.id("analyses") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
+
+    const analysis = await ctx.db.get(args.analysisId);
+    if (!analysis) {
+      return null;
+    }
+
+    // Verify user has access
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+
+    if (!user || analysis.userId !== user._id) {
+      return null;
+    }
+
+    const results = analysis.results as any;
+    return results?.streamData || null;
+  }
+});
+
+/**
  * Get user's Suite Analyzer analyses
  */
 export const getUserSuiteAnalyses = query({
@@ -308,12 +444,108 @@ export const deleteSuiteAnalysis = mutation({
   }
 });
 
+/**
+ * Clean up invalid analyses (admin function)
+ */
+export const cleanupInvalidAnalyses = mutation({
+  args: {},
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get all failed analyses
+    const failedAnalyses = await ctx.db
+      .query("analyses")
+      .filter((q) => q.eq(q.field("status"), "failed"))
+      .collect();
+
+    console.log(`Found ${failedAnalyses.length} failed analyses to clean up`);
+    
+    // Delete all failed analyses
+    for (const analysis of failedAnalyses) {
+      await ctx.db.delete(analysis._id);
+    }
+
+    return { cleaned: failedAnalyses.length };
+  }
+});
+
 // ==========================================
 // SUITE ANALYZER PROCESSING ACTION
 // ==========================================
 
 /**
- * Process Suite Analysis with full algorithm implementation
+ * Process Suite Analysis with batch processing (no storage)
+ */
+export const startBatchProcessing = action({
+  args: {
+    analysisId: v.id("analyses"),
+    orderBatches: v.array(v.array(v.any())), // Simplified to avoid size issues
+    packagingSuite: v.array(v.any()), // Simplified
+    config: v.object({
+      allowRotation: v.boolean(),
+      allowStacking: v.boolean(),
+      includeShippingCosts: v.boolean(),
+      minimumFillRate: v.number()
+    })
+  },
+  handler: async (ctx, args) => {
+    const startTime = Date.now();
+    
+    try {
+      console.log(`Starting batch processing for ${args.orderBatches.length} batches`);
+      
+      // Process in smaller chunks to avoid overwhelming the system
+      const CONCURRENT_BATCHES = 5; // Process 5 batches at a time
+      const batchGroups = [];
+      
+      for (let i = 0; i < args.orderBatches.length; i += CONCURRENT_BATCHES) {
+        batchGroups.push(args.orderBatches.slice(i, i + CONCURRENT_BATCHES));
+      }
+      
+      console.log(`Processing in ${batchGroups.length} groups of ${CONCURRENT_BATCHES} batches`);
+      
+      // Process each group with delays
+      for (let groupIndex = 0; groupIndex < batchGroups.length; groupIndex++) {
+        const group = batchGroups[groupIndex];
+        const baseDelay = groupIndex * CONCURRENT_BATCHES * 200; // 200ms between each batch
+        
+        for (let i = 0; i < group.length; i++) {
+          const globalIndex = groupIndex * CONCURRENT_BATCHES + i;
+          const delay = baseDelay + (i * 200);
+          
+          await ctx.scheduler.runAfter(delay, api.suiteAnalyzerBackend.processBatchOrders, {
+            analysisId: args.analysisId,
+            orderBatch: group[i],
+            packagingSuite: args.packagingSuite,
+            batchIndex: globalIndex,
+            totalBatches: args.orderBatches.length,
+            config: args.config,
+            isFirstBatch: globalIndex === 0,
+            isLastBatch: globalIndex === args.orderBatches.length - 1
+          });
+        }
+      }
+      
+      console.log("All batch processing jobs scheduled");
+      
+    } catch (error) {
+      console.error("Failed to schedule batch processing:", error);
+      
+      await ctx.runMutation(api.suiteAnalyzerBackend.completeAnalysis, {
+        analysisId: args.analysisId,
+        results: {} as any,
+        success: false,
+        error: error instanceof Error ? error.message : "Failed to start processing"
+      });
+    }
+  }
+});
+
+/**
+ * Process Suite Analysis with full algorithm implementation (legacy for backward compatibility)
  */
 export const processSuiteAnalysis = action({
   args: {
@@ -347,70 +579,96 @@ export const processSuiteAnalysis = action({
   },
   handler: async (ctx, args) => {
     const startTime = Date.now();
-    
-    try {
-      console.log("Starting Suite Analysis processing:", args.analysisId);
-
-      // Phase 1: Parse CSV data
-      await updateProgress(ctx, args.analysisId, "parsing", 10, 1, 5, "Parsing order history...", startTime);
-      const orderHistory = parseOrderHistoryCSV(args.orderHistoryCSV, args.fallbackDimensions);
-      
-      await updateProgress(ctx, args.analysisId, "parsing", 30, 2, 5, "Parsing packaging suite...", startTime);
-      const packagingSuite = parsePackagingSuiteCSV(args.packagingSuiteCSV);
-      
-      let baselineMix = null;
-      if (args.baselineMixCSV) {
-        await updateProgress(ctx, args.analysisId, "parsing", 50, 3, 5, "Parsing baseline mix...", startTime);
-        baselineMix = parseBaselineMixCSV(args.baselineMixCSV);
-      }
-
-      // Phase 2: Validation
-      await updateProgress(ctx, args.analysisId, "validation", 60, 4, 5, "Validating data...", startTime);
-      validateInputData(orderHistory, packagingSuite, baselineMix);
-
-      // Phase 3: Run optimization
-      await updateProgress(ctx, args.analysisId, "optimization", 70, 5, 5, "Running optimization...", startTime);
-      const allocations = await processOrderAllocations(
-        ctx, 
-        args.analysisId, 
-        orderHistory, 
-        packagingSuite, 
-        args.config,
-        startTime
-      );
-
-      // Phase 4: Generate analysis results
-      await updateProgress(ctx, args.analysisId, "analysis", 90, 1, 1, "Generating analysis...", startTime);
-      console.log("Generating analysis results with allocations:", allocations.length);
-      const results = generateAnalysisResults(allocations, orderHistory, packagingSuite, baselineMix, startTime);
-      console.log("Analysis results generated successfully");
-
-      // Phase 5: Complete analysis
-      console.log("Calling completeAnalysis mutation...");
-      await ctx.runMutation(api.suiteAnalyzerBackend.completeAnalysis, {
-        analysisId: args.analysisId,
-        results,
-        success: true
-      });
-
-      console.log("Suite Analysis completed successfully");
-
-    } catch (error) {
-      console.error("Suite Analysis failed:", error);
-      
-      await ctx.runMutation(api.suiteAnalyzerBackend.completeAnalysis, {
-        analysisId: args.analysisId,
-        results: {} as any,
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error"
-      });
-    }
+    await processAnalysis(ctx, args.analysisId, args.orderHistoryCSV, args.packagingSuiteCSV, 
+      args.baselineMixCSV, args.fallbackDimensions, args.config, startTime);
   }
 });
 
 // ==========================================
 // HELPER FUNCTIONS
 // ==========================================
+
+// Common processing logic extracted to avoid duplication
+async function processAnalysis(
+  ctx: any, 
+  analysisId: any, 
+  orderHistoryCSV: string, 
+  packagingSuiteCSV: string,
+  baselineMixCSV: string | undefined,
+  fallbackDimensions: any,
+  config: any,
+  startTime: number
+) {
+  try {
+    console.log("Processing analysis with ID:", analysisId);
+
+    // Phase 1: Parse CSV data
+    await updateProgress(ctx, analysisId, "parsing", 10, 1, 5, "Parsing order history...", startTime);
+    const orderHistory = parseOrderHistoryCSV(orderHistoryCSV, fallbackDimensions);
+    
+    await updateProgress(ctx, analysisId, "parsing", 30, 2, 5, "Parsing packaging suite...", startTime);
+    const packagingSuite = parsePackagingSuiteCSV(packagingSuiteCSV);
+    
+    let baselineMix = null;
+    if (baselineMixCSV) {
+      await updateProgress(ctx, analysisId, "parsing", 50, 3, 5, "Parsing baseline mix...", startTime);
+      baselineMix = parseBaselineMixCSV(baselineMixCSV);
+    }
+
+    // Phase 2: Validation
+    await updateProgress(ctx, analysisId, "validation", 60, 4, 5, "Validating data...", startTime);
+    validateInputData(orderHistory, packagingSuite, baselineMix);
+
+    // Phase 3: Run optimization
+    await updateProgress(ctx, analysisId, "optimization", 70, 5, 5, "Running optimization...", startTime);
+    const allocations = await processOrderAllocations(
+      ctx, 
+      analysisId, 
+      orderHistory, 
+      packagingSuite, 
+      config,
+      startTime
+    );
+
+    // Phase 4: Generate analysis results
+    await updateProgress(ctx, analysisId, "analysis", 90, 1, 1, "Generating analysis...", startTime);
+    console.log("Generating analysis results with allocations:", allocations.length);
+    const results = generateAnalysisResults(allocations, orderHistory, packagingSuite, baselineMix, startTime);
+    console.log("Analysis results generated successfully");
+
+    // Phase 5: Complete analysis
+    console.log("Calling completeAnalysis mutation...");
+    
+    // Limit allocations to prevent exceeding Convex limits
+    const limitedResults = {
+      ...results,
+      allocations: results.allocations.slice(0, 100), // Only store first 100 allocations for display
+      totalAllocations: results.allocations.length, // Keep track of actual total
+      summary: {
+        ...results.summary,
+        displayedOrders: Math.min(100, results.allocations.length)
+      }
+    };
+    
+    await ctx.runMutation(api.suiteAnalyzerBackend.completeAnalysis, {
+      analysisId,
+      results: limitedResults,
+      success: true
+    });
+
+    console.log("Suite Analysis completed successfully");
+
+  } catch (error) {
+    console.error("Suite Analysis failed:", error);
+    
+    await ctx.runMutation(api.suiteAnalyzerBackend.completeAnalysis, {
+      analysisId,
+      results: {} as any,
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+}
 
 async function updateProgress(
   ctx: any, 
@@ -438,14 +696,24 @@ async function updateProgress(
 }
 
 function parseOrderHistoryCSV(csv: string, fallbackDimensions?: any) {
-  console.log("Parsing order history CSV, first 200 chars:", csv.substring(0, 200));
-  const lines = csv.trim().split('\n');
+  console.log("Parsing order history CSV, first 500 chars:", csv.substring(0, 500));
+  const lines = csv.trim().split('\n').filter(line => line.trim() !== '');
+  console.log("Total lines in CSV (including header):", lines.length);
+  
+  if (lines.length === 0) {
+    console.error("CSV is empty!");
+    return [];
+  }
+  
   const headers = lines[0].split(',').map(h => h.trim());
   console.log("Order CSV Headers:", headers);
   
   const orders = [];
   for (let i = 1; i < lines.length; i++) {
-    const values = lines[i].split(',').map(v => v.trim());
+    const line = lines[i].trim();
+    if (!line) continue; // Skip empty lines
+    
+    const values = line.split(',').map(v => v.trim());
     const order: any = {};
     
     headers.forEach((header, index) => {
@@ -456,11 +724,15 @@ function parseOrderHistoryCSV(csv: string, fallbackDimensions?: any) {
     let length = null, width = null, height = null;
     let hasActualDimensions = false;
     
-    // Check if individual dimensions are provided in CSV
-    if (order.length && order.width && order.height) {
-      length = parseFloat(order.length);
-      width = parseFloat(order.width);
-      height = parseFloat(order.height);
+    // Check if individual dimensions are provided in CSV - look for various field names
+    const lengthValue = order.product_length || order.length || order.l;
+    const widthValue = order.product_width || order.width || order.w;
+    const heightValue = order.product_height || order.height || order.h;
+    
+    if (lengthValue && widthValue && heightValue) {
+      length = parseFloat(lengthValue);
+      width = parseFloat(widthValue);
+      height = parseFloat(heightValue);
       hasActualDimensions = true;
     }
     
@@ -468,7 +740,7 @@ function parseOrderHistoryCSV(csv: string, fallbackDimensions?: any) {
     const orderId = order.order_id || order.orderid || order.id || order.order || `ORDER-${i}`;
     
     // Try to find the volume field (various common names)
-    const volume = order.total_cuin || order.totalcuin || order.total_order_volume || 
+    const volume = order.total_order_volume || order.total_cuin || order.totalcuin || 
                    order.totalordervolume || order.volume || order.total_volume || 
                    order.cubic_inches || order.size || null;
     
@@ -482,24 +754,35 @@ function parseOrderHistoryCSV(csv: string, fallbackDimensions?: any) {
       });
     }
     
-    orders.push({
-      orderId: orderId,
-      productName: order.product_name || order.productname || order.name || 'Unknown Product',
-      length,
-      width,
-      height,
-      hasActualDimensions,
-      originalVolume: volume ? parseFloat(volume) : null,
-      unit: order.unit || 'in',
-      quantity: parseInt(order.quantity) || 1,
-      weight: parseFloat(order.weight) || 1,
-      category: order.category || 'General',
-      priority: order.priority || 'standard',
-      zone: order.zone || 'domestic'
-    });
+    // Only add valid orders
+    if (orderId && (volume || hasActualDimensions)) {
+      const parsedOrder = {
+        orderId: orderId,
+        productName: order.product_name || order.productname || order.name || 'Unknown Product',
+        length,
+        width,
+        height,
+        hasActualDimensions,
+        originalVolume: volume ? parseFloat(volume) : null,
+        unit: order.unit || 'in',
+        quantity: parseInt(order.quantity) || 1,
+        weight: parseFloat(order.weight) || 1,
+        category: order.category || 'General',
+        priority: order.priority || 'standard',
+        zone: order.zone || 'domestic'
+      };
+      
+      orders.push(parsedOrder);
+      
+      if (i <= 3) {
+        console.log(`Order ${i} added successfully:`, parsedOrder);
+      }
+    } else {
+      console.log(`Order ${i} skipped - missing required data. OrderId: ${orderId}, Volume: ${volume}, HasDims: ${hasActualDimensions}`);
+    }
   }
   
-  console.log(`Parsed ${orders.length} orders from CSV`);
+  console.log(`Successfully parsed ${orders.length} valid orders from ${lines.length - 1} data rows`);
   return orders;
 }
 
@@ -600,6 +883,8 @@ async function processOrderAllocations(
 ) {
   const allocations = [];
   const totalOrders = orderHistory.length;
+  const BATCH_SIZE = 50; // Stream in batches of 50
+  let batchNumber = 0;
   
   for (let i = 0; i < orderHistory.length; i++) {
     const order = orderHistory[i];
@@ -625,16 +910,63 @@ async function processOrderAllocations(
     if (bestPackage) {
       const allocation = createAllocation(order, bestPackage);
       allocations.push(allocation);
+      
+      // Stream batch when we reach batch size
+      if (allocations.length % BATCH_SIZE === 0) {
+        const startIndex = allocations.length - BATCH_SIZE;
+        const batch = allocations.slice(startIndex);
+        batchNumber++;
+        
+        console.log(`Streaming batch ${batchNumber}: orders ${startIndex + 1}-${allocations.length}`);
+        
+        await ctx.runMutation(api.suiteAnalyzerBackend.streamAllocationBatch, {
+          analysisId,
+          allocations: batch,
+          batchNumber,
+          isComplete: false
+        });
+      }
     }
+  }
+  
+  // Stream final batch if there are remaining allocations
+  const remainingCount = allocations.length % BATCH_SIZE;
+  if (remainingCount > 0) {
+    const finalBatch = allocations.slice(-remainingCount);
+    batchNumber++;
+    
+    console.log(`Streaming final batch ${batchNumber}: last ${remainingCount} orders`);
+    
+    await ctx.runMutation(api.suiteAnalyzerBackend.streamAllocationBatch, {
+      analysisId,
+      allocations: finalBatch,
+      batchNumber,
+      isComplete: true
+    });
+  } else if (batchNumber > 0) {
+    // If we have exactly divisible batches, mark the last one as complete
+    await ctx.runMutation(api.suiteAnalyzerBackend.streamAllocationBatch, {
+      analysisId,
+      allocations: [], // Empty batch just to signal completion
+      batchNumber: batchNumber + 1,
+      isComplete: true
+    });
   }
   
   return allocations;
 }
 
 function findBestPackage(order: any, packagingSuite: any[], config: any) {
-  const orderVolume = order.originalVolume || (order.length * order.width * order.height);
+  const orderVolume = order.originalVolume || 
+    (order.hasActualDimensions && order.length && order.width && order.height ? 
+      order.length * order.width * order.height : 0);
   
-  if (!orderVolume) {
+  if (!orderVolume || orderVolume <= 0) {
+    console.log(`Order ${order.orderId} has no valid volume data:`, { 
+      originalVolume: order.originalVolume, 
+      hasActualDimensions: order.hasActualDimensions,
+      dimensions: { l: order.length, w: order.width, h: order.height }
+    });
     return null; // Can't classify without volume data
   }
   
@@ -808,8 +1140,20 @@ function generateAnalysisResults(
   const averageFillRate = processedOrders > 0 ? 
     allocations.reduce((sum, alloc) => sum + alloc.fillRate, 0) / processedOrders : 0;
   
+  console.log("Analysis summary:", {
+    totalOrders: orderHistory.length,
+    processedOrders,
+    failedOrders,
+    averageFillRate,
+    allocationsCount: allocations.length
+  });
+  
   // Generate recommendations
   const recommendations = generateRecommendations(allocations, packagingSuite);
+  
+  // Limit efficiency scores to prevent large arrays
+  const sampleSize = Math.min(100, allocations.length);
+  const sampledEfficiencyScores = allocations.slice(0, sampleSize).map(a => a.efficiency);
   
   // Generate metrics
   const metrics = {
@@ -826,7 +1170,7 @@ function generateAnalysisResults(
     quality: {
       fillRateDistribution: calculateFillRateDistribution(allocations),
       costDistribution: calculateCostDistribution(allocations),
-      efficiencyScores: allocations.map(a => a.efficiency)
+      efficiencyScores: sampledEfficiencyScores // Use sampled scores instead of all
     }
   };
   

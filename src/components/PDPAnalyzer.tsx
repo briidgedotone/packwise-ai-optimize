@@ -10,6 +10,7 @@ import {
   Layers, Shield, ChevronRight, ChevronLeft,
   Check, Calculator
 } from 'lucide-react';
+import { ProductManual } from '@/components/ui/ProductManual';
 import { useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { toast } from 'sonner';
@@ -24,6 +25,7 @@ export const PDPAnalyzer = () => {
   // UI State
   const [currentStep, setCurrentStep] = useState(1);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [showHelpModal, setShowHelpModal] = useState(true);
   
   const [files, setFiles] = useState<{
     mainPDP: File | null;
@@ -583,17 +585,68 @@ export const PDPAnalyzer = () => {
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
       <div>
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 relative">
-          {renderStepHeader()}
-          
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
-          
-          {renderNavigation()}
-        </div>
+        {/* Show placeholder when help modal is open */}
+        {showHelpModal && (
+          <div className="text-center py-20">
+            <Eye className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome to Design Analyzer</h2>
+            <p className="text-gray-600">Please read the manual to get started</p>
+          </div>
+        )}
+        
+        {/* Show stepped interface when help modal is closed */}
+        {!showHelpModal && (
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 relative">
+            {renderStepHeader()}
+            
+            {currentStep === 1 && renderStep1()}
+            {currentStep === 2 && renderStep2()}
+            {currentStep === 3 && renderStep3()}
+            {currentStep === 4 && renderStep4()}
+            
+            {renderNavigation()}
+          </div>
+        )}
       </div>
+      
+      <ProductManual
+        isOpen={showHelpModal}
+        onClose={() => setShowHelpModal(false)}
+        productName="Design Analyzer"
+        productIcon={<Eye className="h-5 w-5 text-white" />}
+        sections={[
+          {
+            title: "INPUTS",
+            icon: "📥",
+            items: [
+              "Packaging design images (PNG, JPG, JPEG formats)",
+              "Product context: category, description, and target demographics",
+              "Optional: Competitor design images for benchmarking",
+              "Analysis preferences: focus areas and retail environment"
+            ]
+          },
+          {
+            title: "OUTPUTS",
+            icon: "📤", 
+            items: [
+              "Visual impact and shelf visibility analysis",
+              "Brand coherence and messaging effectiveness assessment", 
+              "Competitive positioning and differentiation insights",
+              "Actionable recommendations for design improvements"
+            ]
+          },
+          {
+            title: "HOW IT WORKS",
+            icon: "🎯",
+            items: [
+              "1. Upload your packaging design image",
+              "2. Provide product context and target market details",
+              "3. Optionally add competitor designs for benchmarking",
+              "4. Generate comprehensive design analysis and recommendations"
+            ]
+          }
+        ]}
+      />
     </div>
   );
 };

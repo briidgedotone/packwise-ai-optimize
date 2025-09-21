@@ -29,6 +29,7 @@ import FAQSection from "@/components/ui/faq";
 
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [productDropdownOpen, setProductDropdownOpen] = useState(false);
 
   // Benefits data
   const benefits = [
@@ -81,31 +82,31 @@ const Index = () => {
     {
       step: 1,
       name: "Suite Analyzer",
-      description: "Upload your order history and packaging list, and the AI finds your optimal packaging mix, forecasting cost and sustainability savings you can actually measure. It also compares your current packaging mix to a baseline, highlighting gaps and inefficiencies, and recommends improved packaging dimensions to increase fill rates so you can see exactly where to improve and how to pack out more effectively.",
+      description: "Upload your order history and packaging list. AI finds your optimal packaging mix and forecasts measurable cost and sustainability savings.",
       icon: Package
     },
     {
       step: 2, 
       name: "Demand Planner",
-      description: "Feed in usage data or forecasts (by quantity or percentage). The AI tracks trends, updates demand plans in real time, and helps you order the right packaging at the right time.",
+      description: "Feed in usage data or forecasts. AI tracks trends, updates demand plans in real time, and helps you order the right packaging at the right time.",
       icon: TrendingUp
     },
     {
       step: 3,
       name: "Spec Generator", 
-      description: "Simply enter product names or short descriptions. The tool generates estimated product dimensions and volume, along with a note explaining the logic it used, so you can plan packaging more accurately and clean up incomplete data.",
+      description: "Simply enter product names or descriptions. AI generates estimated dimensions and volume with explanations to clean up incomplete data.",
       icon: Brain
     },
     {
       step: 4,
       name: "Design Analyzer",
-      description: "Upload artwork, dielines, or competitor packaging. The AI grades your design, highlights strengths and weaknesses, and compares it against competitors or alternative concepts so you can make sure your packaging stands out on the shelf.",
+      description: "Upload artwork, dielines, or competitor packaging. AI grades your design and compares it against competitors to ensure shelf standout.",
       icon: Eye
     },
     {
       step: 5,
       name: "Packaging AI Chatbot",
-      description: "Ask questions about the platform or packaging best practices. It's your on-demand expert for quick answers and training support.",
+      description: "Ask questions about the platform or packaging best practices. Your on-demand expert for quick answers and training support.",
       icon: MessageSquare
     }
   ];
@@ -133,7 +134,39 @@ const Index = () => {
 
               {/* Desktop Navigation */}
               <nav className="hidden md:flex space-x-8">
-                <a href="#product" className="text-gray-600 hover:text-[#767AFA] transition-colors">Product</a>
+                <div 
+                  className="relative"
+                  onMouseEnter={() => setProductDropdownOpen(true)}
+                  onMouseLeave={() => setProductDropdownOpen(false)}
+                >
+                  <button className="flex items-center text-gray-600 hover:text-[#767AFA] transition-colors">
+                    Product
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {productDropdownOpen && (
+                    <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 z-50">
+                      <div className="p-2">
+                        {toolSteps.map((tool) => {
+                          const Icon = tool.icon;
+                          return (
+                            <Link
+                              key={tool.step}
+                              to={`/product/${tool.name.toLowerCase().replace(/\s+/g, '-')}`}
+                              className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors group"
+                            >
+                              <div className="w-8 h-8 rounded-lg bg-[#767AFA]/10 flex items-center justify-center flex-shrink-0 group-hover:bg-[#767AFA]/20 transition-colors">
+                                <Icon className="h-4 w-4 text-[#767AFA]" />
+                              </div>
+                              <span className="font-medium text-gray-900 text-sm">{tool.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
                 <a href="#how-it-works" className="text-gray-600 hover:text-[#767AFA] transition-colors">How it Works</a>
                 <a href="#pricing" className="text-gray-600 hover:text-[#767AFA] transition-colors">Pricing</a>
                 <a href="#faq" className="text-gray-600 hover:text-[#767AFA] transition-colors">FAQ</a>
@@ -162,7 +195,34 @@ const Index = () => {
             {mobileMenuOpen && (
               <div className="md:hidden bg-white border-t border-gray-200">
                 <div className="px-2 pt-2 pb-3 space-y-1">
-                  <a href="#product" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Product</a>
+                  {/* Mobile Product Dropdown */}
+                  <div>
+                    <button 
+                      onClick={() => setProductDropdownOpen(!productDropdownOpen)}
+                      className="flex items-center justify-between w-full px-3 py-2 text-gray-600 hover:text-[#767AFA]"
+                    >
+                      Product
+                      <ChevronDown className={`h-4 w-4 transition-transform ${productDropdownOpen ? 'rotate-180' : ''}`} />
+                    </button>
+                    {productDropdownOpen && (
+                      <div className="pl-4 space-y-1">
+                        {toolSteps.map((tool) => {
+                          const Icon = tool.icon;
+                          return (
+                            <Link
+                              key={tool.step}
+                              to={`/product/${tool.name.toLowerCase().replace(/\s+/g, '-')}`}
+                              className="flex items-center space-x-3 px-3 py-2 text-sm text-gray-600 hover:text-[#767AFA] hover:bg-gray-50 rounded-lg"
+                              onClick={() => setMobileMenuOpen(false)}
+                            >
+                              <Icon className="h-4 w-4" />
+                              <span>{tool.name}</span>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
                   <a href="#how-it-works" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">How it Works</a>
                   <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Pricing</a>
                   <a href="#faq" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">FAQ</a>
@@ -201,9 +261,11 @@ const Index = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline" className="text-lg px-8 py-4 rounded-full">
-                View Plans
-              </Button>
+              <a href="#how-it-works">
+                <Button size="lg" variant="outline" className="text-lg px-8 py-4 rounded-full">
+                  How it Works
+                </Button>
+              </a>
             </div>
           </div>
 
@@ -247,7 +309,7 @@ const Index = () => {
                   {/* Progress Visualization */}
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-500">Current efficiency</span>
+                      <span className="text-gray-500">Current Fill Rate</span>
                       <span className="font-medium text-gray-700">67%</span>
                     </div>
                     <div className="w-full bg-gray-100 rounded-full h-2">
@@ -260,7 +322,7 @@ const Index = () => {
                     </div>
                     <div className="flex items-center justify-center space-x-1">
                       <span className="text-xs text-gray-500">Target:</span>
-                      <span className="text-xs font-medium" style={{ color: '#767AFA' }}>85% efficiency</span>
+                      <span className="text-xs font-medium" style={{ color: '#767AFA' }}>85% Fill Rate</span>
                     </div>
                   </div>
                 </div>
@@ -366,7 +428,13 @@ const Index = () => {
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900">{tool.name}</h3>
                   </div>
-                  <p className="text-gray-600 text-lg leading-relaxed">{tool.description}</p>
+                  <p className="text-gray-600 text-lg leading-relaxed mb-6">{tool.description}</p>
+                  <Link to={`/product/${tool.name.toLowerCase().replace(/\s+/g, '-')}`}>
+                    <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">
+                      Learn More
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
                 </div>
                 <div className="w-full lg:w-1/2 flex justify-center">
                   <div className="w-80 h-80 bg-white rounded-3xl border border-gray-200 overflow-hidden">

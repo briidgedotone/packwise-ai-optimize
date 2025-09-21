@@ -768,7 +768,12 @@ const SuiteAnalysisResults = () => {
               <div>
                 <p className="text-sm font-medium text-gray-600">Orders Processed</p>
                 <p className="text-3xl font-bold text-gray-900 mt-1">{results.summary.processedOrders.toLocaleString()}</p>
-                <p className="text-xs text-gray-500 mt-1">Total orders analyzed</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {(results as any).totalAllocations && (results as any).totalAllocations > results.allocations.length ? 
+                    `Showing sample of ${results.allocations.length} from ${(results as any).totalAllocations} total` : 
+                    'Total orders analyzed'
+                  }
+                </p>
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <Package className="h-6 w-6 text-blue-600" />

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,25 +8,22 @@ import {
   SparklesIcon as Wand2,
   RectangleGroupIcon as Target,
   CheckCircleIcon as CheckCircle2,
-  ExclamationCircleIcon as AlertCircle,
   ArrowDownTrayIcon as Download,
   DocumentTextIcon as FileText,
   InformationCircleIcon as Info,
-  QuestionMarkCircleIcon as HelpCircle,
   ArrowPathIcon as Loader2,
   ArrowPathIcon as RotateCcw,
-  PlayIcon as Play,
-  ArchiveBoxIcon as Package,
   EyeIcon as Eye,
   EyeSlashIcon as EyeOff,
   MagnifyingGlassIcon as Maximize2,
-  XMarkIcon as X
+  XMarkIcon as X,
+  ChevronLeftIcon as ChevronLeft,
+  ChevronRightIcon as ChevronRight,
+  CheckIcon as Check
 } from '@heroicons/react/24/outline';
-import { useAction, useMutation, useQuery } from 'convex/react';
+import { useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
-import { Id } from '../../convex/_generated/dataModel';
 import { toast } from 'sonner';
-import { designSystem } from '@/lib/design-system';
 import { useTokenGuard } from '@/hooks/useTokenGuard';
 
 interface SpecResult {
@@ -61,6 +57,10 @@ interface SpecGenerationResponse {
 export const SpecGenerator = () => {
   const { checkAndConsumeToken } = useTokenGuard();
   
+  // Step interface state
+  const [currentStep, setCurrentStep] = useState(1);
+  const [showHelpModal, setShowHelpModal] = useState(true);
+  
   // State
   const [productFile, setProductFile] = useState<File | null>(null);
   const [csvContent, setCsvContent] = useState<string>('');
@@ -76,7 +76,6 @@ export const SpecGenerator = () => {
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState<SpecResult[] | null>(null);
-  const [showHelp, setShowHelp] = useState(false);
   const [notesDisplay, setNotesDisplay] = useState<'truncated' | 'wrapped' | 'modal'>('truncated');
   const [selectedNote, setSelectedNote] = useState<{ product: string; notes: string } | null>(null);
   
@@ -88,6 +87,35 @@ export const SpecGenerator = () => {
 
   // Convex hooks
   const generateSpecs = useAction(api.specGenerator.generateSpecs);
+
+  // Step validation
+  const isStep1Valid = productFile !== null;
+  const isStep2Valid = boundingDimensions.min.l && boundingDimensions.avg.l && boundingDimensions.max.l;
+  const isStep3Valid = isStep1Valid && isStep2Valid;
+
+  const steps = [
+    { 
+      number: 1, 
+      title: 'Product Data Upload', 
+      description: 'Upload your product list or order file',
+      isValid: isStep1Valid,
+      isComplete: isStep1Valid && currentStep > 1
+    },
+    { 
+      number: 2, 
+      title: 'Bounding Dimensions', 
+      description: 'Set calibration dimensions for AI estimates',
+      isValid: isStep2Valid,
+      isComplete: isStep2Valid && currentStep > 2
+    },
+    { 
+      number: 3, 
+      title: 'Generate & Results', 
+      description: 'Configure generation and view results',
+      isValid: isStep3Valid,
+      isComplete: false
+    }
+  ];
 
   // File upload handler
   const handleFileUpload = async (file: File) => {
@@ -340,292 +368,323 @@ export const SpecGenerator = () => {
     setProcessedProducts(0);
     setCurrentChunk(0);
     setProcessingProgress('');
+    setCurrentStep(1);
   };
 
-  return (
-    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
-      <div className="space-y-4">
-        {/* Header */}
-        <div className="bg-white rounded-3xl border border-gray-200 p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-600 rounded-3xl flex items-center justify-center">
-                <Wand2 className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-900">Spec Generator</h1>
-                <p className="text-sm text-gray-500 mt-1">
-                  Generate estimated L×W×H and CUIN for product lists using AI
-                </p>
-              </div>
+  // Step rendering functions
+  const renderStepHeader = () => (
+    <div className="mb-8">
+      {/* Progress Steps */}
+      <div className="flex items-center justify-center mb-6">
+        {steps.map((step, index) => (
+          <div key={step.number} className="flex items-center">
+            <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+              currentStep === step.number
+                ? 'text-white border-blue-500 bg-blue-500'
+                : step.isComplete
+                  ? 'text-white border-blue-500 bg-blue-500'
+                  : step.isValid
+                    ? 'border-blue-500 text-blue-500 bg-blue-50'
+                    : 'border-gray-300 bg-gray-50 text-gray-400'
+            }`}>
+              {step.isComplete ? <Check className="h-5 w-5" /> : step.number}
             </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowHelp(!showHelp)}
-                className="border-gray-200"
-              >
-                <HelpCircle className="h-4 w-4 mr-2" />
-                Help
-              </Button>
-              <div className="flex items-center gap-2 px-3 py-2 border rounded-3xl" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
-                <Package className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
-                <span className="text-sm font-medium" style={{ color: designSystem.colors.primary }}>AI Powered</span>
-              </div>
-            </div>
+            {index < steps.length - 1 && (
+              <div className={`w-16 h-0.5 transition-all ${
+                step.isComplete ? 'bg-blue-500' : 'bg-gray-300'
+              }`} />
+            )}
           </div>
+        ))}
+      </div>
+
+      {/* Current Step Info */}
+      <div className="text-center">
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+          Step {currentStep}: {steps[currentStep - 1].title}
+        </h2>
+        <p className="text-gray-600">
+          {steps[currentStep - 1].description}
+        </p>
+      </div>
+    </div>
+  );
+
+  const renderStep1 = () => (
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white border border-gray-200 rounded-3xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-8 h-8 rounded-3xl flex items-center justify-center bg-purple-500">
+            <FileText className="h-4 w-4 text-white" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900">Product Data File</h3>
         </div>
 
-        {/* Help Section */}
-        {showHelp && (
-          <Alert className="bg-blue-50 border-blue-200">
-            <Info className="h-4 w-4" style={{ color: designSystem.colors.primary }} />
-            <AlertDescription className="text-sm text-gray-700">
-              <div className="space-y-2">
+        {!productFile ? (
+          <label className="relative block">
+            <input
+              type="file"
+              accept=".csv"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
+              className="hidden"
+            />
+            <div className="border-2 border-dashed border-gray-200 rounded-3xl p-12 text-center transition-all cursor-pointer group min-h-[300px] flex flex-col justify-center hover:border-purple-500 hover:bg-purple-50">
+              <div className="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-purple-500">
+                <Upload className="h-12 w-12 text-white" />
+              </div>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Upload Product List</h4>
+              <p className="text-gray-600 mb-1">Drop or Upload Your Product CSV Here</p>
+              <p className="text-sm text-gray-500">CSV file with product names or Order ID + Products</p>
+            </div>
+          </label>
+        ) : (
+          <div className="border border-gray-200 rounded-3xl p-6 bg-green-50">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <CheckCircle2 className="h-6 w-6 text-green-500" />
                 <div>
-                  <strong className="text-gray-900">📥 INPUTS:</strong>
-                  <ul className="mt-1 space-y-1 text-xs">
-                    <li>• Product List or Order File (CSV with product names/descriptions)</li>
-                    <li>• Order files can include Order ID + Product Name per row</li>
-                    <li>• Bounding dimensions (Min/Avg/Max L×W×H in inches)</li>
-                    <li>• Optional: Category, Material, Size info</li>
-                  </ul>
-                </div>
-                <div>
-                  <strong className="text-gray-900">📤 OUTPUTS:</strong>
-                  <ul className="mt-1 space-y-1 text-xs">
-                    <li>• Order ID (if applicable) + Product Name</li>
-                    <li>• Estimated L×W×H dimensions in inches</li>
-                    <li>• Total CUIN (cubic inches)</li>
-                    <li>• Confidence level and AI reasoning notes</li>
-                  </ul>
+                  <p className="font-medium text-gray-900">{productFile.name}</p>
+                  <p className="text-sm text-gray-500">{(productFile.size / 1024).toFixed(1)} KB</p>
                 </div>
               </div>
-            </AlertDescription>
-          </Alert>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  setProductFile(null);
+                  setCsvContent('');
+                }}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
         )}
 
-        {!results ? (
-          <div className="grid gap-4 lg:grid-cols-2">
-            {/* File Upload Section */}
-            <Card className="bg-white border-gray-200 shadow-sm rounded-3xl">
-              <CardHeader>
-                <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-3">
-                  <Upload className="h-5 w-5 text-blue-600" />
-                  📥 Product List File
-                </CardTitle>
-                <CardDescription className="text-gray-500">
-                  Upload product list or order file (CSV format)
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {/* File Upload */}
-                <div className="border-2 border-dashed border-gray-200 rounded-3xl p-4 text-center hover:border-blue-300 hover:bg-blue-50/50 transition-colors">
-                  <div className="w-10 h-10 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto mb-3">
-                    <Upload className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <p className="text-sm text-gray-600 mb-3">
-                    Choose CSV file with product names or Order ID + Products
-                  </p>
-                  <Input
-                    type="file"
-                    accept=".csv"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handleFileUpload(file);
-                    }}
-                    className="hidden"
-                    id="product-file"
-                  />
-                  <Button 
-                    variant="outline"
-                    onClick={() => document.getElementById('product-file')?.click()}
-                    className="border-blue-200 text-blue-700 hover:bg-blue-50"
-                  >
-                    {productFile ? `📄 ${productFile.name}` : 'Choose File'}
-                  </Button>
-                </div>
+        {/* Optional Information */}
+        {productFile && (
+          <div className="mt-6 space-y-4">
+            <Label className="text-gray-700 font-medium">Optional Information (helps improve AI accuracy)</Label>
+            <div className="grid gap-3">
+              <Input
+                placeholder="Category (e.g., Electronics, Cosmetics)"
+                className="border-gray-200 rounded-3xl"
+                value={additionalInfo.category}
+                onChange={(e) => setAdditionalInfo(prev => ({ ...prev, category: e.target.value }))}
+              />
+              <Input
+                placeholder="Material Type (e.g., plastic, metal)"
+                className="border-gray-200 rounded-3xl"
+                value={additionalInfo.material}
+                onChange={(e) => setAdditionalInfo(prev => ({ ...prev, material: e.target.value }))}
+              />
+              <Input
+                placeholder="Size Range (e.g., S, M, L, XL)"
+                className="border-gray-200 rounded-3xl"
+                value={additionalInfo.size}
+                onChange={(e) => setAdditionalInfo(prev => ({ ...prev, size: e.target.value }))}
+              />
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 
-                {/* File Success */}
-                {productFile && (
-                  <div className="bg-green-50 border border-green-200 rounded-3xl p-4">
-                    <div className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-green-600" />
-                      <span className="text-sm font-medium text-green-700">File loaded successfully</span>
-                    </div>
-                  </div>
-                )}
+  const renderStep2 = () => (
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white border border-gray-200 rounded-3xl p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 rounded-3xl flex items-center justify-center bg-purple-500">
+            <Target className="h-4 w-4 text-white" />
+          </div>
+          <h3 className="text-lg font-medium text-gray-900">Bounding Dimensions</h3>
+          <span className="text-red-500">*</span>
+        </div>
 
-                {/* Optional Fields */}
-                <div className="space-y-2">
-                  <Label className="text-gray-700 font-medium">Optional Information</Label>
-                  <div className="grid gap-3">
-                    <Input
-                      placeholder="Category (e.g., Electronics, Cosmetics)"
-                      className="border-gray-200 rounded-3xl"
-                      style={{ '--tw-ring-color': designSystem.colors.primary }}
-                      onFocus={(e) => e.target.style.borderColor = designSystem.colors.primary}
-                      value={additionalInfo.category}
-                      onChange={(e) => setAdditionalInfo(prev => ({ ...prev, category: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Material Type (e.g., plastic, metal)"
-                      className="border-gray-200 rounded-3xl"
-                      style={{ '--tw-ring-color': designSystem.colors.primary }}
-                      onFocus={(e) => e.target.style.borderColor = designSystem.colors.primary}
-                      value={additionalInfo.material}
-                      onChange={(e) => setAdditionalInfo(prev => ({ ...prev, material: e.target.value }))}
-                    />
-                    <Input
-                      placeholder="Size Range (e.g., S, M, L, XL)"
-                      className="border-gray-200 rounded-3xl"
-                      style={{ '--tw-ring-color': designSystem.colors.primary }}
-                      onFocus={(e) => e.target.style.borderColor = designSystem.colors.primary}
-                      value={additionalInfo.size}
-                      onChange={(e) => setAdditionalInfo(prev => ({ ...prev, size: e.target.value }))}
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+        <p className="text-sm text-gray-600 mb-6">
+          Set min/avg/max dimensions to calibrate AI estimates (inches). These should reflect your smallest, average, and largest products based on outer packaging dimensions.
+        </p>
 
-            {/* Bounding Dimensions */}
-            <Card className="bg-white border-gray-200 shadow-sm rounded-3xl">
-              <CardHeader>
-                <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-3">
-                  <Target className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
-                  Bounding Dimensions
-                  <span className="text-red-500">*</span>
-                </CardTitle>
-                <CardDescription className="text-gray-500">
-                  Set min/avg/max dimensions to calibrate AI estimates (inches)
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {['min', 'avg', 'max'].map((type) => (
-                  <div key={type} className="space-y-2">
-                    <Label className="text-gray-700 font-medium text-sm">
-                      {type === 'min' ? 'Minimum' : type === 'avg' ? 'Average' : 'Maximum'} Dimensions
+        <div className="space-y-6">
+          {['min', 'avg', 'max'].map((type) => (
+            <div key={type} className="space-y-3">
+              <Label className="text-gray-700 font-medium text-base">
+                {type === 'min' ? 'Minimum' : type === 'avg' ? 'Average' : 'Maximum'} Dimensions
+              </Label>
+              <div className="grid grid-cols-3 gap-4">
+                {['l', 'w', 'h'].map((dim) => (
+                  <div key={dim} className="space-y-2">
+                    <Label className="text-sm text-gray-500 uppercase font-medium">
+                      {dim === 'l' ? 'Length' : dim === 'w' ? 'Width' : 'Height'}
                     </Label>
-                    <div className="grid grid-cols-3 gap-3">
-                      {['l', 'w', 'h'].map((dim) => (
-                        <div key={dim} className="space-y-2">
-                          <Label className="text-xs text-gray-500 uppercase font-medium">
-                            {dim === 'l' ? 'Length' : dim === 'w' ? 'Width' : 'Height'}
-                          </Label>
-                          <Input
-                            type="number"
-                            step="0.1"
-                            min="0.1"
-                            placeholder="0.0"
-                            className="border-gray-200 rounded-3xl"
-                      style={{ '--tw-ring-color': designSystem.colors.primary }}
-                      onFocus={(e) => e.target.style.borderColor = designSystem.colors.primary}
-                            value={boundingDimensions[type as keyof typeof boundingDimensions][dim as 'l' | 'w' | 'h']}
-                            onChange={(e) => setBoundingDimensions(prev => ({
-                              ...prev,
-                              [type]: {
-                                ...prev[type as keyof typeof prev],
-                                [dim]: e.target.value
-                              }
-                            }))}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0.1"
+                      placeholder="0.0"
+                      className="border-gray-200 rounded-3xl"
+                      value={boundingDimensions[type as keyof typeof boundingDimensions][dim as 'l' | 'w' | 'h']}
+                      onChange={(e) => setBoundingDimensions(prev => ({
+                        ...prev,
+                        [type]: {
+                          ...prev[type as keyof typeof prev],
+                          [dim]: e.target.value
+                        }
+                      }))}
+                    />
                   </div>
                 ))}
+              </div>
+            </div>
+          ))}
+        </div>
 
-                <div className="border rounded-3xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
-                  <p className="text-sm" style={{ color: designSystem.colors.primary }}>
-                    <strong>Tip:</strong> These should reflect your smallest, average, and largest products based on outer packaging dimensions
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+        <div className="mt-6 border rounded-3xl p-4 bg-purple-50 border-purple-200">
+          <p className="text-sm text-purple-700">
+            <strong>Tip:</strong> Enter dimensions in inches. Each dimension (L, W, H) must follow: Min &lt; Average &lt; Max
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderStep3 = () => (
+    <div className="max-w-4xl mx-auto">
+      <div className="bg-white border border-gray-200 rounded-3xl p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-8 h-8 rounded-3xl flex items-center justify-center bg-purple-500">
+            <Wand2 className="h-4 w-4 text-white" />
           </div>
-        ) : (
-          // Results Section
-          <Card className="bg-white border-gray-200 shadow-sm">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-xl font-medium text-gray-900 flex items-center gap-2">
-                    <CheckCircle2 className="h-5 w-5 text-green-600" />
-                    Generated Specifications
-                  </CardTitle>
-                  <CardDescription className="text-gray-500 mt-1">
-                    {results.length} products processed with AI analysis
-                    {totalProducts > results.length && (
-                      <span className="ml-2 font-medium" style={{ color: designSystem.colors.primary }}>
-                        ({results.length}/{totalProducts} total)
-                      </span>
-                    )}
-                  </CardDescription>
+          <h3 className="text-lg font-medium text-gray-900">Generation Settings</h3>
+        </div>
+
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="bg-purple-50 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <FileText className="h-5 w-5 text-purple-600" />
+                <span className="font-medium text-gray-900">Product File</span>
+              </div>
+              <p className="text-sm text-gray-600">
+                {productFile ? `✓ ${productFile.name}` : 'No file uploaded'}
+              </p>
+            </div>
+            
+            <div className="bg-purple-50 rounded-xl p-4">
+              <div className="flex items-center gap-3 mb-2">
+                <Target className="h-5 w-5 text-purple-600" />
+                <span className="font-medium text-gray-900">Dimensions</span>
+              </div>
+              <p className="text-sm text-gray-600">
+                {isStep2Valid ? '✓ Configured' : 'Not configured'}
+              </p>
+            </div>
+          </div>
+
+          {csvContent && (
+            <div className="bg-blue-50 rounded-xl p-4">
+              <h4 className="font-medium text-gray-900 mb-2">File Preview</h4>
+              <p className="text-sm text-gray-600">
+                {Math.max(0, csvContent.trim().split('\n').length - 1)} products detected
+              </p>
+            </div>
+          )}
+
+          {/* Progress Display */}
+          {isProcessing && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+              <div className="flex items-center gap-2 text-yellow-800 mb-3">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span className="font-medium">Processing Your Products</span>
+              </div>
+              <p className="text-sm text-yellow-700 mb-3">
+                {processingProgress || 'Initializing...'}
+              </p>
+              
+              {totalProducts > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-yellow-700">Progress</span>
+                    <span className="text-yellow-800 font-medium">
+                      {processedProducts}/{totalProducts} products ({Math.round((processedProducts/totalProducts)*100)}%)
+                    </span>
+                  </div>
+                  <div className="w-full bg-yellow-200 rounded-full h-2">
+                    <div
+                      className="bg-yellow-600 h-2 rounded-full transition-all duration-300"
+                      style={{ width: `${(processedProducts / totalProducts) * 100}%` }}
+                    />
+                  </div>
+                  {totalProducts > 50 && currentChunk > 0 && (
+                    <p className="text-xs text-yellow-600 mt-2">
+                      Large file processing: Chunk {currentChunk} of ~{Math.ceil(totalProducts / 50)}
+                    </p>
+                  )}
                 </div>
+              )}
+            </div>
+          )}
+
+          {/* Results Display */}
+          {results && results.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  Generated Specifications
+                </h4>
                 <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={resetForm}
-                    className="border-gray-200"
-                  >
+                  <Button variant="outline" onClick={resetForm} className="border-gray-200">
                     <RotateCcw className="h-4 w-4 mr-2" />
                     New Generation
                   </Button>
-                  <Button
-                    onClick={exportToCSV}
-                    className="hover:opacity-90 text-white rounded-full"
-                    style={{ backgroundColor: designSystem.colors.primary }}
-                  >
+                  <Button onClick={exportToCSV} className="bg-purple-600 hover:bg-purple-700 text-white">
                     <Download className="h-4 w-4 mr-2" />
                     Export CSV
                   </Button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent>
+
               {/* Notes Display Options */}
-              <div className="mb-3 flex items-center justify-between p-2 bg-gray-50 rounded-3xl">
-                <div className="flex items-center gap-2">
-                  <Label className="text-sm font-medium text-gray-700">Notes Display:</Label>
-                  <div className="flex gap-1">
-                    <Button
-                      variant={notesDisplay === 'truncated' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setNotesDisplay('truncated')}
-                      className="h-8 text-xs"
-                    >
-                      <EyeOff className="h-3 w-3 mr-1" />
-                      Truncated
-                    </Button>
-                    <Button
-                      variant={notesDisplay === 'wrapped' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setNotesDisplay('wrapped')}
-                      className="h-8 text-xs"
-                    >
-                      <Eye className="h-3 w-3 mr-1" />
-                      Full Text
-                    </Button>
-                    <Button
-                      variant={notesDisplay === 'modal' ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => setNotesDisplay('modal')}
-                      className="h-8 text-xs"
-                    >
-                      <Maximize2 className="h-3 w-3 mr-1" />
-                      Click to View
-                    </Button>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-500">
-                  Hover over truncated text to see full notes
+              <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-xl">
+                <Label className="text-sm font-medium text-gray-700">Notes Display:</Label>
+                <div className="flex gap-1">
+                  <Button
+                    variant={notesDisplay === 'truncated' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setNotesDisplay('truncated')}
+                    className="h-8 text-xs"
+                  >
+                    <EyeOff className="h-3 w-3 mr-1" />
+                    Truncated
+                  </Button>
+                  <Button
+                    variant={notesDisplay === 'wrapped' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setNotesDisplay('wrapped')}
+                    className="h-8 text-xs"
+                  >
+                    <Eye className="h-3 w-3 mr-1" />
+                    Full Text
+                  </Button>
+                  <Button
+                    variant={notesDisplay === 'modal' ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setNotesDisplay('modal')}
+                    className="h-8 text-xs"
+                  >
+                    <Maximize2 className="h-3 w-3 mr-1" />
+                    Click to View
+                  </Button>
                 </div>
               </div>
 
               {/* Results Table */}
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto border border-gray-200 rounded-xl">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
@@ -681,8 +740,7 @@ export const SpecGenerator = () => {
                           
                           {notesDisplay === 'modal' && (
                             <button
-                              className="underline cursor-pointer hover:opacity-80"
-                              style={{ color: designSystem.colors.primary }}
+                              className="underline cursor-pointer hover:opacity-80 text-purple-600"
                               onClick={() => setSelectedNote({ 
                                 product: result.productName, 
                                 notes: result.notes 
@@ -699,145 +757,204 @@ export const SpecGenerator = () => {
               </div>
 
               {/* Summary Statistics */}
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-4 gap-3">
-                <div className="rounded-3xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+              <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
+                <div className="bg-purple-50 rounded-xl p-4">
                   <p className="text-sm font-medium text-gray-900">Total Products</p>
-                  <p className="text-2xl font-bold" style={{ color: designSystem.colors.primary }}>{results.length}</p>
+                  <p className="text-2xl font-bold text-purple-600">{results.length}</p>
                 </div>
-                <div className="bg-green-50 rounded-3xl p-4">
+                <div className="bg-green-50 rounded-xl p-4">
                   <p className="text-sm font-medium text-green-900">High Confidence</p>
                   <p className="text-2xl font-bold text-green-700">
                     {results.filter(r => r.confidence === 'high').length}
                   </p>
                 </div>
-                <div className="bg-yellow-50 rounded-3xl p-4">
+                <div className="bg-yellow-50 rounded-xl p-4">
                   <p className="text-sm font-medium text-yellow-900">Medium Confidence</p>
                   <p className="text-2xl font-bold text-yellow-700">
                     {results.filter(r => r.confidence === 'medium').length}
                   </p>
                 </div>
-                <div className="rounded-3xl p-4" style={{ backgroundColor: designSystem.colors.primaryLight }}>
+                <div className="bg-purple-50 rounded-xl p-4">
                   <p className="text-sm font-medium text-gray-900">Avg CUIN</p>
-                  <p className="text-2xl font-bold" style={{ color: designSystem.colors.primary }}>
+                  <p className="text-2xl font-bold text-purple-600">
                     {(results.reduce((sum, r) => sum + r.totalCUIN, 0) / results.length).toFixed(1)}
                   </p>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Notes Modal */}
-        {selectedNote && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
-              <div className="flex items-center justify-between p-6 border-b border-gray-200">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  AI Analysis Notes: {selectedNote.product}
-                </h3>
-                <button
-                  onClick={() => setSelectedNote(null)}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-              <div className="p-6 overflow-y-auto max-h-[60vh]">
-                <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-                  {selectedNote.notes}
-                </div>
-              </div>
-              <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
-                <Button
-                  variant="outline"
-                  onClick={() => setSelectedNote(null)}
-                >
-                  Close
-                </Button>
-                <Button
-                  onClick={() => {
-                    navigator.clipboard.writeText(selectedNote.notes);
-                    toast.success('Notes copied to clipboard');
-                  }}
-                  className="hover:opacity-90 text-white"
-                >
-                  Copy Notes
-                </Button>
-              </div>
             </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderNavigation = () => (
+    <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+      <Button
+        variant="outline"
+        onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
+        disabled={currentStep === 1}
+        className="flex items-center gap-2"
+      >
+        <ChevronLeft className="h-4 w-4" />
+        Previous
+      </Button>
+      
+      <div className="text-sm text-gray-500">
+        Step {currentStep} of {steps.length}
+      </div>
+
+      {currentStep < steps.length ? (
+        <Button
+          onClick={() => setCurrentStep(Math.min(steps.length, currentStep + 1))}
+          disabled={!steps[currentStep - 1].isValid}
+          className="flex items-center gap-2"
+        >
+          Next
+          <ChevronRight className="h-4 w-4" />
+        </Button>
+      ) : (
+        <Button
+          onClick={handleGenerateSpecs}
+          disabled={!isStep3Valid || isProcessing}
+          className="flex items-center gap-2"
+        >
+          {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
+          Generate Specs
+        </Button>
+      )}
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFBFC' }}>
+      <div className="max-w-6xl mx-auto p-6">
+        {/* Show placeholder when help modal is open */}
+        {showHelpModal && (
+          <div className="text-center py-20">
+            <Wand2 className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">Welcome to Spec Generator</h2>
+            <p className="text-gray-600">Generate AI-powered product specifications</p>
           </div>
         )}
-
-        {/* Generate Button and Progress */}
-        {!results && (
-          <div className="space-y-4">
-            {/* Progress Display */}
-            {isProcessing && (
-              <div className="bg-white rounded-3xl border border-gray-200 p-4">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-3xl flex items-center justify-center" style={{ backgroundColor: designSystem.colors.primary }}>
-                    <Loader2 className="h-5 w-5 animate-spin text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-medium text-gray-900">Processing Your Products</h3>
-                    <p className="text-sm text-gray-500 mt-1">
-                      {processingProgress || 'Initializing...'}
-                    </p>
-                  </div>
-                </div>
-                
-                {totalProducts > 0 && (
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Progress</span>
-                      <span className="text-gray-900 font-medium">
-                        {processedProducts}/{totalProducts} products ({Math.round((processedProducts/totalProducts)*100)}%)
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-gradient-to-r from-purple-500 to-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${(processedProducts / totalProducts) * 100}%` }}
-                      />
-                    </div>
-                    {totalProducts > 50 && currentChunk > 0 && (
-                      <p className="text-xs text-gray-500 mt-2">
-                        Large file processing: Chunk {currentChunk} of ~{Math.ceil(totalProducts / 50)}
-                      </p>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+        
+        {/* Show stepped interface when help modal is closed */}
+        {!showHelpModal && (
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-200 p-8 relative">
+            {renderStepHeader()}
             
-            <div className="flex justify-center">
-              <Button 
-                size="lg"
-                disabled={!productFile || !boundingDimensions.min.l || !boundingDimensions.avg.l || !boundingDimensions.max.l || isProcessing}
-                onClick={handleGenerateSpecs}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white disabled:opacity-50 min-w-64 h-12"
-              >
-                {isProcessing ? (
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                    Processing...
-                  </div>
-                ) : !productFile || !boundingDimensions.min.l ? (
-                  <div className="flex items-center gap-2">
-                    <AlertCircle className="h-5 w-5" />
-                    Complete Setup Required
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2">
-                    <Wand2 className="h-5 w-5" />
-                    Generate Specs with AI
-                  </div>
-                )}
-              </Button>
-            </div>
+            {currentStep === 1 && renderStep1()}
+            {currentStep === 2 && renderStep2()}
+            {currentStep === 3 && renderStep3()}
+            
+            {renderNavigation()}
           </div>
         )}
       </div>
+
+      {/* Help Modal */}
+      <div className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-opacity ${showHelpModal ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
+        <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-full max-h-[80vh] overflow-hidden">
+          <div className="flex items-center justify-between p-6 border-b border-gray-200">
+            <h3 className="text-2xl font-semibold text-gray-900 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-600">
+                <Wand2 className="h-5 w-5 text-white" />
+              </div>
+              Spec Generator Manual
+            </h3>
+            <button
+              onClick={() => setShowHelpModal(false)}
+              className="text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
+          <div className="p-6 overflow-y-auto max-h-[60vh]">
+            <div className="space-y-6">
+              <Alert className="bg-blue-50 border-blue-200">
+                <Info className="h-4 w-4 text-blue-600" />
+                <AlertDescription className="text-sm text-gray-700">
+                  <div className="space-y-3">
+                    <div>
+                      <strong className="text-gray-900">📥 INPUTS:</strong>
+                      <ul className="mt-2 space-y-1 text-sm">
+                        <li>• Product List or Order File (CSV with product names/descriptions)</li>
+                        <li>• Order files can include Order ID + Product Name per row</li>
+                        <li>• Bounding dimensions (Min/Avg/Max L×W×H in inches)</li>
+                        <li>• Optional: Category, Material, Size info</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <strong className="text-gray-900">📤 OUTPUTS:</strong>
+                      <ul className="mt-2 space-y-1 text-sm">
+                        <li>• Order ID (if applicable) + Product Name</li>
+                        <li>• Estimated L×W×H dimensions in inches</li>
+                        <li>• Total CUIN (cubic inches)</li>
+                        <li>• Confidence level and AI reasoning notes</li>
+                      </ul>
+                    </div>
+                    <div>
+                      <strong className="text-gray-900">🎯 HOW IT WORKS:</strong>
+                      <ol className="mt-2 space-y-1 text-sm">
+                        <li>1. Upload your product list CSV file</li>
+                        <li>2. Set bounding dimensions to calibrate AI estimates</li>
+                        <li>3. Generate AI-powered specifications</li>
+                        <li>4. Review results and export to CSV</li>
+                      </ol>
+                    </div>
+                  </div>
+                </AlertDescription>
+              </Alert>
+            </div>
+          </div>
+          <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+            <Button onClick={() => setShowHelpModal(false)} className="bg-purple-600 hover:bg-purple-700 text-white">
+              Get Started
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      {/* Notes Modal */}
+      {selectedNote && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-3xl shadow-xl max-w-2xl w-full max-h-[80vh] overflow-hidden">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900">
+                AI Analysis Notes: {selectedNote.product}
+              </h3>
+              <button
+                onClick={() => setSelectedNote(null)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto max-h-[60vh]">
+              <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+                {selectedNote.notes}
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+              <Button
+                variant="outline"
+                onClick={() => setSelectedNote(null)}
+              >
+                Close
+              </Button>
+              <Button
+                onClick={() => {
+                  navigator.clipboard.writeText(selectedNote.notes);
+                  toast.success('Notes copied to clipboard');
+                }}
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                Copy Notes
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

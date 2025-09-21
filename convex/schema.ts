@@ -11,9 +11,18 @@ export default defineSchema({
     role: v.union(v.literal("admin"), v.literal("user")),
     createdAt: v.number(),
     lastLoginAt: v.number(),
+    // Subscription fields
+    stripeCustomerId: v.optional(v.string()),
+    stripeSubscriptionId: v.optional(v.string()),
+    subscriptionPlan: v.optional(v.string()),
+    subscriptionStatus: v.optional(v.string()),
+    subscriptionEndDate: v.optional(v.number()),
+    tokensUsedThisMonth: v.optional(v.number()),
+    lastUsageReset: v.optional(v.number()),
   })
     .index("by_clerk_id", ["clerkId"])
-    .index("by_organization", ["organizationId"]),
+    .index("by_organization", ["organizationId"])
+    .index("by_stripe_customer", ["stripeCustomerId"]),
 
   // Organizations
   organizations: defineTable({
@@ -40,6 +49,7 @@ export default defineSchema({
       v.literal("suite_analyzer"),
       v.literal("spec_generator"), 
       v.literal("demand_planner"),
+      v.literal("demand_planner_v2"),
       v.literal("pdp_analyzer")
     ),
     name: v.string(),
@@ -54,6 +64,8 @@ export default defineSchema({
     error: v.optional(v.string()), // Store error messages
     createdAt: v.number(),
     completedAt: v.optional(v.number()),
+    // Temporary config field for backward compatibility during cleanup
+    config: v.optional(v.any()),
   })
     .index("by_user", ["userId"])
     .index("by_organization", ["organizationId"])
@@ -149,4 +161,68 @@ export default defineSchema({
     updatedAt: v.number(),
   })
     .index("by_user", ["userId"]),
+
+  // Packaging Types (for improved demand planner)
+  packagingTypes: defineTable({
+    userId: v.id("users"),
+    name: v.string(),
+    description: v.optional(v.string()),
+    costPerUnit: v.optional(v.number()),
+    weightPerUnit: v.optional(v.number()),
+    // Physical dimensions
+    length: v.number(),
+    width: v.number(),
+    height: v.number(),
+    cost: v.number(),
+    weight: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"]),
+
+  // Quarterly Usage (for improved demand planner)
+  quarterlyUsage: defineTable({
+    userId: v.id("users"),
+    quarter: v.string(),
+    packageType: v.string(),
+    quantity: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_user_quarter", ["userId", "quarter"]),
+
+  // Manual Mix (for improved demand planner)
+  manualMix: defineTable({
+    userId: v.id("users"),
+    packageType: v.string(),
+    percentage: v.number(),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"]),
+
+  // Subscription Plans
+  subscriptionPlans: defineTable({
+    planId: v.optional(v.string()),
+    name: v.string(),
+    description: v.optional(v.string()),
+    stripeProductId: v.optional(v.string()),
+    stripePriceId: v.optional(v.string()),
+    tokensPerMonth: v.number(),
+    price: v.number(),
+    features: v.array(v.string()),
+    isActive: v.boolean(),
+    createdAt: v.optional(v.number()),
+  }),
+
+  // Usage History
+  usageHistory: defineTable({
+    userId: v.id("users"),
+    month: v.string(),
+    tokensUsed: v.number(),
+    feature: v.string(),
+    analysisId: v.optional(v.string()),
+    analysisType: v.optional(v.string()),
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_month", ["userId", "month"]),
 });

@@ -41,6 +41,7 @@ export const getUserReports = query({
         suite_analyzer: "Suite Analysis",
         spec_generator: "Spec Generation",
         demand_planner: "Demand Planning",
+        demand_planner_v2: "Improved Demand Planning",
         pdp_analyzer: "Design Analysis",
       };
 
@@ -49,6 +50,7 @@ export const getUserReports = query({
         suite_analyzer: "blue",
         spec_generator: "purple",
         demand_planner: "emerald",
+        demand_planner_v2: "teal",
         pdp_analyzer: "pink",
       };
 

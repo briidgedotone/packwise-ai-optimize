@@ -128,7 +128,7 @@ export const InlineAIAssistant = ({
   };
 
   return (
-    <div className="h-80 flex flex-col">
+    <div className="h-56 flex flex-col">
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto mb-3 bg-gray-50 rounded-lg p-3 min-h-0">
         <div className="space-y-3">
@@ -138,13 +138,13 @@ export const InlineAIAssistant = ({
               className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               <div
-                className={`max-w-xs px-3 py-2 rounded-lg ${
-                  message.type === 'user'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white border border-gray-200 text-gray-900'
-                }`}
+                className={`${
+                  message.type === 'user' 
+                    ? 'max-w-xs bg-blue-600 text-white' 
+                    : 'w-full bg-white border border-gray-200 text-gray-900'
+                } px-3 py-2 rounded-lg`}
               >
-                <p className="text-sm">{message.content}</p>
+                <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
                 
                 {/* Suggestions */}
                 {message.suggestions && message.suggestions.length > 0 && (
@@ -167,7 +167,7 @@ export const InlineAIAssistant = ({
           {/* Loading indicator */}
           {isLoading && (
             <div className="flex justify-start">
-              <div className="bg-white border border-gray-200 text-gray-900 max-w-xs px-3 py-2 rounded-lg">
+              <div className="bg-white border border-gray-200 text-gray-900 w-full px-3 py-2 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <Loader2 className="h-4 w-4 animate-spin" />
                   <span className="text-sm">Thinking...</span>

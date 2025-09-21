@@ -7,31 +7,35 @@ import { Link } from "react-router-dom";
 
 const plans = [
   {
-    name: "Starter",
+    name: "Starter Plan",
     description:
-      "Great for small businesses and startups looking to get started with AI",
+      "Great for individuals, small businesses and startups looking to get started with AI",
     price: 39.99,
     yearlyPrice: 319,
     buttonText: "Start Now",
     buttonVariant: "outline" as const,
     features: [
       "50 tokens per month",
-      "All applications included", 
-      "Email support",
-      "Basic analytics",
-      "CSV export"
+      "Core Features (1 token per run)",
+      "Suite Analyzer",
+      "Demand Planner",
+      "Spec Generator",
+      "Design Analyzer",
+      "Unlimited Packaging Chat AI"
     ],
     includes: [
       "Starter includes:",
       "50 tokens per month",
-      "All applications included",
-      "Email support",
-      "Basic analytics",
-      "CSV export"
+      "Core Features (1 token per run):",
+      "Suite Analyzer",
+      "Demand Planner", 
+      "Spec Generator",
+      "Design Analyzer",
+      "Unlimited Packaging Chat AI"
     ],
   },
   {
-    name: "Professional",
+    name: "Professional Plan",
     description:
       "Best value for growing businesses that need more advanced features",
     price: 99.99,
@@ -41,46 +45,57 @@ const plans = [
     popular: true,
     features: [
       "150 tokens per month",
-      "All applications included",
-      "Priority support", 
-      "Advanced analytics",
-      "API access",
-      "Custom reports"
+      "Core Features (1 token per run)",
+      "Suite Analyzer",
+      "Demand Planner",
+      "Spec Generator",
+      "Design Analyzer",
+      "Unlimited Packaging Chat AI"
     ],
     includes: [
       "Professional includes:",
       "150 tokens per month",
-      "All applications included",
-      "Priority support",
-      "Advanced analytics",
-      "API access",
-      "Custom reports"
+      "Core Features (1 token per run):",
+      "Suite Analyzer",
+      "Demand Planner",
+      "Spec Generator", 
+      "Design Analyzer",
+      "Unlimited Packaging Chat AI"
     ],
   },
   {
-    name: "Enterprise",
+    name: "Enterprise Plan",
     description:
-      "Advanced plan with enhanced security and unlimited access for large teams",
+      "Custom pricing with enhanced security and unlimited access for large teams",
     price: null,
     yearlyPrice: null,
     buttonText: "Contact Sales",
     buttonVariant: "outline" as const,
     features: [
-      "Flexible token bundle and pricing",
-      "All applications included",
-      "Dedicated success manager",
-      "API access and advanced support", 
-      "Custom integrations",
-      "Training and onboarding"
+      "Flexible (custom allocation)",
+      "Core Features (1 token per run)",
+      "Suite Analyzer",
+      "Demand Planner",
+      "Spec Generator",
+      "Design Analyzer",
+      "Unlimited Packaging Chat AI",
+      "In-app integrations",
+      "Custom features tailored to your needs",
+      "Multiple accounts / team access"
     ],
     includes: [
       "Enterprise includes:",
-      "Flexible token bundle and pricing",
-      "All applications included",
-      "Dedicated success manager",
-      "API access and advanced support",
-      "Custom integrations",
-      "Training and onboarding"
+      "Flexible tokens (custom allocation)",
+      "Core Features (1 token per run):",
+      "Suite Analyzer",
+      "Demand Planner",
+      "Spec Generator",
+      "Design Analyzer", 
+      "Unlimited Packaging Chat AI",
+      "Enterprise Exclusives:",
+      "In-app integrations",
+      "Custom features tailored to your needs",
+      "Multiple accounts / team access"
     ],
   },
 ];
@@ -160,8 +175,8 @@ export default function PricingSection() {
           </h2>
 
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Every feature is included. Each time you run an application (Suite Analyzer, Demand Planner, 
-            Spec Generator, Design Analyzer, Chatbot), it uses one token. Choose the token bundle that fits your needs.
+            Every plan includes all core features (Suite Analyzer, Demand Planner, Spec Generator, Design Analyzer). 
+            Each run of a core feature uses one token, while Packaging Chat AI is unlimited. Choose the token bundle that fits your needs.
           </p>
 
           <div className="w-fit mx-auto">
@@ -236,14 +251,58 @@ export default function PricingSection() {
                       {plan.includes[0]}
                     </h4>
                     <ul className="space-y-2">
-                      {plan.includes.slice(1).map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start">
-                          <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
-                            <CheckCheck className="h-3 w-3 text-[#767AFA]" />
-                          </span>
-                          <span className="text-sm text-gray-700">{feature}</span>
+                      {/* Tokens */}
+                      <li className="flex items-start">
+                        <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
+                          <CheckCheck className="h-3 w-3 text-[#767AFA]" />
+                        </span>
+                        <span className="text-sm text-gray-700">{plan.includes[1]}</span>
+                      </li>
+                      
+                      {/* Core Features Section */}
+                      <li className="pt-2">
+                        <h5 className="font-semibold text-gray-900 text-sm mb-2">{plan.includes[2]}</h5>
+                        <ul className="space-y-2 ml-2">
+                          {plan.includes.slice(3, 7).map((feature, featureIndex) => (
+                            <li key={featureIndex} className="flex items-start">
+                              <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
+                                <CheckCheck className="h-3 w-3 text-[#767AFA]" />
+                              </span>
+                              <span className="text-sm text-gray-700">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+                      
+                      {/* Unlimited Section */}
+                      <li className="pt-2">
+                        <h5 className="font-semibold text-gray-900 text-sm mb-2">Unlimited</h5>
+                        <ul className="space-y-2 ml-2">
+                          <li className="flex items-start">
+                            <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
+                              <CheckCheck className="h-3 w-3 text-[#767AFA]" />
+                            </span>
+                            <span className="text-sm text-gray-700">{plan.includes[7]}</span>
+                          </li>
+                        </ul>
+                      </li>
+                      
+                      {/* Enterprise Exclusives (if exists) */}
+                      {plan.includes.length > 8 && (
+                        <li className="pt-2">
+                          <h5 className="font-semibold text-gray-900 text-sm mb-2">{plan.includes[8]}</h5>
+                          <ul className="space-y-2 ml-2">
+                            {plan.includes.slice(9).map((feature, featureIndex) => (
+                              <li key={featureIndex} className="flex items-start">
+                                <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
+                                  <CheckCheck className="h-3 w-3 text-[#767AFA]" />
+                                </span>
+                                <span className="text-sm text-gray-700">{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
                         </li>
-                      ))}
+                      )}
                     </ul>
                   </div>
                 </CardContent>

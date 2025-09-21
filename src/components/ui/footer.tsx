@@ -21,42 +21,20 @@ const navigation = {
           id: "product",
           name: "Product",
           items: [
-            { name: "Suite Analyzer", href: "#" },
-            { name: "Demand Planner", href: "#" },
-            { name: "Spec Generator", href: "#" },
-            { name: "Design Analyzer", href: "#" },
-            { name: "Packaging AI Chatbot", href: "#" },
-          ],
-        },
-        {
-          id: "company",
-          name: "Company",
-          items: [
-            { name: "About", href: "#" },
-            { name: "Pricing", href: "#" },
-            { name: "FAQ", href: "#" },
-            { name: "Contact", href: "#" },
-            { name: "Careers", href: "#" },
-          ],
-        },
-        {
-          id: "resources",
-          name: "Resources",
-          items: [
-            { name: "Documentation", href: "#" },
-            { name: "API Reference", href: "#" },
-            { name: "Blog", href: "#" },
-            { name: "Case Studies", href: "#" },
-            { name: "Support Center", href: "#" },
+            { name: "Suite Analyzer", href: "/products/suite-analyzer" },
+            { name: "Demand Planner", href: "/products/demand-planner" },
+            { name: "Spec Generator", href: "/products/spec-generator" },
+            { name: "Design Analyzer", href: "/products/design-analyzer" },
+            { name: "Packaging AI Chatbot", href: "/products/packaging-ai-chatbot" },
           ],
         },
         {
           id: "legal",
           name: "Legal",
           items: [
-            { name: "Privacy Policy", href: "#" },
-            { name: "Terms of Service", href: "#" },
-            { name: "Cookie Policy", href: "#" },
+            { name: "Privacy Policy", href: "/privacy-policy" },
+            { name: "Terms of Service", href: "/terms-of-service" },
+            { name: "Cookie Policy", href: "/cookie-policy" },
           ],
         },
       ],
@@ -138,9 +116,9 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="flex space-x-6 text-gray-600 text-sm mb-4 md:mb-0">
-            <a href="#" className="hover:text-[#767AFA] transition-colors">Privacy Policy</a>
-            <a href="#" className="hover:text-[#767AFA] transition-colors">Terms of Service</a>
-            <a href="#" className="hover:text-[#767AFA] transition-colors">Cookie Policy</a>
+            <a href="/privacy-policy" className="hover:text-[#767AFA] transition-colors">Privacy Policy</a>
+            <a href="/terms-of-service" className="hover:text-[#767AFA] transition-colors">Terms of Service</a>
+            <a href="/cookie-policy" className="hover:text-[#767AFA] transition-colors">Cookie Policy</a>
           </div>
           
           <div className="flex items-center space-x-4">

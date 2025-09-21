@@ -14,8 +14,18 @@ import SignUp from "./pages/SignUp";
 import Onboarding from "./pages/Onboarding";
 import SuiteAnalysisResults from "./pages/SuiteAnalysisResults";
 import SuiteAnalysisLoading from "./pages/SuiteAnalysisLoading";
+import StreamingAnalysisResults from "./pages/StreamingAnalysisResults";
 import PDPAnalysisResults from "./pages/PDPAnalysisResults";
 import NotFound from "./pages/NotFound";
+import SuiteAnalyzer from "./pages/products/SuiteAnalyzer";
+import DemandPlanner from "./pages/products/DemandPlanner";
+import SpecGenerator from "./pages/products/SpecGenerator";
+import DesignAnalyzer from "./pages/products/DesignAnalyzer";
+import PackagingAiChatbot from "./pages/products/PackagingAiChatbot";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import CookiePolicy from "./pages/CookiePolicy";
+import ClientSuiteAnalyzer from "./pages/ClientSuiteAnalyzer";
 
 const App = () => (
   <ErrorBoundary>
@@ -63,6 +73,14 @@ const App = () => (
             } 
           />
           <Route 
+            path="/suite-analysis/:analysisId/streaming" 
+            element={
+              <DashboardProtectedRoute>
+                <StreamingAnalysisResults />
+              </DashboardProtectedRoute>
+            } 
+          />
+          <Route 
             path="/pdp-analysis/results" 
             element={
               <DashboardProtectedRoute>
@@ -70,6 +88,16 @@ const App = () => (
               </DashboardProtectedRoute>
             } 
           />
+          {/* Product Pages */}
+          <Route path="/product/suite-analyzer" element={<SuiteAnalyzer />} />
+          <Route path="/product/demand-planner" element={<DemandPlanner />} />
+          <Route path="/product/spec-generator" element={<SpecGenerator />} />
+          <Route path="/product/design-analyzer" element={<DesignAnalyzer />} />
+          <Route path="/product/packaging-ai-chatbot" element={<PackagingAiChatbot />} />
+          <Route path="/client-suite-analyzer" element={<ClientSuiteAnalyzer />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/cookie-policy" element={<CookiePolicy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
