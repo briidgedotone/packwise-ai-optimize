@@ -105,20 +105,25 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
     }
 
     // Determine plan type based on price
+    const priceId = subscription.items.data[0]?.price.id;
     let planType = 'starter';
     let tokensPerMonth = 50;
-    
-    // You might want to check the price ID to determine the plan
-    const priceId = subscription.items.data[0]?.price.id;
-    if (priceId === process.env.VITE_STRIPE_PROFESSIONAL_PRICE_ID) {
+
+    if (priceId === process.env.VITE_STRIPE_STARTER_PRICE_ID) {
+      planType = 'starter';
+      tokensPerMonth = 50;
+    } else if (priceId === process.env.VITE_STRIPE_PROFESSIONAL_PRICE_ID) {
       planType = 'professional';
       tokensPerMonth = 150;
     }
+
+    console.log(`Processing subscription for price ${priceId}, plan: ${planType}, tokens: ${tokensPerMonth}`);
 
     // Update or create subscription record
     const existingSub = await ctx.runQuery("subscriptionCRUD:getSubscriptionByUser", { userId: user._id });
 
     if (existingSub) {
+      // Update existing subscription
       await ctx.runMutation("subscriptionCRUD:updateSubscription", {
         subscriptionId: existingSub._id,
         status: subscription.status,
@@ -126,7 +131,9 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
         tokensPerMonth,
         currentPeriodEnd: subscription.current_period_end * 1000,
       });
+      console.log(`Updated existing subscription for user ${userId}`);
     } else {
+      // Create new subscription
       await ctx.runMutation("subscriptionCRUD:createSubscription", {
         userId: user._id,
         stripeCustomerId: subscription.customer,
@@ -136,9 +143,10 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
         tokensPerMonth,
         currentPeriodEnd: subscription.current_period_end * 1000,
       });
+      console.log(`Created new subscription for user ${userId}`);
     }
 
-    // Reset token balance for new subscription
+    // Reset or create token balance for subscription
     const tokenBalance = await ctx.runQuery("tokenBalance:getByUserId", { userId: user._id });
     if (tokenBalance) {
       await ctx.runMutation("tokenBalance:updateBalance", {
@@ -147,6 +155,23 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
         usedTokens: 0, // Reset usage for new subscription
         resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
       });
+      console.log(`Updated token balance: ${tokensPerMonth} tokens for user ${userId}`);
+    } else {
+      // Create token balance if it doesn't exist
+      await ctx.runMutation("tokenBalance:createFreeTrialBalance", {
+        userId: user._id,
+      });
+      // Then update it with the correct subscription values
+      const newBalance = await ctx.runQuery("tokenBalance:getByUserId", { userId: user._id });
+      if (newBalance) {
+        await ctx.runMutation("tokenBalance:updateBalance", {
+          balanceId: newBalance._id,
+          monthlyTokens: tokensPerMonth,
+          usedTokens: 0,
+          resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        });
+      }
+      console.log(`Created token balance: ${tokensPerMonth} tokens for user ${userId}`);
     }
   } catch (error) {
     console.error("Error handling subscription created:", error);
