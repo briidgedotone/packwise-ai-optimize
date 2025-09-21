@@ -98,7 +98,7 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
     }
 
     // Get user from database
-    const user = await ctx.runQuery(ctx.query.users.getUserByClerkId, { clerkId: userId });
+    const user = await ctx.runQuery("users:getUserByClerkId", { clerkId: userId });
     if (!user) {
       console.error("User not found:", userId);
       return;
@@ -116,19 +116,18 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
     }
 
     // Update or create subscription record
-    const existingSub = await ctx.runQuery(ctx.query.subscriptions.getByUserId, { userId: user._id });
-    
+    const existingSub = await ctx.runQuery("subscriptionCRUD:getSubscriptionByUser", { userId: user._id });
+
     if (existingSub) {
-      await ctx.runMutation(ctx.mutation.subscriptions.update, {
+      await ctx.runMutation("subscriptionCRUD:updateSubscription", {
         subscriptionId: existingSub._id,
-        stripeSubscriptionId: subscription.id,
         status: subscription.status,
         planType,
         tokensPerMonth,
         currentPeriodEnd: subscription.current_period_end * 1000,
       });
     } else {
-      await ctx.runMutation(ctx.mutation.subscriptions.create, {
+      await ctx.runMutation("subscriptionCRUD:createSubscription", {
         userId: user._id,
         stripeCustomerId: subscription.customer,
         stripeSubscriptionId: subscription.id,
@@ -139,12 +138,16 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
       });
     }
 
-    // Update token balance
-    await ctx.runMutation(ctx.mutation.tokens.updateBalance, {
-      userId: user._id,
-      monthlyTokens: tokensPerMonth,
-      resetTokens: true,
-    });
+    // Reset token balance for new subscription
+    const tokenBalance = await ctx.runQuery("tokenBalance:getByUserId", { userId: user._id });
+    if (tokenBalance) {
+      await ctx.runMutation("tokenBalance:updateBalance", {
+        balanceId: tokenBalance._id,
+        monthlyTokens: tokensPerMonth,
+        usedTokens: 0, // Reset usage for new subscription
+        resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+      });
+    }
   } catch (error) {
     console.error("Error handling subscription created:", error);
   }
@@ -163,21 +166,28 @@ async function handleSubscriptionDeleted(ctx: any, subscription: any) {
     const userId = subscription.metadata?.userId;
     if (!userId) return;
 
-    const user = await ctx.runQuery(ctx.query.users.getUserByClerkId, { clerkId: userId });
+    const user = await ctx.runQuery("users:getUserByClerkId", { clerkId: userId });
     if (!user) return;
 
     // Update subscription status to canceled
-    await ctx.runMutation(ctx.mutation.subscriptions.updateStatus, {
-      userId: user._id,
-      status: 'canceled',
-    });
+    const existingSub = await ctx.runQuery("subscriptionCRUD:getSubscriptionByUser", { userId: user._id });
+    if (existingSub) {
+      await ctx.runMutation("subscriptionCRUD:updateSubscription", {
+        subscriptionId: existingSub._id,
+        status: 'canceled',
+      });
+    }
 
-    // Set tokens to 0
-    await ctx.runMutation(ctx.mutation.tokens.updateBalance, {
-      userId: user._id,
-      monthlyTokens: 0,
-      resetTokens: false,
-    });
+    // Set tokens to 0 (back to free plan)
+    const tokenBalance = await ctx.runQuery("tokenBalance:getByUserId", { userId: user._id });
+    if (tokenBalance) {
+      await ctx.runMutation("tokenBalance:updateBalance", {
+        balanceId: tokenBalance._id,
+        monthlyTokens: 5, // Free plan tokens
+        usedTokens: 0,
+        resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+      });
+    }
   } catch (error) {
     console.error("Error handling subscription deleted:", error);
   }
