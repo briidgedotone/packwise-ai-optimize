@@ -4,19 +4,12 @@ import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 
-// Safe environment variable access
-const getEnvVar = (viteKey: string, nextKey: string, fallback = "") => {
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    return import.meta.env[viteKey] || fallback;
-  }
-  if (typeof process !== 'undefined' && process.env) {
-    return process.env[nextKey] || fallback;
-  }
-  return fallback;
-};
+// Simplified environment variable access
+const CONVEX_URL = import.meta.env.VITE_CONVEX_URL || '';
+const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
 
-const convexUrl = getEnvVar('VITE_CONVEX_URL', 'NEXT_PUBLIC_CONVEX_URL', '');
-const convex = convexUrl ? new ConvexReactClient(convexUrl) : null;
+// Create Convex client only if URL is available
+const convex = CONVEX_URL ? new ConvexReactClient(CONVEX_URL) : null;
 
 interface ConvexClerkProviderProps {
   children: ReactNode;
@@ -57,10 +50,8 @@ function DevModeUI() {
 }
 
 export function ConvexClerkProvider({ children }: ConvexClerkProviderProps) {
-  const publishableKey = getEnvVar('VITE_CLERK_PUBLISHABLE_KEY', 'NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY', 'pk_test_placeholder');
-
   // For development, provide fallback UI if keys are missing
-  if (!publishableKey || publishableKey === 'pk_test_placeholder' || publishableKey === 'pk_test_your_key_here') {
+  if (!CLERK_PUBLISHABLE_KEY || CLERK_PUBLISHABLE_KEY === 'pk_test_placeholder' || CLERK_PUBLISHABLE_KEY === 'pk_test_your_key_here') {
     return <DevModeUI />;
   }
 
@@ -68,7 +59,7 @@ export function ConvexClerkProvider({ children }: ConvexClerkProviderProps) {
   if (!convex) {
     return (
       <ClerkProvider 
-        publishableKey={publishableKey}
+        publishableKey={CLERK_PUBLISHABLE_KEY}
         appearance={{
           elements: {
             formButtonPrimary: "bg-blue-600 hover:bg-blue-700 text-white",
@@ -83,7 +74,7 @@ export function ConvexClerkProvider({ children }: ConvexClerkProviderProps) {
 
   return (
     <ClerkProvider 
-      publishableKey={publishableKey}
+      publishableKey={CLERK_PUBLISHABLE_KEY}
       appearance={{
         elements: {
           formButtonPrimary: "bg-blue-600 hover:bg-blue-700 text-white",

@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -24,7 +23,7 @@ import DesignAnalyzer from "./pages/products/DesignAnalyzer";
 import PackagingAiChatbot from "./pages/products/PackagingAiChatbot";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import CookiePolicy from "./pages/CookiePolicy";
+// import CookiePolicy from "./pages/CookiePolicy"; // DISABLED - causes white screen
 import ClientSuiteAnalyzer from "./pages/ClientSuiteAnalyzer";
 
 const App = () => (
@@ -34,76 +33,76 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/sign-in/*" element={<SignIn />} />
-          <Route path="/sign-up/*" element={<SignUp />} />
-          <Route path="/login" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route 
-            path="/onboarding" 
-            element={
-              <ProtectedRoute>
-                <Onboarding />
-              </ProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/dashboard" 
-            element={
-              <DashboardProtectedRoute>
-                <Dashboard />
-              </DashboardProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/suite-analysis/:analysisId" 
-            element={
-              <DashboardProtectedRoute>
-                <SuiteAnalysisResults />
-              </DashboardProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/suite-analysis/:analysisId/loading" 
-            element={
-              <DashboardProtectedRoute>
-                <SuiteAnalysisLoading />
-              </DashboardProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/suite-analysis/:analysisId/streaming" 
-            element={
-              <DashboardProtectedRoute>
-                <StreamingAnalysisResults />
-              </DashboardProtectedRoute>
-            } 
-          />
-          <Route 
-            path="/pdp-analysis/results" 
-            element={
-              <DashboardProtectedRoute>
-                <PDPAnalysisResults />
-              </DashboardProtectedRoute>
-            } 
-          />
-          {/* Product Pages */}
-          <Route path="/product/suite-analyzer" element={<SuiteAnalyzer />} />
-          <Route path="/product/demand-planner" element={<DemandPlanner />} />
-          <Route path="/product/spec-generator" element={<SpecGenerator />} />
-          <Route path="/product/design-analyzer" element={<DesignAnalyzer />} />
-          <Route path="/product/packaging-ai-chatbot" element={<PackagingAiChatbot />} />
-          <Route path="/client-suite-analyzer" element={<ClientSuiteAnalyzer />} />
-          <Route path="/terms-of-service" element={<TermsOfService />} />
-          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-          <Route path="/cookie-policy" element={<CookiePolicy />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </ConvexClerkProvider>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/sign-in/*" element={<SignIn />} />
+            <Route path="/sign-up/*" element={<SignUp />} />
+            <Route path="/login" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route 
+              path="/onboarding" 
+              element={
+                <ProtectedRoute>
+                  <Onboarding />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/dashboard" 
+              element={
+                <DashboardProtectedRoute>
+                  <Dashboard />
+                </DashboardProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/suite-analysis/:analysisId" 
+              element={
+                <DashboardProtectedRoute>
+                  <SuiteAnalysisResults />
+                </DashboardProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/suite-analysis/:analysisId/loading" 
+              element={
+                <DashboardProtectedRoute>
+                  <SuiteAnalysisLoading />
+                </DashboardProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/suite-analysis/:analysisId/streaming" 
+              element={
+                <DashboardProtectedRoute>
+                  <StreamingAnalysisResults />
+                </DashboardProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/pdp-analysis/results" 
+              element={
+                <DashboardProtectedRoute>
+                  <PDPAnalysisResults />
+                </DashboardProtectedRoute>
+              } 
+            />
+            {/* Product Pages */}
+            <Route path="/product/suite-analyzer" element={<SuiteAnalyzer />} />
+            <Route path="/product/demand-planner" element={<DemandPlanner />} />
+            <Route path="/product/spec-generator" element={<SpecGenerator />} />
+            <Route path="/product/design-analyzer" element={<DesignAnalyzer />} />
+            <Route path="/product/packaging-ai-chatbot" element={<PackagingAiChatbot />} />
+            <Route path="/client-suite-analyzer" element={<ClientSuiteAnalyzer />} />
+            <Route path="/terms-of-service" element={<TermsOfService />} />
+            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+            {/* <Route path="/cookie-policy" element={<CookiePolicy />} /> */} {/* DISABLED - causes white screen */}
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </ConvexClerkProvider>
   </ErrorBoundary>
 );
 
