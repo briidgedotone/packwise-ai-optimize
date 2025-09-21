@@ -90,17 +90,27 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
   console.log("Subscription created:", subscription.id);
   
   try {
-    // Get user by Clerk ID from metadata
-    const userId = subscription.metadata?.userId;
-    if (!userId) {
-      console.error("No userId in subscription metadata");
+    // Get user by customer ID from subscription
+    const customerId = subscription.customer;
+    
+    // First, get the customer from Stripe to get the email
+    if (!stripe) {
+      console.error("Stripe not initialized");
+      return;
+    }
+    
+    const customer = await stripe.customers.retrieve(customerId);
+    if (!customer || customer.deleted) {
+      console.error("Customer not found:", customerId);
       return;
     }
 
-    // Get user from database
-    const user = await ctx.runQuery(ctx.query.users.getUserByClerkId, { clerkId: userId });
+    // Find user by email
+    const users = await ctx.db.query("users").collect();
+    const user = users.find(u => u.email === customer.email);
+    
     if (!user) {
-      console.error("User not found:", userId);
+      console.error("User not found with email:", customer.email);
       return;
     }
 
@@ -108,7 +118,6 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
     let planType = 'starter';
     let tokensPerMonth = 50;
     
-    // You might want to check the price ID to determine the plan
     const priceId = subscription.items.data[0]?.price.id;
     if (priceId === process.env.VITE_STRIPE_PROFESSIONAL_PRICE_ID) {
       planType = 'professional';
@@ -116,35 +125,60 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
     }
 
     // Update or create subscription record
-    const existingSub = await ctx.runQuery(ctx.query.subscriptions.getByUserId, { userId: user._id });
+    const existingSub = await ctx.db
+      .query("subscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .first();
     
     if (existingSub) {
-      await ctx.runMutation(ctx.mutation.subscriptions.update, {
-        subscriptionId: existingSub._id,
+      await ctx.db.patch(existingSub._id, {
         stripeSubscriptionId: subscription.id,
         status: subscription.status,
         planType,
         tokensPerMonth,
         currentPeriodEnd: subscription.current_period_end * 1000,
+        updatedAt: Date.now(),
       });
     } else {
-      await ctx.runMutation(ctx.mutation.subscriptions.create, {
+      await ctx.db.insert("subscriptions", {
         userId: user._id,
-        stripeCustomerId: subscription.customer,
+        stripeCustomerId: customerId,
         stripeSubscriptionId: subscription.id,
         status: subscription.status,
         planType,
         tokensPerMonth,
         currentPeriodEnd: subscription.current_period_end * 1000,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
       });
     }
 
     // Update token balance
-    await ctx.runMutation(ctx.mutation.tokens.updateBalance, {
-      userId: user._id,
-      monthlyTokens: tokensPerMonth,
-      resetTokens: true,
-    });
+    const existingBalance = await ctx.db
+      .query("tokenBalance")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .first();
+    
+    if (existingBalance) {
+      await ctx.db.patch(existingBalance._id, {
+        monthlyTokens: tokensPerMonth,
+        additionalTokens: 0,
+        usedTokens: 0,
+        resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        updatedAt: Date.now(),
+      });
+    } else {
+      await ctx.db.insert("tokenBalance", {
+        userId: user._id,
+        monthlyTokens: tokensPerMonth,
+        additionalTokens: 0,
+        usedTokens: 0,
+        resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
+        updatedAt: Date.now(),
+      });
+    }
+    
+    console.log(`Successfully created subscription for user ${user._id} with ${tokensPerMonth} tokens`);
   } catch (error) {
     console.error("Error handling subscription created:", error);
   }
@@ -160,24 +194,39 @@ async function handleSubscriptionDeleted(ctx: any, subscription: any) {
   console.log("Subscription deleted:", subscription.id);
   
   try {
-    const userId = subscription.metadata?.userId;
-    if (!userId) return;
-
-    const user = await ctx.runQuery(ctx.query.users.getUserByClerkId, { clerkId: userId });
-    if (!user) return;
+    const customerId = subscription.customer;
+    
+    // Find subscription by Stripe subscription ID
+    const existingSub = await ctx.db
+      .query("subscriptions")
+      .withIndex("by_stripe_subscription", (q) => q.eq("stripeSubscriptionId", subscription.id))
+      .first();
+    
+    if (!existingSub) {
+      console.error("Subscription not found:", subscription.id);
+      return;
+    }
 
     // Update subscription status to canceled
-    await ctx.runMutation(ctx.mutation.subscriptions.updateStatus, {
-      userId: user._id,
+    await ctx.db.patch(existingSub._id, {
       status: 'canceled',
+      updatedAt: Date.now(),
     });
 
     // Set tokens to 0
-    await ctx.runMutation(ctx.mutation.tokens.updateBalance, {
-      userId: user._id,
-      monthlyTokens: 0,
-      resetTokens: false,
-    });
+    const existingBalance = await ctx.db
+      .query("tokenBalance")
+      .withIndex("by_user", (q) => q.eq("userId", existingSub.userId))
+      .first();
+      
+    if (existingBalance) {
+      await ctx.db.patch(existingBalance._id, {
+        monthlyTokens: 0,
+        updatedAt: Date.now(),
+      });
+    }
+    
+    console.log(`Successfully canceled subscription for user ${existingSub.userId}`);
   } catch (error) {
     console.error("Error handling subscription deleted:", error);
   }

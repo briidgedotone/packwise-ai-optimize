@@ -86,9 +86,8 @@ const Dashboard = () => {
   const toolUsageStats = useQuery(api.dashboard.getToolUsageStats);
   const recentFiles = useQuery(api.dashboard.getRecentFiles);
   
-  // Token and subscription data
+  // Token data
   const tokenBalance = useQuery(api.tokens.getTokenBalance);
-  const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus);
 
   // Fallback data when backend is unavailable
   const fallbackMetrics = {
@@ -591,6 +590,7 @@ const Dashboard = () => {
           </div>
 
           {/* Bottom Section */}
+
           <div className="absolute bottom-1.5 left-1.5 right-1.5 space-y-1">
 
             {/* User Profile Section */}
