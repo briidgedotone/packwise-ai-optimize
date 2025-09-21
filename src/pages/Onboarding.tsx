@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '@clerk/clerk-react';
-import { useQuery, useAction } from 'convex/react';
+import { useQuery, useAction, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,12 +18,15 @@ export default function Onboarding() {
   
   // Convex actions
   const createCheckoutSession = useAction(api.stripe.createCheckoutSession);
+  const createFreeTrialSubscription = useMutation(api.subscriptionCRUD.createFreeTrialSubscription);
+  const createFreeTrialBalance = useMutation(api.tokenBalance.createFreeTrialBalance);
+  const getUserByClerkId = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
   
   // Check if user already has a subscription
   const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus);
 
-  // If user already has active subscription, redirect to dashboard
-  if (subscriptionStatus?.isActive && subscriptionStatus.planType !== 'free') {
+  // If user already has active paid subscription, redirect to dashboard
+  if (subscriptionStatus?.isActive && (subscriptionStatus.planType === 'starter' || subscriptionStatus.planType === 'professional')) {
     navigate('/dashboard');
     return null;
   }
@@ -92,7 +95,19 @@ export default function Onboarding() {
     
     try {
       if (planId === 'free') {
-        // Free trial - just redirect to dashboard
+        // Free trial - create subscription and token balance
+        if (!getUserByClerkId) {
+          toast.error('User not found');
+          setLoading(false);
+          return;
+        }
+
+        // Create free trial subscription
+        await createFreeTrialSubscription({ userId: getUserByClerkId._id });
+
+        // Create token balance
+        await createFreeTrialBalance({ userId: getUserByClerkId._id });
+
         toast.success('Welcome! Your free trial is active with 5 tokens.');
         navigate('/dashboard');
       } else {
@@ -110,7 +125,7 @@ export default function Onboarding() {
         }
 
         // Get the price ID based on plan
-        const priceId = planId === 'starter' 
+        const priceId = planId === 'starter'
           ? import.meta.env.VITE_STRIPE_STARTER_PRICE_ID
           : import.meta.env.VITE_STRIPE_PROFESSIONAL_PRICE_ID;
 

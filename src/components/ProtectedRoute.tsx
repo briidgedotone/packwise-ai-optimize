@@ -2,7 +2,7 @@ import { useUser } from "@clerk/clerk-react";
 import { Loader2, Package } from "lucide-react";
 import { ReactNode, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 
 interface ProtectedRouteProps {
@@ -12,6 +12,7 @@ interface ProtectedRouteProps {
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
   const { isLoaded, isSignedIn, user } = useUser();
   const createOrUpdateUser = useMutation(api.users.createOrUpdateUser);
+  const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus);
   
   useEffect(() => {
     if (isLoaded && isSignedIn && user) {
@@ -42,6 +43,14 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
   if (!isSignedIn) {
     // Redirect to sign in page using React Router
     return <Navigate to="/sign-in" replace />;
+  }
+
+  // Check subscription status for dashboard access
+  if (isSignedIn && subscriptionStatus !== undefined) {
+    // If user has no active subscription (not even free trial), redirect to onboarding
+    if (!subscriptionStatus || (!subscriptionStatus.isActive && subscriptionStatus.planType === 'free')) {
+      return <Navigate to="/onboarding" replace />;
+    }
   }
 
   return <>{children}</>;

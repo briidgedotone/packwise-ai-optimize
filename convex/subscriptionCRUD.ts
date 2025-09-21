@@ -37,6 +37,25 @@ export const createSubscription = mutation({
   },
 });
 
+// Create free trial subscription
+export const createFreeTrialSubscription = mutation({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("subscriptions", {
+      userId: args.userId,
+      stripeCustomerId: "",
+      status: "active",
+      planType: "free",
+      tokensPerMonth: 5,
+      currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days from now
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    });
+  },
+});
+
 // Update existing subscription
 export const updateSubscription = mutation({
   args: {

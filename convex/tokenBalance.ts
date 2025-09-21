@@ -12,6 +12,23 @@ export const getByUserId = query({
   },
 });
 
+// Create initial token balance for free trial
+export const createFreeTrialBalance = mutation({
+  args: {
+    userId: v.id("users"),
+  },
+  handler: async (ctx, args) => {
+    return await ctx.db.insert("tokenBalance", {
+      userId: args.userId,
+      monthlyTokens: 5,
+      additionalTokens: 0,
+      usedTokens: 0,
+      resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days from now
+      updatedAt: Date.now(),
+    });
+  },
+});
+
 // Update token balance
 export const updateBalance = mutation({
   args: {

@@ -138,9 +138,9 @@ export const getSubscriptionStatus = query({
 
     if (!subscription) {
       return {
-        status: "active",
+        status: "none",
         planType: "free",
-        isActive: true,
+        isActive: false,
       };
     }
 
