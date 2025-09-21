@@ -47,6 +47,7 @@ export const InlineAIAssistant = ({
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isInitialMount = useRef(true);
 
   const askAssistant = useAction(api.aiAssistant.askAssistant);
 
@@ -55,6 +56,10 @@ export const InlineAIAssistant = ({
   };
 
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
     scrollToBottom();
   }, [messages]);
 

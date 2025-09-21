@@ -11,14 +11,14 @@ interface ParsedOrder {
 }
 
 interface ParsedPackage {
-  id: string;
-  name: string;
+  packageId: string;
+  packageName: string;
   length: number;
   width: number;
   height: number;
-  cost: number;
-  weight: number;
-  maxWeight: number;
+  costPerUnit: number;
+  packageWeight: number;
+  maxWeight?: number;
 }
 
 interface AllocationResult {
@@ -39,69 +39,84 @@ interface AnalysisResults {
     averageFillRate: number;
     totalCost: number;
     processingTime: number;
+    memoryUsed?: number;
+    throughput: number; // orders per second
   };
   packageDistribution: { name: string; count: number; percentage: number }[];
   fillRateDistribution: { range: string; count: number }[];
+  efficiency: {
+    optimalAllocations: number;
+    subOptimalAllocations: number;
+    unallocatedOrders: number;
+  };
 }
 
-// Pure math optimization algorithm
+// Optimized algorithm for high-volume processing
 function findBestPackage(order: ParsedOrder, packages: ParsedPackage[]): ParsedPackage | null {
   const orderVolume = order.volume;
-  
+
   if (!orderVolume || orderVolume <= 0) {
     return null;
   }
-  
+
+  // Pre-calculate package volumes for performance (done once per chunk)
+  const packagesWithVolume = packages.map(pkg => ({
+    ...pkg,
+    volume: pkg.length * pkg.width * pkg.height
+  }));
+
   // Filter packages that can physically fit the order
-  let candidatePackages: ParsedPackage[];
-  
+  let candidatePackages: typeof packagesWithVolume;
+
   if (order.length && order.width && order.height) {
     // Use dimensional fitting for orders with actual dimensions
-    candidatePackages = packages.filter(pkg => {
-      // Check if order fits in package (allowing rotation)
+    candidatePackages = packagesWithVolume.filter(pkg => {
+      // Quick volume check first (fastest filter)
+      if (pkg.volume < orderVolume) return false;
+
+      // Weight check (only if both weight and maxWeight are defined and > 0)
+      if (pkg.maxWeight && pkg.maxWeight > 0 && order.weight > 0 && order.weight > pkg.maxWeight) return false;
+
+      // Dimensional fitting with rotation optimization
       const orderDims = [order.length!, order.width!, order.height!].sort((a, b) => b - a);
       const packageDims = [pkg.length, pkg.width, pkg.height].sort((a, b) => b - a);
-      
-      const dimensionalFit = orderDims[0] <= packageDims[0] && 
-                            orderDims[1] <= packageDims[1] && 
-                            orderDims[2] <= packageDims[2];
-      
-      const weightFit = order.weight <= pkg.maxWeight;
-      const volumeFit = pkg.length * pkg.width * pkg.height >= orderVolume;
-      
-      return dimensionalFit && weightFit && volumeFit;
+
+      return orderDims[0] <= packageDims[0] &&
+             orderDims[1] <= packageDims[1] &&
+             orderDims[2] <= packageDims[2];
     });
   } else {
-    // Use volume-based fitting for orders with only volume data
-    candidatePackages = packages.filter(pkg => {
-      const packageVolume = pkg.length * pkg.width * pkg.height;
-      const volumeFit = packageVolume >= orderVolume;
-      const weightFit = order.weight <= pkg.maxWeight;
-      
-      return volumeFit && weightFit;
+    // Volume-based fitting (faster path for volume-only orders)
+    candidatePackages = packagesWithVolume.filter(pkg => {
+      // Volume check
+      if (pkg.volume < orderVolume) return false;
+
+      // Weight check (only if both weight and maxWeight are defined and > 0)
+      if (pkg.maxWeight && pkg.maxWeight > 0 && order.weight > 0 && order.weight > pkg.maxWeight) return false;
+
+      return true;
     });
   }
-  
+
   if (candidatePackages.length === 0) {
     return null;
   }
-  
-  // Sort by efficiency: maximize fill rate while minimizing cost
-  candidatePackages.sort((a, b) => {
-    const aVolume = a.length * a.width * a.height;
-    const bVolume = b.length * b.width * b.height;
-    
-    const aFillRate = orderVolume / aVolume;
-    const bFillRate = orderVolume / bVolume;
-    
-    // Efficiency score: fill rate divided by cost (higher is better)
-    const aEfficiency = aFillRate / a.cost;
-    const bEfficiency = bFillRate / b.cost;
-    
-    return bEfficiency - aEfficiency; // Descending order
-  });
-  
-  return candidatePackages[0];
+
+  // Optimized efficiency calculation
+  let bestPackage = candidatePackages[0];
+  let bestEfficiency = (orderVolume / bestPackage.volume) / Math.max(bestPackage.costPerUnit, 0.01); // Avoid division by zero
+
+  for (let i = 1; i < candidatePackages.length; i++) {
+    const pkg = candidatePackages[i];
+    const efficiency = (orderVolume / pkg.volume) / Math.max(pkg.costPerUnit, 0.01); // Avoid division by zero
+
+    if (efficiency > bestEfficiency) {
+      bestEfficiency = efficiency;
+      bestPackage = pkg;
+    }
+  }
+
+  return bestPackage;
 }
 
 function createAllocation(order: ParsedOrder, packageOption: ParsedPackage): AllocationResult {
@@ -110,14 +125,14 @@ function createAllocation(order: ParsedOrder, packageOption: ParsedPackage): All
   const fillRate = (orderVolume / packageVolume) * 100;
   
   // Efficiency combines fill rate and cost effectiveness
-  const efficiency = fillRate / packageOption.cost;
-  
+  const efficiency = fillRate / packageOption.costPerUnit;
+
   return {
     orderId: order.orderId,
-    recommendedPackage: packageOption.name,
+    recommendedPackage: packageOption.packageName,
     fillRate,
     efficiency,
-    cost: packageOption.cost,
+    cost: packageOption.costPerUnit,
     orderVolume,
     packageVolume
   };
@@ -160,81 +175,143 @@ function calculateDistributions(allocations: AllocationResult[]) {
   return { packageDistribution, fillRateDistribution };
 }
 
-// Main processing function
+// Memory-efficient processing for 1M+ orders
 function processOrders(orders: ParsedOrder[], packages: ParsedPackage[]): AnalysisResults {
   const startTime = performance.now();
   const allocations: AllocationResult[] = [];
-  
+
   const totalOrders = orders.length;
   let processed = 0;
-  
-  // Process orders in batches to provide progress updates
-  const batchSize = Math.max(1, Math.floor(totalOrders / 100)); // 100 progress updates max
-  
-  for (let i = 0; i < totalOrders; i++) {
-    const order = orders[i];
-    
-    // Find best package for this order
-    const bestPackage = findBestPackage(order, packages);
-    
-    if (bestPackage) {
-      const allocation = createAllocation(order, bestPackage);
-      allocations.push(allocation);
+
+  // Optimized batch size for large datasets
+  const CHUNK_SIZE = 10000; // Process 10K orders at a time to manage memory
+  const PROGRESS_INTERVAL = Math.max(1000, Math.floor(totalOrders / 100)); // Progress every 1K orders or 1%
+
+  // Process orders in memory-efficient chunks
+  for (let chunkStart = 0; chunkStart < totalOrders; chunkStart += CHUNK_SIZE) {
+    const chunkEnd = Math.min(chunkStart + CHUNK_SIZE, totalOrders);
+    const chunk = orders.slice(chunkStart, chunkEnd);
+
+    // Process current chunk
+    for (let i = 0; i < chunk.length; i++) {
+      const order = chunk[i];
+
+      // Find best package for this order
+      const bestPackage = findBestPackage(order, packages);
+
+      if (bestPackage) {
+        const allocation = createAllocation(order, bestPackage);
+        allocations.push(allocation);
+      }
+
+      processed++;
+
+      // Send progress update at intervals
+      if (processed % PROGRESS_INTERVAL === 0 || processed === totalOrders) {
+        const progress = (processed / totalOrders) * 100;
+        self.postMessage({
+          type: 'progress',
+          data: {
+            progress: Math.round(progress * 100) / 100, // Round to 2 decimal places
+            processed,
+            total: totalOrders,
+            currentChunk: Math.floor(chunkStart / CHUNK_SIZE) + 1,
+            totalChunks: Math.ceil(totalOrders / CHUNK_SIZE)
+          }
+        });
+      }
     }
-    
-    processed++;
-    
-    // Send progress update every batch
-    if (i % batchSize === 0 || i === totalOrders - 1) {
-      const progress = (processed / totalOrders) * 100;
-      self.postMessage({
-        type: 'progress',
-        data: { progress, processed, total: totalOrders }
-      });
+
+    // Force garbage collection hint between chunks
+    if (typeof global !== 'undefined' && global.gc) {
+      global.gc();
     }
   }
   
   const endTime = performance.now();
   const processingTime = Math.round(endTime - startTime);
-  
+  const throughput = Math.round((processed / processingTime) * 1000); // orders per second
+
   // Calculate summary metrics
   const totalCost = allocations.reduce((sum, alloc) => sum + alloc.cost, 0);
-  const averageFillRate = allocations.length > 0 
-    ? allocations.reduce((sum, alloc) => sum + alloc.fillRate, 0) / allocations.length 
+  const averageFillRate = allocations.length > 0
+    ? allocations.reduce((sum, alloc) => sum + alloc.fillRate, 0) / allocations.length
     : 0;
-  
+
+  // Calculate efficiency metrics
+  const optimalAllocations = allocations.filter(alloc => alloc.fillRate >= 75).length;
+  const subOptimalAllocations = allocations.filter(alloc => alloc.fillRate >= 25 && alloc.fillRate < 75).length;
+  const unallocatedOrders = totalOrders - allocations.length;
+
   // Calculate distributions
   const { packageDistribution, fillRateDistribution } = calculateDistributions(allocations);
-  
+
+  // Memory usage estimation (rough)
+  const memoryUsed = Math.round((
+    allocations.length * 200 + // ~200 bytes per allocation
+    totalOrders * 100 + // ~100 bytes per order
+    packages.length * 80 // ~80 bytes per package
+  ) / 1024 / 1024); // Convert to MB
+
   return {
     allocations,
     summary: {
       totalOrders,
       processedOrders: allocations.length,
-      averageFillRate,
-      totalCost,
-      processingTime
+      averageFillRate: Math.round(averageFillRate * 100) / 100,
+      totalCost: Math.round(totalCost * 100) / 100,
+      processingTime,
+      memoryUsed,
+      throughput
     },
     packageDistribution,
-    fillRateDistribution
+    fillRateDistribution,
+    efficiency: {
+      optimalAllocations,
+      subOptimalAllocations,
+      unallocatedOrders
+    }
   };
 }
 
-// Worker message handler
-self.onmessage = function(e) {
+// Worker message handler with enhanced error handling
+self.onmessage = function(e: MessageEvent) {
   const { orders, packages } = e.data;
-  
+
   try {
+    // Validate input data
+    if (!Array.isArray(orders) || orders.length === 0) {
+      throw new Error('Invalid or empty orders data');
+    }
+
+    if (!Array.isArray(packages) || packages.length === 0) {
+      throw new Error('Invalid or empty packages data');
+    }
+
+    console.log(`Worker: Starting processing of ${orders.length.toLocaleString()} orders with ${packages.length} packages`);
+
+    // Send initial progress
+    self.postMessage({
+      type: 'progress',
+      data: { progress: 0, processed: 0, total: orders.length, currentChunk: 1, totalChunks: Math.ceil(orders.length / 10000) }
+    });
+
     const results = processOrders(orders, packages);
-    
+
+    console.log(`Worker: Completed processing. Allocated ${results.allocations.length} orders`);
+
     self.postMessage({
       type: 'complete',
       data: results
     });
   } catch (error) {
+    console.error('Worker error:', error);
     self.postMessage({
       type: 'error',
-      data: error instanceof Error ? error.message : 'Processing failed'
+      data: {
+        message: error instanceof Error ? error.message : 'Processing failed',
+        stack: error instanceof Error ? error.stack : undefined
+      }
     });
   }
 };

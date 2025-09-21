@@ -25,6 +25,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 // import CookiePolicy from "./pages/CookiePolicy"; // DISABLED - causes white screen
 import ClientSuiteAnalyzer from "./pages/ClientSuiteAnalyzer";
+import ClientSideAnalysisResults from "./pages/ClientSideAnalysisResults";
 
 const App = () => (
   <ErrorBoundary>
@@ -71,13 +72,21 @@ const App = () => (
                 </DashboardProtectedRoute>
               } 
             />
-            <Route 
-              path="/suite-analysis/:analysisId/streaming" 
+            <Route
+              path="/suite-analysis/:analysisId/streaming"
               element={
                 <DashboardProtectedRoute>
                   <StreamingAnalysisResults />
                 </DashboardProtectedRoute>
-              } 
+              }
+            />
+            <Route
+              path="/suite-analysis/:analysisId/client-results"
+              element={
+                <DashboardProtectedRoute>
+                  <ClientSideAnalysisResults />
+                </DashboardProtectedRoute>
+              }
             />
             <Route 
               path="/pdp-analysis/results" 

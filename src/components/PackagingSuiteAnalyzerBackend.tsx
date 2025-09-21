@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,9 +16,6 @@ import {
   ChevronRightIcon as ChevronRight,
   CheckIcon as Check
 } from '@heroicons/react/24/outline';
-import { useMutation, useQuery, useAction } from 'convex/react';
-import { api } from '../../convex/_generated/api';
-import type { Id } from '../../convex/_generated/dataModel';
 import { ProductManual } from '@/components/ui/ProductManual';
 import { useTokenGuard } from '@/hooks/useTokenGuard';
 
@@ -43,16 +40,14 @@ export const PackagingSuiteAnalyzerBackend = () => {
   // Step interface state
   const [currentStep, setCurrentStep] = useState(1);
   
-  const [currentAnalysisId, setCurrentAnalysisId] = useState<Id<"analyses"> | null>(null);
+  const [currentAnalysisId, setCurrentAnalysisId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [processedOrders, setProcessedOrders] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
+  const workerRef = useRef<Worker | null>(null);
 
-  // Convex mutations and queries
-  const startAnalysis = useMutation(api.suiteAnalyzerBackend.startSuiteAnalysis);
-  const startBatchProcessing = useAction(api.suiteAnalyzerBackend.startBatchProcessing);
-  const cleanupInvalidAnalyses = useMutation(api.suiteAnalyzerBackend.cleanupInvalidAnalyses);
-  const analysisData = useQuery(api.suiteAnalyzerBackend.getAnalysis, 
-    currentAnalysisId ? { analysisId: currentAnalysisId } : "skip"
-  );
 
   // Step validation
   const isStep1Valid = files.orderHistory !== null;
@@ -84,7 +79,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
   ];
 
   // Parse CSV data into structured objects
-  const parseOrderHistoryCSV = (csv: string, fallbackDimensions?: any) => {
+  const parseOrderHistoryCSV = (csv: string) => {
     console.log('Parsing CSV with length:', csv.length);
     console.log('First 500 chars of CSV:', csv.substring(0, 500));
     
@@ -135,11 +130,12 @@ export const PackagingSuiteAnalyzerBackend = () => {
       const orderId = order.order_id || order.orderid || order.id || order.order || 
                      order.order_number || order.ordernumber || order['order_id'] || `ORDER-${i}`;
       
-      // More flexible volume extraction - including "Product CUIN"
-      const volume = order.product_cuin || order.total_order_volume || order.total_cuin || 
-                     order.totalcuin || order.totalordervolume || order.volume || 
-                     order.total_volume || order.cubic_inches || order.size || 
-                     order.item_volume || order.cuin || order['product_cuin'] || null;
+      // More flexible volume extraction - including "Total Order Volumes (CUIN)"
+      const volume = order['total_order_volumes_(cuin)'] || order.product_cuin || order.total_order_volumes ||
+                     order.total_order_volume || order.total_cuin || order.totalcuin ||
+                     order.totalordervolume || order.volume || order.total_volume ||
+                     order.cubic_inches || order.size || order.item_volume || order.cuin ||
+                     order['product_cuin'] || null;
       
       // Log what we're checking
       if (i <= 3) {
@@ -275,14 +271,6 @@ export const PackagingSuiteAnalyzerBackend = () => {
     return packages;
   };
 
-  // Split orders into batches
-  const createOrderBatches = (orders: any[], batchSize: number = 50) => {
-    const batches = [];
-    for (let i = 0; i < orders.length; i += batchSize) {
-      batches.push(orders.slice(i, i + batchSize));
-    }
-    return batches;
-  };
 
   const handleFileUpload = (type: keyof typeof files, file: File | null) => {
     setFiles(prev => ({ ...prev, [type]: file }));
@@ -344,9 +332,6 @@ export const PackagingSuiteAnalyzerBackend = () => {
     setError(null);
 
     try {
-      // Clean up any invalid analyses first
-      console.log('Cleaning up invalid analyses...');
-      await cleanupInvalidAnalyses();
       
       // Read file contents
       console.log('Reading order data...');
@@ -377,33 +362,19 @@ export const PackagingSuiteAnalyzerBackend = () => {
         packagingSuiteCSV = await readFileAsText(files.packagingSuite);
       }
       
-      // Start backend analysis with token check
-      console.log('Starting backend analysis...');
-      
+      // Start Web Worker analysis with token check
+      console.log('Starting Web Worker analysis...');
+
       const result = await checkAndConsumeToken('suite_analyzer', async () => {
-        // Create the analysis record
-        const analysisId = await startAnalysis({
-          name: `Suite Analysis - ${new Date().toLocaleString()}`,
-          config: {
-            allowRotation: true,
-            allowStacking: true,
-            includeShippingCosts: false,
-            minimumFillRate: 30
-          }
-        });
         
         // Parse CSV data into structured objects
         console.log('Parsing order history...');
         const allOrders = parseOrderHistoryCSV(orderHistoryCSV);
-        console.log(`Found ${allOrders.length} orders`);
-        
-        // LIMIT ORDERS TO PREVENT OVERLOAD
-        const MAX_ORDERS = 500; // Process max 500 orders to prevent crashes
-        const orders = allOrders.slice(0, MAX_ORDERS);
-        
-        if (allOrders.length > MAX_ORDERS) {
-          console.warn(`Processing only first ${MAX_ORDERS} orders out of ${allOrders.length} total orders`);
-        }
+        console.log(`Found ${allOrders.length.toLocaleString()} orders`);
+
+        // NO LIMITS - Process all orders using Web Worker
+        const orders = allOrders;
+        console.log(`Processing all ${orders.length.toLocaleString()} orders using Web Worker`);
         
         console.log('Parsing packaging suite...');
         const packages = parsePackagingSuiteCSV(packagingSuiteCSV);
@@ -413,44 +384,92 @@ export const PackagingSuiteAnalyzerBackend = () => {
         if (orders.length === 0) {
           console.error('No orders found in CSV!');
           setError('No valid orders found in the uploaded CSV file. Please check the file format.');
-          return { analysisId };
+          return { analysisId: null };
         }
-        
+
         if (packages.length === 0) {
           console.error('No packages found in CSV!');
           setError('No valid packages found in the packaging suite CSV. Please check the file format.');
-          return { analysisId };
+          return { analysisId: null };
         }
         
-        // Split orders into batches for processing
-        console.log('Creating order batches...');
-        const orderBatches = createOrderBatches(orders, 25); // Smaller batches of 25 orders
-        console.log(`Created ${orderBatches.length} batches from ${orders.length} orders`);
-        
-        // Navigate to results page BEFORE starting processing
-        console.log('Navigating to results page...');
-        navigate(`/suite-analysis/${analysisId}/streaming`);
-        
-        // Start batch processing after navigation
-        setTimeout(async () => {
-          console.log(`Starting batch processing for ${orderBatches.length} batches...`);
-          try {
-            await startBatchProcessing({
-              analysisId,
-              orderBatches,
-              packagingSuite: packages,
-              config: {
-                allowRotation: true,
-                allowStacking: true,
-                includeShippingCosts: false,
-                minimumFillRate: 30
+        // Generate analysis ID for navigation
+        const analysisId = `client-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
+
+        // Start Web Worker processing
+        console.log('Starting Web Worker processing...');
+        setIsProcessing(true);
+        setProgress(0);
+        setProcessedOrders(0);
+        setTotalOrders(orders.length);
+
+        // Initialize Web Worker
+        workerRef.current = new Worker(
+          new URL('../workers/analysisWorker.ts', import.meta.url),
+          { type: 'module' }
+        );
+
+        // Set up worker message handlers
+        workerRef.current.onmessage = (e) => {
+          const { type, data } = e.data;
+
+          if (type === 'progress') {
+            setProgress(data.progress);
+            setProcessedOrders(data.processed);
+            console.log(`Progress: ${data.progress.toFixed(1)}% (${data.processed.toLocaleString()}/${data.total.toLocaleString()})`);
+          } else if (type === 'complete') {
+            console.log('Analysis complete! Navigating to results...');
+            setIsProcessing(false);
+
+            // Navigate to results page with data passed through React Router state
+            navigate(`/suite-analysis/${analysisId}/client-results`, {
+              state: {
+                analysisResults: data,
+                analysisId: analysisId,
+                timestamp: new Date().toISOString()
               }
             });
-          } catch (err) {
-            console.error('Batch processing failed:', err);
+
+            // Cleanup worker
+            if (workerRef.current) {
+              workerRef.current.terminate();
+              workerRef.current = null;
+            }
+          } else if (type === 'error') {
+            console.error('Worker error:', data);
+            setError(`Processing failed: ${data.message || 'Unknown error'}`);
+            setIsProcessing(false);
+
+            // Cleanup worker
+            if (workerRef.current) {
+              workerRef.current.terminate();
+              workerRef.current = null;
+            }
           }
-        }, 1000); // Delay to ensure navigation completes
-        
+        };
+
+        workerRef.current.onerror = (error) => {
+          console.error('Worker error:', error);
+          setError('Web Worker failed to start');
+          setIsProcessing(false);
+        };
+
+        // Transform orders to Web Worker format
+        const workerOrders = orders.map(order => ({
+          orderId: order.orderId,
+          volume: order.originalVolume || 0,
+          weight: order.weight || 1,
+          length: order.hasActualDimensions ? order.length : undefined,
+          width: order.hasActualDimensions ? order.width : undefined,
+          height: order.hasActualDimensions ? order.height : undefined
+        }));
+
+        // Send data to worker
+        workerRef.current.postMessage({
+          orders: workerOrders,
+          packages
+        });
+
         return { analysisId };
       });
       
@@ -459,8 +478,10 @@ export const PackagingSuiteAnalyzerBackend = () => {
         return;
       }
 
-      console.log('Analysis started with ID:', result.result.analysisId);
-      setCurrentAnalysisId(result.result.analysisId);
+      if (result.result.analysisId) {
+        console.log('Analysis started with ID:', result.result.analysisId);
+        setCurrentAnalysisId(result.result.analysisId);
+      }
 
     } catch (err) {
       console.error('Analysis failed:', err);
@@ -847,11 +868,11 @@ export const PackagingSuiteAnalyzerBackend = () => {
       ) : (
         <Button
           onClick={handleAnalyze}
-          disabled={!isStep3Valid || !!currentAnalysisId}
+          disabled={!isStep3Valid || isProcessing}
           className="flex items-center gap-2"
         >
-          {currentAnalysisId ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
-          Run Analysis
+          {isProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <BarChart3 className="h-4 w-4" />}
+          {isProcessing ? `Processing... ${progress.toFixed(1)}%` : 'Run Analysis'}
         </Button>
       )}
     </div>
@@ -879,6 +900,30 @@ export const PackagingSuiteAnalyzerBackend = () => {
             {currentStep === 3 && renderStep3()}
             
             {renderNavigation()}
+
+            {/* Progress Display */}
+            {isProcessing && (
+              <div className="mt-6 p-6 bg-blue-50 border border-blue-200 rounded-3xl">
+                <div className="flex items-center gap-4 mb-4">
+                  <Loader2 className="h-6 w-6 text-blue-600 animate-spin" />
+                  <div>
+                    <h3 className="text-lg font-semibold text-blue-900">Processing Analysis</h3>
+                    <p className="text-blue-700">
+                      {processedOrders.toLocaleString()} of {totalOrders.toLocaleString()} orders processed
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full bg-blue-200 rounded-full h-3 mb-2">
+                  <div
+                    className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+                <div className="text-sm text-blue-600 text-center">
+                  {progress.toFixed(1)}% Complete
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
