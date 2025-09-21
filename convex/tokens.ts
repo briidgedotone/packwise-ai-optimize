@@ -1,6 +1,7 @@
 // Token management functions
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, action } from "./_generated/server";
+import { internal } from "./_generated/api";
 
 // Get user's token balance
 export const getTokenBalance = query({
@@ -76,7 +77,7 @@ export const canUseToken = query({
 export const consumeToken = mutation({
   args: {
     analysisType: v.string(),
-    analysisId: v.optional(v.id("analyses")),
+    analysisId: v.optional(v.union(v.id("analyses"), v.null())),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -139,17 +140,67 @@ export const getSubscriptionStatus = query({
     if (!subscription) {
       return {
         status: "none",
-        planType: "free",
+        planType: null,
         isActive: false,
       };
     }
+
+    // Free trial plans are no longer supported - treat as inactive to force migration
+    const isActive = subscription.planType !== "free" &&
+                     (subscription.status === "active" || subscription.status === "trialing");
 
     return {
       status: subscription.status,
       planType: subscription.planType,
       tokensPerMonth: subscription.tokensPerMonth,
       currentPeriodEnd: subscription.currentPeriodEnd,
-      isActive: subscription.status === "active" || subscription.status === "trialing",
+      isActive,
     };
   },
 });
+
+// Manual subscription sync - force refresh from Stripe
+export const syncSubscriptionFromStripe = action({
+  args: {},
+  handler: async (ctx): Promise<{ success: boolean; message: string; subscription?: any }> => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    try {
+      // For now, return a simple response until we fix the internal dependencies
+      return {
+        success: false,
+        message: "Manual sync temporarily disabled while fixing dependencies"
+      };
+    } catch (error: any) {
+      console.error("Subscription sync error:", error);
+      return {
+        success: false,
+        message: error.message || "Failed to sync subscription"
+      };
+    }
+  },
+});
+
+// Get webhook status for current user - TEMPORARILY DISABLED
+// export const getWebhookStatus = query({
+//   args: {},
+//   handler: async (ctx) => {
+//     const identity = await ctx.auth.getUserIdentity();
+//     if (!identity) return null;
+
+//     try {
+//       const webhookStatus = await ctx.db
+//         .query("webhookStatus")
+//         .withIndex("by_user", (q) => q.eq("userId", identity.subject))
+//         .order("desc")
+//         .first();
+
+//       return webhookStatus;
+//     } catch (error) {
+//       // If webhookStatus table doesn't exist or has issues, return null
+//       console.error("Error fetching webhook status:", error);
+//       return null;
+//     }
+//   },
+// });
