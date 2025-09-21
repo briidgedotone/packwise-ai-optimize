@@ -99,7 +99,7 @@ export const createOrUpdateUser = mutation({
   },
 });
 
-// Get user by Clerk ID
+// Get user by Clerk ID (for webhooks)
 export const getUserByClerkId = query({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
@@ -107,6 +107,28 @@ export const getUserByClerkId = query({
       .query("users")
       .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
       .first();
+  },
+});
+
+// Update user's Stripe customer ID
+export const updateUserStripeCustomerId = mutation({
+  args: {
+    clerkId: v.string(),
+    stripeCustomerId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .first();
+
+    if (!user) throw new Error("User not found");
+
+    await ctx.db.patch(user._id, {
+      stripeCustomerId: args.stripeCustomerId,
+    });
+
+    return user._id;
   },
 });
 
