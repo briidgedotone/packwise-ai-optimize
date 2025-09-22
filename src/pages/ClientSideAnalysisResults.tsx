@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
+import { Slider } from '@/components/ui/slider';
 import {
   ArrowLeft,
   Package,
@@ -13,11 +14,12 @@ import {
   Download,
   Search,
   Filter,
-  TrendingUp,
   DollarSign,
-  Clock
+  Clock,
+  Target,
+  ChevronDown,
 } from 'lucide-react';
-import { PieChart, Pie, Cell, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { ResponsiveContainer, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from 'recharts';
 
 interface AllocationResult {
   orderId: string;
@@ -29,6 +31,28 @@ interface AllocationResult {
   packageVolume: number;
 }
 
+interface PackageCostBreakdown {
+  packageName: string;
+  baselineOrders: number;
+  optimizedOrders: number;
+  baselineCost: number;
+  optimizedCost: number;
+  savings: number;
+  savingsPercentage: number;
+  packageCost: number;
+}
+
+interface PackageMaterialBreakdown {
+  packageName: string;
+  baselineOrders: number;
+  optimizedOrders: number;
+  baselineMaterial: number;
+  optimizedMaterial: number;
+  materialSavings: number;
+  materialSavingsPercentage: number;
+  packageWeight: number;
+}
+
 interface AnalysisResults {
   allocations: AllocationResult[];
   summary: {
@@ -36,11 +60,20 @@ interface AnalysisResults {
     processedOrders: number;
     averageFillRate: number;
     totalCost: number;
+    baselineCost: number;
+    savings: number;
+    savingsPercentage: number;
+    totalMaterial: number;
+    baselineMaterial: number;
+    materialSavings: number;
+    materialSavingsPercentage: number;
     processingTime: number;
     memoryUsed?: number;
     throughput: number;
   };
-  packageDistribution: { name: string; count: number; percentage: number }[];
+  packageDistribution: { name: string; count: number; percentage: number; baselinePercentage?: number }[];
+  packageCostBreakdown: PackageCostBreakdown[];
+  packageMaterialBreakdown: PackageMaterialBreakdown[];
   fillRateDistribution: { range: string; count: number }[];
   efficiency: {
     optimalAllocations: number;
@@ -66,6 +99,22 @@ export default function ClientSideAnalysisResults() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(100);
+  const [targetFillRate, setTargetFillRate] = useState(75);
+  const [showMeetingTarget, setShowMeetingTarget] = useState(false);
+  const [showNeedingImprovement, setShowNeedingImprovement] = useState(false);
+
+  // Sort packages in logical order: Small → Medium → Large
+  const sortPackagesBySize = (packages: any[]) => {
+    const sizeOrder = { 'small': 1, 'medium': 2, 'large': 3 };
+    return [...packages].sort((a, b) => {
+      // Handle different property names for package identification
+      const aName = (a.name || a.packageName || '').toLowerCase();
+      const bName = (b.name || b.packageName || '').toLowerCase();
+      const aSize = sizeOrder[aName as keyof typeof sizeOrder] || 999;
+      const bSize = sizeOrder[bName as keyof typeof sizeOrder] || 999;
+      return aSize - bSize;
+    });
+  };
 
   useEffect(() => {
     // Load analysis results from React Router state
@@ -112,8 +161,6 @@ export default function ClientSideAnalysisResults() {
 
   const { analysisResults: results } = analysisData;
 
-  // Calculate chart data
-  const chartColors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#06B6D4'];
 
   // Get unique package types for filter
   const packageTypes = Array.from(new Set(results.allocations.map(a => a.recommendedPackage)));
@@ -146,7 +193,10 @@ export default function ClientSideAnalysisResults() {
     csvSections.push(`Total Orders,${results.summary.totalOrders.toLocaleString()}`);
     csvSections.push(`Processed Orders,${results.summary.processedOrders.toLocaleString()}`);
     csvSections.push(`Average Fill Rate,${results.summary.averageFillRate.toFixed(1)}%`);
-    csvSections.push(`Total Cost,$${results.summary.totalCost.toFixed(2)}`);
+    csvSections.push(`Baseline Cost,$${(results.summary.baselineCost || results.summary.totalCost).toFixed(2)}`);
+    csvSections.push(`Optimized Cost,$${results.summary.totalCost.toFixed(2)}`);
+    csvSections.push(`Total Savings,$${(results.summary.savings || 0).toFixed(2)}`);
+    csvSections.push(`Savings Percentage,${(results.summary.savingsPercentage || 0).toFixed(1)}%`);
     csvSections.push(`Processing Speed,"${results.summary.throughput.toLocaleString()} orders/sec"`);
     csvSections.push(`Processing Time,${results.summary.processingTime}ms`);
     if (results.summary.memoryUsed) {
@@ -320,7 +370,7 @@ export default function ClientSideAnalysisResults() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Total Cost</p>
+                  <p className="text-sm font-medium text-gray-600">Optimized Cost</p>
                   <p className="text-3xl font-bold text-purple-600 mt-1">
                     ${results.summary.totalCost.toFixed(0)}
                   </p>
@@ -351,131 +401,782 @@ export default function ClientSideAnalysisResults() {
           </Card>
         </div>
 
-        {/* Package Distribution and Efficiency */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Package Distribution Comparison */}
+        <div className="mb-6">
           <Card>
             <CardHeader>
-              <CardTitle>Package Distribution</CardTitle>
-              <CardDescription>Recommended packages for your orders</CardDescription>
+              <CardTitle>Package Distribution Comparison</CardTitle>
+              <CardDescription>Baseline vs AI-optimized package usage</CardDescription>
             </CardHeader>
             <CardContent>
               {results.packageDistribution.length > 0 ? (
                 <>
-                  <div className="h-64 mb-4">
+                  <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={results.packageDistribution}
-                          cx="50%"
-                          cy="50%"
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="count"
-                          label={({ name, percentage }) => `${name} (${percentage.toFixed(1)}%)`}
-                        >
-                          {results.packageDistribution.map((_, index) => (
-                            <Cell key={`cell-${index}`} fill={chartColors[index % chartColors.length]} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
+                      <BarChart
+                        data={sortPackagesBySize(results.packageDistribution).map(pkg => ({
+                          name: pkg.name,
+                          Baseline: pkg.baselinePercentage || 0,
+                          Optimized: pkg.percentage,
+                          baselineCount: Math.round(results.summary.processedOrders * (pkg.baselinePercentage || 0) / 100),
+                          optimizedCount: pkg.count
+                        }))}
+                        margin={{ top: 20, right: 30, left: 20, bottom: 40 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                        <XAxis
+                          dataKey="name"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <YAxis label={{ value: 'Usage (%)', angle: -90, position: 'insideLeft' }} />
+                        <Tooltip
+                          formatter={(value: number, name: string, props: any) => [
+                            `${value.toFixed(1)}% (${name === 'Baseline' ? props.payload.baselineCount : props.payload.optimizedCount} orders)`,
+                            name
+                          ]}
+                          contentStyle={{
+                            backgroundColor: 'white',
+                            border: '1px solid #e5e7eb',
+                            borderRadius: '6px'
+                          }}
+                        />
+                        <Legend />
+                        <Bar dataKey="Baseline" fill="#94a3b8" />
+                        <Bar dataKey="Optimized" fill="#3b82f6" />
+                      </BarChart>
                     </ResponsiveContainer>
                   </div>
-                  <div className="space-y-2">
-                    {results.packageDistribution.map((pkg, index) => (
-                      <div key={pkg.name} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2">
-                          <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: chartColors[index % chartColors.length] }}
-                          />
-                          <span>{pkg.name}</span>
+
+                  {/* Order Count Summary */}
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {sortPackagesBySize(results.packageDistribution).map((pkg) => {
+                      const baselineCount = Math.round(results.summary.processedOrders * (pkg.baselinePercentage || 0) / 100);
+                      const optimizedCount = pkg.count;
+
+                      return (
+                        <div key={pkg.name} className="bg-gray-50 rounded-lg p-4 border">
+                          <h5 className="font-semibold text-gray-900 mb-2">{pkg.name}</h5>
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-600">Baseline:</span>
+                              <span className="font-medium text-gray-800">
+                                {baselineCount} orders ({(pkg.baselinePercentage || 0).toFixed(1)}%)
+                              </span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                              <span className="text-sm text-gray-600">Optimized:</span>
+                              <span className="font-medium text-blue-600">
+                                {optimizedCount} orders ({pkg.percentage.toFixed(1)}%)
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                        <span className="font-medium">{pkg.percentage.toFixed(1)}%</span>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </>
               ) : (
-                <div className="h-64 flex items-center justify-center text-gray-500">
-                  No package data available
+                <div className="text-center py-8 text-gray-500">
+                  <p>No distribution data available</p>
                 </div>
               )}
             </CardContent>
           </Card>
+        </div>
 
-          <Card>
+        {/* Cost Savings Analysis */}
+        {(results.summary.baselineCost > 0 || results.packageCostBreakdown?.length > 0) && (
+          <Card className="mb-6">
             <CardHeader>
-              <CardTitle>Efficiency Analysis</CardTitle>
-              <CardDescription>Package allocation efficiency breakdown</CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-green-600" />
+                Cost Savings Analysis
+              </CardTitle>
+              <CardDescription>
+                Comparison between baseline distribution and AI-optimized allocation
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center">
-                      <TrendingUp className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-green-900">Optimal Allocations</p>
-                      <p className="text-sm text-green-700">Fill rate ≥ 75%</p>
-                    </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                    <p className="text-sm font-medium text-gray-600">Baseline Cost</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-green-600">
-                      {results.efficiency.optimalAllocations.toLocaleString()}
-                    </p>
-                    <p className="text-sm text-green-600">
-                      {((results.efficiency.optimalAllocations / results.summary.processedOrders) * 100).toFixed(1)}%
-                    </p>
-                  </div>
+                  <p className="text-2xl font-bold text-gray-700">
+                    ${(results.summary.baselineCost || results.summary.totalCost).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Using historical package distribution</p>
                 </div>
 
-                <div className="flex items-center justify-between p-4 bg-yellow-50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-yellow-500 rounded-lg flex items-center justify-center">
-                      <BarChart3 className="h-5 w-5 text-white" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-yellow-900">Sub-Optimal</p>
-                      <p className="text-sm text-yellow-700">Fill rate 25-75%</p>
-                    </div>
+                <div className="bg-purple-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <p className="text-sm font-medium text-purple-600">Optimized Cost</p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-2xl font-bold text-yellow-600">
-                      {results.efficiency.subOptimalAllocations.toLocaleString()}
-                    </p>
-                    <p className="text-sm text-yellow-600">
-                      {((results.efficiency.subOptimalAllocations / results.summary.processedOrders) * 100).toFixed(1)}%
-                    </p>
-                  </div>
+                  <p className="text-2xl font-bold text-purple-700">
+                    ${results.summary.totalCost.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                  <p className="text-xs text-purple-500 mt-1">With AI optimization</p>
                 </div>
 
-                {results.efficiency.unallocatedOrders > 0 && (
-                  <div className="flex items-center justify-between p-4 bg-red-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-red-500 rounded-lg flex items-center justify-center">
-                        <AlertCircle className="h-5 w-5 text-white" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-red-900">Unallocated</p>
-                        <p className="text-sm text-red-700">No suitable package</p>
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <p className="text-sm font-medium text-green-600">Total Savings</p>
+                  </div>
+                  <p className="text-2xl font-bold text-green-700">
+                    ${(results.summary.savings || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                  <Badge className="mt-2 bg-green-100 text-green-700">
+                    {(results.summary.savingsPercentage || 0).toFixed(1)}% reduction
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Visual Bar Comparison */}
+              <div className="mt-6 pt-6 border-t">
+                <p className="text-sm font-medium text-gray-700 mb-3">Cost Comparison Visualization</p>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-gray-600">Baseline</span>
+                      <span className="font-medium">${(results.summary.baselineCost || results.summary.totalCost).toFixed(2)}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-6">
+                      <div className="bg-gray-500 h-6 rounded-full flex items-center justify-end pr-2" style={{ width: '100%' }}>
+                        <span className="text-xs text-white">100%</span>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-red-600">
-                        {results.efficiency.unallocatedOrders.toLocaleString()}
-                      </p>
-                      <p className="text-sm text-red-600">
-                        {((results.efficiency.unallocatedOrders / results.summary.totalOrders) * 100).toFixed(1)}%
-                      </p>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-purple-600">Optimized</span>
+                      <span className="font-medium">${results.summary.totalCost.toFixed(2)}</span>
                     </div>
+                    <div className="w-full bg-purple-100 rounded-full h-6">
+                      <div
+                        className="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2"
+                        style={{ width: `${((results.summary.totalCost / (results.summary.baselineCost || results.summary.totalCost)) * 100).toFixed(0)}%` }}
+                      >
+                        <span className="text-xs text-white">
+                          {((results.summary.totalCost / (results.summary.baselineCost || results.summary.totalCost)) * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Per-Package Cost Breakdown Table */}
+              <div className="mt-6 pt-6 border-t">
+                <p className="text-sm font-medium text-gray-700 mb-3">Per-Package Cost Breakdown</p>
+                {results.packageCostBreakdown && results.packageCostBreakdown.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b bg-gray-50">
+                          <th className="text-left py-3 px-2 font-medium text-gray-700">Package Type</th>
+                          <th className="text-center py-3 px-2 font-medium text-gray-700">Unit Cost</th>
+                          <th className="text-center py-3 px-2 font-medium text-gray-700">Baseline Orders</th>
+                          <th className="text-center py-3 px-2 font-medium text-gray-700">Optimized Orders</th>
+                          <th className="text-right py-3 px-2 font-medium text-gray-700">Baseline Cost</th>
+                          <th className="text-right py-3 px-2 font-medium text-gray-700">Optimized Cost</th>
+                          <th className="text-right py-3 px-2 font-medium text-gray-700">Savings</th>
+                          <th className="text-center py-3 px-2 font-medium text-gray-700">Savings %</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {results.packageCostBreakdown.map((pkg, index) => {
+                          const isPositiveSavings = pkg.savings > 0;
+                          const isZeroSavings = pkg.savings === 0;
+
+                          return (
+                            <tr key={index} className="border-b hover:bg-gray-50">
+                              <td className="py-3 px-2 font-medium text-gray-900">{pkg.packageName}</td>
+                              <td className="text-center py-3 px-2 text-gray-600">${pkg.packageCost.toFixed(2)}</td>
+                              <td className="text-center py-3 px-2 text-gray-600">{pkg.baselineOrders.toLocaleString()}</td>
+                              <td className="text-center py-3 px-2 text-purple-600 font-medium">{pkg.optimizedOrders.toLocaleString()}</td>
+                              <td className="text-right py-3 px-2 text-gray-600">${pkg.baselineCost.toFixed(2)}</td>
+                              <td className="text-right py-3 px-2 text-purple-600 font-medium">${pkg.optimizedCost.toFixed(2)}</td>
+                              <td className={`text-right py-3 px-2 font-medium ${
+                                isPositiveSavings ? 'text-green-600' :
+                                isZeroSavings ? 'text-gray-600' : 'text-red-600'
+                              }`}>
+                                {isPositiveSavings ? '+' : ''}${pkg.savings.toFixed(2)}
+                              </td>
+                              <td className="text-center py-3 px-2">
+                                <Badge
+                                  className={`text-xs ${
+                                    isPositiveSavings ? 'bg-green-100 text-green-700' :
+                                    isZeroSavings ? 'bg-gray-100 text-gray-600' : 'bg-red-100 text-red-700'
+                                  }`}
+                                >
+                                  {isPositiveSavings ? '+' : ''}{pkg.savingsPercentage.toFixed(1)}%
+                                </Badge>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      <tfoot>
+                        <tr className="border-t-2 bg-gray-50 font-medium">
+                          <td className="py-3 px-2 text-gray-900">TOTAL</td>
+                          <td className="text-center py-3 px-2">-</td>
+                          <td className="text-center py-3 px-2 text-gray-700">
+                            {results.packageCostBreakdown.reduce((sum, pkg) => sum + pkg.baselineOrders, 0).toLocaleString()}
+                          </td>
+                          <td className="text-center py-3 px-2 text-purple-600">
+                            {results.packageCostBreakdown.reduce((sum, pkg) => sum + pkg.optimizedOrders, 0).toLocaleString()}
+                          </td>
+                          <td className="text-right py-3 px-2 text-gray-700">
+                            ${results.packageCostBreakdown.reduce((sum, pkg) => sum + pkg.baselineCost, 0).toFixed(2)}
+                          </td>
+                          <td className="text-right py-3 px-2 text-purple-600">
+                            ${results.packageCostBreakdown.reduce((sum, pkg) => sum + pkg.optimizedCost, 0).toFixed(2)}
+                          </td>
+                          <td className={`text-right py-3 px-2 font-bold ${
+                            results.summary.savings > 0 ? 'text-green-600' :
+                            results.summary.savings === 0 ? 'text-gray-600' : 'text-red-600'
+                          }`}>
+                            {results.summary.savings > 0 ? '+' : ''}${results.summary.savings.toFixed(2)}
+                          </td>
+                          <td className="text-center py-3 px-2">
+                            <Badge className={`text-xs font-bold ${
+                              results.summary.savings > 0 ? 'bg-green-100 text-green-700' :
+                              results.summary.savings === 0 ? 'bg-gray-100 text-gray-600' : 'bg-red-100 text-red-700'
+                            }`}>
+                              {results.summary.savings > 0 ? '+' : ''}{(results.summary.savingsPercentage || 0).toFixed(1)}%
+                            </Badge>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p className="mb-2">Per-package breakdown not available</p>
+                    <p className="text-sm">Run a new analysis to see detailed cost breakdown by package type</p>
                   </div>
                 )}
               </div>
             </CardContent>
           </Card>
-        </div>
+        )}
+
+        {/* Material Usage Analysis */}
+        {(results.summary.baselineMaterial > 0 || results.packageMaterialBreakdown?.length > 0) && (
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Package className="h-5 w-5 text-blue-600" />
+                Material Usage Analysis
+              </CardTitle>
+              <CardDescription>
+                Comparison of packaging material consumption between baseline and optimized allocation
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
+                    <p className="text-sm font-medium text-gray-600">Baseline Material</p>
+                  </div>
+                  <p className="text-2xl font-bold text-gray-700">
+                    {(results.summary.baselineMaterial || results.summary.totalMaterial || 0).toFixed(3)} lbs
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Using historical package distribution</p>
+                </div>
+
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <p className="text-sm font-medium text-blue-600">Optimized Material</p>
+                  </div>
+                  <p className="text-2xl font-bold text-blue-700">
+                    {(results.summary.totalMaterial || 0).toFixed(3)} lbs
+                  </p>
+                  <p className="text-xs text-blue-500 mt-1">With AI optimization</p>
+                </div>
+
+                <div className="bg-green-50 p-4 rounded-lg">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <p className="text-sm font-medium text-green-600">Material Savings</p>
+                  </div>
+                  <p className="text-2xl font-bold text-green-700">
+                    {(results.summary.materialSavings || 0).toFixed(3)} lbs
+                  </p>
+                  <Badge className="mt-2 bg-green-100 text-green-700">
+                    {(results.summary.materialSavingsPercentage || 0).toFixed(1)}% reduction
+                  </Badge>
+                </div>
+              </div>
+
+              {/* Visual Bar Comparison for Material */}
+              <div className="mt-6 pt-6 border-t">
+                <p className="text-sm font-medium text-gray-700 mb-3">Material Usage Comparison</p>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-gray-600">Baseline Material</span>
+                      <span className="font-medium">{(results.summary.baselineMaterial || results.summary.totalMaterial || 0).toFixed(3)} lbs</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-6">
+                      <div className="bg-gray-500 h-6 rounded-full flex items-center justify-end pr-2" style={{ width: '100%' }}>
+                        <span className="text-xs text-white">100%</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div>
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="text-blue-600">Optimized Material</span>
+                      <span className="font-medium">{(results.summary.totalMaterial || 0).toFixed(3)} lbs</span>
+                    </div>
+                    <div className="w-full bg-blue-100 rounded-full h-6">
+                      <div
+                        className="bg-blue-500 h-6 rounded-full flex items-center justify-end pr-2"
+                        style={{ width: `${((results.summary.totalMaterial || 0) / (results.summary.baselineMaterial || results.summary.totalMaterial || 1) * 100).toFixed(0)}%` }}
+                      >
+                        <span className="text-xs text-white">
+                          {((results.summary.totalMaterial || 0) / (results.summary.baselineMaterial || results.summary.totalMaterial || 1) * 100).toFixed(1)}%
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Per-Package Material Breakdown Table */}
+              <div className="mt-6 pt-6 border-t">
+                <p className="text-sm font-medium text-gray-700 mb-3">Per-Package Material Breakdown</p>
+                {results.packageMaterialBreakdown && results.packageMaterialBreakdown.length > 0 ? (
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="border-b bg-gray-50">
+                          <th className="text-left py-3 px-2 font-medium text-gray-700">Package Type</th>
+                          <th className="text-center py-3 px-2 font-medium text-gray-700">Unit Weight (lbs)</th>
+                          <th className="text-center py-3 px-2 font-medium text-gray-700">Baseline Orders</th>
+                          <th className="text-center py-3 px-2 font-medium text-gray-700">Optimized Orders</th>
+                          <th className="text-right py-3 px-2 font-medium text-gray-700">Baseline Material</th>
+                          <th className="text-right py-3 px-2 font-medium text-gray-700">Optimized Material</th>
+                          <th className="text-right py-3 px-2 font-medium text-gray-700">Material Savings</th>
+                          <th className="text-center py-3 px-2 font-medium text-gray-700">Savings %</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {results.packageMaterialBreakdown.map((pkg, index) => {
+                          const isPositiveSavings = pkg.materialSavings > 0;
+                          const isZeroSavings = pkg.materialSavings === 0;
+
+                          return (
+                            <tr key={index} className="border-b hover:bg-gray-50">
+                              <td className="py-3 px-2 font-medium text-gray-900">{pkg.packageName}</td>
+                              <td className="text-center py-3 px-2 text-gray-600">{pkg.packageWeight.toFixed(3)}</td>
+                              <td className="text-center py-3 px-2 text-gray-600">{pkg.baselineOrders.toLocaleString()}</td>
+                              <td className="text-center py-3 px-2 text-blue-600 font-medium">{pkg.optimizedOrders.toLocaleString()}</td>
+                              <td className="text-right py-3 px-2 text-gray-600">{pkg.baselineMaterial.toFixed(3)} lbs</td>
+                              <td className="text-right py-3 px-2 text-blue-600 font-medium">{pkg.optimizedMaterial.toFixed(3)} lbs</td>
+                              <td className={`text-right py-3 px-2 font-medium ${
+                                isPositiveSavings ? 'text-green-600' :
+                                isZeroSavings ? 'text-gray-600' : 'text-red-600'
+                              }`}>
+                                {isPositiveSavings ? '+' : ''}{pkg.materialSavings.toFixed(3)} lbs
+                              </td>
+                              <td className="text-center py-3 px-2">
+                                <Badge
+                                  className={`text-xs ${
+                                    isPositiveSavings ? 'bg-green-100 text-green-700' :
+                                    isZeroSavings ? 'bg-gray-100 text-gray-600' : 'bg-red-100 text-red-700'
+                                  }`}
+                                >
+                                  {isPositiveSavings ? '+' : ''}{pkg.materialSavingsPercentage.toFixed(1)}%
+                                </Badge>
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      <tfoot>
+                        <tr className="border-t-2 bg-gray-50 font-medium">
+                          <td className="py-3 px-2 text-gray-900">TOTAL</td>
+                          <td className="text-center py-3 px-2">-</td>
+                          <td className="text-center py-3 px-2 text-gray-700">
+                            {(results.packageMaterialBreakdown?.reduce((sum, pkg) => sum + pkg.baselineOrders, 0) || 0).toLocaleString()}
+                          </td>
+                          <td className="text-center py-3 px-2 text-blue-600">
+                            {(results.packageMaterialBreakdown?.reduce((sum, pkg) => sum + pkg.optimizedOrders, 0) || 0).toLocaleString()}
+                          </td>
+                          <td className="text-right py-3 px-2 text-gray-700">
+                            {(results.packageMaterialBreakdown?.reduce((sum, pkg) => sum + pkg.baselineMaterial, 0) || 0).toFixed(3)} lbs
+                          </td>
+                          <td className="text-right py-3 px-2 text-blue-600">
+                            {(results.packageMaterialBreakdown?.reduce((sum, pkg) => sum + pkg.optimizedMaterial, 0) || 0).toFixed(3)} lbs
+                          </td>
+                          <td className={`text-right py-3 px-2 font-bold ${
+                            (results.summary.materialSavings || 0) > 0 ? 'text-green-600' :
+                            (results.summary.materialSavings || 0) === 0 ? 'text-gray-600' : 'text-red-600'
+                          }`}>
+                            {(results.summary.materialSavings || 0) > 0 ? '+' : ''}{(results.summary.materialSavings || 0).toFixed(3)} lbs
+                          </td>
+                          <td className="text-center py-3 px-2">
+                            <Badge className={`text-xs font-bold ${
+                              (results.summary.materialSavings || 0) > 0 ? 'bg-green-100 text-green-700' :
+                              (results.summary.materialSavings || 0) === 0 ? 'bg-gray-100 text-gray-600' : 'bg-red-100 text-red-700'
+                            }`}>
+                              {(results.summary.materialSavings || 0) > 0 ? '+' : ''}{(results.summary.materialSavingsPercentage || 0).toFixed(1)}%
+                            </Badge>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <p className="mb-2">Per-package material breakdown not available</p>
+                    <p className="text-sm">Run a new analysis to see detailed material usage by package type</p>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Fill Rate Target Analyzer */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="h-5 w-5 text-purple-600" />
+              Fill Rate Target Analyzer
+            </CardTitle>
+            <CardDescription>
+              Adjust your target fill rate to get specific package optimization recommendations
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Fill Rate Slider */}
+            <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-6 border border-purple-200">
+              <div className="flex items-center justify-between mb-4">
+                <label className="text-sm font-semibold text-gray-900">Target Fill Rate</label>
+                <Badge className="bg-purple-600 text-white text-lg px-4 py-2 font-bold">
+                  {targetFillRate}%
+                </Badge>
+              </div>
+
+              <div className="space-y-4">
+                <Slider
+                  value={[targetFillRate]}
+                  onValueChange={(value) => setTargetFillRate(value[0])}
+                  max={90}
+                  min={50}
+                  step={5}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-xs text-gray-600">
+                  <span>50% - Conservative</span>
+                  <span>65% - Balanced</span>
+                  <span>75% - Efficient</span>
+                  <span>90% - Maximum</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Analysis & Recommendations */}
+            {(() => {
+              // Calculate current performance against target and collect order details
+              const currentPerformance = results.allocations.reduce((acc, allocation) => {
+                const packageName = allocation.recommendedPackage;
+                const meetsTarget = allocation.fillRate >= targetFillRate;
+
+                if (!acc.packages[packageName]) {
+                  acc.packages[packageName] = {
+                    orders: 0,
+                    meetingTarget: 0,
+                    fillRates: [],
+                    volumes: [],
+                    costs: []
+                  };
+                }
+
+                acc.packages[packageName].orders++;
+                acc.packages[packageName].fillRates.push(allocation.fillRate);
+                acc.packages[packageName].volumes.push(allocation.orderVolume);
+                acc.packages[packageName].costs.push(allocation.cost);
+
+                if (meetsTarget) {
+                  acc.packages[packageName].meetingTarget++;
+                  acc.totalMeetingTarget++;
+                  acc.ordersMeetingTarget.push(allocation);
+                } else {
+                  acc.ordersNeedingImprovement.push(allocation);
+                }
+
+                acc.totalOrders++;
+                return acc;
+              }, {
+                totalOrders: 0,
+                totalMeetingTarget: 0,
+                ordersMeetingTarget: [] as AllocationResult[],
+                ordersNeedingImprovement: [] as AllocationResult[],
+                packages: {} as Record<string, {
+                  orders: number;
+                  meetingTarget: number;
+                  fillRates: number[];
+                  volumes: number[];
+                  costs: number[];
+                }>
+              });
+
+              // Analyze each package and generate recommendations
+              const packageRecommendations = Object.entries(currentPerformance.packages).map(([packageName, data]) => {
+                const avgFillRate = data.fillRates.reduce((sum, rate) => sum + rate, 0) / data.fillRates.length;
+                const successRate = (data.meetingTarget / data.orders) * 100;
+                const avgVolume = data.volumes.reduce((sum, vol) => sum + vol, 0) / data.volumes.length;
+                const avgCost = data.costs.reduce((sum, cost) => sum + cost, 0) / data.costs.length;
+
+                // Calculate optimal dimensions for this package's orders
+                const optimalVolume = avgVolume / (targetFillRate / 100); // Volume needed for target fill rate
+                const cubicRoot = Math.cbrt(optimalVolume);
+
+                // Generate recommendations based on performance
+                let recommendation: {
+                  type: string;
+                  priority: string;
+                  action: string;
+                  reason: string;
+                  suggestion: string;
+                  impact: string;
+                  expectedFillRate: string;
+                };
+
+                if (successRate < 30) {
+                  // Poor performance - major changes needed
+                  recommendation = {
+                    type: 'optimize',
+                    priority: 'high',
+                    action: `Redesign ${packageName} package`,
+                    reason: `Only ${successRate.toFixed(0)}% of orders meet your ${targetFillRate}% target`,
+                    suggestion: `Reduce dimensions to approximately ${Math.ceil(cubicRoot * 1.1)}" × ${Math.ceil(cubicRoot * 0.95)}" × ${Math.ceil(cubicRoot * 0.95)}"`,
+                    impact: `Could improve fill rate for ${data.orders} orders`,
+                    expectedFillRate: `${avgFillRate.toFixed(0)}% → ${Math.min(targetFillRate + 5, 95)}%`
+                  };
+                } else if (successRate < 60) {
+                  // Moderate performance - minor adjustments
+                  const reductionPercent = ((100 - avgFillRate) * 0.6).toFixed(0);
+                  recommendation = {
+                    type: 'adjust',
+                    priority: 'medium',
+                    action: `Optimize ${packageName} dimensions`,
+                    reason: `${successRate.toFixed(0)}% success rate - room for improvement`,
+                    suggestion: `Reduce package size by ~${reductionPercent}% to better fit orders`,
+                    impact: `Affects ${data.orders} orders (${((data.orders / results.allocations.length) * 100).toFixed(0)}% of total)`,
+                    expectedFillRate: `${avgFillRate.toFixed(0)}% → ${Math.min(avgFillRate + 10, targetFillRate + 5)}%`
+                  };
+                } else if (successRate >= 80) {
+                  // Good performance - keep as is
+                  recommendation = {
+                    type: 'keep',
+                    priority: 'low',
+                    action: `Keep ${packageName} as-is`,
+                    reason: `${successRate.toFixed(0)}% success rate - performing well`,
+                    suggestion: `Current dimensions are optimal for your target`,
+                    impact: `Successfully handles ${data.meetingTarget} orders`,
+                    expectedFillRate: `${avgFillRate.toFixed(0)}% (target achieved)`
+                  };
+                } else {
+                  // Decent performance - minor tweaks
+                  recommendation = {
+                    type: 'tweak',
+                    priority: 'low',
+                    action: `Fine-tune ${packageName}`,
+                    reason: `${successRate.toFixed(0)}% success rate - close to target`,
+                    suggestion: `Small dimension adjustments could push you over the target`,
+                    impact: `Minor improvements for ${data.orders} orders`,
+                    expectedFillRate: `${avgFillRate.toFixed(0)}% → ${targetFillRate}%`
+                  };
+                }
+
+                return {
+                  packageName,
+                  orders: data.orders,
+                  avgFillRate,
+                  successRate,
+                  avgCost,
+                  type: recommendation.type,
+                  priority: recommendation.priority,
+                  action: recommendation.action,
+                  reason: recommendation.reason,
+                  suggestion: recommendation.suggestion,
+                  impact: recommendation.impact,
+                  expectedFillRate: recommendation.expectedFillRate
+                };
+              }).sort((a, b) => {
+                // Sort by priority: high > medium > low
+                const priorityOrder = { high: 3, medium: 2, low: 1 };
+                return priorityOrder[b.priority] - priorityOrder[a.priority];
+              });
+
+              const overallSuccessRate = (currentPerformance.totalMeetingTarget / currentPerformance.totalOrders) * 100;
+
+              return (
+                <div className="space-y-6">
+                  {/* Current Performance Summary */}
+                  <div className="bg-white border rounded-lg p-5">
+                    <h4 className="font-semibold text-gray-900 mb-3">Performance at {targetFillRate}% Target</h4>
+                    <div className="grid grid-cols-2 gap-4">
+                      <button
+                        onClick={() => setShowMeetingTarget(!showMeetingTarget)}
+                        className="text-center p-3 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors cursor-pointer border border-blue-200 hover:border-blue-300"
+                      >
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                          <div className="text-2xl font-bold text-blue-600">
+                            {currentPerformance.totalMeetingTarget}
+                          </div>
+                          <ChevronDown className={`h-4 w-4 text-blue-600 transition-transform ${showMeetingTarget ? 'rotate-180' : ''}`} />
+                        </div>
+                        <div className="text-sm text-blue-800">Orders Meeting Target</div>
+                        <div className="text-xs text-blue-600">{overallSuccessRate.toFixed(1)}% success rate</div>
+                      </button>
+                      <button
+                        onClick={() => setShowNeedingImprovement(!showNeedingImprovement)}
+                        className="text-center p-3 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors cursor-pointer border border-orange-200 hover:border-orange-300"
+                      >
+                        <div className="flex items-center justify-center gap-2 mb-2">
+                          <div className="text-2xl font-bold text-orange-600">
+                            {currentPerformance.totalOrders - currentPerformance.totalMeetingTarget}
+                          </div>
+                          <ChevronDown className={`h-4 w-4 text-orange-600 transition-transform ${showNeedingImprovement ? 'rotate-180' : ''}`} />
+                        </div>
+                        <div className="text-sm text-orange-800">Orders Need Improvement</div>
+                        <div className="text-xs text-orange-600">{(100 - overallSuccessRate).toFixed(1)}% need optimization</div>
+                      </button>
+                    </div>
+
+                    {/* Expandable Order Details */}
+                    {showMeetingTarget && (
+                      <div className="mt-4 p-4 bg-blue-25 border border-blue-200 rounded-lg">
+                        <h5 className="font-medium text-blue-900 mb-3">Orders Meeting {targetFillRate}% Target</h5>
+                        <div className="max-h-48 overflow-y-auto">
+                          <div className="grid gap-2">
+                            {currentPerformance.ordersMeetingTarget.slice(0, 20).map((order, idx) => (
+                              <div key={idx} className="flex justify-between items-center text-sm bg-white p-2 rounded border">
+                                <span className="font-medium text-gray-900">{order.orderId}</span>
+                                <div className="flex gap-3 text-xs text-gray-600">
+                                  <span>{order.recommendedPackage}</span>
+                                  <span className="font-medium text-green-600">{order.fillRate.toFixed(1)}%</span>
+                                </div>
+                              </div>
+                            ))}
+                            {currentPerformance.ordersMeetingTarget.length > 20 && (
+                              <div className="text-xs text-blue-600 text-center py-2">
+                                Showing first 20 of {currentPerformance.ordersMeetingTarget.length} orders
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {showNeedingImprovement && (
+                      <div className="mt-4 p-4 bg-orange-25 border border-orange-200 rounded-lg">
+                        <h5 className="font-medium text-orange-900 mb-3">Orders Needing Improvement</h5>
+                        <div className="max-h-48 overflow-y-auto">
+                          <div className="grid gap-2">
+                            {currentPerformance.ordersNeedingImprovement.slice(0, 20).map((order, idx) => (
+                              <div key={idx} className="flex justify-between items-center text-sm bg-white p-2 rounded border">
+                                <span className="font-medium text-gray-900">{order.orderId}</span>
+                                <div className="flex gap-3 text-xs text-gray-600">
+                                  <span>{order.recommendedPackage}</span>
+                                  <span className="font-medium text-red-600">{order.fillRate.toFixed(1)}%</span>
+                                  <span className="text-gray-500">Gap: {(targetFillRate - order.fillRate).toFixed(1)}%</span>
+                                </div>
+                              </div>
+                            ))}
+                            {currentPerformance.ordersNeedingImprovement.length > 20 && (
+                              <div className="text-xs text-orange-600 text-center py-2">
+                                Showing first 20 of {currentPerformance.ordersNeedingImprovement.length} orders
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Package Recommendations */}
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-4">Package Optimization Recommendations</h4>
+                    <div className="space-y-4">
+                      {sortPackagesBySize(packageRecommendations).map((rec) => {
+                        const getStyle = () => {
+                          switch (rec.type) {
+                            case 'optimize':
+                              return {
+                                bgColor: 'bg-red-50 border-red-200',
+                                iconColor: 'bg-red-600',
+                                badgeColor: 'bg-red-100 text-red-800'
+                              };
+                            case 'adjust':
+                              return {
+                                bgColor: 'bg-yellow-50 border-yellow-200',
+                                iconColor: 'bg-yellow-600',
+                                badgeColor: 'bg-yellow-100 text-yellow-800'
+                              };
+                            case 'keep':
+                              return {
+                                bgColor: 'bg-green-50 border-green-200',
+                                iconColor: 'bg-green-600',
+                                badgeColor: 'bg-green-100 text-green-800'
+                              };
+                            default:
+                              return {
+                                bgColor: 'bg-blue-50 border-blue-200',
+                                iconColor: 'bg-blue-600',
+                                badgeColor: 'bg-blue-100 text-blue-800'
+                              };
+                          }
+                        };
+
+                        const style = getStyle();
+
+                        return (
+                          <div key={rec.packageName} className={`${style.bgColor} border rounded-lg p-5`}>
+                            <div className="flex items-start gap-4">
+                              <div className={`${style.iconColor} rounded-full p-2 flex-shrink-0`}>
+                                <Package className="h-5 w-5 text-white" />
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center justify-between mb-2">
+                                  <h5 className="font-semibold text-gray-900">{rec.action}</h5>
+                                  <Badge className={`${style.badgeColor} text-xs px-2 py-1`}>
+                                    {rec.priority.toUpperCase()} PRIORITY
+                                  </Badge>
+                                </div>
+                                <p className="text-sm text-gray-700 mb-3">{rec.reason}</p>
+
+                                <div className="bg-white bg-opacity-70 rounded-lg p-3 mb-3">
+                                  <p className="text-sm font-medium text-gray-900 mb-1">💡 Recommendation:</p>
+                                  <p className="text-sm text-gray-800">{rec.suggestion}</p>
+                                </div>
+
+                                <div className="flex items-center justify-between text-xs text-gray-600">
+                                  <span>Impact: {rec.impact}</span>
+                                  <span>Expected: {rec.expectedFillRate}</span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </CardContent>
+        </Card>
 
         {/* Detailed Order Table */}
         <Card>

@@ -19,6 +19,7 @@ interface ParsedPackage {
   costPerUnit: number;
   packageWeight: number;
   maxWeight?: number;
+  usage?: string | null;  // Baseline usage percentage
 }
 
 interface AllocationResult {
@@ -31,6 +32,28 @@ interface AllocationResult {
   packageVolume: number;
 }
 
+interface PackageCostBreakdown {
+  packageName: string;
+  baselineOrders: number;
+  optimizedOrders: number;
+  baselineCost: number;
+  optimizedCost: number;
+  savings: number;
+  savingsPercentage: number;
+  packageCost: number;
+}
+
+interface PackageMaterialBreakdown {
+  packageName: string;
+  baselineOrders: number;
+  optimizedOrders: number;
+  baselineMaterial: number; // Total weight used in baseline
+  optimizedMaterial: number; // Total weight used in optimized
+  materialSavings: number; // Weight saved vs baseline
+  materialSavingsPercentage: number; // Percentage of material saved
+  packageWeight: number; // Weight per package unit
+}
+
 interface AnalysisResults {
   allocations: AllocationResult[];
   summary: {
@@ -38,11 +61,20 @@ interface AnalysisResults {
     processedOrders: number;
     averageFillRate: number;
     totalCost: number;
+    baselineCost: number; // Cost using baseline package distribution
+    savings: number; // Amount saved vs baseline
+    savingsPercentage: number; // Percentage saved vs baseline
+    totalMaterial: number; // Total material weight used in optimized
+    baselineMaterial: number; // Total material weight in baseline
+    materialSavings: number; // Material weight saved vs baseline
+    materialSavingsPercentage: number; // Percentage of material saved
     processingTime: number;
     memoryUsed?: number;
     throughput: number; // orders per second
   };
-  packageDistribution: { name: string; count: number; percentage: number }[];
+  packageDistribution: { name: string; count: number; percentage: number; baselinePercentage?: number }[];
+  packageCostBreakdown: PackageCostBreakdown[]; // Per-package cost analysis
+  packageMaterialBreakdown: PackageMaterialBreakdown[]; // Per-package material analysis
   fillRateDistribution: { range: string; count: number }[];
   efficiency: {
     optimalAllocations: number;
@@ -238,13 +270,103 @@ function processOrders(orders: ParsedOrder[], packages: ParsedPackage[]): Analys
     ? allocations.reduce((sum, alloc) => sum + alloc.fillRate, 0) / allocations.length
     : 0;
 
+  // Calculate baseline cost and per-package breakdown
+  let baselineCost = 0;
+  const totalOrdersProcessed = allocations.length;
+
+  // Parse baseline usage percentages from packages
+  const baselineDistribution: Record<string, number> = {};
+  packages.forEach(pkg => {
+    if (pkg.usage) {
+      const usagePercent = parseFloat(pkg.usage.toString().replace('%', ''));
+      if (!isNaN(usagePercent)) {
+        baselineDistribution[pkg.packageName] = usagePercent / 100;
+      }
+    }
+  });
+
+  // Calculate optimized package counts from allocations
+  const optimizedCounts: Record<string, number> = {};
+  allocations.forEach(alloc => {
+    optimizedCounts[alloc.recommendedPackage] = (optimizedCounts[alloc.recommendedPackage] || 0) + 1;
+  });
+
+  // Create per-package cost and material breakdown
+  const packageCostBreakdown: PackageCostBreakdown[] = [];
+  const packageMaterialBreakdown: PackageMaterialBreakdown[] = [];
+  let baselineMaterial = 0;
+
+  packages.forEach(pkg => {
+    // Baseline calculations
+    const baselinePercentage = baselineDistribution[pkg.packageName] || (Object.keys(baselineDistribution).length === 0 ? 1 / packages.length : 0);
+    const baselineOrders = Math.round(totalOrdersProcessed * baselinePercentage);
+    const packageBaselineCost = baselineOrders * pkg.costPerUnit;
+    const packageBaselineMaterial = baselineOrders * pkg.packageWeight;
+
+    // Optimized calculations
+    const optimizedOrders = optimizedCounts[pkg.packageName] || 0;
+    const packageOptimizedCost = optimizedOrders * pkg.costPerUnit;
+    const packageOptimizedMaterial = optimizedOrders * pkg.packageWeight;
+
+    // Cost savings calculations
+    const packageSavings = packageBaselineCost - packageOptimizedCost;
+    const packageSavingsPercentage = packageBaselineCost > 0 ? (packageSavings / packageBaselineCost) * 100 : 0;
+
+    // Material savings calculations
+    const packageMaterialSavings = packageBaselineMaterial - packageOptimizedMaterial;
+    const packageMaterialSavingsPercentage = packageBaselineMaterial > 0 ? (packageMaterialSavings / packageBaselineMaterial) * 100 : 0;
+
+    packageCostBreakdown.push({
+      packageName: pkg.packageName,
+      baselineOrders,
+      optimizedOrders,
+      baselineCost: packageBaselineCost,
+      optimizedCost: packageOptimizedCost,
+      savings: packageSavings,
+      savingsPercentage: packageSavingsPercentage,
+      packageCost: pkg.costPerUnit
+    });
+
+    packageMaterialBreakdown.push({
+      packageName: pkg.packageName,
+      baselineOrders,
+      optimizedOrders,
+      baselineMaterial: packageBaselineMaterial,
+      optimizedMaterial: packageOptimizedMaterial,
+      materialSavings: packageMaterialSavings,
+      materialSavingsPercentage: packageMaterialSavingsPercentage,
+      packageWeight: pkg.packageWeight
+    });
+
+    baselineCost += packageBaselineCost;
+    baselineMaterial += packageBaselineMaterial;
+  });
+
+  // Calculate total cost and material savings
+  const savings = baselineCost - totalCost;
+  const savingsPercentage = baselineCost > 0 ? (savings / baselineCost) * 100 : 0;
+
+  // Calculate total material usage
+  const totalMaterial = allocations.reduce((sum, alloc) => {
+    const pkg = packages.find(p => p.packageName === alloc.recommendedPackage);
+    return sum + (pkg ? pkg.packageWeight : 0);
+  }, 0);
+
+  const materialSavings = baselineMaterial - totalMaterial;
+  const materialSavingsPercentage = baselineMaterial > 0 ? (materialSavings / baselineMaterial) * 100 : 0;
+
   // Calculate efficiency metrics
   const optimalAllocations = allocations.filter(alloc => alloc.fillRate >= 75).length;
   const subOptimalAllocations = allocations.filter(alloc => alloc.fillRate >= 25 && alloc.fillRate < 75).length;
   const unallocatedOrders = totalOrders - allocations.length;
 
-  // Calculate distributions
+  // Calculate distributions with baseline comparison
   const { packageDistribution, fillRateDistribution } = calculateDistributions(allocations);
+
+  // Add baseline percentages to package distribution
+  packageDistribution.forEach(dist => {
+    dist.baselinePercentage = (baselineDistribution[dist.name] || 0) * 100;
+  });
 
   // Memory usage estimation (rough)
   const memoryUsed = Math.round((
@@ -260,11 +382,32 @@ function processOrders(orders: ParsedOrder[], packages: ParsedPackage[]): Analys
       processedOrders: allocations.length,
       averageFillRate: Math.round(averageFillRate * 100) / 100,
       totalCost: Math.round(totalCost * 100) / 100,
+      baselineCost: Math.round(baselineCost * 100) / 100,
+      savings: Math.round(savings * 100) / 100,
+      savingsPercentage: Math.round(savingsPercentage * 100) / 100,
+      totalMaterial: Math.round(totalMaterial * 1000) / 1000, // Round to 3 decimal places for weight
+      baselineMaterial: Math.round(baselineMaterial * 1000) / 1000,
+      materialSavings: Math.round(materialSavings * 1000) / 1000,
+      materialSavingsPercentage: Math.round(materialSavingsPercentage * 100) / 100,
       processingTime,
       memoryUsed,
       throughput
     },
     packageDistribution,
+    packageCostBreakdown: packageCostBreakdown.map(breakdown => ({
+      ...breakdown,
+      baselineCost: Math.round(breakdown.baselineCost * 100) / 100,
+      optimizedCost: Math.round(breakdown.optimizedCost * 100) / 100,
+      savings: Math.round(breakdown.savings * 100) / 100,
+      savingsPercentage: Math.round(breakdown.savingsPercentage * 100) / 100
+    })),
+    packageMaterialBreakdown: packageMaterialBreakdown.map(breakdown => ({
+      ...breakdown,
+      baselineMaterial: Math.round(breakdown.baselineMaterial * 1000) / 1000,
+      optimizedMaterial: Math.round(breakdown.optimizedMaterial * 1000) / 1000,
+      materialSavings: Math.round(breakdown.materialSavings * 1000) / 1000,
+      materialSavingsPercentage: Math.round(breakdown.materialSavingsPercentage * 100) / 100
+    })),
     fillRateDistribution,
     efficiency: {
       optimalAllocations,
