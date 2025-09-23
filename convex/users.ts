@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalQuery } from "./_generated/server";
 
 // Create or update user from Clerk
 export const createOrUpdateUser = mutation({
@@ -67,32 +67,37 @@ export const createOrUpdateUser = mutation({
         lastLoginAt: Date.now(),
       });
       
-      // Check if this is a testing account
+      // Check if this is a testing account - only create subscription/tokens for testing accounts
       const isTestingAccount = args.email === 'admin@briidge.one';
-      const monthlyTokens = isTestingAccount ? 1000 : 5; // 1000 tokens for testing, 5 for normal users
-      
-      // Initialize free trial subscription
-      await ctx.db.insert("subscriptions", {
-        userId,
-        stripeCustomerId: "", // Will be set when they subscribe
-        stripeSubscriptionId: undefined,
-        status: "trialing",
-        planType: isTestingAccount ? "enterprise" : "free",
-        tokensPerMonth: monthlyTokens,
-        currentPeriodEnd: Date.now() + (isTestingAccount ? 365 : 14) * 24 * 60 * 60 * 1000, // 1 year for testing, 14 days trial
-        createdAt: Date.now(),
-        updatedAt: Date.now(),
-      });
-      
-      // Initialize token balance
-      await ctx.db.insert("tokenBalance", {
-        userId,
-        monthlyTokens: monthlyTokens,
-        additionalTokens: 0,
-        usedTokens: 0,
-        resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000, // Reset in 30 days
-        updatedAt: Date.now(),
-      });
+
+      if (isTestingAccount) {
+        const monthlyTokens = 1000; // 1000 tokens for testing account
+
+        // Initialize enterprise subscription for testing account
+        await ctx.db.insert("subscriptions", {
+          userId,
+          stripeCustomerId: "", // Will be set when they subscribe
+          stripeSubscriptionId: undefined,
+          status: "trialing",
+          planType: "enterprise",
+          tokensPerMonth: monthlyTokens,
+          currentPeriodEnd: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year for testing
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        });
+
+        // Initialize token balance for testing account
+        await ctx.db.insert("tokenBalance", {
+          userId,
+          monthlyTokens: monthlyTokens,
+          additionalTokens: 0,
+          usedTokens: 0,
+          resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000, // Reset in 30 days
+          updatedAt: Date.now(),
+        });
+      }
+      // For regular users: NO automatic subscription or token balance creation
+      // They must explicitly choose a plan on the onboarding page
       
       return userId;
     }
@@ -101,6 +106,17 @@ export const createOrUpdateUser = mutation({
 
 // Get user by Clerk ID (for webhooks)
 export const getUserByClerkId = query({
+  args: { clerkId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", args.clerkId))
+      .first();
+  },
+});
+
+// Internal version for use by other backend functions
+export const _getUserByClerkId = internalQuery({
   args: { clerkId: v.string() },
   handler: async (ctx, args) => {
     return await ctx.db

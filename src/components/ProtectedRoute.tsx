@@ -45,10 +45,17 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
     return <Navigate to="/sign-in" replace />;
   }
 
-  // Check subscription status for dashboard access
+  // Check subscription status for routing
   if (isSignedIn && subscriptionStatus !== undefined) {
-    // If user has no active subscription (not even free trial), redirect to onboarding
-    if (!subscriptionStatus || (!subscriptionStatus.isActive && subscriptionStatus.planType === 'free')) {
+    const currentPath = window.location.pathname;
+
+    // If user has active subscription but is on onboarding page, redirect to dashboard
+    if (subscriptionStatus?.isActive && currentPath === '/onboarding') {
+      return <Navigate to="/dashboard" replace />;
+    }
+
+    // If user has no active subscription and not on onboarding, redirect to onboarding
+    if (!subscriptionStatus?.isActive && currentPath !== '/onboarding') {
       return <Navigate to="/onboarding" replace />;
     }
   }

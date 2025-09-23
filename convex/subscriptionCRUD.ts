@@ -1,8 +1,19 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalQuery } from "./_generated/server";
 
 // Get subscription by user ID
 export const getSubscriptionByUser = query({
+  args: { userId: v.id("users") },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("subscriptions")
+      .withIndex("by_user", (q) => q.eq("userId", args.userId))
+      .first();
+  },
+});
+
+// Internal version for use by other backend functions
+export const _getSubscriptionByUser = internalQuery({
   args: { userId: v.id("users") },
   handler: async (ctx, args) => {
     return await ctx.db
@@ -37,24 +48,7 @@ export const createSubscription = mutation({
   },
 });
 
-// Create free trial subscription
-export const createFreeTrialSubscription = mutation({
-  args: {
-    userId: v.id("users"),
-  },
-  handler: async (ctx, args) => {
-    return await ctx.db.insert("subscriptions", {
-      userId: args.userId,
-      stripeCustomerId: "",
-      status: "active",
-      planType: "free",
-      tokensPerMonth: 5,
-      currentPeriodEnd: Date.now() + 30 * 24 * 60 * 60 * 1000, // 30 days from now
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    });
-  },
-});
+// Note: createFreeTrialSubscription function removed - free trials are no longer supported
 
 // Update existing subscription
 export const updateSubscription = mutation({

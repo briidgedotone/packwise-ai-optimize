@@ -16,14 +16,67 @@ try {
   console.log("Stripe not available in this environment");
 }
 
-// Simple helper to check if Stripe is configured
+// Comprehensive environment validation
+export const validateStripeEnvironment = action({
+  args: {},
+  handler: async (ctx, args) => {
+    const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+    const stripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+    const stripeStarterPriceId = process.env.STRIPE_STARTER_PRICE_ID;
+    const stripeProfessionalPriceId = process.env.STRIPE_PROFESSIONAL_PRICE_ID;
+    const stripePublishableKey = process.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
+    const validation = {
+      stripeSecretKey: {
+        configured: !!stripeSecretKey && stripeSecretKey !== '',
+        environment: stripeSecretKey?.startsWith('sk_test_') ? 'test' :
+                     stripeSecretKey?.startsWith('sk_live_') ? 'live' : 'none',
+        valid: !!stripeSecretKey && (stripeSecretKey.startsWith('sk_test_') || stripeSecretKey.startsWith('sk_live_'))
+      },
+      stripeWebhookSecret: {
+        configured: !!stripeWebhookSecret && stripeWebhookSecret !== '',
+        valid: !!stripeWebhookSecret && stripeWebhookSecret.startsWith('whsec_')
+      },
+      stripeStarterPriceId: {
+        configured: !!stripeStarterPriceId && stripeStarterPriceId !== '',
+        valid: !!stripeStarterPriceId && stripeStarterPriceId.startsWith('price_')
+      },
+      stripeProfessionalPriceId: {
+        configured: !!stripeProfessionalPriceId && stripeProfessionalPriceId !== '',
+        valid: !!stripeProfessionalPriceId && stripeProfessionalPriceId.startsWith('price_')
+      },
+      stripePublishableKey: {
+        configured: !!stripePublishableKey && stripePublishableKey !== '',
+        environment: stripePublishableKey?.startsWith('pk_test_') ? 'test' :
+                     stripePublishableKey?.startsWith('pk_live_') ? 'live' : 'none',
+        valid: !!stripePublishableKey && (stripePublishableKey.startsWith('pk_test_') || stripePublishableKey.startsWith('pk_live_'))
+      }
+    };
+
+    const allValid = Object.values(validation).every(v => v.configured && v.valid);
+    const environmentMatch = validation.stripeSecretKey.environment === validation.stripePublishableKey.environment;
+
+    return {
+      ...validation,
+      allValid,
+      environmentMatch,
+      summary: {
+        configured: Object.values(validation).filter(v => v.configured).length,
+        valid: Object.values(validation).filter(v => v.valid).length,
+        total: Object.keys(validation).length
+      }
+    };
+  },
+});
+
+// Simple helper to check if Stripe is configured (for backward compatibility)
 export const isStripeConfigured = action({
   args: {},
   handler: async (ctx, args) => {
     const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
     return {
       configured: !!stripeSecretKey && stripeSecretKey !== '',
-      environment: stripeSecretKey?.startsWith('sk_test_') ? 'test' : 
+      environment: stripeSecretKey?.startsWith('sk_test_') ? 'test' :
                    stripeSecretKey?.startsWith('sk_live_') ? 'live' : 'none'
     };
   },

@@ -83,7 +83,6 @@ export const generateSpecs = action({
     productData: v.string(),
     boundingDimensions: v.object({
       min: v.object({ l: v.number(), w: v.number(), h: v.number() }),
-      avg: v.object({ l: v.number(), w: v.number(), h: v.number() }),
       max: v.object({ l: v.number(), w: v.number(), h: v.number() }),
     }),
     additionalInfo: v.optional(v.object({
@@ -169,7 +168,6 @@ async function generateSpecsForProducts(
   products: Array<{ orderId?: string; productName: string; category?: string }>,
   boundingDimensions: {
     min: { l: number; w: number; h: number };
-    avg: { l: number; w: number; h: number };
     max: { l: number; w: number; h: number };
   },
   additionalInfo: {
@@ -334,7 +332,6 @@ function buildGPTPrompt(
   products: Array<{ orderId?: string; productName: string; category?: string }>,
   boundingDimensions: {
     min: { l: number; w: number; h: number };
-    avg: { l: number; w: number; h: number };
     max: { l: number; w: number; h: number };
   },
   additionalInfo: {
@@ -353,7 +350,6 @@ ${productList}
 
 DIMENSIONAL CONSTRAINTS:
 - Minimum: ${boundingDimensions.min.l}" × ${boundingDimensions.min.w}" × ${boundingDimensions.min.h}"
-- Average: ${boundingDimensions.avg.l}" × ${boundingDimensions.avg.w}" × ${boundingDimensions.avg.h}"
 - Maximum: ${boundingDimensions.max.l}" × ${boundingDimensions.max.w}" × ${boundingDimensions.max.h}"
 
 ${additionalInfo?.category ? `CONTEXT: Product category is ${additionalInfo.category}` : ''}

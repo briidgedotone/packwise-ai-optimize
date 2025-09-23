@@ -1,7 +1,8 @@
 {
   "node": {
     "externalPackages": [
-      "@clerk/clerk-sdk-node"
+      "@clerk/clerk-sdk-node",
+      "stripe"
     ]
   }
 }

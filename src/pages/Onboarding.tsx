@@ -14,42 +14,13 @@ export default function Onboarding() {
   const navigate = useNavigate();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
-  const [selectedPlan, setSelectedPlan] = useState<'free' | 'starter' | 'professional'>('free');
+  const [selectedPlan, setSelectedPlan] = useState<'starter' | 'professional'>('starter');
   
-  // Convex actions
+  // Convex actions and queries
   const createCheckoutSession = useAction(api.stripe.createCheckoutSession);
-  const createFreeTrialSubscription = useMutation(api.subscriptionCRUD.createFreeTrialSubscription);
-  const createFreeTrialBalance = useMutation(api.tokenBalance.createFreeTrialBalance);
-  const getUserByClerkId = useQuery(api.users.getUserByClerkId, user ? { clerkId: user.id } : "skip");
-  
-  // Check if user already has a subscription
   const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus);
 
-  // If user already has active paid subscription, redirect to dashboard
-  if (subscriptionStatus?.isActive && (subscriptionStatus.planType === 'starter' || subscriptionStatus.planType === 'professional')) {
-    navigate('/dashboard');
-    return null;
-  }
-
   const plans = [
-    {
-      id: 'free',
-      name: 'Free Trial',
-      description: 'Perfect for trying out QuantiPackAI with sample analyses',
-      price: 'Free',
-      period: '5 tokens',
-      tokens: 5,
-      cta: 'Start Free Trial',
-      popular: false,
-      includes: [
-        'Free includes:',
-        '5 analysis tokens',
-        'All applications included',
-        'Email support',
-        'Basic analytics',
-        'CSV export'
-      ]
-    },
     {
       id: 'starter',
       name: 'Starter',
@@ -91,66 +62,48 @@ export default function Onboarding() {
 
   const handlePlanSelection = async (planId: string) => {
     setLoading(true);
-    setSelectedPlan(planId as any);
+    setSelectedPlan(planId as 'starter' | 'professional');
     
     try {
-      if (planId === 'free') {
-        // Free trial - create subscription and token balance
-        if (!getUserByClerkId) {
-          toast.error('User not found');
-          setLoading(false);
-          return;
-        }
+      // All plans are now paid plans - initiate Stripe checkout
+      if (!isStripeConfigured()) {
+        toast.error('Payment system is not configured. Please contact support.');
+        setLoading(false);
+        return;
+      }
 
-        // Create free trial subscription
-        await createFreeTrialSubscription({ userId: getUserByClerkId._id });
+      if (!user) {
+        toast.error('User not found');
+        setLoading(false);
+        return;
+      }
 
-        // Create token balance
-        await createFreeTrialBalance({ userId: getUserByClerkId._id });
+      // Get the price ID based on plan
+      const priceId = planId === 'starter'
+        ? import.meta.env.VITE_STRIPE_STARTER_PRICE_ID
+        : import.meta.env.VITE_STRIPE_PROFESSIONAL_PRICE_ID;
 
-        toast.success('Welcome! Your free trial is active with 5 tokens.');
-        navigate('/dashboard');
+      if (!priceId) {
+        toast.error('Price configuration is missing');
+        setLoading(false);
+        return;
+      }
+
+      // Create Stripe checkout session
+      const session = await createCheckoutSession({
+        priceId,
+        userId: user.id,
+        userEmail: user.emailAddresses[0]?.emailAddress || '',
+        successUrl: `${window.location.origin}/dashboard?payment=success`,
+        cancelUrl: `${window.location.origin}/onboarding`,
+      });
+
+      if (session.url) {
+        // Redirect to Stripe checkout
+        window.location.href = session.url;
       } else {
-        // Paid plan - initiate Stripe checkout
-        if (!isStripeConfigured()) {
-          toast.error('Payment system is not configured. Please contact support.');
-          setLoading(false);
-          return;
-        }
-
-        if (!user) {
-          toast.error('User not found');
-          setLoading(false);
-          return;
-        }
-
-        // Get the price ID based on plan
-        const priceId = planId === 'starter'
-          ? import.meta.env.VITE_STRIPE_STARTER_PRICE_ID
-          : import.meta.env.VITE_STRIPE_PROFESSIONAL_PRICE_ID;
-
-        if (!priceId) {
-          toast.error('Price configuration is missing');
-          setLoading(false);
-          return;
-        }
-
-        // Create Stripe checkout session
-        const session = await createCheckoutSession({
-          priceId,
-          userId: user.id,
-          userEmail: user.emailAddresses[0]?.emailAddress || '',
-          successUrl: `${window.location.origin}/dashboard?payment=success`,
-          cancelUrl: `${window.location.origin}/onboarding`,
-        });
-
-        if (session.url) {
-          // Redirect to Stripe checkout
-          window.location.href = session.url;
-        } else {
-          toast.error('Failed to create checkout session');
-          setLoading(false);
-        }
+        toast.error('Failed to create checkout session');
+        setLoading(false);
       }
     } catch (error) {
       console.error('Error selecting plan:', error);
@@ -170,13 +123,47 @@ export default function Onboarding() {
             </div>
           </div>
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            Welcome to QuantiPackAI, {user?.firstName || 'there'}!
+            {subscriptionStatus?.planType === 'free'
+              ? `Your free trial has ended, ${user?.firstName || 'there'}!`
+              : `Welcome to QuantiPackAI, ${user?.firstName || 'there'}!`
+            }
           </h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Choose your plan to start optimizing your packaging with AI-powered insights.
-            Each analysis uses one token.
+            {subscriptionStatus?.planType === 'free'
+              ? 'Please choose a plan to continue using QuantiPackAI and access all your previous analyses. Each plan includes unlimited access to all AI-powered features.'
+              : 'Choose your plan to start optimizing your packaging with AI-powered insights. Each analysis uses one token.'
+            }
           </p>
         </div>
+
+        {/* Migration Notice for Free Trial Users */}
+        {subscriptionStatus?.planType === 'free' && (
+          <div className="max-w-4xl mx-auto mb-8">
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+              <div className="flex items-start space-x-3">
+                <div className="flex-shrink-0">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Package className="h-4 w-4 text-blue-600" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">
+                    Upgrade Required
+                  </h3>
+                  <p className="text-blue-700 mb-4">
+                    Your free trial access has ended. To continue using QuantiPackAI and access all your previous analyses,
+                    please choose one of our paid plans below. All your data and previous work will be preserved.
+                  </p>
+                  <ul className="text-sm text-blue-600 space-y-1">
+                    <li>• All your previous analyses will remain accessible</li>
+                    <li>• No data will be lost during the upgrade</li>
+                    <li>• Choose the plan that best fits your business needs</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-3 gap-8 py-6 mb-12">

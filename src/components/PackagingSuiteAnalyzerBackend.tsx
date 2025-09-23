@@ -17,12 +17,16 @@ import {
   CheckIcon as Check
 } from '@heroicons/react/24/outline';
 import { ProductManual } from '@/components/ui/ProductManual';
+import { CSVFormatGuide } from '@/components/ui/CSVFormatGuide';
 import { useTokenGuard } from '@/hooks/useTokenGuard';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 
 export const PackagingSuiteAnalyzerBackend = () => {
   const navigate = useNavigate();
   const { checkAndConsumeToken, tokenBalance } = useTokenGuard();
+  const createAnalysis = useMutation(api.analyses.create);
   const [showHelpModal, setShowHelpModal] = useState(true); // Show automatically on load
   const [files, setFiles] = useState<{
     orderHistory: File | null;
@@ -403,71 +407,75 @@ export const PackagingSuiteAnalyzerBackend = () => {
         setProcessedOrders(0);
         setTotalOrders(orders.length);
 
-        // Initialize Web Worker
-        workerRef.current = new Worker(
-          new URL('../workers/analysisWorker.ts', import.meta.url),
-          { type: 'module' }
-        );
+        // Initialize Web Worker with Vite's special syntax
+        // Import the worker using ?worker suffix for Vite
+        import('../workers/analysisWorker.ts?worker').then((WorkerModule) => {
+          workerRef.current = new WorkerModule.default();
 
-        // Set up worker message handlers
-        workerRef.current.onmessage = (e) => {
-          const { type, data } = e.data;
+          // Set up worker message handlers
+          workerRef.current.onmessage = (e) => {
+            const { type, data } = e.data;
 
-          if (type === 'progress') {
-            setProgress(data.progress);
-            setProcessedOrders(data.processed);
-            console.log(`Progress: ${data.progress.toFixed(1)}% (${data.processed.toLocaleString()}/${data.total.toLocaleString()})`);
-          } else if (type === 'complete') {
-            console.log('Analysis complete! Navigating to results...');
-            setIsProcessing(false);
+            if (type === 'progress') {
+              setProgress(data.progress);
+              setProcessedOrders(data.processed);
+              console.log(`Progress: ${data.progress.toFixed(1)}% (${data.processed.toLocaleString()}/${data.total.toLocaleString()})`);
+            } else if (type === 'complete') {
+              console.log('Analysis complete! Saving to database...');
+              setIsProcessing(false);
 
-            // Navigate to results page with data passed through React Router state
-            navigate(`/suite-analysis/${analysisId}/client-results`, {
-              state: {
-                analysisResults: data,
-                analysisId: analysisId,
-                timestamp: new Date().toISOString()
+              // Navigate to results page with data passed through React Router state
+              navigate(`/suite-analysis/${analysisId}/client-results`, {
+                state: {
+                  analysisResults: data,
+                  analysisId: analysisId,
+                  timestamp: new Date().toISOString()
+                }
+              });
+
+              // Cleanup worker
+              if (workerRef.current) {
+                workerRef.current.terminate();
+                workerRef.current = null;
               }
-            });
+            } else if (type === 'error') {
+              console.error('Worker error:', data);
+              setError(`Processing failed: ${data.message || 'Unknown error'}`);
+              setIsProcessing(false);
 
-            // Cleanup worker
-            if (workerRef.current) {
-              workerRef.current.terminate();
-              workerRef.current = null;
+              // Cleanup worker
+              if (workerRef.current) {
+                workerRef.current.terminate();
+                workerRef.current = null;
+              }
             }
-          } else if (type === 'error') {
-            console.error('Worker error:', data);
-            setError(`Processing failed: ${data.message || 'Unknown error'}`);
+          };
+
+          workerRef.current.onerror = (error) => {
+            console.error('Worker error:', error);
+            setError('Web Worker failed to start');
             setIsProcessing(false);
+          };
 
-            // Cleanup worker
-            if (workerRef.current) {
-              workerRef.current.terminate();
-              workerRef.current = null;
-            }
-          }
-        };
+          // Transform orders to Web Worker format
+          const workerOrders = orders.map(order => ({
+            orderId: order.orderId,
+            volume: order.originalVolume || 0,
+            weight: order.weight || 1,
+            length: order.hasActualDimensions ? order.length : undefined,
+            width: order.hasActualDimensions ? order.width : undefined,
+            height: order.hasActualDimensions ? order.height : undefined
+          }));
 
-        workerRef.current.onerror = (error) => {
-          console.error('Worker error:', error);
-          setError('Web Worker failed to start');
+          // Send data to worker
+          workerRef.current.postMessage({
+            orders: workerOrders,
+            packages
+          });
+        }).catch((error) => {
+          console.error('Failed to load Web Worker:', error);
+          setError('Failed to load Web Worker');
           setIsProcessing(false);
-        };
-
-        // Transform orders to Web Worker format
-        const workerOrders = orders.map(order => ({
-          orderId: order.orderId,
-          volume: order.originalVolume || 0,
-          weight: order.weight || 1,
-          length: order.hasActualDimensions ? order.length : undefined,
-          width: order.hasActualDimensions ? order.width : undefined,
-          height: order.hasActualDimensions ? order.height : undefined
-        }));
-
-        // Send data to worker
-        workerRef.current.postMessage({
-          orders: workerOrders,
-          packages
         });
 
         return { analysisId };
@@ -543,6 +551,24 @@ export const PackagingSuiteAnalyzerBackend = () => {
           <h3 className="text-lg font-medium text-gray-900">Order History Data</h3>
         </div>
 
+        <CSVFormatGuide
+          title="Required CSV Format"
+          description="Your CSV should include: Order ID, Total Order Volume (CUIN), and optionally Customer ID, Product SKU, Quantity"
+          columns={[
+            { name: "Order ID" },
+            { name: "Total Order Volume" },
+            { name: "Customer ID" },
+            { name: "Product SKU" },
+            { name: "Quantity" }
+          ]}
+          sampleData={[
+            { "Order ID": "ORD-001", "Total Order Volume": "145.5", "Customer ID": "CUST-A", "Product SKU": "SKU-001", "Quantity": "2" },
+            { "Order ID": "ORD-002", "Total Order Volume": "89.2", "Customer ID": "CUST-B", "Product SKU": "SKU-002", "Quantity": "1" },
+            { "Order ID": "ORD-003", "Total Order Volume": "267.8", "Customer ID": "CUST-C", "Product SKU": "SKU-003", "Quantity": "3" }
+          ]}
+          className="mb-6"
+        />
+
         {!files.orderHistory ? (
           <label className="relative block">
             <input
@@ -555,9 +581,9 @@ export const PackagingSuiteAnalyzerBackend = () => {
               <div className="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-blue-500">
                 <Upload className="h-12 w-12 text-white" />
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Upload Order History</h4>
-              <p className="text-gray-600 mb-1">Drop or Upload Your Order History CSV Here</p>
-              <p className="text-sm text-gray-500">CSV file with Order ID and Total Volume columns</p>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Upload Order History CSV</h4>
+              <p className="text-gray-600 mb-1">Click to browse or drag and drop your file</p>
+              <p className="text-sm text-gray-500">CSV file with the format shown above</p>
             </div>
           </label>
         ) : (
@@ -613,23 +639,43 @@ export const PackagingSuiteAnalyzerBackend = () => {
         </div>
 
         {!useManualPackageInput ? (
-          !files.packagingSuite ? (
-            <label className="relative block">
-              <input
-                type="file"
-                accept=".csv"
-                onChange={(e) => handleFileUpload('packagingSuite', e.target.files?.[0] || null)}
-                className="hidden"
-              />
-              <div className="border-2 border-dashed border-gray-200 rounded-3xl p-12 text-center transition-all cursor-pointer group min-h-[300px] flex flex-col justify-center hover:border-blue-500 hover:bg-blue-50">
-                <div className="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-blue-500">
-                  <Upload className="h-12 w-12 text-white" />
+          <>
+            <CSVFormatGuide
+              title="Required CSV Format"
+              description="Your CSV should include: Package Type, Length (inches), Width (inches), Height (inches), Cost ($), Weight (lbs)"
+              columns={[
+                { name: "Package Type" },
+                { name: "Length" },
+                { name: "Width" },
+                { name: "Height" },
+                { name: "Cost" },
+                { name: "Weight" }
+              ]}
+              sampleData={[
+                { "Package Type": "Small Box", "Length": "12", "Width": "8", "Height": "6", "Cost": "1.25", "Weight": "0.5" },
+                { "Package Type": "Medium Box", "Length": "16", "Width": "12", "Height": "8", "Cost": "2.15", "Weight": "0.8" },
+                { "Package Type": "Large Box", "Length": "20", "Width": "16", "Height": "12", "Cost": "3.45", "Weight": "1.2" }
+              ]}
+              className="mb-6"
+            />
+
+            {!files.packagingSuite ? (
+              <label className="relative block">
+                <input
+                  type="file"
+                  accept=".csv"
+                  onChange={(e) => handleFileUpload('packagingSuite', e.target.files?.[0] || null)}
+                  className="hidden"
+                />
+                <div className="border-2 border-dashed border-gray-200 rounded-3xl p-12 text-center transition-all cursor-pointer group min-h-[300px] flex flex-col justify-center hover:border-blue-500 hover:bg-blue-50">
+                  <div className="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-blue-500">
+                    <Upload className="h-12 w-12 text-white" />
+                  </div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">Upload Packaging Types CSV</h4>
+                  <p className="text-gray-600 mb-1">Click to browse or drag and drop your file</p>
+                  <p className="text-sm text-gray-500">CSV file with the format shown above</p>
                 </div>
-                <h4 className="text-lg font-semibold text-gray-900 mb-2">Upload Packaging Suite</h4>
-                <p className="text-gray-600 mb-1">Drop or Upload Your Packaging CSV Here</p>
-                <p className="text-sm text-gray-500">CSV with packaging dimensions, costs, and usage data</p>
-              </div>
-            </label>
+              </label>
           ) : (
             <div className="border border-gray-200 rounded-3xl p-6 bg-green-50">
               <div className="flex items-center justify-between">
@@ -649,7 +695,8 @@ export const PackagingSuiteAnalyzerBackend = () => {
                 </Button>
               </div>
             </div>
-          )
+          )}
+          </>
         ) : (
           <div className="space-y-4">
             <p className="text-sm text-gray-600 mb-4">Enter your packaging types manually:</p>

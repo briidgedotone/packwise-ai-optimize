@@ -6,9 +6,18 @@ import { httpAction } from "./_generated/server";
 // HTTP router
 const http = httpRouter();
 
+// Test endpoint
+http.route({
+  path: "/test",
+  method: "GET",
+  handler: httpAction(async (ctx, request) => {
+    return new Response("Test endpoint working", { status: 200 });
+  }),
+});
+
 // Stripe webhook endpoint
 http.route({
-  path: "/stripe/webhook",
+  path: "/webhook",
   method: "POST",
   handler: httpAction(async (ctx, request) => {
     try {

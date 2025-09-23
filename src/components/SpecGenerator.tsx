@@ -13,18 +13,17 @@ import {
   InformationCircleIcon as Info,
   ArrowPathIcon as Loader2,
   ArrowPathIcon as RotateCcw,
-  EyeIcon as Eye,
-  EyeSlashIcon as EyeOff,
-  MagnifyingGlassIcon as Maximize2,
   XMarkIcon as X,
   ChevronLeftIcon as ChevronLeft,
   ChevronRightIcon as ChevronRight,
-  CheckIcon as Check
+  CheckIcon as Check,
+  PlusIcon as Plus
 } from '@heroicons/react/24/outline';
 import { useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { toast } from 'sonner';
 import { useTokenGuard } from '@/hooks/useTokenGuard';
+import { CSVFormatGuide } from '@/components/ui/CSVFormatGuide';
 
 interface SpecResult {
   orderId?: string;
@@ -64,9 +63,12 @@ export const SpecGenerator = () => {
   // State
   const [productFile, setProductFile] = useState<File | null>(null);
   const [csvContent, setCsvContent] = useState<string>('');
+  const [useManualEntry, setUseManualEntry] = useState(false);
+  const [manualProducts, setManualProducts] = useState([
+    { name: '', description: '', category: '' }
+  ]);
   const [boundingDimensions, setBoundingDimensions] = useState({
     min: { l: '', w: '', h: '' },
-    avg: { l: '', w: '', h: '' },
     max: { l: '', w: '', h: '' },
   });
   const [additionalInfo, setAdditionalInfo] = useState({
@@ -76,7 +78,6 @@ export const SpecGenerator = () => {
   });
   const [isProcessing, setIsProcessing] = useState(false);
   const [results, setResults] = useState<SpecResult[] | null>(null);
-  const [notesDisplay, setNotesDisplay] = useState<'truncated' | 'wrapped' | 'modal'>('truncated');
   const [selectedNote, setSelectedNote] = useState<{ product: string; notes: string } | null>(null);
   
   // Chunked processing state
@@ -88,16 +89,37 @@ export const SpecGenerator = () => {
   // Convex hooks
   const generateSpecs = useAction(api.specGenerator.generateSpecs);
 
+  // Manual entry helper functions
+  const addProductRow = () => {
+    if (manualProducts.length < 20) {
+      setManualProducts(prev => [...prev, { name: '', description: '', category: '' }]);
+    } else {
+      toast.error('Maximum 20 products allowed');
+    }
+  };
+
+  const removeProductRow = (index: number) => {
+    if (manualProducts.length > 1) {
+      setManualProducts(prev => prev.filter((_, i) => i !== index));
+    }
+  };
+
+  const updateProductRow = (index: number, field: 'name' | 'description' | 'category', value: string) => {
+    setManualProducts(prev => prev.map((product, i) =>
+      i === index ? { ...product, [field]: value } : product
+    ));
+  };
+
   // Step validation
-  const isStep1Valid = productFile !== null;
-  const isStep2Valid = boundingDimensions.min.l && boundingDimensions.avg.l && boundingDimensions.max.l;
+  const isStep1Valid = productFile !== null || (useManualEntry && manualProducts.some(p => p.name.trim() !== ''));
+  const isStep2Valid = boundingDimensions.min.l && boundingDimensions.max.l;
   const isStep3Valid = isStep1Valid && isStep2Valid;
 
   const steps = [
-    { 
-      number: 1, 
-      title: 'Product Data Upload', 
-      description: 'Upload your product list or order file',
+    {
+      number: 1,
+      title: 'Product Data Upload',
+      description: 'Upload your product list',
       isValid: isStep1Valid,
       isComplete: isStep1Valid && currentStep > 1
     },
@@ -124,12 +146,26 @@ export const SpecGenerator = () => {
     
     reader.onload = (e) => {
       const content = e.target?.result as string;
-      setCsvContent(content);
-      
-      // Preview first few lines
+
+      // Validate product count
       const lines = content.trim().split('\n');
       const productCount = Math.max(0, lines.length - 1);
-      
+
+      if (productCount > 20) {
+        toast.error(`Too many products! Your CSV contains ${productCount} products, but the maximum allowed is 20. Please reduce your file size or use multiple generations.`);
+        setProductFile(null);
+        setCsvContent('');
+        return;
+      }
+
+      if (productCount === 0) {
+        toast.error('No products found in CSV. Please check your file format.');
+        setProductFile(null);
+        setCsvContent('');
+        return;
+      }
+
+      setCsvContent(content);
       toast.success(`📄 File loaded: ${productCount} products detected`);
     };
     
@@ -143,7 +179,7 @@ export const SpecGenerator = () => {
       return false;
     }
     
-    if (!boundingDimensions.min.l || !boundingDimensions.avg.l || !boundingDimensions.max.l) {
+    if (!boundingDimensions.min.l || !boundingDimensions.max.l) {
       toast.error('Please set all bounding dimensions');
       return false;
     }
@@ -154,29 +190,24 @@ export const SpecGenerator = () => {
       w: parseFloat(boundingDimensions.min.w),
       h: parseFloat(boundingDimensions.min.h),
     };
-    const avg = {
-      l: parseFloat(boundingDimensions.avg.l),
-      w: parseFloat(boundingDimensions.avg.w),
-      h: parseFloat(boundingDimensions.avg.h),
-    };
     const max = {
       l: parseFloat(boundingDimensions.max.l),
       w: parseFloat(boundingDimensions.max.w),
       h: parseFloat(boundingDimensions.max.h),
     };
 
-    if (min.l >= avg.l || avg.l >= max.l) {
-      toast.error('Length dimensions must be: Min < Average < Max');
+    if (min.l >= max.l) {
+      toast.error('Length dimensions must be: Min < Max');
       return false;
     }
-    
-    if (min.w >= avg.w || avg.w >= max.w) {
-      toast.error('Width dimensions must be: Min < Average < Max');
+
+    if (min.w >= max.w) {
+      toast.error('Width dimensions must be: Min < Max');
       return false;
     }
-    
-    if (min.h >= avg.h || avg.h >= max.h) {
-      toast.error('Height dimensions must be: Min < Average < Max');
+
+    if (min.h >= max.h) {
+      toast.error('Height dimensions must be: Min < Max');
       return false;
     }
 
@@ -186,14 +217,28 @@ export const SpecGenerator = () => {
   // Generate specifications with chunked processing
   const handleGenerateSpecs = async () => {
     if (!validateForm()) return;
-    
+
     setIsProcessing(true);
     setResults(null);
     setProcessedProducts(0);
     setCurrentChunk(0);
-    
+
+    // Get CSV content - either from file or manual entries
+    let productData = csvContent;
+    if (useManualEntry) {
+      // Create CSV from manual entries
+      const validProducts = manualProducts.filter(p => p.name.trim() !== '');
+      const headers = ['Product Name', 'Description', 'Category'];
+      const rows = validProducts.map(p => [
+        `"${p.name}"`,
+        `"${p.description || ''}"`,
+        `"${p.category || ''}"`
+      ].join(','));
+      productData = [headers.join(','), ...rows].join('\n');
+    }
+
     // Get total product count
-    const lines = csvContent.trim().split('\n');
+    const lines = productData.trim().split('\n');
     const totalCount = Math.max(0, lines.length - 1); // Minus header
     setTotalProducts(totalCount);
     
@@ -206,11 +251,6 @@ export const SpecGenerator = () => {
             w: parseFloat(boundingDimensions.min.w),
             h: parseFloat(boundingDimensions.min.h),
           },
-          avg: {
-            l: parseFloat(boundingDimensions.avg.l),
-            w: parseFloat(boundingDimensions.avg.w),
-            h: parseFloat(boundingDimensions.avg.h),
-          },
           max: {
             l: parseFloat(boundingDimensions.max.l),
             w: parseFloat(boundingDimensions.max.w),
@@ -218,7 +258,7 @@ export const SpecGenerator = () => {
           },
         };
 
-        await processChunkedSpecs(bounds, totalCount);
+        await processChunkedSpecs(bounds, totalCount, productData);
         return { success: true };
       });
       
@@ -249,7 +289,7 @@ export const SpecGenerator = () => {
   };
   
   // Process specs in chunks for large files
-  const processChunkedSpecs = async (bounds: any, totalCount: number) => {
+  const processChunkedSpecs = async (bounds: any, totalCount: number, productData: string) => {
     let allResults: SpecResult[] = [];
     let chunk = 0;
     let processedSoFar = 0;
@@ -274,7 +314,7 @@ export const SpecGenerator = () => {
       setProcessingProgress(`Processing chunk ${chunk}: products ${chunkStart}-${chunkStart + expectedChunkSize - 1}`);
       
       const response: SpecGenerationResponse = await generateSpecs({
-        productData: csvContent,
+        productData: productData,
         boundingDimensions: bounds,
         additionalInfo: {
           category: additionalInfo.category || undefined,
@@ -358,7 +398,6 @@ export const SpecGenerator = () => {
     setResults(null);
     setBoundingDimensions({
       min: { l: '', w: '', h: '' },
-      avg: { l: '', w: '', h: '' },
       max: { l: '', w: '', h: '' },
     });
     setAdditionalInfo({ category: '', material: '', size: '' });
@@ -420,7 +459,43 @@ export const SpecGenerator = () => {
           <h3 className="text-lg font-medium text-gray-900">Product Data File</h3>
         </div>
 
-        {!productFile ? (
+        {/* Toggle between CSV upload and manual entry */}
+        <div className="flex gap-4 mb-6">
+          <Button
+            variant={!useManualEntry ? "default" : "outline"}
+            onClick={() => setUseManualEntry(false)}
+            className="flex-1"
+          >
+            Upload CSV
+          </Button>
+          <Button
+            variant={useManualEntry ? "default" : "outline"}
+            onClick={() => setUseManualEntry(true)}
+            className="flex-1"
+          >
+            Manual Entry
+          </Button>
+        </div>
+
+        {!useManualEntry ? (
+          <>
+            <CSVFormatGuide
+              title="Required CSV Format"
+              description="Your CSV should include: Product Name, and optionally Description, Category. Note: Limited to 20 products per generation."
+              columns={[
+                { name: "Product Name" },
+                { name: "Description" },
+                { name: "Category" }
+              ]}
+              sampleData={[
+                { "Product Name": "Wireless Bluetooth Headphones", "Description": "Over-ear wireless headphones", "Category": "Electronics" },
+                { "Product Name": "Stainless Steel Water Bottle", "Description": "500ml insulated bottle", "Category": "Drinkware" },
+                { "Product Name": "Organic Cotton T-Shirt", "Description": "Medium size crew neck", "Category": "Apparel" }
+              ]}
+              className="mb-6"
+            />
+
+            {!productFile ? (
           <label className="relative block">
             <input
               type="file"
@@ -435,9 +510,9 @@ export const SpecGenerator = () => {
               <div className="w-24 h-24 rounded-3xl flex items-center justify-center mx-auto mb-4 bg-purple-500">
                 <Upload className="h-12 w-12 text-white" />
               </div>
-              <h4 className="text-lg font-semibold text-gray-900 mb-2">Upload Product List</h4>
-              <p className="text-gray-600 mb-1">Drop or Upload Your Product CSV Here</p>
-              <p className="text-sm text-gray-500">CSV file with product names or Order ID + Products</p>
+              <h4 className="text-lg font-semibold text-gray-900 mb-2">Upload Product List CSV</h4>
+              <p className="text-gray-600 mb-1">Click to browse or drag and drop your file</p>
+              <p className="text-sm text-gray-500">CSV file with the format shown above</p>
             </div>
           </label>
         ) : (
@@ -463,9 +538,77 @@ export const SpecGenerator = () => {
             </div>
           </div>
         )}
+          </>
+        ) : (
+          <div className="space-y-4">
+            <p className="text-sm text-gray-600 mb-4">Enter your products manually (maximum 20):</p>
+            {manualProducts.map((product, index) => (
+              <div key={index} className="border border-gray-200 rounded-xl p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-medium text-gray-700">Product {index + 1}</h4>
+                  {manualProducts.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeProductRow(index)}
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div>
+                    <Label className="text-xs">Product Name *</Label>
+                    <Input
+                      type="text"
+                      value={product.name}
+                      onChange={(e) => updateProductRow(index, 'name', e.target.value)}
+                      placeholder="e.g., Wireless Bluetooth Headphones"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Description</Label>
+                    <Input
+                      type="text"
+                      value={product.description}
+                      onChange={(e) => updateProductRow(index, 'description', e.target.value)}
+                      placeholder="e.g., Over-ear wireless headphones"
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-xs">Category</Label>
+                    <Input
+                      type="text"
+                      value={product.category}
+                      onChange={(e) => updateProductRow(index, 'category', e.target.value)}
+                      placeholder="e.g., Electronics"
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {manualProducts.length < 20 && (
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addProductRow}
+                className="w-full border-dashed"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Another Product
+              </Button>
+            )}
+          </div>
+        )}
 
         {/* Optional Information */}
-        {productFile && (
+        {(productFile || (useManualEntry && manualProducts.some(p => p.name.trim() !== ''))) && (
           <div className="mt-6 space-y-4">
             <Label className="text-gray-700 font-medium">Optional Information (helps improve AI accuracy)</Label>
             <div className="grid gap-3">
@@ -506,14 +649,14 @@ export const SpecGenerator = () => {
         </div>
 
         <p className="text-sm text-gray-600 mb-6">
-          Set min/avg/max dimensions to calibrate AI estimates (inches). These should reflect your smallest, average, and largest products based on outer packaging dimensions.
+          Set min/max dimensions to calibrate AI estimates (inches). These should reflect your smallest and largest products based on outer packaging dimensions.
         </p>
 
         <div className="space-y-6">
-          {['min', 'avg', 'max'].map((type) => (
+          {['min', 'max'].map((type) => (
             <div key={type} className="space-y-3">
               <Label className="text-gray-700 font-medium text-base">
-                {type === 'min' ? 'Minimum' : type === 'avg' ? 'Average' : 'Maximum'} Dimensions
+                {type === 'min' ? 'Minimum' : 'Maximum'} Dimensions
               </Label>
               <div className="grid grid-cols-3 gap-4">
                 {['l', 'w', 'h'].map((dim) => (
@@ -545,7 +688,7 @@ export const SpecGenerator = () => {
 
         <div className="mt-6 border rounded-3xl p-4 bg-purple-50 border-purple-200">
           <p className="text-sm text-purple-700">
-            <strong>Tip:</strong> Enter dimensions in inches. Each dimension (L, W, H) must follow: Min &lt; Average &lt; Max
+            <strong>Tip:</strong> Enter dimensions in inches. Each dimension (L, W, H) must follow: Min &lt; Max
           </p>
         </div>
       </div>
@@ -585,11 +728,16 @@ export const SpecGenerator = () => {
             </div>
           </div>
 
-          {csvContent && (
+          {(csvContent || (useManualEntry && manualProducts.some(p => p.name.trim() !== ''))) && (
             <div className="bg-blue-50 rounded-xl p-4">
-              <h4 className="font-medium text-gray-900 mb-2">File Preview</h4>
+              <h4 className="font-medium text-gray-900 mb-2">
+                {useManualEntry ? 'Manual Entry Preview' : 'File Preview'}
+              </h4>
               <p className="text-sm text-gray-600">
-                {Math.max(0, csvContent.trim().split('\n').length - 1)} products detected
+                {useManualEntry
+                  ? `${manualProducts.filter(p => p.name.trim() !== '').length} products entered`
+                  : `${Math.max(0, csvContent.trim().split('\n').length - 1)} products detected`
+                }
               </p>
             </div>
           )}
@@ -649,39 +797,6 @@ export const SpecGenerator = () => {
                 </div>
               </div>
 
-              {/* Notes Display Options */}
-              <div className="flex items-center gap-2 p-2 bg-gray-50 rounded-xl">
-                <Label className="text-sm font-medium text-gray-700">Notes Display:</Label>
-                <div className="flex gap-1">
-                  <Button
-                    variant={notesDisplay === 'truncated' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setNotesDisplay('truncated')}
-                    className="h-8 text-xs"
-                  >
-                    <EyeOff className="h-3 w-3 mr-1" />
-                    Truncated
-                  </Button>
-                  <Button
-                    variant={notesDisplay === 'wrapped' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setNotesDisplay('wrapped')}
-                    className="h-8 text-xs"
-                  >
-                    <Eye className="h-3 w-3 mr-1" />
-                    Full Text
-                  </Button>
-                  <Button
-                    variant={notesDisplay === 'modal' ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => setNotesDisplay('modal')}
-                    className="h-8 text-xs"
-                  >
-                    <Maximize2 className="h-3 w-3 mr-1" />
-                    Click to View
-                  </Button>
-                </div>
-              </div>
 
               {/* Results Table */}
               <div className="overflow-x-auto border border-gray-200 rounded-xl">
@@ -722,33 +837,10 @@ export const SpecGenerator = () => {
                             {result.confidence.toUpperCase()}
                           </span>
                         </td>
-                        <td className={`px-4 py-3 text-gray-600 text-xs ${notesDisplay === 'wrapped' ? '' : 'max-w-xs'}`}>
-                          {notesDisplay === 'truncated' && (
-                            <div 
-                              className="truncate cursor-help hover:text-gray-900 transition-colors"
-                              title={result.notes}
-                            >
-                              {result.notes}
-                            </div>
-                          )}
-                          
-                          {notesDisplay === 'wrapped' && (
-                            <div className="whitespace-pre-wrap text-wrap max-w-md">
-                              {result.notes}
-                            </div>
-                          )}
-                          
-                          {notesDisplay === 'modal' && (
-                            <button
-                              className="underline cursor-pointer hover:opacity-80 text-purple-600"
-                              onClick={() => setSelectedNote({ 
-                                product: result.productName, 
-                                notes: result.notes 
-                              })}
-                            >
-                              View Details →
-                            </button>
-                          )}
+                        <td className="px-4 py-3 text-gray-600 text-xs">
+                          <div className="whitespace-pre-wrap text-wrap max-w-md">
+                            {result.notes}
+                          </div>
                         </td>
                       </tr>
                     ))}

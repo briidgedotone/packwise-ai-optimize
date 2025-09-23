@@ -225,4 +225,21 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_month", ["userId", "month"]),
+
+  // Webhook Status Tracking
+  webhookStatus: defineTable({
+    userId: v.string(), // Clerk user ID
+    eventType: v.string(), // e.g., customer.subscription.created
+    status: v.union(
+      v.literal("processing"),
+      v.literal("completed"),
+      v.literal("failed")
+    ),
+    message: v.optional(v.string()),
+    subscriptionId: v.optional(v.string()),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_status", ["status"]),
 });
