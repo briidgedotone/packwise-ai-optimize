@@ -148,6 +148,17 @@ export const updateUserStripeCustomerId = mutation({
   },
 });
 
+// Get user by Stripe customer ID (for webhooks)
+export const getUserByStripeCustomerId = query({
+  args: { stripeCustomerId: v.string() },
+  handler: async (ctx, args) => {
+    return await ctx.db
+      .query("users")
+      .withIndex("by_stripe_customer", (q) => q.eq("stripeCustomerId", args.stripeCustomerId))
+      .first();
+  },
+});
+
 // Get current user
 export const getCurrentUser = query({
   args: {},

@@ -242,4 +242,30 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_status", ["status"]),
+
+  // Billing History (Stripe invoices and payment records)
+  billingHistory: defineTable({
+    userId: v.id("users"), // Reference to users table
+    stripeCustomerId: v.string(), // Stripe customer ID
+    stripeInvoiceId: v.string(), // Stripe invoice ID
+    stripeSubscriptionId: v.optional(v.string()), // Stripe subscription ID
+    amount: v.number(), // Amount in cents
+    currency: v.string(), // Currency code (e.g., "usd")
+    status: v.union(
+      v.literal("paid"),
+      v.literal("open"),
+      v.literal("void"),
+      v.literal("uncollectible")
+    ),
+    planName: v.string(), // e.g., "Professional", "Starter"
+    billingPeriodStart: v.number(), // Unix timestamp
+    billingPeriodEnd: v.number(), // Unix timestamp
+    invoiceUrl: v.optional(v.string()), // Stripe hosted invoice URL
+    pdfUrl: v.optional(v.string()), // Direct PDF download URL
+    createdAt: v.number(), // When invoice was created
+    paidAt: v.optional(v.number()), // When invoice was paid
+  })
+    .index("by_user", ["userId"])
+    .index("by_customer", ["stripeCustomerId"])
+    .index("by_user_date", ["userId", "createdAt"]),
 });

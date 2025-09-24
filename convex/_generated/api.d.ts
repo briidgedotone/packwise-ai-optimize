@@ -16,6 +16,7 @@ import type {
 import type * as adminTools from "../adminTools.js";
 import type * as aiAssistant from "../aiAssistant.js";
 import type * as analyses from "../analyses.js";
+import type * as billing from "../billing.js";
 import type * as cleanup from "../cleanup.js";
 import type * as dashboard from "../dashboard.js";
 import type * as debug from "../debug.js";
@@ -49,6 +50,7 @@ declare const fullApi: ApiFromModules<{
   adminTools: typeof adminTools;
   aiAssistant: typeof aiAssistant;
   analyses: typeof analyses;
+  billing: typeof billing;
   cleanup: typeof cleanup;
   dashboard: typeof dashboard;
   debug: typeof debug;

@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
+import { useQuery, useAction } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import { Button } from '@/components/ui/button';
 import { designSystem } from '@/lib/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { 
-  Settings as SettingsIcon, User, Bell, Shield, 
-  Palette, Globe, Database, Mail, Phone,
-  Save, ArrowLeft, Check, X
+import {
+  Settings as SettingsIcon, User, CreditCard,
+  Save
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -27,24 +28,64 @@ export const Settings = () => {
     role: 'Packaging Manager'
   });
 
-  // Notification settings state
-  const [notifications, setNotifications] = useState({
-    emailNotifications: true,
-    analysisComplete: true,
-    weeklyReport: false,
-    systemUpdates: true,
-    marketingEmails: false
-  });
+  // Real subscription data from Convex
+  const getCurrentSubscription = useAction(api.billing.getCurrentSubscriptionDetails);
+  const createBillingPortal = useAction(api.stripe.createBillingPortalSession);
 
-  // Theme settings state
-  const [theme, setTheme] = useState('light');
+  // Current subscription state
+  const [currentSubscription, setCurrentSubscription] = useState<any>(null);
+  const [loadingSubscription, setLoadingSubscription] = useState(false);
+  const [loadingBillingPortal, setLoadingBillingPortal] = useState(false);
+
+  // Load current subscription details on component mount
+  React.useEffect(() => {
+    const loadSubscriptionDetails = async () => {
+      if (user?.id) {
+        setLoadingSubscription(true);
+        try {
+          const subscription = await getCurrentSubscription();
+          setCurrentSubscription(subscription);
+        } catch (error) {
+          console.error('Failed to load subscription details:', error);
+        } finally {
+          setLoadingSubscription(false);
+        }
+      }
+    };
+
+    loadSubscriptionDetails();
+  }, [user?.id, getCurrentSubscription]);
+
+  // Handle manage subscription
+  const handleManageSubscription = async () => {
+    if (!currentSubscription?.stripeCustomerId) {
+      toast.error('Unable to access billing portal. Please contact support.');
+      return;
+    }
+
+    setLoadingBillingPortal(true);
+    try {
+      const result = await createBillingPortal({
+        customerId: currentSubscription.stripeCustomerId,
+        returnUrl: window.location.origin + '/settings'
+      });
+
+      if (result?.url) {
+        window.open(result.url, '_blank');
+      } else {
+        toast.error('Failed to create billing portal session');
+      }
+    } catch (error) {
+      console.error('Error creating billing portal:', error);
+      toast.error('Failed to open billing portal. Please try again.');
+    } finally {
+      setLoadingBillingPortal(false);
+    }
+  };
 
   const settingSections = [
     { id: 'profile', label: 'Profile', icon: User },
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'preferences', label: 'Preferences', icon: Palette },
-    { id: 'data', label: 'Data & Privacy', icon: Database }
+    { id: 'subscription', label: 'Current Plan', icon: CreditCard }
   ];
 
   const handleSaveProfile = async () => {
@@ -64,9 +105,13 @@ export const Settings = () => {
     }
   };
 
-  const handleSaveNotifications = () => {
-    // In a real app, this would save to your backend
-    toast.success('Notification preferences saved');
+  const formatDate = (dateString: string | number) => {
+    const date = typeof dateString === 'string' ? new Date(dateString) : new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   };
 
   const renderProfileSection = () => (
@@ -157,192 +202,53 @@ export const Settings = () => {
     </div>
   );
 
-  const renderNotificationsSection = () => (
+  const renderSubscriptionSection = () => (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Notification Preferences</h2>
-        <p className="text-sm text-gray-500">Manage how you receive notifications about your account and analyses.</p>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Current Plan</h2>
+        <p className="text-sm text-gray-500">View and manage your current subscription plan.</p>
       </div>
 
-      <div className="space-y-3">
-        {[
-          { key: 'emailNotifications', label: 'Email Notifications', description: 'Receive notifications via email' },
-          { key: 'analysisComplete', label: 'Analysis Complete', description: 'Get notified when analyses finish' },
-          { key: 'weeklyReport', label: 'Weekly Reports', description: 'Receive weekly usage summaries' },
-          { key: 'systemUpdates', label: 'System Updates', description: 'Get notified about new features and updates' },
-          { key: 'marketingEmails', label: 'Marketing Emails', description: 'Receive tips and product updates' }
-        ].map((setting) => (
-          <div key={setting.key} className="flex items-center justify-between p-3 bg-gray-50 rounded-3xl">
-            <div>
-              <h4 className="font-medium text-gray-900">{setting.label}</h4>
-              <p className="text-sm text-gray-500">{setting.description}</p>
-            </div>
-            <button
-              onClick={() => setNotifications(prev => ({ ...prev, [setting.key]: !prev[setting.key as keyof typeof prev] }))}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors`}
-              style={{
-                backgroundColor: notifications[setting.key as keyof typeof notifications] ? designSystem.colors.primary : '#D1D5DB'
-              }}
+      {/* Current Plan Section */}
+      <div className="p-6 bg-blue-50 border border-blue-200 rounded-3xl">
+        <div className="flex items-center gap-3 mb-4">
+          <CreditCard className="h-6 w-6 text-blue-600" />
+          <h4 className="text-lg font-medium text-blue-900">Current Plan</h4>
+        </div>
+
+        {loadingSubscription ? (
+          <p className="text-blue-800">Loading subscription details...</p>
+        ) : currentSubscription ? (
+          <>
+            <p className="text-blue-800 mb-4">
+              You are currently on the <strong>{currentSubscription.plan}</strong> plan.
+              {currentSubscription.nextBillingDate && (
+                <> Your next billing date is {formatDate(currentSubscription.nextBillingDate)}.</>
+              )}
+            </p>
+            <Button
+              variant="outline"
+              className="rounded-full border-blue-300 text-blue-700 hover:bg-blue-100"
+              onClick={handleManageSubscription}
+              disabled={loadingBillingPortal || !currentSubscription?.stripeCustomerId}
             >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  notifications[setting.key as keyof typeof notifications] ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex gap-3">
-        <Button 
-          onClick={handleSaveNotifications}
-          className="hover:opacity-90 text-white rounded-full"
-          style={{ backgroundColor: designSystem.colors.primary }}
-        >
-          <Save className="h-4 w-4 mr-2" />
-          Save Preferences
-        </Button>
-      </div>
-    </div>
-  );
-
-  const renderSecuritySection = () => (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Security Settings</h2>
-        <p className="text-sm text-gray-500">Manage your account security and authentication.</p>
-      </div>
-
-      <div className="space-y-3">
-        <div className="p-3 border rounded-3xl" style={{ backgroundColor: designSystem.colors.primaryLight, borderColor: designSystem.colors.primary }}>
-          <div className="flex items-center gap-3 mb-3">
-            <Shield className="h-5 w-5" style={{ color: designSystem.colors.primary }} />
-            <h4 className="font-medium text-gray-900">Account Security</h4>
-          </div>
-          <p className="text-sm text-gray-700 mb-4">
-            Your account security is managed through Clerk. You can update your password, enable two-factor authentication, and manage connected accounts.
+              {loadingBillingPortal ? 'Opening billing portal...' : 'Manage Subscription'}
+            </Button>
+          </>
+        ) : (
+          <p className="text-blue-800">
+            No active subscription found. <a href="/onboarding" className="underline">Choose a plan</a> to get started.
           </p>
-          <Button 
-            variant="outline" 
-            className="rounded-full hover:opacity-90"
-            style={{ borderColor: designSystem.colors.primary, color: designSystem.colors.primary }}
-            onClick={() => window.open('https://clerk.com/docs/authentication/security', '_blank')}
-          >
-            Manage Security Settings
-          </Button>
-        </div>
-
-        <div className="p-3 bg-gray-50 rounded-3xl">
-          <h4 className="font-medium text-gray-900 mb-2">Active Sessions</h4>
-          <p className="text-sm text-gray-600 mb-3">You are currently signed in on this device.</p>
-          <Button 
-            variant="outline" 
-            onClick={() => signOut()}
-            className="text-red-600 border-red-300 hover:bg-red-50 rounded-full"
-          >
-            Sign Out All Sessions
-          </Button>
-        </div>
+        )}
       </div>
     </div>
   );
 
-  const renderPreferencesSection = () => (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Preferences</h2>
-        <p className="text-sm text-gray-500">Customize your experience with QuantiPackAI.</p>
-      </div>
-
-      <div className="space-y-3">
-        <div className="p-3 bg-gray-50 rounded-3xl">
-          <h4 className="font-medium text-gray-900 mb-3">Theme</h4>
-          <div className="grid grid-cols-2 gap-3">
-            {['light', 'dark'].map((themeOption) => (
-              <button
-                key={themeOption}
-                onClick={() => setTheme(themeOption)}
-                className={`p-3 rounded-3xl border-2 transition-colors capitalize ${
-                  theme === themeOption 
-                    ? 'text-gray-900' 
-                    : 'border-gray-200 hover:border-gray-300'
-                }`}
-                style={theme === themeOption ? {
-                  borderColor: designSystem.colors.primary,
-                  backgroundColor: designSystem.colors.primaryLight
-                } : {}}
-              >
-                {themeOption === theme && <Check className="h-4 w-4 float-right" style={{ color: designSystem.colors.primary }} />}
-                {themeOption} Theme
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="p-3 bg-gray-50 rounded-3xl">
-          <h4 className="font-medium text-gray-900 mb-2">Language & Region</h4>
-          <div className="grid gap-3 md:grid-cols-2">
-            <div>
-              <Label className="text-gray-700">Language</Label>
-              <select className="w-full mt-1 p-2 border border-gray-300 rounded-3xl">
-                <option>English (US)</option>
-                <option>English (UK)</option>
-                <option>Spanish</option>
-                <option>French</option>
-              </select>
-            </div>
-            <div>
-              <Label className="text-gray-700">Time Zone</Label>
-              <select className="w-full mt-1 p-2 border border-gray-300 rounded-3xl">
-                <option>Pacific Time (PT)</option>
-                <option>Mountain Time (MT)</option>
-                <option>Central Time (CT)</option>
-                <option>Eastern Time (ET)</option>
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-
-  const renderDataSection = () => (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">Data & Privacy</h2>
-        <p className="text-sm text-gray-500">Manage your data and privacy settings.</p>
-      </div>
-
-      <div className="space-y-3">
-        <div className="p-3 bg-gray-50 rounded-3xl">
-          <h4 className="font-medium text-gray-900 mb-3">Data Export</h4>
-          <p className="text-sm text-gray-600 mb-3">Download all your data including analyses, uploads, and settings.</p>
-          <Button variant="outline" className="rounded-full">
-            Download My Data
-          </Button>
-        </div>
-
-        <div className="p-3 bg-red-50 border border-red-200 rounded-3xl">
-          <h4 className="font-medium text-red-900 mb-2">Delete Account</h4>
-          <p className="text-sm text-red-700 mb-3">
-            Permanently delete your account and all associated data. This action cannot be undone.
-          </p>
-          <Button variant="outline" className="border-red-300 text-red-700 hover:bg-red-100 rounded-full">
-            Delete Account
-          </Button>
-        </div>
-      </div>
-    </div>
-  );
 
   const renderSection = () => {
     switch (activeSection) {
       case 'profile': return renderProfileSection();
-      case 'notifications': return renderNotificationsSection();
-      case 'security': return renderSecuritySection();
-      case 'preferences': return renderPreferencesSection();
-      case 'data': return renderDataSection();
+      case 'subscription': return renderSubscriptionSection();
       default: return renderProfileSection();
     }
   };

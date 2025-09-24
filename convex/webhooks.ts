@@ -1,7 +1,7 @@
 // Stripe webhook processing
 import { v } from "convex/values";
 import { action, internalAction, query, mutation } from "./_generated/server";
-import { internal } from "./_generated/api";
+import { internal, api } from "./_generated/api";
 
 // Import Stripe (we'll handle this carefully)
 let stripe: any = null;
@@ -424,12 +424,62 @@ async function handleSubscriptionUpdated(ctx: any, subscription: any) {
 
 async function handlePaymentSucceeded(ctx: any, invoice: any) {
   console.log("Payment succeeded:", invoice.id);
-  
-  // Reset monthly tokens on successful payment
-  const subscriptionId = invoice.subscription;
-  if (subscriptionId) {
-    // This will be called on recurring payments
-    // The subscription webhook handles the initial payment
+
+  try {
+    const customerId = invoice.customer;
+    const subscriptionId = invoice.subscription;
+
+    // Find user by Stripe customer ID
+    const user = await ctx.runQuery(api.users.getUserByStripeCustomerId, {
+      stripeCustomerId: customerId
+    });
+
+    if (!user) {
+      console.error("User not found for Stripe customer:", customerId);
+      return;
+    }
+
+    // Get plan name from subscription or line items
+    let planName = 'Unknown Plan';
+    if (invoice.lines?.data?.[0]?.price?.product?.name) {
+      planName = invoice.lines.data[0].price.product.name;
+    } else if (subscriptionId) {
+      // Fetch subscription to get product info
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId, {
+        expand: ['items.data.price.product']
+      });
+      planName = subscription.items?.data?.[0]?.price?.product?.name || planName;
+    }
+
+    // Store billing record
+    await ctx.runMutation(api.billing.storeBillingRecord, {
+      userId: user._id,
+      stripeCustomerId: customerId,
+      stripeInvoiceId: invoice.id,
+      stripeSubscriptionId: subscriptionId || undefined,
+      amount: invoice.amount_paid || invoice.total,
+      currency: invoice.currency,
+      status: "paid",
+      planName,
+      billingPeriodStart: (invoice.period_start || invoice.created) * 1000,
+      billingPeriodEnd: (invoice.period_end || invoice.created) * 1000,
+      invoiceUrl: invoice.hosted_invoice_url || undefined,
+      pdfUrl: invoice.invoice_pdf || undefined,
+      createdAt: invoice.created * 1000,
+      paidAt: Date.now(),
+    });
+
+    console.log("Billing record stored for invoice:", invoice.id);
+
+    // Reset monthly tokens on successful payment (if subscription)
+    if (subscriptionId) {
+      // This will be called on recurring payments
+      // The subscription webhook handles the initial payment
+    }
+
+  } catch (error) {
+    console.error("Error processing payment succeeded webhook:", error);
+    throw error;
   }
 }
 
