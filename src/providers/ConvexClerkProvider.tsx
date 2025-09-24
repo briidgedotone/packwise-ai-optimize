@@ -7,10 +7,6 @@ import { useNavigate } from "react-router-dom";
 // Simplified environment variable access
 const CONVEX_URL = import.meta.env.VITE_CONVEX_URL || '';
 const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || '';
-const CLERK_IS_SATELLITE = import.meta.env.VITE_CLERK_IS_SATELLITE === 'true';
-const CLERK_DOMAIN = import.meta.env.VITE_CLERK_DOMAIN || '';
-const CLERK_SIGN_IN_URL = import.meta.env.VITE_CLERK_SIGN_IN_URL || '';
-const CLERK_SIGN_UP_URL = import.meta.env.VITE_CLERK_SIGN_UP_URL || '';
 
 // Create Convex client only if URL is available
 const convex = CONVEX_URL ? new ConvexReactClient(CONVEX_URL) : null;
@@ -64,11 +60,6 @@ export function ConvexClerkProvider({ children }: ConvexClerkProviderProps) {
     return (
       <ClerkProvider
         publishableKey={CLERK_PUBLISHABLE_KEY}
-        isSatellite={CLERK_IS_SATELLITE}
-        domain={CLERK_DOMAIN}
-        signInUrl={CLERK_SIGN_IN_URL}
-        signUpUrl={CLERK_SIGN_UP_URL}
-        allowedRedirectOrigins={['https://packwise-ai-optimize.vercel.app']}
         appearance={{
           elements: {
             formButtonPrimary: "bg-blue-600 hover:bg-blue-700 text-white",
@@ -84,11 +75,6 @@ export function ConvexClerkProvider({ children }: ConvexClerkProviderProps) {
   return (
     <ClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}
-      isSatellite={CLERK_IS_SATELLITE}
-      domain={CLERK_DOMAIN}
-      signInUrl={CLERK_SIGN_IN_URL}
-      signUpUrl={CLERK_SIGN_UP_URL}
-      allowedRedirectOrigins={['https://packwise-ai-optimize.vercel.app']}
       appearance={{
         elements: {
           formButtonPrimary: "bg-blue-600 hover:bg-blue-700 text-white",
