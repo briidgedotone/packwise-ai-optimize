@@ -1,4 +1,5 @@
 # Welcome to your Lovable project
+<!-- Added authentication flow fixes and Vercel deployment configuration -->
 
 ## Project info
 
