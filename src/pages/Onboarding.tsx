@@ -166,17 +166,17 @@ export default function Onboarding() {
         )}
 
         {/* Pricing Cards */}
-        <div className="grid md:grid-cols-3 gap-8 py-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 py-6 mb-12 max-w-4xl mx-auto px-4">
           {plans.map((plan) => (
             <div key={plan.id}>
               <Card
-                className={`relative border rounded-3xl ${
+                className={`relative border rounded-3xl h-full ${
                   plan.popular
                     ? "ring-2 ring-[#767AFA] bg-purple-50"
                     : "bg-white border-gray-200"
                 }`}
               >
-                <CardHeader className="text-left">
+                <CardHeader className="text-left pb-4">
                   <div className="flex justify-between items-start">
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
                       {plan.name}
@@ -220,7 +220,7 @@ export default function Onboarding() {
                   )}
                 </CardHeader>
 
-                <CardContent className="pt-0">
+                <CardContent className="pt-0 flex flex-col h-full">
                   <button
                     onClick={() => handlePlanSelection(plan.id)}
                     disabled={loading && selectedPlan === plan.id}
