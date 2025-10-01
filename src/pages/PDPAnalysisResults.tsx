@@ -138,16 +138,16 @@ const PDPAnalysisResults = () => {
 
   const getMetricDefinition = (metric: string): string => {
     const definitions = {
-      hierarchy: 'Visual Hierarchy measures how effectively your design guides the viewer\'s eye to the most important elements in order of priority, ensuring key information is noticed first.',
-      branding: 'Brand Prominence evaluates how well your brand identity stands out on the packaging, including logo visibility, brand name recognition, and overall brand presence.',
-      typography: 'Typography assesses the readability, font choices, text sizing, and overall effectiveness of text elements in communicating your product information.',
-      color: 'Color Strategy analyzes your color palette choices, contrast levels, emotional impact, and how well colors align with your brand and product category.',
-      imagery: 'Imagery Quality evaluates the quality, relevance, and impact of photos, illustrations, or graphics used on your packaging design.',
-      messaging: 'Messaging Clarity measures how clearly and effectively your packaging communicates key product benefits, claims, and information to consumers.',
-      simplicity: 'Simplicity assesses whether your design avoids clutter and unnecessary elements, making it easy for consumers to quickly understand your product.',
-      balance: 'Balance evaluates the visual equilibrium of your design elements, ensuring proper distribution of visual weight across the packaging.',
-      shelf_performance: 'Shelf Performance measures how well your design will stand out and attract attention in a retail environment among competing products.',
-      consistency: 'Consistency analyzes how well your design elements work together cohesively and align with your overall brand guidelines and identity.'
+      hierarchy: 'How well the layout guides the eye from the most important element to the least important. Is the brand name, product type, and key benefit ordered logically?',
+      branding: 'Is the brand clearly visible and easy to recognize at shelf distance? Is it positioned consistently for maximum recognition?',
+      typography: 'Are fonts legible at both close and far distances? Is there a good balance between type sizes, weights, and spacing?',
+      color: 'Are colors chosen to stand out on the shelf while staying on-brand? Is contrast used to make key elements pop without clashing?',
+      imagery: 'Are product photos or illustrations high-quality and well-lit? Do they feel cohesive with the rest of the design rather than pasted on?',
+      messaging: 'Are key benefits, features, or claims easy to find and read? Are they placed where the customer\'s eye naturally lands?',
+      simplicity: 'Is the artwork free from unnecessary clutter, background noise, or over-detailing? Does each design element serve a clear purpose?',
+      balance: 'Is the artwork visually balanced? Are elements spaced evenly so no area feels too empty or overcrowded?',
+      shelf_performance: 'Will the design work well at physical shelf scale and in digital thumbnails? Is it still recognizable and legible when reduced in size or viewed quickly?',
+      consistency: 'Do all visual elements (colors, fonts, imagery, icons) feel like part of the same family? Is there a consistent tone and style throughout the design?'
     };
     return definitions[metric as keyof typeof definitions] || 'This metric measures an important aspect of your packaging design effectiveness.';
   };
