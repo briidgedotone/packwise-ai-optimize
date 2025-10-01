@@ -2,36 +2,37 @@ import { Brain, ArrowRight, FileText, Zap, Calculator, Package, FileInput, Searc
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 const SpecGenerator = () => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const flowchartSteps = [
     {
       step: 1,
       title: "Upload Product Names",
       description: "Text list of products (e.g., 'toothbrush,' 'running shoes')",
-      icon: FileInput,
-      visual: "Text file with a product list"
+      icon: FileInput
     },
     {
       step: 2,
       title: "Proprietary Research Formulas",
-      description: "Determine typical product dimensions from curated references",
-      icon: Search,
-      visual: "Magnifying glass over a database/reference icon"
+      description: "Automatically estimate product dimensions using curated data and AI-driven analysis",
+      icon: Search
     },
     {
       step: 3,
       title: "Generate Product Specs",
       description: "Outputs product L × W × H (with sensible bounds if needed)",
-      icon: Calculator,
-      visual: "Product silhouette with L/W/H callouts"
+      icon: Calculator
     },
     {
       step: 4,
       title: "Usable Data Output",
-      description: "Delivers structured spec rows in CSV or table format",
-      icon: FileText,
-      visual: "Tidy table: Product → L × W × H"
+      description: "Delivers structured spec rows in CSV or table format with dimensions and volume",
+      icon: FileText
     }
   ];
 
@@ -58,7 +59,7 @@ const SpecGenerator = () => {
                 <Button variant="ghost">Login</Button>
               </Link>
               <Link to="/sign-up">
-                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Start Free Trial</Button>
+                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Get Started</Button>
               </Link>
             </div>
           </div>
@@ -127,10 +128,7 @@ const SpecGenerator = () => {
                         <CardTitle className="text-lg">{step.title}</CardTitle>
                       </CardHeader>
                       <CardContent className="text-center">
-                        <p className="text-sm text-gray-600 mb-3">{step.description}</p>
-                        <div className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-xs text-gray-500 italic">{step.visual}</p>
-                        </div>
+                        <p className="text-sm text-gray-600">{step.description}</p>
                       </CardContent>
                     </Card>
                     {index < flowchartSteps.length - 1 && (
@@ -180,14 +178,15 @@ const SpecGenerator = () => {
                       <th className="text-left py-2">L</th>
                       <th className="text-left py-2">W</th>
                       <th className="text-left py-2">H</th>
+                      <th className="text-left py-2">Volume</th>
                     </tr>
                   </thead>
                   <tbody className="font-mono">
-                    <tr><td>iPhone 14 Pro</td><td>6.1</td><td>2.8</td><td>0.3</td></tr>
-                    <tr><td>Running shoes</td><td>12.0</td><td>4.5</td><td>5.0</td></tr>
-                    <tr><td>Coffee mug</td><td>4.0</td><td>3.5</td><td>4.0</td></tr>
-                    <tr><td>Laptop bag</td><td>16.0</td><td>12.0</td><td>3.0</td></tr>
-                    <tr><td>Wireless headphones</td><td>8.0</td><td>7.0</td><td>3.0</td></tr>
+                    <tr><td>iPhone 14 Pro</td><td>6.1</td><td>2.8</td><td>0.3</td><td>5.1</td></tr>
+                    <tr><td>Running shoes</td><td>12.0</td><td>4.5</td><td>5.0</td><td>270.0</td></tr>
+                    <tr><td>Coffee mug</td><td>4.0</td><td>3.5</td><td>4.0</td><td>56.0</td></tr>
+                    <tr><td>Laptop bag</td><td>16.0</td><td>12.0</td><td>3.0</td><td>576.0</td></tr>
+                    <tr><td>Wireless headphones</td><td>8.0</td><td>7.0</td><td>3.0</td><td>168.0</td></tr>
                   </tbody>
                 </table>
               </div>

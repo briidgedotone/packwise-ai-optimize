@@ -8,27 +8,27 @@ import { cn } from '@/lib/utils'
 const faqs = [
   {
     question: "How do tokens work?",
-    answer: "Each time you run a core function (analysis, spec batch, design compare), you use a token. Tokens reset monthly based on your plan."
+    answer: "Each time you run a core function (analysis, spec batch, design compare), you use a token."
   },
   {
     question: "Can I bring my historical data?",
-    answer: "Yes. Upload order history and packaging types via CSV/XLSX with our templates. We support most common formats."
+    answer: "Yes. Upload order history and packaging types via CSV/XLSX with our templates."
   },
   {
     question: "What if I run out of tokens?",
-    answer: "You can add tokens anytime or upgrade your plan. We'll notify you when you're running low."
+    answer: "Add tokens or upgrade your plan anytime."
   },
   {
-    question: "Is my data secure?", 
-    answer: "We encrypt your data in transit and at rest. Your data is never shared and you can delete it anytime."
+    question: "Is my data secure?",
+    answer: "We encrypt your data in transit and at rest."
   },
   {
     question: "Do you offer trials?",
-    answer: "We offer a 14-day money-back guarantee on all plans. Book a walkthrough to see the platform in action."
+    answer: "We're all paid plans. Book a walkthrough or view plans to get started."
   },
   {
     question: "Can I cancel or change plans?",
-    answer: "Yes, you can change or cancel at the end of any billing cycle. No long-term contracts required."
+    answer: "Yes, at the end of any billing cycle."
   }
 ]
 
@@ -106,11 +106,12 @@ export default function FAQSection() {
             <p className="text-gray-600 mb-6">
               Our team is here to help you get the most out of QuantiPackAI.
             </p>
-            <button
-              className="bg-[#767AFA] hover:opacity-90 text-white px-8 py-3 rounded-3xl font-medium transition-opacity"
+            <a
+              href="mailto:knammouz@quantipack.com"
+              className="inline-block bg-[#767AFA] hover:opacity-90 text-white px-8 py-3 rounded-3xl font-medium transition-opacity"
             >
               Contact Support
-            </button>
+            </a>
           </div>
         </div>
       </div>

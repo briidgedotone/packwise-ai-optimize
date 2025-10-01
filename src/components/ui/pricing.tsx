@@ -37,7 +37,7 @@ const plans = [
   {
     name: "Professional Plan",
     description:
-      "Best value for growing businesses that need more advanced features",
+      "Best value for individuals and businesses that need more capacity for frequent use and greater flexibility",
     price: 99.99,
     yearlyPrice: 799,
     buttonText: "Start Now",
@@ -66,7 +66,7 @@ const plans = [
   {
     name: "Enterprise Plan",
     description:
-      "Custom pricing with enhanced security and unlimited access for large teams",
+      "Custom pricing for a tailored solution built around your business needs",
     price: null,
     yearlyPrice: null,
     buttonText: "Contact Sales",

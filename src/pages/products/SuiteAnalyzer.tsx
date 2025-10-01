@@ -2,8 +2,13 @@ import { Package, ArrowRight, TrendingUp, DollarSign, BarChart3, Upload, Databas
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 const SuiteAnalyzer = () => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const flowchartSteps = [
     {
       step: 1,
@@ -66,7 +71,7 @@ const SuiteAnalyzer = () => {
                 <Button variant="ghost">Login</Button>
               </Link>
               <Link to="/sign-up">
-                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Start Free Trial</Button>
+                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Get Started</Button>
               </Link>
             </div>
           </div>
@@ -204,7 +209,7 @@ const SuiteAnalyzer = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/sign-up">
               <Button size="lg" className="bg-[#767AFA] hover:bg-[#767AFA]/90">
-                Start Free Trial
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useClerk, useUser } from '@clerk/clerk-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { designSystem } from '@/lib/design-system';
 import {
@@ -12,7 +12,6 @@ import {
   ArrowLeftOnRectangleIcon as LogOut,
   ChevronDownIcon as ChevronDown,
   EllipsisHorizontalIcon as MoreHorizontal,
-  ArrowRightIcon as ArrowRight,
   BoltIcon as Activity,
   BoltIcon as Zap,
   FolderOpenIcon as FolderOpen,
@@ -43,7 +42,6 @@ import { SpecGenerator } from '@/components/SpecGenerator';
 import { ImprovedPackagingDemandPlanner } from '@/components/ImprovedPackagingDemandPlanner';
 import { PDPAnalyzer } from '@/components/PDPAnalyzer';
 import { InlineAIAssistant } from '@/components/InlineAIAssistant';
-import { Reports } from '@/pages/Reports';
 import Settings from '@/pages/Settings';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
@@ -52,9 +50,19 @@ const Dashboard = () => {
   const { signOut } = useClerk();
   const { user } = useUser();
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+
+  // Handle navigation from footer links
+  useEffect(() => {
+    if (location.state?.activeTab) {
+      setActiveTab(location.state.activeTab);
+      // Clear the state to avoid re-triggering on future navigations
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   // Backend availability state - now available with new Convex account
   const [isBackendUnavailable, setIsBackendUnavailable] = useState(false);
@@ -188,7 +196,6 @@ const Dashboard = () => {
     { id: 'spec-generator', label: 'Spec Generator', icon: DocumentPlusIcon },
     { id: 'demand-planner-v2', label: 'Demand Planner', icon: ChartBarSquareIcon },
     { id: 'pdp-analyzer', label: 'Design Analyzer', icon: EyeIcon },
-    { id: 'reports', label: 'Reports', icon: DocumentChartBarIcon },
     { id: 'settings', label: 'Settings', icon: Cog6ToothIcon },
   ];
 
@@ -255,13 +262,11 @@ const Dashboard = () => {
         return <ImprovedPackagingDemandPlanner />;
       case 'pdp-analyzer':
         return <PDPAnalyzer />;
-      case 'reports':
-        return <Reports />;
       case 'settings':
         return <Settings />;
       default:
         return (
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+          <div className="min-h-screen bg-white">
             <div>
               
               {/* Backend Unavailable Warning */}
@@ -314,8 +319,15 @@ const Dashboard = () => {
                 </div>
               )}
 
+              {/* Welcome Message */}
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold text-gray-900">
+                  Welcome, {user?.firstName || user?.fullName || 'there'}!
+                </h1>
+              </div>
+
               {/* Main Dashboard Grid */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3 mt-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 mb-3">
                 
                 {/* Key Metrics Cards */}
                 <div className="lg:col-span-4">
@@ -331,27 +343,27 @@ const Dashboard = () => {
                         <div>
                           <div className="flex items-baseline gap-2 mb-1">
                             <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                              {safeMetrics?.tokensUsed || '0'}
+                              {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
                             </span>
                             <span className="text-sm text-gray-600 font-medium">
                               / {safeMetrics?.tokensLimit || '10'}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-500 uppercase tracking-wider">Tokens Used</p>
+                          <p className="text-xs text-gray-500 uppercase tracking-wider">Tokens Remaining</p>
                         </div>
                       </div>
                       <div className="space-y-3">
                         <div className="flex justify-between text-sm mb-0.5">
-                          <span className="text-gray-500">Available</span>
+                          <span className="text-gray-500">Used</span>
                           <span className="font-medium text-gray-700">
-                            {safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || '10'}
+                            {safeMetrics?.tokensUsed || '0'}
                           </span>
                         </div>
                         <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-                          <div 
+                          <div
                             className="h-2 rounded-full transition-all duration-500 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 relative"
-                            style={{ 
-                              width: `${Math.min(100, ((safeMetrics?.tokensUsed || 0) / (safeMetrics?.tokensLimit || 10)) * 100)}%` 
+                            style={{
+                              width: `${Math.min(100, ((safeMetrics?.tokensRemaining || safeMetrics?.tokensLimit || 10) / (safeMetrics?.tokensLimit || 10)) * 100)}%`
                             }}
                           >
                             <div className="absolute inset-0 bg-white bg-opacity-30 animate-pulse"></div>
@@ -456,52 +468,76 @@ const Dashboard = () => {
               {/* Analytics and Recent Activity Grid */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-3">
                 
-                {/* Tool Analytics - New Simple Version */}
-                <div className="bg-white rounded-lg border p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <BarChart3 className="h-5 w-5 text-orange-500" />
-                    <h3 className="font-semibold text-gray-900">Tool Analytics</h3>
+                {/* Tool Analytics - Blue Gradient Style */}
+                <div className="bg-gradient-to-br from-white to-blue-50 rounded-3xl border border-blue-100 p-6 transition-all duration-300 shadow-lg hover:shadow-xl">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                      <BarChart3 className="h-5 w-5 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Tool Analytics</h3>
                   </div>
                   <div className="space-y-3">
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Suite Analyzer</span>
-                      <span className="text-sm font-medium text-gray-900">0 uses</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Spec Generator</span>
-                      <span className="text-sm font-medium text-gray-900">0 uses</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Design Analyzer</span>
-                      <span className="text-sm font-medium text-gray-900">0 uses</span>
-                    </div>
-                    <div className="flex justify-between items-center">
-                      <span className="text-sm text-gray-600">Demand Planner</span>
-                      <span className="text-sm font-medium text-gray-900">0 uses</span>
-                    </div>
+                    {toolUsageStats ? (
+                      toolUsageStats.map((tool) => (
+                        <div key={tool.name} className="flex justify-between items-center py-2 px-3 rounded-xl bg-white/60 hover:bg-white/80 transition-colors">
+                          <span className="text-sm font-medium text-gray-700">{tool.name}</span>
+                          <span className="text-sm font-bold text-blue-600">{tool.count} {tool.count === 1 ? 'use' : 'uses'}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <>
+                        <div className="flex justify-between items-center py-2 px-3 rounded-xl bg-white/60">
+                          <span className="text-sm font-medium text-gray-700">Suite Analyzer</span>
+                          <span className="text-sm font-bold text-blue-600">0 uses</span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 px-3 rounded-xl bg-white/60">
+                          <span className="text-sm font-medium text-gray-700">Spec Generator</span>
+                          <span className="text-sm font-bold text-blue-600">0 uses</span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 px-3 rounded-xl bg-white/60">
+                          <span className="text-sm font-medium text-gray-700">Design Analyzer</span>
+                          <span className="text-sm font-bold text-blue-600">0 uses</span>
+                        </div>
+                        <div className="flex justify-between items-center py-2 px-3 rounded-xl bg-white/60">
+                          <span className="text-sm font-medium text-gray-700">Demand Planner</span>
+                          <span className="text-sm font-bold text-blue-600">0 uses</span>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </div>
 
-                {/* Recent Analyses - New Simple Version */}
-                <div className="bg-white rounded-lg border p-6">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Activity className="h-5 w-5 text-green-500" />
-                    <h3 className="font-semibold text-gray-900">Recent Analyses</h3>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-xs text-gray-500 hover:text-gray-700 ml-auto"
-                      onClick={() => setActiveTab('reports')}
-                    >
-                      View all
-                      <ArrowRight className="h-3 w-3 ml-1" />
-                    </Button>
+                {/* Recent Analyses - Blue Gradient Style */}
+                <div className="bg-gradient-to-br from-white to-indigo-50 rounded-3xl border border-indigo-100 p-6 transition-all duration-300 shadow-lg hover:shadow-xl">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-blue-600 rounded-2xl flex items-center justify-center">
+                      <Activity className="h-5 w-5 text-white" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Recent Analyses</h3>
                   </div>
-                  <div className="text-center py-8">
-                    <FolderOpen className="h-8 w-8 text-gray-300 mx-auto mb-2" />
-                    <p className="text-sm text-gray-500">No analyses yet</p>
-                    <p className="text-xs text-gray-400">Your work will appear here</p>
-                  </div>
+                  {recentActivity && recentActivity.length > 0 ? (
+                    <div className="space-y-3">
+                      {recentActivity.slice(0, 5).map((activity) => (
+                        <div key={activity.id} className="py-3 px-3 rounded-xl bg-white/60 hover:bg-white/80 transition-colors">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <p className="text-sm font-semibold text-gray-900 mb-1">{activity.title}</p>
+                              <p className="text-xs text-gray-500">{activity.time}</p>
+                            </div>
+                            <span className="text-xs font-bold text-blue-600 bg-blue-100 px-2 py-1 rounded-lg ml-2">{activity.value}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <div className="w-12 h-12 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                        <FolderOpen className="h-6 w-6 text-blue-400" />
+                      </div>
+                      <p className="text-sm font-medium text-gray-600">No analyses yet</p>
+                      <p className="text-xs text-gray-400 mt-1">Your work will appear here</p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -512,7 +548,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-white">
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-[#E3E7EA]">
         <h1 className="text-xl font-medium text-gray-900">QuantiPackAI</h1>

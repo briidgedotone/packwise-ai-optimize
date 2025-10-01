@@ -37,7 +37,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
   });
 
   const [manualPackages, setManualPackages] = useState([
-    { name: '', id: '', length: '', width: '', height: '', cost: '', weight: '', usage: '' }
+    { name: '', length: '', width: '', height: '', cost: '', weight: '', usage: '' }
   ]);
   const [useManualPackageInput, setUseManualPackageInput] = useState(false);
 
@@ -249,8 +249,8 @@ export const PackagingSuiteAnalyzerBackend = () => {
       const usingDefaultCost = !providedCost || parseFloat(providedCost) === 0;
       
       const packageData = {
-        packageName: pkg.package_name || pkg.packagename || pkg.name || pkg['package_name'] || `Package-${i}`,
-        packageId: pkg.package_id || pkg.packageid || pkg.id || pkg['package_id'] || `PKG-${i}`,
+        packageName: pkg.package_name || pkg.packagename || pkg.package_type || pkg.name || pkg['package_name'] || `Package-${i}`,
+        packageId: pkg.package_name || pkg.packagename || pkg.package_type || pkg.name || pkg['package_name'] || `PKG-${i}`,
         length: parseFloat(pkg.length || pkg.l || pkg.package_length) || 12,
         width: parseFloat(pkg.width || pkg.w || pkg.package_width) || 9,
         height: parseFloat(pkg.height || pkg.h || pkg.package_height) || 3,
@@ -261,7 +261,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
         maxWeight: parseFloat(pkg.max_weight || pkg.maxweight) || 50,
         material: pkg.material || 'Cardboard',
         type: pkg.type || 'box',
-        usage: pkg['usage_%'] || pkg.usage_percent || pkg.usage || null
+        usage: pkg.baseline_usage_percent || pkg['usage_%'] || pkg.usage_percent || pkg.usage || null
       };
       
       packages.push(packageData);
@@ -346,12 +346,11 @@ export const PackagingSuiteAnalyzerBackend = () => {
       
       if (useManualPackageInput) {
         // Create CSV from manual input
-        const headers = ['Package Name', 'Package ID', 'Length', 'Width', 'Height', 'Cost per Unit', 'Package Weight', 'Usage %'];
+        const headers = ['Package Type', 'Length', 'Width', 'Height', 'Cost', 'Weight', 'Baseline Usage Percent'];
         const rows = manualPackages
-          .filter(pkg => pkg.name && pkg.id && pkg.length && pkg.width && pkg.height)
+          .filter(pkg => pkg.name && pkg.length && pkg.width && pkg.height)
           .map(pkg => [
             pkg.name,
-            pkg.id,
             pkg.length,
             pkg.width,
             pkg.height,
@@ -359,7 +358,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
             pkg.weight || '',
             pkg.usage || ''
           ].join(','));
-        
+
         packagingSuiteCSV = [headers.join(','), ...rows].join('\n');
         console.log('Created packaging suite CSV from manual input:', packagingSuiteCSV);
       } else {
@@ -553,18 +552,15 @@ export const PackagingSuiteAnalyzerBackend = () => {
 
         <CSVFormatGuide
           title="Required CSV Format"
-          description="Your CSV should include: Order ID, Total Order Volume (CUIN), and optionally Customer ID, Product SKU, Quantity"
+          description="Your CSV should include: Order ID and Total Order Volume (CUIN)"
           columns={[
             { name: "Order ID" },
-            { name: "Total Order Volume" },
-            { name: "Customer ID" },
-            { name: "Product SKU" },
-            { name: "Quantity" }
+            { name: "Total Order Volume" }
           ]}
           sampleData={[
-            { "Order ID": "ORD-001", "Total Order Volume": "145.5", "Customer ID": "CUST-A", "Product SKU": "SKU-001", "Quantity": "2" },
-            { "Order ID": "ORD-002", "Total Order Volume": "89.2", "Customer ID": "CUST-B", "Product SKU": "SKU-002", "Quantity": "1" },
-            { "Order ID": "ORD-003", "Total Order Volume": "267.8", "Customer ID": "CUST-C", "Product SKU": "SKU-003", "Quantity": "3" }
+            { "Order ID": "ORD-001", "Total Order Volume": "145.5" },
+            { "Order ID": "ORD-002", "Total Order Volume": "89.2" },
+            { "Order ID": "ORD-003", "Total Order Volume": "267.8" }
           ]}
           className="mb-6"
         />
@@ -642,19 +638,20 @@ export const PackagingSuiteAnalyzerBackend = () => {
           <>
             <CSVFormatGuide
               title="Required CSV Format"
-              description="Your CSV should include: Package Type, Length (inches), Width (inches), Height (inches), Cost ($), Weight (lbs)"
+              description="Your CSV should include: Package Type, Length (inches), Width (inches), Height (inches), Cost ($), Weight (lbs), Baseline Usage Percent (%)"
               columns={[
                 { name: "Package Type" },
                 { name: "Length" },
                 { name: "Width" },
                 { name: "Height" },
                 { name: "Cost" },
-                { name: "Weight" }
+                { name: "Weight" },
+                { name: "Baseline Usage Percent" }
               ]}
               sampleData={[
-                { "Package Type": "Small Box", "Length": "12", "Width": "8", "Height": "6", "Cost": "1.25", "Weight": "0.5" },
-                { "Package Type": "Medium Box", "Length": "16", "Width": "12", "Height": "8", "Cost": "2.15", "Weight": "0.8" },
-                { "Package Type": "Large Box", "Length": "20", "Width": "16", "Height": "12", "Cost": "3.45", "Weight": "1.2" }
+                { "Package Type": "Small Box", "Length": "12", "Width": "8", "Height": "6", "Cost": "1.25", "Weight": "0.5", "Baseline Usage Percent": "30" },
+                { "Package Type": "Medium Box", "Length": "16", "Width": "12", "Height": "8", "Cost": "2.15", "Weight": "0.8", "Baseline Usage Percent": "50" },
+                { "Package Type": "Large Box", "Length": "20", "Width": "16", "Height": "12", "Cost": "3.45", "Weight": "1.2", "Baseline Usage Percent": "20" }
               ]}
               className="mb-6"
             />
@@ -716,27 +713,15 @@ export const PackagingSuiteAnalyzerBackend = () => {
                     </Button>
                   )}
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <Label className="text-xs">Package Name *</Label>
-                    <Input
-                      type="text"
-                      value={pkg.name}
-                      onChange={(e) => updatePackageRow(index, 'name', e.target.value)}
-                      placeholder="e.g., Small Box"
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-xs">Package ID *</Label>
-                    <Input
-                      type="text"
-                      value={pkg.id}
-                      onChange={(e) => updatePackageRow(index, 'id', e.target.value)}
-                      placeholder="e.g., SM"
-                      className="mt-1"
-                    />
-                  </div>
+                <div className="mb-3">
+                  <Label className="text-xs">Package Name *</Label>
+                  <Input
+                    type="text"
+                    value={pkg.name}
+                    onChange={(e) => updatePackageRow(index, 'name', e.target.value)}
+                    placeholder="e.g., Small Box"
+                    className="mt-1"
+                  />
                 </div>
                 <div className="grid grid-cols-3 gap-3">
                   <div>
@@ -797,7 +782,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Usage % (optional)</Label>
+                    <Label className="text-xs">Baseline Usage % (optional)</Label>
                     <Input
                       type="number"
                       step="0.1"
@@ -986,8 +971,8 @@ export const PackagingSuiteAnalyzerBackend = () => {
             icon: "📥",
             items: [
               "Order History CSV with Order ID and Total Order Volume (cubic inches)",
-              "Packaging Suite CSV with package dimensions and costs (optional)",
-              "Alternative: Manual package entry with dimensions",
+              "Packaging Suite CSV with package dimensions, costs, and baseline packaging usage rate (%)",
+              "Alternative: Manual package entry with dimensions and baseline usage rate",
               "Optional: Product dimensions (Length, Width, Height) for enhanced analysis"
             ]
           },

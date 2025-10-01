@@ -174,11 +174,15 @@ export const SpecGenerator = () => {
 
   // Validate form
   const validateForm = () => {
-    if (!csvContent.trim()) {
-      toast.error('Please upload a product file');
+    // Check if we have product data (either file upload or manual entry)
+    const hasManualProducts = useManualEntry && manualProducts.some(p => p.name.trim() !== '');
+    const hasFileData = !useManualEntry && csvContent.trim();
+
+    if (!hasManualProducts && !hasFileData) {
+      toast.error('Please upload a product file or enter products manually');
       return false;
     }
-    
+
     if (!boundingDimensions.min.l || !boundingDimensions.max.l) {
       toast.error('Please set all bounding dimensions');
       return false;
@@ -570,7 +574,7 @@ export const SpecGenerator = () => {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Description</Label>
+                    <Label className="text-xs">Description (optional)</Label>
                     <Input
                       type="text"
                       value={product.description}
@@ -580,7 +584,7 @@ export const SpecGenerator = () => {
                     />
                   </div>
                   <div>
-                    <Label className="text-xs">Category</Label>
+                    <Label className="text-xs">Category (optional)</Label>
                     <Input
                       type="text"
                       value={product.category}
@@ -970,10 +974,9 @@ export const SpecGenerator = () => {
                     <div>
                       <strong className="text-gray-900">📥 INPUTS:</strong>
                       <ul className="mt-2 space-y-1 text-sm">
-                        <li>• Product List or Order File (CSV with product names/descriptions)</li>
-                        <li>• Order files can include Order ID + Product Name per row</li>
+                        <li>• Product List (CSV with product names - required)</li>
                         <li>• Bounding dimensions (Min/Avg/Max L×W×H in inches)</li>
-                        <li>• Optional: Category, Material, Size info</li>
+                        <li>• Optional: Order ID, Product descriptions, Category, Material, Size info</li>
                       </ul>
                     </div>
                     <div>

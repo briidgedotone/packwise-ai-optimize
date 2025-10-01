@@ -14,6 +14,7 @@ import { ProductManual } from '@/components/ui/ProductManual';
 import { toast } from 'sonner';
 import { useQuery, useMutation, useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { useTokenGuard } from '@/hooks/useTokenGuard';
 
 interface PackagingType {
   name: string;
@@ -51,7 +52,8 @@ interface DemandResults {
 
 export const ImprovedPackagingDemandPlanner = () => {
   const { user } = useUser();
-  
+  const { checkAndConsumeToken } = useTokenGuard();
+
   // UI State
   const [currentStep, setCurrentStep] = useState(1);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -556,26 +558,35 @@ export const ImprovedPackagingDemandPlanner = () => {
     if (!isStep3Valid) return;
 
     setIsProcessing(true);
-    
+
     try {
-      const totalOrders = parseInt(forecastParams.totalOrders);
-      const safetyBuffer = parseFloat(forecastParams.safetyBuffer);
+      const result = await checkAndConsumeToken('demand_planner', async () => {
+        const totalOrders = parseInt(forecastParams.totalOrders);
+        const safetyBuffer = parseFloat(forecastParams.safetyBuffer);
 
-      // Prepare manual mix if using manual method
-      const manualMixData = selectedMethod === 'manual' ? manualMix : undefined;
+        // Prepare manual mix if using manual method
+        const manualMixData = selectedMethod === 'manual' ? manualMix : undefined;
 
-      const response = await calculateDemand({
-        method: selectedMethod!,
-        forecastParams: {
-          totalOrders,
-          safetyBuffer
-        },
-        manualMix: manualMixData
+        const response = await calculateDemand({
+          method: selectedMethod!,
+          forecastParams: {
+            totalOrders,
+            safetyBuffer
+          },
+          manualMix: manualMixData
+        });
+
+        return response;
       });
 
-      setResults(response.results);
+      if (result.success && result.result) {
+        setResults(result.result.results);
+        toast.success('Demand forecast calculated successfully');
+      } else if (result.error === 'NO_TOKENS') {
+        toast.error('No tokens remaining. Please upgrade your plan.');
+      }
+
       setIsProcessing(false);
-      toast.success('Demand forecast calculated successfully');
     } catch (error) {
       console.error('Failed to calculate demand:', error);
       toast.error('Failed to calculate demand forecast');
@@ -705,7 +716,7 @@ export const ImprovedPackagingDemandPlanner = () => {
 
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
             <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <label className="cursor-pointer">
+            <label className="cursor-pointer block">
               <span className="text-lg font-medium text-gray-700 block mb-2">
                 Upload Packaging Types CSV
               </span>
@@ -718,10 +729,10 @@ export const ImprovedPackagingDemandPlanner = () => {
                 onChange={handlePackagingTypesUpload}
                 className="hidden"
               />
-              <Button className="bg-blue-600 hover:bg-blue-700">
+              <span className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md transition-colors cursor-pointer">
                 <Upload className="h-4 w-4 mr-2" />
                 Choose File
-              </Button>
+              </span>
             </label>
           </div>
         </>

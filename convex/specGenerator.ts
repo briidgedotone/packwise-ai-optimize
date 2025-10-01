@@ -94,14 +94,31 @@ export const generateSpecs = action({
   },
   handler: async (ctx, args) => {
     try {
+      // Get user
+      const identity = await ctx.auth.getUserIdentity();
+      if (!identity) {
+        throw new Error("Not authenticated");
+      }
+
+      const user = await ctx.runQuery(async (ctx) => {
+        return await ctx.db
+          .query("users")
+          .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
+          .first();
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
       // First, test API connectivity with a simple request
       console.log('Testing API connectivity...');
       await testAPIConnectivity();
       console.log('API connectivity test passed');
-      
+
       // Parse CSV data
       const products = parseProductCSV(args.productData);
-      
+
       // Generate specifications
       const results = await generateSpecsForProducts(
         products,
@@ -109,6 +126,21 @@ export const generateSpecs = action({
         args.additionalInfo,
         args.startIndex || 0
       );
+
+      // Save analysis record (just tracking usage, no results)
+      await ctx.runMutation(async (ctx) => {
+        await ctx.db.insert("analyses", {
+          userId: user._id,
+          organizationId: user.organizationId,
+          type: "spec_generator",
+          name: `Spec Generation - ${products.length} products`,
+          status: "completed",
+          inputFiles: [],
+          createdAt: Date.now(),
+          completedAt: Date.now(),
+          results: { productCount: products.length }, // Just track count, not actual data
+        });
+      });
 
       return results;
     } catch (error) {

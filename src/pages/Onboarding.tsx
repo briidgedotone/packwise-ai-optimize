@@ -23,39 +23,44 @@ export default function Onboarding() {
   const plans = [
     {
       id: 'starter',
-      name: 'Starter',
-      description: 'Great for small businesses and startups looking to get started with AI',
+      name: 'Starter Plan',
+      description: 'Great for individuals, small businesses and startups looking to get started with AI',
       price: 39.99,
       period: '/month',
       tokens: 50,
       cta: 'Start Now',
       popular: false,
       includes: [
-        'Free includes:',
-        'Unlimited CSV uploads',
-        'Basic reporting & analytics',
-        'Email support',
-        'Up to 1 organization',
-        'Standard templates'
+        'Starter includes:',
+        '50 tokens per month',
+        'Core Features (1 token per run):',
+        'Suite Analyzer',
+        'Demand Planner',
+        'Spec Generator',
+        'Design Analyzer',
+        'Unlimited',
+        'Unlimited Packaging Chat AI'
       ]
     },
     {
       id: 'professional',
-      name: 'Professional',
-      description: 'Best value for growing businesses that need more advanced features',
+      name: 'Professional Plan',
+      description: 'Best value for individuals and businesses that need more capacity for frequent use and greater flexibility',
       price: 99.99,
       period: '/month',
       tokens: 150,
       cta: 'Start Now',
       popular: true,
       includes: [
-        'Everything in Starter, plus:',
-        'Advanced analytics dashboard',
-        'Custom report generation',
-        'Priority email support',
-        'API access for integrations',
-        'Up to 5 organizations',
-        'Advanced templates'
+        'Professional includes:',
+        '150 tokens per month',
+        'Core Features (1 token per run):',
+        'Suite Analyzer',
+        'Demand Planner',
+        'Spec Generator',
+        'Design Analyzer',
+        'Unlimited',
+        'Unlimited Packaging Chat AI'
       ]
     }
   ];
@@ -238,14 +243,41 @@ export default function Onboarding() {
                       {plan.includes[0]}
                     </h4>
                     <ul className="space-y-2">
-                      {plan.includes.slice(1).map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start">
-                          <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
-                            <CheckCheck className="h-3 w-3 text-[#767AFA]" />
-                          </span>
-                          <span className="text-sm text-gray-700">{feature}</span>
-                        </li>
-                      ))}
+                      {/* Tokens */}
+                      <li className="flex items-start">
+                        <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
+                          <CheckCheck className="h-3 w-3 text-[#767AFA]" />
+                        </span>
+                        <span className="text-sm text-gray-700">{plan.includes[1]}</span>
+                      </li>
+
+                      {/* Core Features Section */}
+                      <li className="pt-2">
+                        <h5 className="font-semibold text-gray-900 text-sm mb-2">{plan.includes[2]}</h5>
+                        <ul className="space-y-2 ml-2">
+                          {plan.includes.slice(3, 7).map((feature, featureIndex) => (
+                            <li key={featureIndex} className="flex items-start">
+                              <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
+                                <CheckCheck className="h-3 w-3 text-[#767AFA]" />
+                              </span>
+                              <span className="text-sm text-gray-700">{feature}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </li>
+
+                      {/* Unlimited Section */}
+                      <li className="pt-2">
+                        <h5 className="font-semibold text-gray-900 text-sm mb-2">{plan.includes[7]}</h5>
+                        <ul className="space-y-2 ml-2">
+                          <li className="flex items-start">
+                            <span className="h-5 w-5 bg-white border border-[#767AFA] rounded-full grid place-content-center mt-0.5 mr-3 flex-shrink-0">
+                              <CheckCheck className="h-3 w-3 text-[#767AFA]" />
+                            </span>
+                            <span className="text-sm text-gray-700">{plan.includes[8]}</span>
+                          </li>
+                        </ul>
+                      </li>
                     </ul>
                   </div>
                 </CardContent>

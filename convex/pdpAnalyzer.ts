@@ -18,13 +18,30 @@ export const analyzePDP = action({
   },
   handler: async (ctx, args) => {
     try {
+      // Get user for analysis tracking
+      const identity = await ctx.auth.getUserIdentity();
+      if (!identity) {
+        throw new Error("User not authenticated");
+      }
+
+      const user = await ctx.runQuery(async (ctx) => {
+        return await ctx.db
+          .query("users")
+          .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
+          .first();
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
       // Run main analysis and competitor analyses in parallel with error handling
       const mainAnalysisPromise = analyzeImage(args.mainPDPData, args.metaInfo);
-      
+
       const competitorAnalysesPromise = args.competitorPDPs && args.competitorPDPs.length > 0
         ? Promise.allSettled(args.competitorPDPs.map((competitorPDP, i) =>
             analyzeImage(
-              competitorPDP, 
+              competitorPDP,
               args.metaInfo,
               `Competitor ${String.fromCharCode(65 + i)}` // A, B, C, D
             )
@@ -50,16 +67,37 @@ export const analyzePDP = action({
       }
 
       // Calculate Z-scores if competitors exist
-      const normalizedScores = competitorAnalyses.length > 0 
+      const normalizedScores = competitorAnalyses.length > 0
         ? calculateZScores(mainAnalysis, competitorAnalyses)
         : null;
 
       // Generate actionable recommendations
       const recommendations = await generateRecommendations(
-        mainAnalysis, 
+        mainAnalysis,
         competitorAnalyses,
         args.metaInfo
       );
+
+      // Calculate overall score for the analysis record
+      const overallScore = Object.values(mainAnalysis.scores).reduce((sum, score) => sum + score, 0) / Object.keys(mainAnalysis.scores).length;
+
+      // Save analysis record (just tracking usage, no full results)
+      await ctx.runMutation(async (ctx) => {
+        await ctx.db.insert("analyses", {
+          userId: user._id,
+          organizationId: user.organizationId,
+          type: "design_analyzer",
+          name: `Design Analysis - ${args.metaInfo?.category || 'Product'}`,
+          status: "completed",
+          inputFiles: [],
+          createdAt: Date.now(),
+          completedAt: Date.now(),
+          results: {
+            overallScore: Math.round(overallScore * 10) / 10, // Just track overall score, not full analysis
+            competitorCount: competitorAnalyses.length
+          },
+        });
+      });
 
       return {
         mainAnalysis,

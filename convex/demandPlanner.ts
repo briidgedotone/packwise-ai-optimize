@@ -54,27 +54,44 @@ export const calculateDemandPlanning = action({
     insights: string[];
   }> => {
     try {
+      // Get user for analysis tracking
+      const identity = await ctx.auth.getUserIdentity();
+      if (!identity) {
+        throw new Error("User not authenticated");
+      }
+
+      const user = await ctx.runQuery(async (ctx) => {
+        return await ctx.db
+          .query("users")
+          .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
+          .first();
+      });
+
+      if (!user) {
+        throw new Error("User not found");
+      }
+
       // Parse packaging suite data (required)
       const packagingSuite = parsePackagingSuite(args.packagingSuiteData);
-      
+
       // Determine packaging mix percentages
       let packagingMix: Record<string, number>;
-      
+
       if (args.manualMixData) {
         // Option B: Manual mix overrides usage log
         packagingMix = parseManualMix(args.manualMixData);
       } else if (args.usageLogData) {
         // Option A: Calculate from usage log
         const usageRecords = parseUsageLog(args.usageLogData);
-        
+
         // Get existing usage data and merge
         const existingUsage = await ctx.runQuery(api.demandPlanner.getUsageHistory, {
           userId: args.userId,
         });
-        
+
         const combinedUsage = [...existingUsage, ...usageRecords];
         packagingMix = calculateMixFromUsage(combinedUsage);
-        
+
         // Store new usage records
         for (const record of usageRecords) {
           await ctx.runMutation(api.demandPlanner.storeUsageRecord, {
@@ -91,20 +108,20 @@ export const calculateDemandPlanning = action({
       // Calculate demand for each package type
       const demandResults: DemandResult[] = [];
       const safetyStock = args.safetyStockPercent || 0;
-      
+
       for (const [packageType, usagePercent] of Object.entries(packagingMix)) {
         const packageSpec = packagingSuite.find(spec => spec.packageType === packageType);
-        
+
         if (!packageSpec) {
           console.warn(`Package type "${packageType}" not found in packaging suite`);
           continue;
         }
-        
+
         const baseQty = Math.round(args.totalOrders * (usagePercent / 100));
         const finalQty = Math.round(baseQty * (1 + safetyStock / 100));
         const estimatedCost = (packageSpec.costPerUnit || 0) * finalQty;
         const estimatedWeight = (packageSpec.weightPerUnit || 0) * finalQty;
-        
+
         demandResults.push({
           packageType,
           baseQty,
@@ -115,8 +132,11 @@ export const calculateDemandPlanning = action({
           estimatedWeight,
         });
       }
-      
-      // Store analysis result
+
+      const totalPackages = demandResults.reduce((sum, r) => sum + r.finalQty, 0);
+      const totalCost = demandResults.reduce((sum, r) => sum + r.estimatedCost, 0);
+
+      // Store analysis result (existing demand planner table)
       const analysisId: any = await ctx.runMutation(api.demandPlanner.storeDemandAnalysis, {
         userId: args.userId,
         totalOrders: args.totalOrders,
@@ -125,16 +145,35 @@ export const calculateDemandPlanning = action({
         results: demandResults,
         insights: generateInsights(demandResults, args.totalOrders, safetyStock),
       });
-      
+
+      // Save analysis record for dashboard tracking (just tracking usage, no full results)
+      await ctx.runMutation(async (ctx) => {
+        await ctx.db.insert("analyses", {
+          userId: user._id,
+          organizationId: user.organizationId,
+          type: "demand_planner",
+          name: `Demand Forecast - ${args.forecastPeriod}`,
+          status: "completed",
+          inputFiles: [],
+          createdAt: Date.now(),
+          completedAt: Date.now(),
+          results: {
+            totalPackages, // Just track summary metrics, not full results
+            totalCost: Math.round(totalCost * 100) / 100,
+            packageTypeCount: demandResults.length
+          },
+        });
+      });
+
       return {
         analysisId,
         results: demandResults,
-        totalPackages: demandResults.reduce((sum, r) => sum + r.finalQty, 0),
-        totalCost: demandResults.reduce((sum, r) => sum + r.estimatedCost, 0),
+        totalPackages,
+        totalCost,
         totalWeight: demandResults.reduce((sum, r) => sum + r.estimatedWeight, 0),
         insights: generateInsights(demandResults, args.totalOrders, safetyStock),
       };
-      
+
     } catch (error) {
       console.error('Error in demand planning calculation:', error);
       throw new Error(error instanceof Error ? error.message : "Failed to calculate demand planning");

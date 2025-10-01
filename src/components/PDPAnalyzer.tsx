@@ -113,22 +113,37 @@ export const PDPAnalyzer = () => {
   };
 
   const handleMainPDPUpload = async (file: File | null) => {
-    setFiles(prev => ({ ...prev, mainPDP: file }));
     if (file) {
+      // Check file size (limit to 2MB per image to avoid storage quota issues)
+      const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+      if (file.size > maxSize) {
+        toast.error(`File size exceeds 2MB limit. Please compress or resize your image. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+        return;
+      }
+
+      setFiles(prev => ({ ...prev, mainPDP: file }));
       const preview = await fileToDataUrl(file);
       setMainPDPPreview(preview);
-      toast.success(`Main PDP loaded: ${file.name}`);
+      toast.success(`Main Design loaded: ${file.name}`);
     } else {
+      setFiles(prev => ({ ...prev, mainPDP: null }));
       setMainPDPPreview(null);
     }
   };
 
   const handleCompetitorUpload = async (file: File | null) => {
     if (file && files.competitors.length < 4) {
+      // Check file size (limit to 2MB per image)
+      const maxSize = 2 * 1024 * 1024; // 2MB in bytes
+      if (file.size > maxSize) {
+        toast.error(`File size exceeds 2MB limit. Please compress or resize your image. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
+        return;
+      }
+
       setFiles(prev => ({ ...prev, competitors: [...prev.competitors, file] }));
       const preview = await fileToDataUrl(file);
       setCompetitorPreviews(prev => [...prev, preview]);
-      toast.success(`Competitor PDP added: ${file.name}`);
+      toast.success(`Competitor Design added: ${file.name}`);
     }
   };
 
@@ -138,13 +153,13 @@ export const PDPAnalyzer = () => {
       competitors: prev.competitors.filter((_, i) => i !== index)
     }));
     setCompetitorPreviews(prev => prev.filter((_, i) => i !== index));
-    toast.info('Competitor PDP removed');
+    toast.info('Competitor Design removed');
   };
 
   // Handle PDP analysis
   const handleAnalyzePDP = async () => {
     if (!files.mainPDP) {
-      toast.error('Please upload your main PDP first');
+      toast.error('Please upload your main design first');
       return;
     }
 
@@ -223,14 +238,14 @@ export const PDPAnalyzer = () => {
 
       if (result.success) {
         navigate('/pdp-analysis/results');
-        toast.success('PDP analysis completed successfully!');
+        toast.success('Design analysis completed successfully!');
       } else if (result.error === 'NO_TOKENS') {
         navigate('/onboarding');
       }
       
     } catch (error) {
       console.error('Error analyzing PDP:', error);
-      toast.error('Failed to analyze PDP');
+      toast.error('Failed to analyze design');
     } finally {
       setIsAnalyzing(false);
     }
@@ -304,7 +319,7 @@ export const PDPAnalyzer = () => {
               <p className="text-lg text-gray-500 mb-4">Drop or Upload Your Packaging Design Here</p>
               <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
                 <Shield className="h-4 w-4" />
-                <span>Secure upload • JPG, PNG, PDF • Max 10MB</span>
+                <span>Secure upload • JPG, PNG, PDF • Max 2MB per image</span>
               </div>
             </div>
           </label>
@@ -312,7 +327,7 @@ export const PDPAnalyzer = () => {
           <div className="relative">
             <img
               src={mainPDPPreview}
-              alt="Main PDP"
+              alt="Main Design"
               className="w-full max-w-md mx-auto rounded-3xl shadow-lg"
             />
             <button
@@ -327,7 +342,7 @@ export const PDPAnalyzer = () => {
             <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-3xl">
               <div className="flex items-center gap-2 text-green-700">
                 <CheckCircle2 className="h-5 w-5" />
-                <span className="font-medium">Main PDP uploaded successfully</span>
+                <span className="font-medium">Main Design uploaded successfully</span>
               </div>
             </div>
           </div>
@@ -408,7 +423,7 @@ export const PDPAnalyzer = () => {
 
   const renderStep3 = () => (
     <div className="max-w-4xl mx-auto">
-      {/* Competitor PDPs */}
+      {/* Competitor Designs */}
       <div className="bg-white border border-gray-200 rounded-3xl p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
@@ -619,7 +634,7 @@ export const PDPAnalyzer = () => {
             title: "INPUTS",
             icon: "📥",
             items: [
-              "Packaging design images (PNG, JPG, JPEG formats)",
+              "Packaging design images (PNG, JPG, JPEG formats - Max 2MB per image)",
               "Product context: category, description, and target demographics",
               "Optional: Competitor design images for benchmarking",
               "Analysis preferences: focus areas and retail environment"

@@ -2,43 +2,43 @@ import { TrendingUp, ArrowRight, BarChart3, Calendar, AlertTriangle, Package, Fi
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 const DemandPlanner = () => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const flowchartSteps = [
     {
       step: 1,
       title: "Upload Historical Usage",
       description: "Past packaging usage by type",
-      icon: FileSpreadsheet,
-      visual: "Spreadsheet with package types + % usage"
+      icon: FileSpreadsheet
     },
     {
       step: 2,
       title: "Proprietary Formulas Calculate Percentages",
       description: "System determines actual mix % for each packaging type from historical data",
-      icon: PieChart,
-      visual: "Pie chart showing auto-calculated % split"
+      icon: PieChart
     },
     {
       step: 3,
       title: "Rolling Percentage Tracking",
       description: "Percentages are stored and updated quarter after quarter for continuous accuracy",
-      icon: History,
-      visual: "Timeline chart with % mix trending over multiple quarters"
+      icon: History
     },
     {
       step: 4,
       title: "Input Order Forecasts",
       description: "Provide total forecasted orders for upcoming periods",
-      icon: Calendar,
-      visual: "Calendar with 'Forecast: 1M Orders Q1'"
+      icon: Calendar
     },
     {
       step: 5,
       title: "Accurate Packaging Demand Plan",
       description: "Outputs precise demand by package type, aligned to forecast and rolling usage mix",
-      icon: BarChart3,
-      visual: "Stacked bar chart showing demand per package type"
+      icon: BarChart3
     }
   ];
 
@@ -66,7 +66,7 @@ const DemandPlanner = () => {
                 <Button variant="ghost">Login</Button>
               </Link>
               <Link to="/sign-up">
-                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Start Free Trial</Button>
+                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Get Started</Button>
               </Link>
             </div>
           </div>
@@ -135,10 +135,7 @@ const DemandPlanner = () => {
                         <CardTitle className="text-lg">{step.title}</CardTitle>
                       </CardHeader>
                       <CardContent className="text-center">
-                        <p className="text-sm text-gray-600 mb-3">{step.description}</p>
-                        <div className="bg-gray-50 rounded-lg p-3">
-                          <p className="text-xs text-gray-500 italic">{step.visual}</p>
-                        </div>
+                        <p className="text-sm text-gray-600">{step.description}</p>
                       </CardContent>
                     </Card>
                     {index < flowchartSteps.length - 1 && (

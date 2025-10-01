@@ -1,5 +1,4 @@
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 
 interface PDPAnalysisResult {
   mainAnalysis: {
@@ -66,6 +65,57 @@ interface ImageData {
   }>;
 }
 
+const criteriaWeights = {
+  hierarchy: 0.15,
+  branding: 0.15,
+  typography: 0.12,
+  color: 0.12,
+  imagery: 0.10,
+  messaging: 0.10,
+  simplicity: 0.08,
+  balance: 0.08,
+  shelf_performance: 0.05,
+  consistency: 0.05
+};
+
+const getMetricDisplayName = (metric: string): string => {
+  const metricNames: Record<string, string> = {
+    hierarchy: 'Visual Hierarchy',
+    branding: 'Brand Prominence',
+    typography: 'Typography',
+    color: 'Color Strategy',
+    imagery: 'Imagery Quality',
+    messaging: 'Messaging Clarity',
+    simplicity: 'Simplicity',
+    balance: 'Balance',
+    shelf_performance: 'Shelf Performance',
+    consistency: 'Consistency'
+  };
+  return metricNames[metric] || metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+};
+
+const calculateWeightedScore = (scores: Record<string, number>) => {
+  let weightedTotal = 0;
+  let usedWeight = 0;
+
+  Object.entries(scores).forEach(([criterion, score]) => {
+    const weight = criteriaWeights[criterion as keyof typeof criteriaWeights] || 0;
+    if (weight > 0) {
+      weightedTotal += score * weight;
+      usedWeight += weight;
+    }
+  });
+
+  return usedWeight > 0 ? weightedTotal / usedWeight : 0;
+};
+
+const getScoreLabel = (score: number) => {
+  if (score >= 8.5) return 'Excellent';
+  if (score >= 7) return 'Good';
+  if (score >= 5) return 'Fair';
+  return 'Needs Improvement';
+};
+
 export const exportPDPAnalysisToPDF = async (
   results: PDPAnalysisResult,
   imageData: ImageData | null
@@ -87,260 +137,332 @@ export const exportPDPAnalysisToPDF = async (
     };
 
     // Helper function to add text with word wrapping
-    const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 12) => {
+    const addWrappedText = (text: string, x: number, y: number, maxWidth: number, fontSize: number = 10) => {
       pdf.setFontSize(fontSize);
       const lines = pdf.splitTextToSize(text, maxWidth);
       pdf.text(lines, x, y);
       return lines.length * (fontSize * 0.35); // Return height used
     };
 
-    // Title Page
-    pdf.setFontSize(24);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Design Analysis Report', pageWidth / 2, yPosition + 20, { align: 'center' });
-    
-    yPosition += 40;
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'normal');
-    pdf.text(`Generated on: ${new Date(results.timestamp).toLocaleDateString()}`, pageWidth / 2, yPosition, { align: 'center' });
-    
-    yPosition += 20;
-    const overallScore = Object.values(results.mainAnalysis.scores).reduce((a, b) => a + b, 0) / Object.keys(results.mainAnalysis.scores).length;
-    pdf.setFontSize(18);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text(`Overall Performance Score: ${overallScore.toFixed(1)}/10`, pageWidth / 2, yPosition, { align: 'center' });
+    const overallScore = calculateWeightedScore(results.mainAnalysis.scores);
 
-    // Summary Statistics
-    yPosition += 30;
-    checkPageBreak(60);
-    
-    pdf.setFontSize(16);
+    // ============ PAGE 1: COVER & OVERVIEW ============
+    pdf.setFontSize(28);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Executive Summary', margin, yPosition);
-    yPosition += 15;
+    pdf.text('PDP Analysis Report', pageWidth / 2, yPosition + 30, { align: 'center' });
 
-    const aboveAverage = Object.values(results.mainAnalysis.scores).filter(s => s >= 7).length;
-    const totalMetrics = Object.keys(results.mainAnalysis.scores).length;
-    
+    yPosition += 50;
     pdf.setFontSize(12);
     pdf.setFont('helvetica', 'normal');
-    const summaryText = `
-• Analyzed ${totalMetrics} key performance metrics
-• ${aboveAverage} metrics performing above average (7.0+)
-• ${results.recommendations.priority_improvements.length} priority improvement areas identified
-• ${results.recommendations.quick_wins.length} quick wins available
-• ${results.competitorAnalyses.length} competitor${results.competitorAnalyses.length !== 1 ? 's' : ''} analyzed for benchmarking
-    `.trim();
-    
-    const summaryHeight = addWrappedText(summaryText, margin, yPosition, contentWidth);
-    yPosition += summaryHeight + 20;
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(`Generated on ${new Date(results.timestamp).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    })}`, pageWidth / 2, yPosition, { align: 'center' });
 
-    // Main Design Analysis
-    checkPageBreak(80);
-    pdf.addPage();
-    yPosition = margin;
-    
+    // Overall Score Box
+    yPosition += 30;
+    pdf.setDrawColor(59, 130, 246);
+    pdf.setLineWidth(0.5);
+    pdf.rect(margin + 20, yPosition, contentWidth - 40, 40);
+
+    yPosition += 15;
     pdf.setFontSize(16);
+    pdf.setTextColor(0, 0, 0);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Main PDP Performance Analysis', margin, yPosition);
-    yPosition += 20;
+    pdf.text('Overall Score', pageWidth / 2, yPosition, { align: 'center' });
 
-    // Add main PDP image if available
+    yPosition += 12;
+    pdf.setFontSize(32);
+    pdf.setTextColor(59, 130, 246);
+    pdf.text(`${overallScore.toFixed(1)}/10`, pageWidth / 2, yPosition, { align: 'center' });
+
+    yPosition += 10;
+    pdf.setFontSize(12);
+    pdf.setTextColor(100, 100, 100);
+    pdf.text(getScoreLabel(overallScore), pageWidth / 2, yPosition, { align: 'center' });
+
+    // Summary Statistics
+    yPosition += 40;
+    const strongMetrics = Object.values(results.mainAnalysis.scores).filter(s => s >= 7).length;
+
+    pdf.setFontSize(11);
+    pdf.setTextColor(0, 0, 0);
+    pdf.setFont('helvetica', 'normal');
+
+    const stats = [
+      `✓ ${strongMetrics} strong metrics`,
+      `⚠ ${results.recommendations.priority_improvements.length} areas to improve`,
+      `⚡ ${results.recommendations.quick_wins.length} quick wins`,
+      `🏆 ${results.recommendations.competitive_advantages.length} competitive advantages`
+    ];
+
+    const statStartY = yPosition;
+    stats.forEach((stat, index) => {
+      const xPos = index % 2 === 0 ? margin + 10 : pageWidth / 2 + 10;
+      const yPos = statStartY + Math.floor(index / 2) * 10;
+      pdf.text(stat, xPos, yPos);
+    });
+
+    yPosition += 30;
+    if (results.competitorAnalyses.length > 0) {
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Compared against ${results.competitorAnalyses.length} competitor${results.competitorAnalyses.length !== 1 ? 's' : ''}`, pageWidth / 2, yPosition, { align: 'center' });
+    }
+
+    // ============ PAGE 2: VISUAL COMPARISON ============
     if (imageData?.mainPDP) {
+      pdf.addPage();
+      yPosition = margin;
+
+      pdf.setFontSize(18);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(0, 0, 0);
+      pdf.text('Visual Comparison', margin, yPosition);
+      yPosition += 15;
+
+      // Main design
       try {
-        const imgWidth = 60;
-        const imgHeight = 60;
+        const imgWidth = 70;
+        const imgHeight = 70;
+
+        pdf.setFontSize(11);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(59, 130, 246);
+        pdf.text('Your Design', margin, yPosition);
+        yPosition += 5;
+
+        pdf.setDrawColor(59, 130, 246);
+        pdf.setLineWidth(1);
+        pdf.rect(margin - 2, yPosition - 2, imgWidth + 4, imgHeight + 4);
+
         pdf.addImage(imageData.mainPDP.dataUrl, 'JPEG', margin, yPosition, imgWidth, imgHeight);
-        yPosition += imgHeight + 10;
+
+        pdf.setFontSize(10);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(0, 0, 0);
+        pdf.text(`Score: ${overallScore.toFixed(1)}/10`, margin, yPosition + imgHeight + 8);
+
+        yPosition += imgHeight + 20;
       } catch (error) {
         console.warn('Could not add main PDP image to PDF:', error);
       }
-    }
 
-    // Performance Scores
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Performance Scores', margin, yPosition);
-    yPosition += 15;
-
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    
-    Object.entries(results.mainAnalysis.scores).forEach(([metric, score]) => {
-      checkPageBreak(20);
-      
-      const metricName = metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-      pdf.text(`${metricName}: ${score.toFixed(1)}/10`, margin, yPosition);
-      
-      // Score bar visualization
-      const barWidth = 50;
-      const barHeight = 3;
-      const scorePercent = score / 10;
-      
-      // Background bar
-      pdf.setFillColor(230, 230, 230);
-      pdf.rect(margin + 80, yPosition - 2, barWidth, barHeight, 'F');
-      
-      // Score bar
-      const color = score >= 7 ? [34, 197, 94] : score >= 5 ? [251, 191, 36] : [239, 68, 68];
-      pdf.setFillColor(color[0], color[1], color[2]);
-      pdf.rect(margin + 80, yPosition - 2, barWidth * scorePercent, barHeight, 'F');
-      
-      yPosition += 12;
-    });
-
-    // Visual Elements Analysis
-    yPosition += 15;
-    checkPageBreak(80);
-    
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Visual Elements Analysis', margin, yPosition);
-    yPosition += 15;
-
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    
-    const visualElements = [
-      `Design Style: ${results.mainAnalysis.visualElements.design_style}`,
-      `Logo Position: ${results.mainAnalysis.visualElements.logo_position}`,
-      `Primary Colors: ${results.mainAnalysis.visualElements.primary_colors.join(', ')}`,
-      `Text Hierarchy: ${results.mainAnalysis.visualElements.text_hierarchy}`,
-      `Featured Claims: ${results.mainAnalysis.visualElements.featured_claims.join(', ')}`
-    ];
-
-    visualElements.forEach(element => {
-      checkPageBreak(10);
-      const height = addWrappedText(`• ${element}`, margin, yPosition, contentWidth, 10);
-      yPosition += height + 5;
-    });
-
-    // Competitor Analysis
-    if (results.competitorAnalyses.length > 0) {
-      yPosition += 20;
-      checkPageBreak(60);
-      
-      pdf.setFontSize(16);
-      pdf.setFont('helvetica', 'bold');
-      pdf.text('Competitive Benchmark', margin, yPosition);
-      yPosition += 20;
-
-      results.competitorAnalyses.forEach((competitor, index) => {
-        checkPageBreak(40);
-        
-        const competitorScore = Object.values(competitor.scores).reduce((a, b) => a + b, 0) / Object.keys(competitor.scores).length;
-        
+      // Competitors
+      if (imageData.competitors.length > 0) {
+        yPosition += 10;
         pdf.setFontSize(12);
         pdf.setFont('helvetica', 'bold');
-        pdf.text(`${competitor.label}`, margin, yPosition);
-        pdf.text(`Score: ${competitorScore.toFixed(1)}/10`, margin + 100, yPosition);
-        yPosition += 15;
+        pdf.setTextColor(0, 0, 0);
+        pdf.text('Competitors', margin, yPosition);
+        yPosition += 10;
 
-        // Add competitor image if available
-        if (imageData?.competitors[index]) {
+        imageData.competitors.forEach((comp, index) => {
+          checkPageBreak(65);
+
           try {
-            const imgWidth = 30;
-            const imgHeight = 30;
-            pdf.addImage(imageData.competitors[index].dataUrl, 'JPEG', margin, yPosition, imgWidth, imgHeight);
-            yPosition += imgHeight + 10;
+            const imgWidth = 50;
+            const imgHeight = 50;
+            const compScore = calculateWeightedScore(results.competitorAnalyses[index].scores);
+
+            pdf.setFontSize(10);
+            pdf.setFont('helvetica', 'bold');
+            pdf.setTextColor(70, 70, 70);
+            pdf.text(`Competitor ${index + 1}`, margin, yPosition);
+            yPosition += 5;
+
+            pdf.setDrawColor(200, 200, 200);
+            pdf.setLineWidth(0.5);
+            pdf.rect(margin - 2, yPosition - 2, imgWidth + 4, imgHeight + 4);
+
+            pdf.addImage(comp.dataUrl, 'JPEG', margin, yPosition, imgWidth, imgHeight);
+
+            pdf.setFontSize(9);
+            pdf.setFont('helvetica', 'normal');
+            pdf.setTextColor(0, 0, 0);
+            pdf.text(`Score: ${compScore.toFixed(1)}/10`, margin, yPosition + imgHeight + 7);
+
+            yPosition += imgHeight + 15;
           } catch (error) {
             console.warn(`Could not add competitor ${index} image to PDF:`, error);
           }
-        } else {
-          yPosition += 10;
-        }
-      });
+        });
+      }
     }
 
-    // Recommendations
+    // ============ PAGE 3: DETAILED METRICS ============
     pdf.addPage();
     yPosition = margin;
-    
-    pdf.setFontSize(16);
+
+    pdf.setFontSize(18);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('Strategic Recommendations', margin, yPosition);
-    yPosition += 20;
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('Detailed Metrics', margin, yPosition);
+    yPosition += 15;
+
+    const sortedMetrics = Object.entries(results.mainAnalysis.scores)
+      .sort(([, a], [, b]) => b - a);
+
+    sortedMetrics.forEach(([metric, score]) => {
+      checkPageBreak(40);
+
+      // Metric name and score
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(0, 0, 0);
+      pdf.text(getMetricDisplayName(metric), margin, yPosition);
+
+      const weight = criteriaWeights[metric as keyof typeof criteriaWeights] || 0;
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(120, 120, 120);
+      pdf.text(`Weight: ${(weight * 100).toFixed(0)}%`, margin, yPosition + 5);
+
+      // Score display
+      pdf.setFontSize(16);
+      pdf.setFont('helvetica', 'bold');
+      const scoreColor = score >= 7 ? [37, 99, 235] : score >= 5 ? [234, 88, 12] : [220, 38, 38];
+      pdf.setTextColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+      pdf.text(`${score.toFixed(1)}`, pageWidth - margin - 30, yPosition + 3);
+
+      pdf.setFontSize(8);
+      pdf.setTextColor(120, 120, 120);
+      pdf.text(getScoreLabel(score), pageWidth - margin - 30, yPosition + 9);
+
+      // Progress bar
+      yPosition += 12;
+      const barWidth = contentWidth - 40;
+      const barHeight = 4;
+      const scorePercent = score / 10;
+
+      pdf.setFillColor(229, 231, 235);
+      pdf.rect(margin, yPosition, barWidth, barHeight, 'F');
+
+      pdf.setFillColor(scoreColor[0], scoreColor[1], scoreColor[2]);
+      pdf.rect(margin, yPosition, barWidth * scorePercent, barHeight, 'F');
+
+      // Analysis text
+      yPosition += 8;
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(60, 60, 60);
+      const analysisHeight = addWrappedText(results.mainAnalysis.analysis[metric], margin, yPosition, contentWidth - 5, 9);
+      yPosition += analysisHeight + 15;
+    });
+
+    // ============ PAGE 4: RECOMMENDATIONS ============
+    pdf.addPage();
+    yPosition = margin;
+
+    pdf.setFontSize(18);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('Recommendations', margin, yPosition);
+    yPosition += 15;
 
     // Overall Strategy
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
     pdf.text('Overall Strategy', margin, yPosition);
-    yPosition += 15;
+    yPosition += 10;
 
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(40, 40, 40);
     const strategyHeight = addWrappedText(results.recommendations.overall_strategy, margin, yPosition, contentWidth, 10);
     yPosition += strategyHeight + 20;
 
-    // Priority Improvements
-    checkPageBreak(40);
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Priority Improvements', margin, yPosition);
-    yPosition += 15;
-
-    results.recommendations.priority_improvements.forEach((improvement, index) => {
-      checkPageBreak(60);
-      
-      pdf.setFontSize(12);
-      pdf.setFont('helvetica', 'bold');
-      const improvementTitle = `${index + 1}. ${improvement.metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}`;
-      pdf.text(improvementTitle, margin, yPosition);
-      yPosition += 12;
-
-      pdf.setFontSize(10);
-      pdf.setFont('helvetica', 'normal');
-      pdf.text(`Current Score: ${improvement.current_score.toFixed(1)} → Target Score: ${improvement.target_score.toFixed(1)}`, margin + 5, yPosition);
-      yPosition += 10;
-
-      const recHeight = addWrappedText(improvement.recommendation, margin + 5, yPosition, contentWidth - 5, 10);
-      yPosition += recHeight + 5;
-
-      pdf.setFont('helvetica', 'italic');
-      const exampleHeight = addWrappedText(`Example: ${improvement.example}`, margin + 5, yPosition, contentWidth - 5, 9);
-      yPosition += exampleHeight + 15;
-    });
-
     // Quick Wins
-    checkPageBreak(60);
+    checkPageBreak(50);
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
     pdf.text('Quick Wins', margin, yPosition);
-    yPosition += 15;
+    yPosition += 10;
 
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
+    pdf.setTextColor(40, 40, 40);
     results.recommendations.quick_wins.forEach((win, index) => {
-      checkPageBreak(15);
-      const winHeight = addWrappedText(`${index + 1}. ${win}`, margin, yPosition, contentWidth, 10);
-      yPosition += winHeight + 8;
+      checkPageBreak(20);
+      const winHeight = addWrappedText(`${index + 1}. ${win}`, margin + 3, yPosition, contentWidth - 3, 10);
+      yPosition += winHeight + 6;
+    });
+
+    // Priority Improvements
+    yPosition += 15;
+    checkPageBreak(50);
+    pdf.setFontSize(14);
+    pdf.setFont('helvetica', 'bold');
+    pdf.setTextColor(0, 0, 0);
+    pdf.text('Priority Improvements', margin, yPosition);
+    yPosition += 10;
+
+    results.recommendations.priority_improvements.forEach((improvement, index) => {
+      checkPageBreak(50);
+
+      pdf.setFontSize(12);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(0, 0, 0);
+      pdf.text(`${index + 1}. ${getMetricDisplayName(improvement.metric)}`, margin, yPosition);
+      yPosition += 8;
+
+      pdf.setFontSize(9);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(100, 100, 100);
+      pdf.text(`Current: ${improvement.current_score.toFixed(1)} → Target: ${improvement.target_score.toFixed(1)}`, margin + 3, yPosition);
+      yPosition += 8;
+
+      pdf.setFontSize(10);
+      pdf.setTextColor(40, 40, 40);
+      const recHeight = addWrappedText(improvement.recommendation, margin + 3, yPosition, contentWidth - 3, 10);
+      yPosition += recHeight + 5;
+
+      if (improvement.example) {
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'italic');
+        pdf.setTextColor(80, 80, 80);
+        const exampleHeight = addWrappedText(`Example: ${improvement.example}`, margin + 3, yPosition, contentWidth - 3, 9);
+        yPosition += exampleHeight + 10;
+      }
     });
 
     // Competitive Advantages
-    yPosition += 10;
-    checkPageBreak(60);
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.text('Competitive Advantages', margin, yPosition);
-    yPosition += 15;
+    if (results.recommendations.competitive_advantages.length > 0) {
+      yPosition += 15;
+      checkPageBreak(50);
+      pdf.setFontSize(14);
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(0, 0, 0);
+      pdf.text('Your Competitive Advantages', margin, yPosition);
+      yPosition += 10;
 
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    results.recommendations.competitive_advantages.forEach((advantage, index) => {
-      checkPageBreak(15);
-      const advHeight = addWrappedText(`${index + 1}. ${advantage}`, margin, yPosition, contentWidth, 10);
-      yPosition += advHeight + 8;
-    });
+      pdf.setFontSize(10);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(40, 40, 40);
+      results.recommendations.competitive_advantages.forEach((advantage, index) => {
+        checkPageBreak(20);
+        const advHeight = addWrappedText(`${index + 1}. ${advantage}`, margin + 3, yPosition, contentWidth - 3, 10);
+        yPosition += advHeight + 6;
+      });
+    }
 
-    // Footer on last page
-    pdf.setFontSize(8);
-    pdf.setFont('helvetica', 'italic');
-    pdf.text('Generated by QuantiPackAI - PDP Visual Intelligence', pageWidth / 2, pageHeight - 10, { align: 'center' });
+    // Footer on all pages
+    const pageCount = pdf.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      pdf.setPage(i);
+      pdf.setFontSize(8);
+      pdf.setFont('helvetica', 'normal');
+      pdf.setTextColor(150, 150, 150);
+      pdf.text('QuantiPackAI - PDP Analysis Report', margin, pageHeight - 10);
+      pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin - 20, pageHeight - 10);
+    }
 
     // Save the PDF
-    const fileName = `PDP_Analysis_Report_${new Date().toISOString().split('T')[0]}.pdf`;
+    const fileName = `PDP_Analysis_${new Date().toISOString().split('T')[0]}.pdf`;
     pdf.save(fileName);
-    
+
   } catch (error) {
     console.error('Error generating PDF:', error);
     throw new Error('Failed to generate PDF report');

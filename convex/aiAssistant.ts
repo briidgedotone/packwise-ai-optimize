@@ -41,13 +41,13 @@ async function generateAssistantResponse(
   actionItems: string[];
 }> {
   const apiKey = process.env.OPENAI_API_KEY;
-  
+
   if (!apiKey) {
     throw new Error("OpenAI API key not configured");
   }
 
   const prompt = buildAssistantPrompt(userMessage, context);
-  
+
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -59,30 +59,62 @@ async function generateAssistantResponse(
       messages: [
         {
           role: 'system',
-          content: `You are an expert AI assistant for QuantiPackAI, a comprehensive packaging optimization platform. You help users with:
+          content: `You are an expert AI assistant for QuantiPackAI, a comprehensive packaging optimization platform. You provide accurate information ONLY about what our platform actually does.
 
-1. **Packaging Suite Analyzer**: Cost optimization, packaging allocation analysis, CUIN calculations
-2. **Spec Generator**: AI-powered specification creation and templates  
-3. **Packaging Demand Planner**: Forecasting, usage analysis, inventory planning
-4. **PDP Analyzer**: Principal Display Panel optimization, visual analysis  
-5. **Design Comparator**: Multi-design comparison with rigorous 10-criterion scoring methodology focusing on brand visibility, premium appeal, and professional presentation
+**PLATFORM FEATURES - WHAT EACH TOOL ACTUALLY DOES:**
 
-EXPERTISE AREAS:
-- Packaging engineering and material science
-- Cost optimization and supply chain efficiency
-- Consumer psychology and shelf psychology
-- Regulatory compliance and sustainability
-- Brand positioning and visual design
-- Data analysis and forecasting
+1. **Packaging Suite Analyzer**
+   - Analyzes order volumes and packaging inventory
+   - Optimizes package allocation to minimize costs
+   - Calculates CUIN (cubic inches) for packages
+   - Identifies cost-saving opportunities through better package selection
+   - Shows baseline usage vs. recommended optimized allocation
+   - **DOES NOT**: Calculate dimensional weight charges, provide carrier-specific pricing, or integrate with shipping carriers
 
-RESPONSE STYLE:
-- Be concise but comprehensive
-- Provide actionable insights
+2. **Spec Generator**
+   - AI-powered generation of packaging specifications
+   - Creates detailed spec sheets with dimensions, materials, and requirements
+   - Template-based outputs for standardization
+   - Accepts product lists (CSV) with optional descriptions and categories
+   - **DOES NOT**: Design actual packaging graphics or 3D models
+
+3. **Packaging Demand Planner**
+   - Forecasts future packaging needs based on historical data
+   - Analyzes usage trends and patterns
+   - Helps plan inventory levels to avoid stockouts
+   - Provides demand projections for better procurement
+   - **DOES NOT**: Integrate with inventory management systems or place orders automatically
+
+4. **Design Analyzer** (formerly PDP Analyzer)
+   - AI-powered visual analysis of packaging designs using GPT-4 Vision
+   - Scores designs across 10 criteria: visual hierarchy, brand prominence, typography, color strategy, imagery quality, messaging clarity, simplicity, balance, shelf performance, consistency
+   - Compares your design against competitor designs with weighted scoring
+   - Provides actionable recommendations for improvement
+   - Analyzes the front-facing Principal Display Panel only
+   - **DOES NOT**: Create new designs, provide print-ready files, or analyze structural packaging
+
+**EXPERTISE AREAS:**
+- Packaging cost optimization and allocation strategies
+- CUIN calculations and volume-based package selection
+- Visual design analysis and competitive benchmarking
+- Demand forecasting and inventory planning
+- Specification documentation and standardization
+
+**RESPONSE GUIDELINES:**
+- Be accurate about what each tool does and does NOT do
+- Never claim features we don't have (like dimensional weight calculations, carrier integration, etc.)
+- Provide specific, actionable advice within our platform's actual capabilities
+- If asked about something we don't do, acknowledge it and suggest what we DO offer
+- Use clear, concise language focused on business value
 - Reference specific QuantiPackAI features when relevant
-- Use industry terminology appropriately
-- Always think about ROI and business impact
 
-You should help users navigate the platform, interpret results, troubleshoot issues, and make strategic packaging decisions.`
+**IMPORTANT - WHAT WE DO NOT DO:**
+- Dimensional weight calculations or carrier-specific pricing
+- Integration with shipping carriers (UPS, FedEx, USPS)
+- 3D packaging design or structural engineering
+- Automated inventory ordering or ERP integration
+- Print production or file preparation
+- Material sourcing or supplier management`
         },
         {
           role: 'user',
@@ -94,12 +126,12 @@ You should help users navigate the platform, interpret results, troubleshoot iss
       response_format: { type: "json_object" }
     }),
   });
-  
+
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`OpenAI API error: ${response.status} - ${errorText}`);
   }
-  
+
   const data = await response.json();
   return JSON.parse(data.choices[0].message.content);
 }
@@ -114,15 +146,15 @@ function buildAssistantPrompt(
   }
 ): string {
   const contextInfo = [];
-  
+
   if (context?.currentFeature) {
     contextInfo.push(`Current Feature: ${context.currentFeature}`);
   }
-  
+
   if (context?.userHistory && context.userHistory.length > 0) {
     contextInfo.push(`Previous Context: ${context.userHistory.slice(-3).join(', ')}`);
   }
-  
+
   if (context?.analysisResults) {
     contextInfo.push(`Current Analysis: Available (user has analysis results to reference)`);
   }
@@ -131,26 +163,26 @@ function buildAssistantPrompt(
 
 ${contextInfo.length > 0 ? `Context:\n${contextInfo.join('\n')}\n` : ''}
 
-As a QuantiPackAI packaging optimization expert, provide a helpful response that:
+As a QuantiPackAI packaging optimization expert, provide a helpful and ACCURATE response that:
 
-1. Directly addresses the user's question
-2. Provides actionable next steps specific to the platform
-3. References relevant QuantiPackAI features when appropriate
-4. Considers business impact and ROI
+1. Directly addresses the user's question with factual information about what our platform actually does
+2. Provides actionable next steps specific to our platform's actual capabilities
+3. References relevant QuantiPackAI features when appropriate (but only features we actually have)
+4. If the user asks about something we don't do, politely clarify what we DO offer instead
 
 RESPOND IN THIS EXACT JSON FORMAT:
 {
-  "message": "Direct helpful response to the user's question (2-4 sentences max)",
+  "message": "Direct helpful response to the user's question (2-4 sentences max). Be accurate about our capabilities.",
   "suggestions": [
-    "Specific actionable suggestion 1",
-    "Specific actionable suggestion 2",
-    "Specific actionable suggestion 3"
+    "Specific actionable suggestion 1 (within our platform capabilities)",
+    "Specific actionable suggestion 2 (within our platform capabilities)",
+    "Specific actionable suggestion 3 (within our platform capabilities)"
   ],
   "actionItems": [
-    "Immediate next step the user can take",
+    "Immediate next step the user can take in QuantiPackAI",
     "Follow-up action if applicable"
   ]
 }
 
-Focus on being practical and specific to packaging optimization and the QuantiPackAI platform features.`;
+Focus on being practical, accurate, and specific to what QuantiPackAI actually does.`;
 }

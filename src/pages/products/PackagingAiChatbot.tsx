@@ -2,8 +2,13 @@ import { MessageSquare, ArrowRight, Lightbulb, Clock, BookOpen, Package } from "
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 const PackagingAiChatbot = () => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const features = [
     {
       icon: Lightbulb,
@@ -57,7 +62,7 @@ const PackagingAiChatbot = () => {
                 <Button variant="ghost">Login</Button>
               </Link>
               <Link to="/sign-up">
-                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Start Free Trial</Button>
+                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Get Started</Button>
               </Link>
             </div>
           </div>
@@ -96,8 +101,8 @@ const PackagingAiChatbot = () => {
             <div className="bg-white rounded-2xl shadow-xl p-8">
               <div className="space-y-6">
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-gray-900 mb-2">&lt;5s</div>
-                  <p className="text-gray-600">Average Response Time</p>
+                  <div className="text-3xl font-bold text-gray-900 mb-2">Unlimited</div>
+                  <p className="text-gray-600">Questions Per Month</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-center">
                   <div>
@@ -105,8 +110,8 @@ const PackagingAiChatbot = () => {
                     <p className="text-sm text-gray-600">Available</p>
                   </div>
                   <div>
-                    <div className="text-2xl font-semibold text-blue-600">1000+</div>
-                    <p className="text-sm text-gray-600">Topics Covered</p>
+                    <div className="text-2xl font-semibold text-blue-600">0</div>
+                    <p className="text-sm text-gray-600">Tokens Used</p>
                   </div>
                 </div>
               </div>

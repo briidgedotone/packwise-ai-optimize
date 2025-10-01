@@ -3,6 +3,7 @@
 import { Package } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 function handleScrollTop() {
   window.scroll({
@@ -21,11 +22,11 @@ const navigation = {
           id: "product",
           name: "Product",
           items: [
-            { name: "Suite Analyzer", href: "/products/suite-analyzer" },
-            { name: "Demand Planner", href: "/products/demand-planner" },
-            { name: "Spec Generator", href: "/products/spec-generator" },
-            { name: "Design Analyzer", href: "/products/design-analyzer" },
-            { name: "Packaging AI Chatbot", href: "/products/packaging-ai-chatbot" },
+            { name: "Suite Analyzer", href: "/product/suite-analyzer" },
+            { name: "Demand Planner", href: "/product/demand-planner" },
+            { name: "Spec Generator", href: "/product/spec-generator" },
+            { name: "Design Analyzer", href: "/product/design-analyzer" },
+            { name: "Packaging AI Chatbot", href: "/product/packaging-ai-chatbot" },
           ],
         },
         {
@@ -67,13 +68,18 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-gray-900">Stay updated</h4>
             <p className="text-gray-600 text-sm mb-4">Get packaging optimization tips and product updates</p>
             <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
-              <Input 
-                type="email" 
-                placeholder="Enter your email" 
+              <Input
+                type="email"
+                placeholder="Enter your email"
                 className="bg-white border-gray-300 text-gray-900 placeholder-gray-500 rounded-3xl"
+                disabled
               />
-              <Button style={{ backgroundColor: '#767AFA' }} className="hover:opacity-90 rounded-3xl whitespace-nowrap">
-                Subscribe
+              <Button
+                style={{ backgroundColor: '#767AFA' }}
+                className="hover:opacity-90 rounded-3xl whitespace-nowrap"
+                disabled
+              >
+                Coming Soon
               </Button>
             </div>
           </div>
@@ -95,12 +101,12 @@ export default function Footer() {
                   <ul role="list" className="space-y-2">
                     {section.items.map((item) => (
                       <li key={item.name}>
-                        <a
-                          href={item.href}
+                        <Link
+                          to={item.href}
                           className="text-gray-600 hover:text-[#767AFA] transition-colors text-sm"
                         >
                           {item.name}
-                        </a>
+                        </Link>
                       </li>
                     ))}
                   </ul>

@@ -2,8 +2,13 @@ import { Eye, ArrowRight, Camera, Award, Target, Package, Upload, Search, FileTe
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
 
 const DesignAnalyzer = () => {
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const flowchartSteps = [
     {
       step: 1,
@@ -50,16 +55,16 @@ const DesignAnalyzer = () => {
   ];
 
   const criteria = [
-    "Brand Visibility",
-    "Premium Appeal", 
-    "Shelf Impact",
-    "Color Harmony",
-    "Typography",
-    "Layout Balance",
-    "Information Hierarchy",
-    "Target Audience Fit",
-    "Market Differentiation",
-    "Professional Presentation"
+    "Visual Hierarchy",
+    "Brand Prominence & Placement",
+    "Typography & Readability",
+    "Color Strategy & Contrast",
+    "Imagery Integration & Quality",
+    "Messaging Clarity & Claim Placement",
+    "Simplicity & Focus",
+    "Balance & Composition",
+    "Shelf & Omni-Channel Performance",
+    "Design Consistency & Cohesion"
   ];
 
   return (
@@ -79,7 +84,7 @@ const DesignAnalyzer = () => {
                 <Button variant="ghost">Login</Button>
               </Link>
               <Link to="/sign-up">
-                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Start Free Trial</Button>
+                <Button className="bg-[#767AFA] hover:bg-[#767AFA]/90">Get Started</Button>
               </Link>
             </div>
           </div>
@@ -240,7 +245,7 @@ const DesignAnalyzer = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/sign-up">
               <Button size="lg" className="bg-orange-600 hover:bg-orange-700">
-                Start Free Trial
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
