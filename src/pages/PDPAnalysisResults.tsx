@@ -8,7 +8,9 @@ import {
   CheckCircleIcon as CheckCircle,
   ChartBarIcon as BarChart,
   LightBulbIcon as Lightbulb,
-  ExclamationTriangleIcon as AlertTriangle
+  ExclamationTriangleIcon as AlertTriangle,
+  ChevronDownIcon as ChevronDown,
+  ChevronUpIcon as ChevronUp
 } from '@heroicons/react/24/outline';
 import { toast } from 'sonner';
 import { exportPDPAnalysisToPDF } from '@/lib/pdpAnalysisExport';
@@ -387,7 +389,7 @@ const PDPAnalysisResults = () => {
                   >
                     <button
                       onClick={() => setSelectedMetric(isExpanded ? null : metric)}
-                      className="w-full px-5 py-4 flex items-center justify-between text-left"
+                      className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-gray-50 transition-colors"
                     >
                       <div className="flex items-center gap-4 flex-1">
                         <div className="flex flex-col">
@@ -407,6 +409,19 @@ const PDPAnalysisResults = () => {
                             className="bg-blue-600 h-2 rounded-full transition-all"
                             style={{ width: `${(score / 10) * 100}%` }}
                           />
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-blue-600 font-medium ml-4">
+                          {isExpanded ? (
+                            <>
+                              <span>View Less</span>
+                              <ChevronUp className="h-4 w-4" />
+                            </>
+                          ) : (
+                            <>
+                              <span>View More</span>
+                              <ChevronDown className="h-4 w-4" />
+                            </>
+                          )}
                         </div>
                       </div>
                     </button>
