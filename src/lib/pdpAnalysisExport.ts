@@ -149,7 +149,7 @@ export const exportPDPAnalysisToPDF = async (
     // ============ PAGE 1: COVER & OVERVIEW ============
     pdf.setFontSize(28);
     pdf.setFont('helvetica', 'bold');
-    pdf.text('PDP Analysis Report', pageWidth / 2, yPosition + 30, { align: 'center' });
+    pdf.text('Design Analysis Report', pageWidth / 2, yPosition + 30, { align: 'center' });
 
     yPosition += 50;
     pdf.setFontSize(12);
@@ -194,7 +194,6 @@ export const exportPDPAnalysisToPDF = async (
     const stats = [
       `✓ ${strongMetrics} strong metrics`,
       `⚠ ${results.recommendations.priority_improvements.length} areas to improve`,
-      `⚡ ${results.recommendations.quick_wins.length} quick wins`,
       `🏆 ${results.recommendations.competitive_advantages.length} competitive advantages`
     ];
 
@@ -373,25 +372,7 @@ export const exportPDPAnalysisToPDF = async (
     const strategyHeight = addWrappedText(results.recommendations.overall_strategy, margin, yPosition, contentWidth, 10);
     yPosition += strategyHeight + 20;
 
-    // Quick Wins
-    checkPageBreak(50);
-    pdf.setFontSize(14);
-    pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(0, 0, 0);
-    pdf.text('Quick Wins', margin, yPosition);
-    yPosition += 10;
-
-    pdf.setFontSize(10);
-    pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(40, 40, 40);
-    results.recommendations.quick_wins.forEach((win, index) => {
-      checkPageBreak(20);
-      const winHeight = addWrappedText(`${index + 1}. ${win}`, margin + 3, yPosition, contentWidth - 3, 10);
-      yPosition += winHeight + 6;
-    });
-
     // Priority Improvements
-    yPosition += 15;
     checkPageBreak(50);
     pdf.setFontSize(14);
     pdf.setFont('helvetica', 'bold');
@@ -455,12 +436,12 @@ export const exportPDPAnalysisToPDF = async (
       pdf.setFontSize(8);
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(150, 150, 150);
-      pdf.text('QuantiPackAI - PDP Analysis Report', margin, pageHeight - 10);
+      pdf.text('QuantiPackAI - Design Analysis Report', margin, pageHeight - 10);
       pdf.text(`Page ${i} of ${pageCount}`, pageWidth - margin - 20, pageHeight - 10);
     }
 
     // Save the PDF
-    const fileName = `PDP_Analysis_${new Date().toISOString().split('T')[0]}.pdf`;
+    const fileName = `Design_Analysis_${new Date().toISOString().split('T')[0]}.pdf`;
     pdf.save(fileName);
 
   } catch (error) {
