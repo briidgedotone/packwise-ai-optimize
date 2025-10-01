@@ -461,12 +461,11 @@ const PDPAnalysisResults = () => {
             <p className="text-gray-700 leading-relaxed">{results.recommendations.overall_strategy}</p>
           </div>
 
-          {/* Combined Priority Improvements & Quick Wins */}
-          {(results.recommendations.priority_improvements.length > 0 || results.recommendations.quick_wins.length > 0) && (
+          {/* Priority Improvements */}
+          {results.recommendations.priority_improvements.length > 0 && (
             <div className="mb-8">
               <h3 className="font-medium text-gray-900 mb-4">Priority Improvements</h3>
               <div className="grid gap-4">
-                {/* Priority Improvements */}
                 {results.recommendations.priority_improvements.map((improvement, index) => (
                   <div key={`priority-${index}`} className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
                     <div className="flex items-start gap-3">
@@ -481,20 +480,6 @@ const PDPAnalysisResults = () => {
                           </div>
                         </div>
                         <p className="text-sm text-gray-700">{improvement.recommendation}</p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-
-                {/* Quick Wins */}
-                {results.recommendations.quick_wins.map((win, index) => (
-                  <div key={`quick-${index}`} className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
-                        {results.recommendations.priority_improvements.length + index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm text-gray-700">{win}</p>
                       </div>
                     </div>
                   </div>
