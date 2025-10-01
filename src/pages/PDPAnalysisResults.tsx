@@ -461,43 +461,42 @@ const PDPAnalysisResults = () => {
             <p className="text-gray-700 leading-relaxed">{results.recommendations.overall_strategy}</p>
           </div>
 
-          {/* Quick Wins */}
-          {results.recommendations.quick_wins.length > 0 && (
+          {/* Combined Priority Improvements & Quick Wins */}
+          {(results.recommendations.priority_improvements.length > 0 || results.recommendations.quick_wins.length > 0) && (
             <div className="mb-8">
-              <h3 className="font-medium text-gray-900 mb-3">Quick Wins</h3>
-              <div className="space-y-2">
-                {results.recommendations.quick_wins.map((win, index) => (
-                  <div key={index} className="flex items-start gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-                    <div className="w-6 h-6 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
-                      {index + 1}
+              <h3 className="font-medium text-gray-900 mb-4">Priority Improvements</h3>
+              <div className="grid gap-4">
+                {/* Priority Improvements */}
+                {results.recommendations.priority_improvements.map((improvement, index) => (
+                  <div key={`priority-${index}`} className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-orange-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                        {index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-gray-900">{getMetricDisplayName(improvement.metric)}</h4>
+                          <div className="text-sm font-medium text-orange-700 bg-orange-100 px-2 py-1 rounded">
+                            {improvement.current_score.toFixed(1)} → {improvement.target_score.toFixed(1)}
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-700">{improvement.recommendation}</p>
+                      </div>
                     </div>
-                    <p className="text-gray-700 text-sm">{win}</p>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
 
-          {/* Priority Improvements */}
-          {results.recommendations.priority_improvements.length > 0 && (
-            <div className="mb-8">
-              <h3 className="font-medium text-gray-900 mb-3">Priority Improvements</h3>
-              <div className="space-y-4">
-                {results.recommendations.priority_improvements.map((improvement, index) => (
-                  <div key={index} className="p-4 border border-gray-200 rounded-lg">
-                    <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium text-gray-900">{getMetricDisplayName(improvement.metric)}</h4>
-                      <div className="text-sm text-gray-600">
-                        {improvement.current_score.toFixed(1)} → {improvement.target_score.toFixed(1)}
+                {/* Quick Wins */}
+                {results.recommendations.quick_wins.map((win, index) => (
+                  <div key={`quick-${index}`} className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold flex-shrink-0">
+                        {results.recommendations.priority_improvements.length + index + 1}
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-700">{win}</p>
                       </div>
                     </div>
-                    <p className="text-sm text-gray-700 mb-2">{improvement.recommendation}</p>
-                    {improvement.example && (
-                      <div className="mt-2 p-3 bg-gray-50 rounded border border-gray-200">
-                        <p className="text-xs text-gray-600 font-medium mb-1">Example:</p>
-                        <p className="text-sm text-gray-700">{improvement.example}</p>
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
