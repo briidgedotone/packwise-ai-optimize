@@ -36,7 +36,11 @@ export const analyzePDP = action({
       }
 
       // Run main analysis and competitor analyses in parallel with error handling
-      const mainAnalysisPromise = analyzeImage(args.mainPDPData, args.metaInfo);
+      const mainAnalysisPromise = analyzeImage(args.mainPDPData, args.metaInfo)
+        .catch(error => {
+          console.error('Main PDP analysis failed:', error);
+          throw new Error(`Failed to analyze main design: ${error.message}`);
+        });
 
       const competitorAnalysesPromise = args.competitorPDPs && args.competitorPDPs.length > 0
         ? Promise.allSettled(args.competitorPDPs.map((competitorPDP, i) =>
@@ -49,10 +53,22 @@ export const analyzePDP = action({
         : Promise.resolve([]);
 
       // Wait for both main and competitor analyses to complete
-      const [mainAnalysis, competitorResults] = await Promise.all([
-        mainAnalysisPromise,
-        competitorAnalysesPromise
-      ]);
+      let mainAnalysis;
+      let competitorResults;
+
+      try {
+        [mainAnalysis, competitorResults] = await Promise.all([
+          mainAnalysisPromise,
+          competitorAnalysesPromise
+        ]);
+      } catch (error) {
+        // If main analysis fails, throw a user-friendly error
+        throw new Error(
+          error instanceof Error
+            ? error.message
+            : 'Failed to analyze your design. The image may be too large or the service is temporarily unavailable. Please try again with a smaller image or wait a few moments.'
+        );
+      }
 
       // Filter successful competitor analyses and log failures
       const competitorAnalyses: PDPAnalysis[] = [];
@@ -203,12 +219,16 @@ Provide expert-level analysis with evidence-based reasoning that demonstrates de
     
   } catch (error) {
     clearTimeout(timeoutId);
-    
+
     if (error instanceof Error && error.name === 'AbortError') {
-      throw new Error(`PDP analysis timeout for ${label} - request took longer than 30 seconds`);
+      throw new Error(`Analysis timeout (30s) - The image analysis took too long. Please try with a smaller image file (under 1MB recommended) or try again in a few moments.`);
     }
-    
-    throw error;
+
+    if (error instanceof Error) {
+      throw new Error(`Analysis failed: ${error.message}`);
+    }
+
+    throw new Error('Analysis failed: Unknown error occurred');
   }
 }
 
