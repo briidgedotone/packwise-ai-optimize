@@ -136,6 +136,22 @@ const PDPAnalysisResults = () => {
     return metricNames[metric as keyof typeof metricNames] || metric.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   };
 
+  const getMetricDefinition = (metric: string): string => {
+    const definitions = {
+      hierarchy: 'Visual Hierarchy measures how effectively your design guides the viewer\'s eye to the most important elements in order of priority, ensuring key information is noticed first.',
+      branding: 'Brand Prominence evaluates how well your brand identity stands out on the packaging, including logo visibility, brand name recognition, and overall brand presence.',
+      typography: 'Typography assesses the readability, font choices, text sizing, and overall effectiveness of text elements in communicating your product information.',
+      color: 'Color Strategy analyzes your color palette choices, contrast levels, emotional impact, and how well colors align with your brand and product category.',
+      imagery: 'Imagery Quality evaluates the quality, relevance, and impact of photos, illustrations, or graphics used on your packaging design.',
+      messaging: 'Messaging Clarity measures how clearly and effectively your packaging communicates key product benefits, claims, and information to consumers.',
+      simplicity: 'Simplicity assesses whether your design avoids clutter and unnecessary elements, making it easy for consumers to quickly understand your product.',
+      balance: 'Balance evaluates the visual equilibrium of your design elements, ensuring proper distribution of visual weight across the packaging.',
+      shelf_performance: 'Shelf Performance measures how well your design will stand out and attract attention in a retail environment among competing products.',
+      consistency: 'Consistency analyzes how well your design elements work together cohesively and align with your overall brand guidelines and identity.'
+    };
+    return definitions[metric as keyof typeof definitions] || 'This metric measures an important aspect of your packaging design effectiveness.';
+  };
+
   const calculateWeightedScore = (scores: Record<string, number>) => {
     let weightedTotal = 0;
     let usedWeight = 0;
@@ -184,9 +200,9 @@ const PDPAnalysisResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-gray-50 to-purple-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -234,71 +250,96 @@ const PDPAnalysisResults = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Score Overview */}
-        <div className="bg-white rounded-lg border border-gray-200 p-8 mb-6">
-          <div className="flex items-start justify-between mb-8">
-            <div>
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">
-                Overall Score: <span className={getScoreColor(overallScore)}>{overallScore.toFixed(1)}</span>/10
-              </h2>
-              <p className="text-gray-600">{getScoreLabel(overallScore)} — Your Design</p>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-gray-500 mb-1">Compared against</div>
-              <div className="text-2xl font-bold text-gray-900">{results.competitorAnalyses.length}</div>
-              <div className="text-sm text-gray-500">competitor{results.competitorAnalyses.length !== 1 ? 's' : ''}</div>
-            </div>
-          </div>
+        {/* Score Overview with Featured Design */}
+        <div className="relative bg-gradient-to-br from-blue-50 via-white to-blue-50 rounded-lg border border-blue-200 p-8 mb-6 overflow-hidden">
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 to-purple-600/5 pointer-events-none"></div>
 
-          {/* Performance Summary Bar */}
-          <div className="flex items-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-5 w-5 text-green-600" />
-              <span className="text-gray-700">
-                <span className="font-semibold">{Object.values(results.mainAnalysis.scores).filter(s => s >= 7).length}</span> strong metrics
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-orange-600" />
-              <span className="text-gray-700">
-                <span className="font-semibold">{results.recommendations.priority_improvements.length}</span> areas to improve
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-blue-600" />
-              <span className="text-gray-700">
-                <span className="font-semibold">{results.recommendations.quick_wins.length}</span> quick wins
-              </span>
+          <div className="relative z-10">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+              {/* Left: Score Information */}
+              <div>
+                <h2 className="text-4xl font-bold text-gray-900 mb-3">
+                  Overall Score: <span className={getScoreColor(overallScore)}>{overallScore.toFixed(1)}</span>/10
+                </h2>
+                <p className="text-xl text-gray-700 mb-6">{getScoreLabel(overallScore)} — Your Design</p>
+
+                {/* Performance Summary */}
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-green-200">
+                    <CheckCircle className="h-6 w-6 text-green-600 flex-shrink-0" />
+                    <span className="text-gray-700">
+                      <span className="font-bold text-lg">{Object.values(results.mainAnalysis.scores).filter(s => s >= 7).length}</span> strong metrics
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-orange-200">
+                    <AlertTriangle className="h-6 w-6 text-orange-600 flex-shrink-0" />
+                    <span className="text-gray-700">
+                      <span className="font-bold text-lg">{results.recommendations.priority_improvements.length}</span> areas to improve
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-blue-200">
+                    <Lightbulb className="h-6 w-6 text-blue-600 flex-shrink-0" />
+                    <span className="text-gray-700">
+                      <span className="font-bold text-lg">{results.recommendations.quick_wins.length}</span> quick wins
+                    </span>
+                  </div>
+                </div>
+
+                {results.competitorAnalyses.length > 0 && (
+                  <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 border border-gray-200">
+                    <div className="text-sm text-gray-600 mb-1">Compared against</div>
+                    <div className="flex items-baseline gap-2">
+                      <div className="text-3xl font-bold text-gray-900">{results.competitorAnalyses.length}</div>
+                      <div className="text-gray-600">competitor{results.competitorAnalyses.length !== 1 ? 's' : ''}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Right: Your Design Featured */}
+              {imageData?.mainPDP && (
+                <div className="relative">
+                  <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-1 shadow-2xl">
+                    <div className="bg-white rounded-xl overflow-hidden">
+                      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-6 py-4">
+                        <div className="flex items-center justify-between">
+                          <span className="text-lg font-bold">Your Design</span>
+                          <span className="text-2xl font-bold">{overallScore.toFixed(1)}/10</span>
+                        </div>
+                      </div>
+                      <div className="p-6 bg-gray-50">
+                        <img
+                          src={imageData.mainPDP.dataUrl}
+                          alt="Your Design"
+                          className="w-full h-64 object-contain rounded-lg"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  {/* Decorative elements */}
+                  <div className="absolute -top-4 -right-4 w-24 h-24 bg-blue-500/10 rounded-full blur-2xl"></div>
+                  <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Images Comparison */}
-        {imageData?.mainPDP && (
+        {/* Competitor Designs Section */}
+        {imageData?.competitors && imageData.competitors.length > 0 && (
           <div className="bg-white rounded-lg border border-gray-200 p-8 mb-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-6">Visual Comparison</h2>
+            <h2 className="text-lg font-semibold text-gray-900 mb-6">Competitor Designs</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Your Design */}
-              <div className="border-2 border-blue-600 rounded-lg overflow-hidden">
-                <div className="bg-blue-600 text-white px-4 py-2 text-sm font-medium">
-                  Your Design — {overallScore.toFixed(1)}/10
-                </div>
-                <div className="p-4 bg-gray-50">
-                  <img
-                    src={imageData.mainPDP.dataUrl}
-                    alt="Your Design"
-                    className="w-full h-48 object-contain"
-                  />
-                </div>
-              </div>
-
-              {/* Competitors */}
               {imageData.competitors.map((comp, index) => {
                 const compScore = calculateWeightedScore(results.competitorAnalyses[index].scores);
                 return (
-                  <div key={index} className="border border-gray-300 rounded-lg overflow-hidden">
-                    <div className="bg-gray-700 text-white px-4 py-2 text-sm font-medium">
-                      Competitor {index + 1} — {compScore.toFixed(1)}/10
+                  <div key={index} className="border border-gray-300 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                    <div className="bg-gray-700 text-white px-4 py-3 text-sm font-medium">
+                      <div className="flex items-center justify-between">
+                        <span>Competitor {index + 1}</span>
+                        <span className="text-lg font-bold">{compScore.toFixed(1)}/10</span>
+                      </div>
                     </div>
                     <div className="p-4 bg-gray-50">
                       <img
@@ -362,10 +403,19 @@ const PDPAnalysisResults = () => {
                     </button>
 
                     {isExpanded && (
-                      <div className="px-5 pb-4 border-t border-gray-200">
-                        <p className="text-sm text-gray-700 mt-4 leading-relaxed">
-                          {results.mainAnalysis.analysis[metric]}
-                        </p>
+                      <div className="px-5 pb-4 border-t border-gray-200 space-y-4">
+                        <div className="mt-4">
+                          <h4 className="text-sm font-semibold text-gray-900 mb-2">What is {getMetricDisplayName(metric)}?</h4>
+                          <p className="text-sm text-gray-600 leading-relaxed italic">
+                            {getMetricDefinition(metric)}
+                          </p>
+                        </div>
+                        <div>
+                          <h4 className="text-sm font-semibold text-gray-900 mb-2">Your Analysis</h4>
+                          <p className="text-sm text-gray-700 leading-relaxed">
+                            {results.mainAnalysis.analysis[metric]}
+                          </p>
+                        </div>
                       </div>
                     )}
                   </div>
