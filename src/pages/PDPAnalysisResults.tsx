@@ -218,7 +218,7 @@ const PDPAnalysisResults = () => {
               </Button>
               <div className="h-6 w-px bg-gray-300" />
               <div>
-                <h1 className="text-lg font-semibold text-gray-900">PDP Analysis Results</h1>
+                <h1 className="text-lg font-semibold text-gray-900">Design Analysis Results</h1>
                 <p className="text-sm text-gray-500">
                   {new Date(results.timestamp).toLocaleDateString('en-US', {
                     month: 'short',
@@ -370,7 +370,7 @@ const PDPAnalysisResults = () => {
         <div className="bg-white rounded-lg border border-gray-200 p-8 mb-6">
           <div className="flex items-center gap-3 mb-6">
             <BarChart className="h-6 w-6 text-gray-900" />
-            <h2 className="text-lg font-semibold text-gray-900">Detailed Metrics</h2>
+            <h2 className="text-lg font-semibold text-gray-900">Detailed Metrics (Your Design)</h2>
           </div>
 
           <div className="space-y-4">
