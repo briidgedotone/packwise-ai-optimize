@@ -283,12 +283,6 @@ const PDPAnalysisResults = () => {
                       <span className="font-bold text-lg">{results.recommendations.priority_improvements.length}</span> areas to improve
                     </span>
                   </div>
-                  <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-blue-200">
-                    <Lightbulb className="h-6 w-6 text-blue-600 flex-shrink-0" />
-                    <span className="text-gray-700">
-                      <span className="font-bold text-lg">{metricsNeedingImprovement}</span> potential improvements
-                    </span>
-                  </div>
                 </div>
 
                 {results.competitorAnalyses && results.competitorAnalyses.length > 0 && (
