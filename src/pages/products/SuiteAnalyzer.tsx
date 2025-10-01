@@ -13,7 +13,7 @@ const SuiteAnalyzer = () => {
     {
       step: 1,
       title: "Upload Order Data",
-      description: "Order ID + Total Order Volume (cu.in)",
+      description: "Order ID + Total Order Volume (CUIN)",
       icon: FileSpreadsheet,
       visual: "CSV with order IDs and volumes"
     },
@@ -27,7 +27,7 @@ const SuiteAnalyzer = () => {
     {
       step: 3,
       title: "Proprietary Formulas",
-      description: "Apply custom allocation logic to match orders with the most efficient packaging",
+      description: "QuantiPackAI Logic to match orders with the most efficient packaging",
       icon: Calculator,
       visual: "Formula routing orders to different box sizes"
     },

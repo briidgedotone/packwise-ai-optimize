@@ -8,27 +8,39 @@ import { cn } from '@/lib/utils'
 const faqs = [
   {
     question: "How do tokens work?",
-    answer: "Each time you run a core function (analysis, spec batch, design compare), you use a token."
+    answer: "Each time you run a core feature (Suite Analyzer, Demand Planner, Designer Analyzer, Spec Generator) you use one token. Tokens reset monthly based on your plan. Unused tokens don't roll over."
+  },
+  {
+    question: "What happens if I run out of tokens?",
+    answer: "You'll get low-balance alerts. You can upgrade your plan or contact us for a custom token amount."
   },
   {
     question: "Can I bring my historical data?",
-    answer: "Yes. Upload order history and packaging types via CSV/XLSX with our templates."
+    answer: "Yes. Upload order history, packaging types, or product lists via CSV/XLSX. We provide simple templates and support common formats."
   },
   {
-    question: "What if I run out of tokens?",
-    answer: "Add tokens or upgrade your plan anytime."
+    question: "What can I export?",
+    answer: "Results from each feature can be exported — CSV for data-driven outputs (e.g., demand plans, packaging recommendations) or PDF for qualitative results (e.g., design comparisons, shelf-readiness reports)."
   },
   {
     question: "Is my data secure?",
-    answer: "We encrypt your data in transit and at rest."
-  },
-  {
-    question: "Do you offer trials?",
-    answer: "We're all paid plans. Book a walkthrough or view plans to get started."
+    answer: "Yes—data is encrypted in transit and at rest. We don't share your data, and you can request deletion at any time."
   },
   {
     question: "Can I cancel or change plans?",
-    answer: "Yes, at the end of any billing cycle."
+    answer: "Yes. You can change or cancel at the end of any billing cycle. If you cancel, remaining tokens are forfeited."
+  },
+  {
+    question: "How does onboarding work?",
+    answer: "The platform uses a step-by-step guided method that explains and walks you through each feature as you go—no heavy training required."
+  },
+  {
+    question: "What makes QuantiPackAI different?",
+    answer: "Proprietary formulas convert your real order and product data into clear actions—helping you right-size packaging, cut cost, reduce waste, and plan demand accurately."
+  },
+  {
+    question: "Does QuantiPackAI integrate with my tools?",
+    answer: "We support easy CSV exports for ERP/PLM/vendor workflows. If you need something specific, reach out—enterprise plans can accommodate custom needs."
   }
 ]
 

@@ -246,7 +246,7 @@ const SpecGenerator = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/sign-up">
               <Button size="lg" className="bg-purple-600 hover:bg-purple-700">
-                Start Free Trial
+                Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>

@@ -61,7 +61,6 @@ export default function SignUpPage() {
 
         <div className="text-sm text-white/80">
           "QuantiPackAI helped us reduce packaging costs by 23% while improving our sustainability metrics."
-          <div className="mt-2 font-medium">— Sarah Chen, Head of Operations</div>
         </div>
       </div>
 
@@ -82,7 +81,7 @@ export default function SignUpPage() {
           <div className="max-w-md w-full">
             <div className="text-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Get Started Free
+                Get Started
               </h1>
               <p className="text-gray-600">
                 Create your account and start optimizing your packaging today

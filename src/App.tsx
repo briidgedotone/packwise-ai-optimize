@@ -23,7 +23,6 @@ import DesignAnalyzer from "./pages/products/DesignAnalyzer";
 import PackagingAiChatbot from "./pages/products/PackagingAiChatbot";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-// import CookiePolicy from "./pages/CookiePolicy"; // DISABLED - causes white screen
 import ClientSuiteAnalyzer from "./pages/ClientSuiteAnalyzer";
 import ClientSideAnalysisResults from "./pages/ClientSideAnalysisResults";
 
@@ -105,7 +104,6 @@ const App = () => (
             <Route path="/client-suite-analyzer" element={<ClientSuiteAnalyzer />} />
             <Route path="/terms-of-service" element={<TermsOfService />} />
             <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            {/* <Route path="/cookie-policy" element={<CookiePolicy />} /> */} {/* DISABLED - causes white screen */}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
