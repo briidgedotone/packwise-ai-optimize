@@ -171,6 +171,9 @@ const PDPAnalysisResults = () => {
 
   const overallScore = calculateWeightedScore(results.mainAnalysis.scores);
 
+  // Count metrics that need improvement (score < 8)
+  const metricsNeedingImprovement = Object.values(results.mainAnalysis.scores).filter(s => s < 8).length;
+
   const getScoreColor = (score: number) => {
     if (score >= 8.5) return 'text-green-600';
     if (score >= 7) return 'text-blue-600';
@@ -283,7 +286,7 @@ const PDPAnalysisResults = () => {
                   <div className="flex items-center gap-3 bg-white/80 backdrop-blur-sm rounded-lg p-3 border border-blue-200">
                     <Lightbulb className="h-6 w-6 text-blue-600 flex-shrink-0" />
                     <span className="text-gray-700">
-                      <span className="font-bold text-lg">{results.recommendations.priority_improvements.length}</span> potential improvements
+                      <span className="font-bold text-lg">{metricsNeedingImprovement}</span> potential improvements
                     </span>
                   </div>
                 </div>
