@@ -440,6 +440,29 @@ const PDPAnalysisResults = () => {
                             {results.mainAnalysis.analysis[metric]}
                           </p>
                         </div>
+                        {/* Potential Improvement */}
+                        {(() => {
+                          const improvement = results.recommendations.priority_improvements.find(
+                            imp => imp.metric === metric
+                          );
+                          return improvement ? (
+                            <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+                              <div className="flex items-start gap-2 mb-2">
+                                <Lightbulb className="h-5 w-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                                <h4 className="text-sm font-semibold text-orange-900">Potential Improvement</h4>
+                              </div>
+                              <p className="text-sm text-gray-700 leading-relaxed">
+                                {improvement.recommendation}
+                              </p>
+                              <div className="mt-2 flex items-center gap-2 text-xs text-orange-700">
+                                <span className="font-medium">Target Score:</span>
+                                <span className="bg-orange-100 px-2 py-1 rounded">
+                                  {improvement.current_score.toFixed(1)} → {improvement.target_score.toFixed(1)}
+                                </span>
+                              </div>
+                            </div>
+                          ) : null;
+                        })()}
                       </div>
                     )}
                   </div>
