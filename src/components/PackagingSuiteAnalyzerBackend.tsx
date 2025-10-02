@@ -268,7 +268,9 @@ export const PackagingSuiteAnalyzerBackend = () => {
           providedCost,
           costPerUnit,
           usingDefaultCost,
-          allFields: Object.keys(pkg).filter(k => k.includes('cost') || k.includes('price'))
+          allFields: Object.keys(pkg).filter(k => k.includes('cost') || k.includes('price')),
+          allPkgKeys: Object.keys(pkg),
+          allValues: Object.entries(pkg).filter(([k, v]) => k.includes('cost') || k.includes('price'))
         });
       }
       
@@ -489,6 +491,14 @@ export const PackagingSuiteAnalyzerBackend = () => {
             width: order.hasActualDimensions ? order.width : undefined,
             height: order.hasActualDimensions ? order.height : undefined
           }));
+
+          // Log package costs before sending to worker
+          console.log('Packages being sent to worker:', packages.map(pkg => ({
+            name: pkg.packageName,
+            cost: pkg.costPerUnit,
+            usingDefault: pkg.usingDefaultCost,
+            usage: pkg.usage
+          })));
 
           // Send data to worker
           workerRef.current.postMessage({
