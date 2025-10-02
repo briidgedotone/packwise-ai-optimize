@@ -554,10 +554,10 @@ export default function ClientSideAnalysisResults() {
                       <span className="text-purple-600">Optimized</span>
                       <span className="font-medium">${results.summary.totalCost.toFixed(2)}</span>
                     </div>
-                    <div className="w-full bg-purple-100 rounded-full h-6">
+                    <div className="w-full bg-purple-100 rounded-full h-6 overflow-hidden">
                       <div
                         className="bg-purple-500 h-6 rounded-full flex items-center justify-end pr-2"
-                        style={{ width: `${((results.summary.totalCost / (results.summary.baselineCost || results.summary.totalCost)) * 100).toFixed(0)}%` }}
+                        style={{ width: `${Math.min(((results.summary.totalCost / (results.summary.baselineCost || results.summary.totalCost)) * 100), 100).toFixed(0)}%` }}
                       >
                         <span className="text-xs text-white">
                           {((results.summary.totalCost / (results.summary.baselineCost || results.summary.totalCost)) * 100).toFixed(1)}%
@@ -734,10 +734,10 @@ export default function ClientSideAnalysisResults() {
                       <span className="text-blue-600">Optimized Material</span>
                       <span className="font-medium">{(results.summary.totalMaterial || 0).toFixed(3)} lbs</span>
                     </div>
-                    <div className="w-full bg-blue-100 rounded-full h-6">
+                    <div className="w-full bg-blue-100 rounded-full h-6 overflow-hidden">
                       <div
                         className="bg-blue-500 h-6 rounded-full flex items-center justify-end pr-2"
-                        style={{ width: `${((results.summary.totalMaterial || 0) / (results.summary.baselineMaterial || results.summary.totalMaterial || 1) * 100).toFixed(0)}%` }}
+                        style={{ width: `${Math.min(((results.summary.totalMaterial || 0) / (results.summary.baselineMaterial || results.summary.totalMaterial || 1) * 100), 100).toFixed(0)}%` }}
                       >
                         <span className="text-xs text-white">
                           {((results.summary.totalMaterial || 0) / (results.summary.baselineMaterial || results.summary.totalMaterial || 1) * 100).toFixed(1)}%
