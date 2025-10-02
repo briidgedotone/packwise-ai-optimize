@@ -31,8 +31,8 @@ export const ProductManual: React.FC<ProductManualProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 transition-opacity">
-      <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-full max-h-[80vh] overflow-hidden">
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+      <div className="bg-white rounded-3xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between p-6 border-b border-gray-200 flex-shrink-0">
           <h3 className="text-2xl font-semibold text-gray-900 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gradient-to-br from-purple-500 to-blue-600">
               {productIcon}
@@ -46,7 +46,7 @@ export const ProductManual: React.FC<ProductManualProps> = ({
             <X className="h-5 w-5" />
           </button>
         </div>
-        <div className="p-6 overflow-y-auto max-h-[60vh]">
+        <div className="p-6 overflow-y-auto flex-1">
           <div className="space-y-6">
             <Alert className="bg-blue-50 border-blue-200">
               <Info className="h-4 w-4 text-blue-600" />
@@ -67,7 +67,7 @@ export const ProductManual: React.FC<ProductManualProps> = ({
             </Alert>
           </div>
         </div>
-        <div className="flex justify-end gap-3 p-6 border-t border-gray-200">
+        <div className="flex justify-end gap-3 p-6 border-t border-gray-200 flex-shrink-0">
           <Button onClick={onClose} className="bg-purple-600 hover:bg-purple-700 text-white">
             Get Started
           </Button>
