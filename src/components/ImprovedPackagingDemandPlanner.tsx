@@ -183,32 +183,67 @@ export const ImprovedPackagingDemandPlanner = () => {
       try {
         const csv = e.target?.result as string;
         const lines = csv.split('\n').filter(line => line.trim());
-        
-        // Auto-detect delimiter (comma, tab, or semicolon)
-        const firstLine = lines[0];
-        const delimiter = firstLine.includes('\t') ? '\t' : 
-                         firstLine.includes(';') ? ';' : ',';
-        
-        const headers = lines[0].toLowerCase().split(delimiter).map(h => h.trim());
-        
-        const nameIndex = headers.findIndex(h => ['package type', 'packaging', 'type', 'name'].includes(h));
-        const lengthIndex = headers.findIndex(h => ['length', 'l', 'len'].includes(h));
-        const widthIndex = headers.findIndex(h => ['width', 'w', 'wid'].includes(h));
-        const heightIndex = headers.findIndex(h => ['height', 'h', 'depth', 'hgt'].includes(h));
-        const costIndex = headers.findIndex(h => ['cost', 'price', '$', 'unit cost'].includes(h));
-        const weightIndex = headers.findIndex(h => ['weight', 'wt', 'lbs', 'pounds'].includes(h));
+
+        // Find the actual header row by looking for expected column names
+        let headerRowIndex = -1;
+        let delimiter = ',';
+        let headers: string[] = [];
+
+        // Check first 5 lines to find the header row
+        for (let i = 0; i < Math.min(5, lines.length); i++) {
+          const line = lines[i];
+          // Auto-detect delimiter
+          const testDelimiter = line.includes('\t') ? '\t' :
+                               line.includes(';') ? ';' : ',';
+
+          const testHeaders = line.toLowerCase().split(testDelimiter).map(h => h.trim());
+
+          // Check if this line contains expected header keywords
+          const hasPackageType = testHeaders.some(h =>
+            ['package type', 'packaging', 'type', 'name', 'package'].includes(h) ||
+            h.includes('package') || h.includes('type')
+          );
+
+          const hasOtherHeaders = testHeaders.some(h =>
+            ['length', 'width', 'height', 'cost', 'weight', 'l', 'w', 'h'].includes(h) ||
+            h.includes('length') || h.includes('width') || h.includes('height')
+          );
+
+          if (hasPackageType || hasOtherHeaders) {
+            headerRowIndex = i;
+            delimiter = testDelimiter;
+            headers = testHeaders;
+            break;
+          }
+        }
+
+        if (headerRowIndex === -1) {
+          toast.error('Could not find header row with expected column names');
+          return;
+        }
+
+        const nameIndex = headers.findIndex(h => ['package type', 'packaging', 'type', 'name', 'package'].includes(h) || h.includes('package'));
+        const lengthIndex = headers.findIndex(h => ['length', 'l', 'len'].includes(h) || h.includes('length'));
+        const widthIndex = headers.findIndex(h => ['width', 'w', 'wid'].includes(h) || h.includes('width'));
+        const heightIndex = headers.findIndex(h => ['height', 'h', 'depth', 'hgt'].includes(h) || h.includes('height'));
+        const costIndex = headers.findIndex(h => ['cost', 'price', '$', 'unit cost'].includes(h) || h.includes('cost'));
+        const weightIndex = headers.findIndex(h => ['weight', 'wt', 'lbs', 'pounds'].includes(h) || h.includes('weight'));
 
         if (nameIndex === -1) {
-          toast.error('Package Type column not found');
+          toast.error('Package Type column not found in header row');
           return;
         }
 
         const types: PackagingType[] = [];
-        for (let i = 1; i < lines.length; i++) {
+        // Start processing from the row after the header
+        for (let i = headerRowIndex + 1; i < lines.length; i++) {
           const values = lines[i].split(delimiter).map(v => v.trim());
-          
+
+          // Skip empty rows
+          if (!values[nameIndex] || values[nameIndex] === '') continue;
+
           const type: PackagingType = {
-            name: values[nameIndex] || `Package ${i}`,
+            name: values[nameIndex] || `Package ${types.length + 1}`,
             length: lengthIndex !== -1 ? parseFloat(values[lengthIndex]) || 0 : 0,
             width: widthIndex !== -1 ? parseFloat(values[widthIndex]) || 0 : 0,
             height: heightIndex !== -1 ? parseFloat(values[heightIndex]) || 0 : 0,
@@ -218,8 +253,13 @@ export const ImprovedPackagingDemandPlanner = () => {
           types.push(type);
         }
 
+        if (types.length === 0) {
+          toast.error('No valid packaging data found in the file');
+          return;
+        }
+
         setPackagingTypes(types);
-        
+
         // Store in Convex
         storePackagingTypes({ packagingTypes: types })
           .then(() => {
@@ -250,21 +290,54 @@ export const ImprovedPackagingDemandPlanner = () => {
       try {
         const csv = e.target?.result as string;
         const lines = csv.split('\n').filter(line => line.trim());
-        
-        // Auto-detect delimiter (comma, tab, or semicolon)
-        const firstLine = lines[0];
-        const delimiter = firstLine.includes('\t') ? '\t' : 
-                         firstLine.includes(';') ? ';' : ',';
-        
-        const headers = lines[0].toLowerCase().split(delimiter).map(h => h.trim());
-        
-        const typeIndex = headers.findIndex(h => 
+
+        // Find the actual header row by looking for expected column names
+        let headerRowIndex = -1;
+        let delimiter = ',';
+        let headers: string[] = [];
+
+        // Check first 5 lines to find the header row
+        for (let i = 0; i < Math.min(5, lines.length); i++) {
+          const line = lines[i];
+          // Auto-detect delimiter
+          const testDelimiter = line.includes('\t') ? '\t' :
+                               line.includes(';') ? ';' : ',';
+
+          const testHeaders = line.toLowerCase().split(testDelimiter).map(h => h.trim());
+
+          // Check if this line contains expected header keywords for quarterly data
+          const hasPackageType = testHeaders.some(h =>
+            ['package type', 'packaging', 'type', 'name', 'package id', 'packaging name', 'package name', 'package'].includes(h) ||
+            h.includes('package') || h.includes('packaging')
+          );
+
+          const hasQuantity = testHeaders.some(h =>
+            ['quantity', 'qty', 'amount', 'count', 'used', 'usage amount', 'usage count'].includes(h) ||
+            h.includes('quantity') || h.includes('qty') || h.includes('used') ||
+            h.includes('usage') || h.includes('amount') || h.includes('count')
+          );
+
+          if (hasPackageType || hasQuantity) {
+            headerRowIndex = i;
+            delimiter = testDelimiter;
+            headers = testHeaders;
+            break;
+          }
+        }
+
+        if (headerRowIndex === -1) {
+          toast.error('Could not find header row with expected column names for quarterly data');
+          return;
+        }
+
+        const typeIndex = headers.findIndex(h =>
           ['package type', 'packaging', 'type', 'name', 'package id', 'packaging name', 'package name'].includes(h) ||
           h.includes('package') || h.includes('packaging')
         );
-        const qtyIndex = headers.findIndex(h => 
+        const qtyIndex = headers.findIndex(h =>
           ['quantity', 'qty', 'amount', 'count', 'used', 'usage amount', 'usage count'].includes(h) ||
-          h.includes('quantity') || h.includes('qty') || h.includes('used') || h.includes('usage') || h.includes('amount') || h.includes('count')
+          h.includes('quantity') || h.includes('qty') || h.includes('used') ||
+          h.includes('usage') || h.includes('amount') || h.includes('count')
         );
 
         if (typeIndex === -1 || qtyIndex === -1) {
@@ -274,14 +347,23 @@ export const ImprovedPackagingDemandPlanner = () => {
         }
 
         const newQuarterData: QuarterData[] = [];
-        for (let i = 1; i < lines.length; i++) {
+        // Start processing from the row after the header
+        for (let i = headerRowIndex + 1; i < lines.length; i++) {
           const values = lines[i].split(delimiter).map(v => v.trim());
-          
+
+          // Skip empty rows
+          if (!values[typeIndex] || values[typeIndex] === '') continue;
+
           newQuarterData.push({
             quarter,
             packageType: values[typeIndex],
             quantity: parseFloat(values[qtyIndex]) || 0
           });
+        }
+
+        if (newQuarterData.length === 0) {
+          toast.error('No valid quarterly data found in the file');
+          return;
         }
 
         // Remove existing data for this quarter and add new data
@@ -295,7 +377,7 @@ export const ImprovedPackagingDemandPlanner = () => {
             // Recalculate mix percentages
             updateMixFromQuarterlyData(updatedData);
             toast.success(`${quarter} data uploaded successfully`);
-            
+
             // Clear the file input to allow re-uploading
             if (event.target) {
               event.target.value = '';
