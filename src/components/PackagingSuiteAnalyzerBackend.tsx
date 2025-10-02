@@ -37,7 +37,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
   });
 
   const [manualPackages, setManualPackages] = useState([
-    { name: '', length: '', width: '', height: '', cost: '', weight: '', usage: '' }
+    { name: '', id: '', length: '', width: '', height: '', cost: '', weight: '', usage: '' }
   ]);
   const [useManualPackageInput, setUseManualPackageInput] = useState(false);
 
@@ -225,11 +225,25 @@ export const PackagingSuiteAnalyzerBackend = () => {
   const parsePackagingSuiteCSV = (csv: string) => {
     console.log('Parsing packaging CSV with length:', csv.length);
     const lines = csv.trim().split('\n');
-    const headers = lines[0].split(',').map(h => h.trim());
+
+    // Find the header row (skip title rows if they exist)
+    let headerIndex = 0;
+    const expectedHeaders = ['package', 'type', 'name', 'length', 'width', 'height', 'cost', 'weight', 'price'];
+
+    for (let i = 0; i < Math.min(5, lines.length); i++) {
+      const potentialHeaders = lines[i].toLowerCase();
+      if (expectedHeaders.some(h => potentialHeaders.includes(h))) {
+        headerIndex = i;
+        console.log(`Found headers at row ${i + 1}`);
+        break;
+      }
+    }
+
+    const headers = lines[headerIndex].split(',').map(h => h.trim());
     console.log('Package CSV Headers:', headers);
-    
+
     const packages = [];
-    for (let i = 1; i < lines.length; i++) {
+    for (let i = headerIndex + 1; i < lines.length; i++) {
       const values = lines[i].split(',').map(v => v.trim());
       const pkg: any = {};
       
@@ -243,10 +257,20 @@ export const PackagingSuiteAnalyzerBackend = () => {
       }
       
       // Handle "Price" field as well as other cost fields
-      const providedCost = pkg.cost_per_unit || pkg.costperunit || pkg.cost || 
-                          pkg.price || pkg.unit_cost || pkg.unitcost;
+      const providedCost = pkg.cost_per_unit || pkg.costperunit || pkg.cost ||
+                          pkg.price || pkg.unit_cost || pkg.unitcost || pkg.package_cost;
       const costPerUnit = parseFloat(providedCost) || 1.0;
       const usingDefaultCost = !providedCost || parseFloat(providedCost) === 0;
+
+      // Debug logging for cost parsing
+      if (i <= 3) {
+        console.log(`Package ${i} cost parsing:`, {
+          providedCost,
+          costPerUnit,
+          usingDefaultCost,
+          allFields: Object.keys(pkg).filter(k => k.includes('cost') || k.includes('price'))
+        });
+      }
       
       const packageData = {
         packageName: pkg.package_name || pkg.packagename || pkg.package_type || pkg.name || pkg['package_name'] || `Package-${i}`,
