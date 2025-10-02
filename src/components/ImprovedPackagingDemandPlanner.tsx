@@ -354,9 +354,34 @@ export const ImprovedPackagingDemandPlanner = () => {
           // Skip empty rows
           if (!values[typeIndex] || values[typeIndex] === '') continue;
 
+          let packageTypeName = values[typeIndex];
+
+          // Try to match with existing packaging types for consistency
+          // This ensures quarterly data uses the same names as packaging types
+          if (packagingTypes.length > 0) {
+            const packageTypeLower = packageTypeName.toLowerCase();
+
+            // Find exact match first
+            let matchedType = packagingTypes.find(pt => pt.name === packageTypeName);
+
+            // If no exact match, try case-insensitive partial matching
+            if (!matchedType) {
+              matchedType = packagingTypes.find(pt => {
+                const nameLower = pt.name.toLowerCase();
+                // Check if either contains the other (handles "Small" vs "Small Box" cases)
+                return nameLower.includes(packageTypeLower) || packageTypeLower.includes(nameLower);
+              });
+            }
+
+            // Use the matched packaging type name if found
+            if (matchedType) {
+              packageTypeName = matchedType.name;
+            }
+          }
+
           newQuarterData.push({
             quarter,
-            packageType: values[typeIndex],
+            packageType: packageTypeName,
             quantity: parseFloat(values[qtyIndex]) || 0
           });
         }
