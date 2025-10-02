@@ -344,12 +344,12 @@ export const PackagingSuiteAnalyzerBackend = () => {
     }
 
     if (useManualPackageInput) {
-      // Validate manual packages
-      const validPackages = manualPackages.filter(pkg => 
-        pkg.name && pkg.id && pkg.length && pkg.width && pkg.height &&
+      // Validate manual packages - ID is auto-generated, not required from user
+      const validPackages = manualPackages.filter(pkg =>
+        pkg.name && pkg.length && pkg.width && pkg.height &&
         !isNaN(parseFloat(pkg.length)) && !isNaN(parseFloat(pkg.width)) && !isNaN(parseFloat(pkg.height))
       );
-      
+
       if (validPackages.length === 0) {
         setError('Please enter at least one valid package with all required fields');
         return;
