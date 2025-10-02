@@ -259,13 +259,17 @@ export const PackagingSuiteAnalyzerBackend = () => {
       // Handle "Price" field as well as other cost fields
       const providedCost = pkg.cost_per_unit || pkg.costperunit || pkg.cost ||
                           pkg.price || pkg.unit_cost || pkg.unitcost || pkg.package_cost;
-      const costPerUnit = parseFloat(providedCost) || 1.0;
-      const usingDefaultCost = !providedCost || parseFloat(providedCost) === 0;
+
+      // Remove $ symbol and parse the cost
+      const cleanedCost = providedCost ? String(providedCost).replace(/[$,]/g, '').trim() : '';
+      const costPerUnit = parseFloat(cleanedCost) || 1.0;
+      const usingDefaultCost = !providedCost || !cleanedCost || parseFloat(cleanedCost) === 0;
 
       // Debug logging for cost parsing
       if (i <= 3) {
         console.log(`Package ${i} cost parsing:`, {
           providedCost,
+          cleanedCost,
           costPerUnit,
           usingDefaultCost,
           allFields: Object.keys(pkg).filter(k => k.includes('cost') || k.includes('price')),
