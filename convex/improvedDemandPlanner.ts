@@ -343,8 +343,24 @@ export const calculateDemandForecast = action({
     const safetyMultiplier: number = 1 + (safetyBuffer / 100);
 
     for (const [packageType, percentage] of Object.entries(mixPercentages)) {
-      const packagingType: any = packagingTypes.find((p: any) => p.name === packageType);
-      
+      // Try to find exact match first, then try partial match
+      let packagingType: any = packagingTypes.find((p: any) => p.name === packageType);
+
+      // If no exact match, try case-insensitive partial matching
+      if (!packagingType) {
+        const packageTypeLower = packageType.toLowerCase();
+        packagingType = packagingTypes.find((p: any) => {
+          const nameLower = p.name.toLowerCase();
+          // Check if either contains the other (handles "Small" vs "Small Box" cases)
+          return nameLower.includes(packageTypeLower) || packageTypeLower.includes(nameLower);
+        });
+      }
+
+      // Log if still no match found
+      if (!packagingType) {
+        console.warn(`No packaging type found for "${packageType}". Available types:`, packagingTypes.map((p: any) => p.name));
+      }
+
       const baseQuantity = Math.round(totalOrders * (percentage / 100));
       const finalQuantity = Math.round(baseQuantity * safetyMultiplier);
       const estimatedCost: number = packagingType ? packagingType.cost * finalQuantity : 0;
