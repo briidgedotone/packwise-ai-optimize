@@ -76,6 +76,7 @@ interface AnalysisResults {
   packageCostBreakdown: PackageCostBreakdown[]; // Per-package cost analysis
   packageMaterialBreakdown: PackageMaterialBreakdown[]; // Per-package material analysis
   fillRateDistribution: { range: string; count: number }[];
+  volumeDistribution: { range: string; count: number; percentage: number }[];
   efficiency: {
     optimalAllocations: number;
     subOptimalAllocations: number;
@@ -205,6 +206,72 @@ function calculateDistributions(allocations: AllocationResult[]) {
   }));
   
   return { packageDistribution, fillRateDistribution };
+}
+
+function calculateVolumeDistribution(allocations: AllocationResult[]) {
+  if (allocations.length === 0) {
+    return [];
+  }
+
+  // Extract all order volumes
+  const volumes = allocations.map(alloc => alloc.orderVolume);
+
+  // Calculate min and max
+  const minVolume = Math.min(...volumes);
+  const maxVolume = Math.max(...volumes);
+
+  // Handle edge case where all volumes are the same
+  if (minVolume === maxVolume) {
+    return [{
+      range: `${Math.round(minVolume)} cu in`,
+      count: allocations.length,
+      percentage: 100
+    }];
+  }
+
+  // Calculate optimal bin count (50-100 bins based on data size)
+  // More data points = more bins for better granularity
+  const binCount = allocations.length < 1000 ? 50 :
+                   allocations.length < 10000 ? 75 : 100;
+
+  // Calculate bin width
+  const range = maxVolume - minVolume;
+  const binWidth = range / binCount;
+
+  // Initialize bins
+  const bins: { min: number; max: number; count: number }[] = [];
+  for (let i = 0; i < binCount; i++) {
+    bins.push({
+      min: minVolume + (i * binWidth),
+      max: minVolume + ((i + 1) * binWidth),
+      count: 0
+    });
+  }
+
+  // Count orders in each bin
+  allocations.forEach(alloc => {
+    const volume = alloc.orderVolume;
+    // Find which bin this volume belongs to
+    let binIndex = Math.floor((volume - minVolume) / binWidth);
+    // Handle edge case where volume === maxVolume (would be binCount)
+    if (binIndex >= binCount) binIndex = binCount - 1;
+    bins[binIndex].count++;
+  });
+
+  // Format bins for display
+  const volumeDistribution = bins
+    .filter(bin => bin.count > 0) // Only include bins with data
+    .map(bin => {
+      const minRounded = Math.round(bin.min);
+      const maxRounded = Math.round(bin.max);
+      return {
+        range: `${minRounded}-${maxRounded}`,
+        count: bin.count,
+        percentage: (bin.count / allocations.length) * 100
+      };
+    });
+
+  return volumeDistribution;
 }
 
 // Memory-efficient processing for 1M+ orders
@@ -362,6 +429,7 @@ function processOrders(orders: ParsedOrder[], packages: ParsedPackage[]): Analys
 
   // Calculate distributions with baseline comparison
   const { packageDistribution, fillRateDistribution } = calculateDistributions(allocations);
+  const volumeDistribution = calculateVolumeDistribution(allocations);
 
   // Add baseline percentages to package distribution
   packageDistribution.forEach(dist => {
@@ -409,6 +477,7 @@ function processOrders(orders: ParsedOrder[], packages: ParsedPackage[]): Analys
       materialSavingsPercentage: Math.round(breakdown.materialSavingsPercentage * 100) / 100
     })),
     fillRateDistribution,
+    volumeDistribution,
     efficiency: {
       optimalAllocations,
       subOptimalAllocations,

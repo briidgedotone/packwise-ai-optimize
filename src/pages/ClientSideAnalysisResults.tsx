@@ -75,6 +75,7 @@ interface AnalysisResults {
   packageCostBreakdown: PackageCostBreakdown[];
   packageMaterialBreakdown: PackageMaterialBreakdown[];
   fillRateDistribution: { range: string; count: number }[];
+  volumeDistribution: { range: string; count: number; percentage: number }[];
   efficiency: {
     optimalAllocations: number;
     subOptimalAllocations: number;
@@ -252,7 +253,17 @@ export default function ClientSideAnalysisResults() {
     });
     csvSections.push('');
 
-    // Section 5: Order Details (use all allocations, not just filtered)
+    // Section 5: Volume Distribution
+    if (results.volumeDistribution && results.volumeDistribution.length > 0) {
+      csvSections.push('=== ORDER VOLUME DISTRIBUTION ===');
+      csvSections.push('Volume Range (cu in),Count,Percentage');
+      results.volumeDistribution.forEach(dist => {
+        csvSections.push(`${dist.range},${dist.count.toLocaleString()},${dist.percentage.toFixed(2)}%`);
+      });
+      csvSections.push('');
+    }
+
+    // Section 6: Order Details (use all allocations, not just filtered)
     csvSections.push('=== ORDER ALLOCATION DETAILS ===');
     csvSections.push(`Total Records,${results.allocations.length.toLocaleString()}`);
     csvSections.push('');
@@ -490,6 +501,53 @@ export default function ClientSideAnalysisResults() {
               ) : (
                 <div className="text-center py-8 text-gray-500">
                   <p>No distribution data available</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Order Volume Distribution */}
+        <div className="mb-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>Order Volume Distribution</CardTitle>
+              <CardDescription>Distribution of order volumes across your dataset</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {results.volumeDistribution && results.volumeDistribution.length > 0 ? (
+                <div className="h-64">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={results.volumeDistribution}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                      <XAxis
+                        dataKey="range"
+                        tick={{ fontSize: 10, angle: -45, textAnchor: 'end' }}
+                        height={80}
+                        label={{ value: 'Volume Range (cubic inches)', position: 'insideBottom', offset: -10 }}
+                      />
+                      <YAxis label={{ value: 'Frequency', angle: -90, position: 'insideLeft' }} />
+                      <Tooltip
+                        formatter={(value: number, name: string, props: any) => [
+                          `${value} orders (${props.payload.percentage.toFixed(1)}%)`,
+                          'Count'
+                        ]}
+                        contentStyle={{
+                          backgroundColor: 'white',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '6px'
+                        }}
+                      />
+                      <Bar dataKey="count" fill="#3b82f6" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              ) : (
+                <div className="text-center py-8 text-gray-500">
+                  <p>No volume distribution data available</p>
                 </div>
               )}
             </CardContent>
