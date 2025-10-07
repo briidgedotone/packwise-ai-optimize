@@ -199,8 +199,11 @@ export const getToolUsageStats = query({
     };
 
     analyses.forEach(analysis => {
-      if (toolCounts.hasOwnProperty(analysis.type)) {
-        toolCounts[analysis.type as keyof typeof toolCounts]++;
+      // Count demand_planner_v2 as demand_planner for backward compatibility
+      const analysisType = analysis.type === 'demand_planner_v2' ? 'demand_planner' : analysis.type;
+
+      if (toolCounts.hasOwnProperty(analysisType)) {
+        toolCounts[analysisType as keyof typeof toolCounts]++;
       }
     });
 

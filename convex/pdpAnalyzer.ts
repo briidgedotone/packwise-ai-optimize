@@ -102,7 +102,7 @@ export const analyzePDP = action({
         await ctx.db.insert("analyses", {
           userId: user._id,
           organizationId: user.organizationId,
-          type: "design_analyzer",
+          type: "pdp_analyzer",
           name: `Design Analysis - ${args.metaInfo?.category || 'Product'}`,
           status: "completed",
           inputFiles: [],
