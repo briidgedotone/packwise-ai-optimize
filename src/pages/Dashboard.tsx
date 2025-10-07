@@ -4,7 +4,6 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { designSystem } from '@/lib/design-system';
 import {
-  ArchiveBoxIcon as Package,
   ChatBubbleLeftRightIcon as MessageSquare,
   Bars3Icon as Menu,
   XMarkIcon as X,
@@ -551,7 +550,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-white">
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-[#E3E7EA]">
-        <h1 className="text-xl font-medium text-gray-900">QuantiPackAI</h1>
+        <img src="/logo.svg" alt="QuantiPackAI Logo" className="h-8" />
         <Button
           variant="ghost"
           size="sm"
@@ -567,12 +566,7 @@ const Dashboard = () => {
         <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-gradient-to-b from-white via-blue-50 to-indigo-100 border-r border-indigo-200 transition-transform duration-200 ease-in-out shadow-xl`}>
           {/* Sidebar Header */}
           <div className="border-b border-gray-200 px-3 flex items-center bg-white" style={{ height: '50px' }}>
-            <div className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-xl flex items-center justify-center bg-blue-600">
-                <Package className="h-3.5 w-3.5 text-white" />
-              </div>
-              <h1 className="text-sm font-medium text-gray-900">QuantiPackAI</h1>
-            </div>
+            <img src="/logo.svg" alt="QuantiPackAI Logo" className="h-8" />
           </div>
 
           {/* Sidebar Content */}
