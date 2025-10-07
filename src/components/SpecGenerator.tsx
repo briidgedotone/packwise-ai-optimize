@@ -241,13 +241,38 @@ export const SpecGenerator = () => {
       productData = [headers.join(','), ...rows].join('\n');
     }
 
-    // Get total product count
+    // Validate CSV format BEFORE consuming token
     const lines = productData.trim().split('\n');
+    if (lines.length < 2) {
+      toast.error('Invalid CSV', {
+        description: 'CSV must contain header and at least one data row'
+      });
+      setIsProcessing(false);
+      return;
+    }
+
+    // Check if CSV has product name column
+    const firstLine = lines[0];
+    const isTabSeparated = firstLine.includes('\t');
+    const delimiter = isTabSeparated ? '\t' : ',';
+    const headers = firstLine.toLowerCase().split(delimiter).map(h => h.trim());
+    const hasProductColumn = headers.some(h =>
+      h.includes('product') || h.includes('name') || h.includes('description') || h.includes('item')
+    );
+
+    if (!hasProductColumn) {
+      toast.error('Invalid CSV Format', {
+        description: 'CSV must contain a column with product names (e.g., "Product Name", "Item", "Description")'
+      });
+      setIsProcessing(false);
+      return;
+    }
+
     const totalCount = Math.max(0, lines.length - 1); // Minus header
     setTotalProducts(totalCount);
-    
+
     try {
-      // Check token before starting
+      // Check token before starting (validation passed)
       const tokenResult = await checkAndConsumeToken('spec_generator', async () => {
         const bounds = {
           min: {
