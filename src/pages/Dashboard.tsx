@@ -550,7 +550,7 @@ const Dashboard = () => {
     <div className="min-h-screen bg-white">
       {/* Mobile Header */}
       <div className="lg:hidden flex items-center justify-between p-4 bg-white border-b border-[#E3E7EA]">
-        <img src="/logo.svg" alt="QuantiPackAI Logo" className="h-8" />
+        <img src="/logo.svg" alt="QuantiPackAI Logo" className="h-10" />
         <Button
           variant="ghost"
           size="sm"
@@ -565,8 +565,8 @@ const Dashboard = () => {
         {/* Sidebar */}
         <div className={`${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:relative z-30 w-60 h-full bg-gradient-to-b from-white via-blue-50 to-indigo-100 border-r border-indigo-200 transition-transform duration-200 ease-in-out shadow-xl`}>
           {/* Sidebar Header */}
-          <div className="border-b border-gray-200 px-3 flex items-center bg-white" style={{ height: '50px' }}>
-            <img src="/logo.svg" alt="QuantiPackAI Logo" className="h-8" />
+          <div className="border-b border-gray-200 px-3 flex items-center bg-white" style={{ height: '60px' }}>
+            <img src="/logo.svg" alt="QuantiPackAI Logo" className="h-11" />
           </div>
 
           {/* Sidebar Content */}
