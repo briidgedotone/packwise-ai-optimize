@@ -527,6 +527,7 @@ export default function ClientSideAnalysisResults() {
                         dataKey="range"
                         tick={{ fontSize: 10, angle: -45, textAnchor: 'end' }}
                         height={80}
+                        interval={Math.ceil(results.volumeDistribution.length / 10) - 1}
                         label={{ value: 'Volume Range (cubic inches)', position: 'insideBottom', offset: -10 }}
                       />
                       <YAxis label={{ value: 'Frequency', angle: -90, position: 'insideLeft' }} />
