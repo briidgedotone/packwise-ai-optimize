@@ -25,6 +25,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import ClientSuiteAnalyzer from "./pages/ClientSuiteAnalyzer";
 import ClientSideAnalysisResults from "./pages/ClientSideAnalysisResults";
+import Settings from "./pages/Settings";
 
 const App = () => (
   <ErrorBoundary>
@@ -47,13 +48,21 @@ const App = () => (
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/dashboard" 
+            <Route
+              path="/dashboard"
               element={
                 <DashboardProtectedRoute>
                   <Dashboard />
                 </DashboardProtectedRoute>
-              } 
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <DashboardProtectedRoute>
+                  <Settings />
+                </DashboardProtectedRoute>
+              }
             />
             <Route 
               path="/suite-analysis/:analysisId" 
