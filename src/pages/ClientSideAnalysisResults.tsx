@@ -253,9 +253,9 @@ export default function ClientSideAnalysisResults() {
     });
     csvSections.push('');
 
-    // Section 5: Volume Distribution
+    // Section 5: Order Profile Distribution
     if (results.volumeDistribution && results.volumeDistribution.length > 0) {
-      csvSections.push('=== ORDER VOLUME DISTRIBUTION ===');
+      csvSections.push('=== ORDER PROFILE DISTRIBUTION ===');
       csvSections.push('Volume Range (cu in),Count,Percentage');
       results.volumeDistribution.forEach(dist => {
         csvSections.push(`${dist.range},${dist.count.toLocaleString()},${dist.percentage.toFixed(2)}%`);
@@ -507,12 +507,12 @@ export default function ClientSideAnalysisResults() {
           </Card>
         </div>
 
-        {/* Order Volume Distribution */}
+        {/* Order Profile Distribution */}
         <div className="mb-6">
           <Card>
             <CardHeader>
-              <CardTitle>Order Volume Distribution</CardTitle>
-              <CardDescription>Distribution of order volumes across your dataset</CardDescription>
+              <CardTitle>Order Profile Distribution</CardTitle>
+              <CardDescription>Distribution of order profiles across your dataset</CardDescription>
             </CardHeader>
             <CardContent>
               {results.volumeDistribution && results.volumeDistribution.length > 0 ? (
@@ -527,7 +527,7 @@ export default function ClientSideAnalysisResults() {
                         dataKey="range"
                         tick={{ fontSize: 10, angle: -45, textAnchor: 'end' }}
                         height={80}
-                        interval={Math.ceil(results.volumeDistribution.length / 10) - 1}
+                        interval={Math.ceil(results.volumeDistribution.length / 5) - 1}
                         label={{ value: 'Volume Range (cubic inches)', position: 'insideBottom', offset: -10 }}
                       />
                       <YAxis label={{ value: 'Frequency', angle: -90, position: 'insideLeft' }} />
@@ -548,7 +548,7 @@ export default function ClientSideAnalysisResults() {
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
-                  <p>No volume distribution data available</p>
+                  <p>No order profile distribution data available</p>
                 </div>
               )}
             </CardContent>
