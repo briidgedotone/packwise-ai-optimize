@@ -135,8 +135,12 @@ export default function ClientSideAnalysisResults() {
       return null;
     }
 
-    // Extract volumes
-    const volumes = allocations.map(a => a.orderVolume).filter(v => v > 0);
+    // Extract volumes (limit to first 1M orders for performance)
+    const volumes = allocations
+      .slice(0, 1000000)
+      .map(a => a.orderVolume)
+      .filter(v => v != null && v > 0 && isFinite(v));
+
     if (volumes.length === 0) return null;
 
     const n = volumes.length;
@@ -152,11 +156,34 @@ export default function ClientSideAnalysisResults() {
     const p99 = sortedVolumes[p99Index];
 
     // Use 99th percentile if max stretches beyond 90% of range
-    const effectiveMax = (p99 - minV) / (maxV - minV) > 0.9 ? maxV : p99;
+    const effectiveMax = (maxV - minV) === 0 ? maxV : ((p99 - minV) / (maxV - minV) > 0.9 ? maxV : p99);
     const cappedAt99 = effectiveMax < maxV;
 
     // Calculate bin width and edges
     const binWidth = (effectiveMax - minV) / bins;
+
+    // Edge case: all volumes are the same or very similar (binWidth too small)
+    if (binWidth === 0 || !isFinite(binWidth) || binWidth < 0.1) {
+      // Return a single-bin histogram
+      return {
+        data: [{
+          range: `${Math.round(minV)}`,
+          count: n,
+          percentage: '100.0',
+          lowEdge: minV,
+          highEdge: minV
+        }],
+        median: minV,
+        average: minV,
+        min: minV,
+        max: maxV,
+        effectiveMax: maxV,
+        cappedAt99: false,
+        outlierCount: 0,
+        isHighlySkewed: false,
+        totalOrders: n
+      };
+    }
 
     // Smart rounding function for clean labels
     const smartRound = (value: number): number => {
@@ -1323,7 +1350,7 @@ export default function ClientSideAnalysisResults() {
         {/* Order Profile Histogram */}
         {(() => {
           const histogram = calculateVolumeHistogram(results.allocations);
-          if (!histogram) return null;
+          if (!histogram || !histogram.data || histogram.data.length === 0) return null;
 
           return (
             <Card className="mb-6">
@@ -1395,7 +1422,7 @@ export default function ClientSideAnalysisResults() {
                         textAnchor="end"
                         height={80}
                         tick={{ fontSize: 11 }}
-                        interval={Math.ceil(histogram.data.length / 15)} // Show fewer labels if too many bins
+                        interval={Math.max(0, Math.ceil(histogram.data.length / 15) - 1)} // Show fewer labels if too many bins
                       />
                       <YAxis
                         scale={useLogScale ? "log" : "linear"}
