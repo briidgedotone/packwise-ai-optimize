@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { action } from "./_generated/server";
+import { api } from "./_generated/api";
 
 // Main PDP analysis action
 export const analyzePDP = action({
@@ -24,11 +25,8 @@ export const analyzePDP = action({
         throw new Error("User not authenticated");
       }
 
-      const user = await ctx.runQuery(async (ctx) => {
-        return await ctx.db
-          .query("users")
-          .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
-          .first();
+      const user = await ctx.runQuery(api.users.getUserByClerkId, {
+        clerkId: identity.subject
       });
 
       if (!user) {
@@ -98,21 +96,14 @@ export const analyzePDP = action({
       const overallScore = Object.values(mainAnalysis.scores).reduce((sum, score) => sum + score, 0) / Object.keys(mainAnalysis.scores).length;
 
       // Save analysis record (just tracking usage, no full results)
-      await ctx.runMutation(async (ctx) => {
-        await ctx.db.insert("analyses", {
-          userId: user._id,
-          organizationId: user.organizationId,
-          type: "pdp_analyzer",
-          name: `Design Analysis - ${args.metaInfo?.category || 'Product'}`,
-          status: "completed",
-          inputFiles: [],
-          createdAt: Date.now(),
-          completedAt: Date.now(),
-          results: {
-            overallScore: Math.round(overallScore * 10) / 10, // Just track overall score, not full analysis
-            competitorCount: competitorAnalyses.length
-          },
-        });
+      await ctx.runMutation(api.analyses.create, {
+        type: "pdp_analyzer",
+        name: `Design Analysis - ${args.metaInfo?.category || 'Product'}`,
+        status: "completed",
+        results: {
+          overallScore: Math.round(overallScore * 10) / 10, // Just track overall score, not full analysis
+          competitorCount: competitorAnalyses.length
+        },
       });
 
       return {

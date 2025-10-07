@@ -60,11 +60,8 @@ export const calculateDemandPlanning = action({
         throw new Error("User not authenticated");
       }
 
-      const user = await ctx.runQuery(async (ctx) => {
-        return await ctx.db
-          .query("users")
-          .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
-          .first();
+      const user = await ctx.runQuery(api.users.getUserByClerkId, {
+        clerkId: identity.subject
       });
 
       if (!user) {
@@ -147,22 +144,15 @@ export const calculateDemandPlanning = action({
       });
 
       // Save analysis record for dashboard tracking (just tracking usage, no full results)
-      await ctx.runMutation(async (ctx) => {
-        await ctx.db.insert("analyses", {
-          userId: user._id,
-          organizationId: user.organizationId,
-          type: "demand_planner",
-          name: `Demand Forecast - ${args.forecastPeriod}`,
-          status: "completed",
-          inputFiles: [],
-          createdAt: Date.now(),
-          completedAt: Date.now(),
-          results: {
-            totalPackages, // Just track summary metrics, not full results
-            totalCost: Math.round(totalCost * 100) / 100,
-            packageTypeCount: demandResults.length
-          },
-        });
+      await ctx.runMutation(api.analyses.create, {
+        type: "demand_planner",
+        name: `Demand Forecast - ${args.forecastPeriod}`,
+        status: "completed",
+        results: {
+          totalPackages, // Just track summary metrics, not full results
+          totalCost: Math.round(totalCost * 100) / 100,
+          packageTypeCount: demandResults.length
+        },
       });
 
       return {
