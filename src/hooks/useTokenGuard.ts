@@ -34,20 +34,38 @@ export const useTokenGuard = () => {
     }
 
     try {
-      // Execute the analysis first
-      const result = await executeAnalysis();
-      
-      // If analysis succeeded, consume the token
+      // CONSUME TOKEN FIRST (before running analysis) to prevent race conditions
+      let tokenConsumed = false;
       try {
         await consumeToken({
           analysisType,
-          analysisId: result?.analysisId
+          analysisId: undefined // Will be set later if needed
         });
+        tokenConsumed = true;
+        console.log('Token consumed successfully before analysis');
+      } catch (tokenError: any) {
+        console.error('Failed to consume token:', tokenError);
+        toast.error(
+          'Unable to consume token',
+          {
+            description: tokenError.message || 'Please try again or upgrade your plan.',
+            action: {
+              label: 'Upgrade',
+              onClick: () => navigate('/onboarding')
+            }
+          }
+        );
+        return { success: false, error: tokenError.message || 'TOKEN_CONSUMPTION_FAILED' };
+      }
 
-        // Notify about successful token consumption
-        console.log('Token consumed successfully, triggering refresh');
+      // Now execute the analysis (only if token was successfully consumed)
+      try {
+        const result = await executeAnalysis();
 
-        // Force refresh of token balance queries by triggering a re-render
+        // Notify about successful analysis
+        console.log('Analysis completed successfully, triggering refresh');
+
+        // Force refresh of token balance queries
         setRefreshTrigger(prev => prev + 1);
 
         // Dispatch a custom event to notify dashboard of token consumption
@@ -55,31 +73,34 @@ export const useTokenGuard = () => {
           detail: { analysisType, timestamp: Date.now() }
         }));
 
-        // Show remaining tokens (calculate manually since we just consumed one)
-        const remaining = (tokenBalance?.remainingTokens || 1) - 1;
+        // Show remaining tokens
+        const remaining = Math.max(0, (tokenBalance?.remainingTokens || 0) - 1);
         if (remaining <= 2 && remaining > 0) {
           toast.warning(`Only ${remaining} token${remaining === 1 ? '' : 's'} remaining`);
         } else if (remaining === 0) {
           toast.warning('That was your last token! Please purchase more to continue.');
         }
 
-        // Add a small delay to ensure backend updates propagate and trigger another refresh
+        // Add a small delay to ensure backend updates propagate
         setTimeout(() => {
           setRefreshTrigger(prev => prev + 1);
           window.dispatchEvent(new CustomEvent('tokenConsumed', {
             detail: { analysisType, timestamp: Date.now() }
           }));
         }, 1000);
-      } catch (tokenError) {
-        console.error('Failed to consume token:', tokenError);
-        // Analysis succeeded but token consumption failed - let it pass
+
+        return { success: true, result };
+      } catch (error: any) {
+        console.error('Analysis failed after token consumption:', error);
+        toast.error('Analysis failed', {
+          description: 'Your token was consumed but the analysis failed. Please contact support if this persists.'
+        });
+        return { success: false, error: error.message };
       }
-      
-      return { success: true, result };
     } catch (error: any) {
-      console.error('Analysis failed:', error);
+      console.error('Unexpected error:', error);
       toast.error('Analysis failed', {
-        description: error.message || 'An error occurred during analysis'
+        description: error.message || 'An unexpected error occurred'
       });
       return { success: false, error: error.message };
     }
