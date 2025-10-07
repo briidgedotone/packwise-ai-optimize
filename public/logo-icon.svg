@@ -1,0 +1,14 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Icon Background -->
+  <rect width="48" height="48" rx="12" fill="#767AFA"/>
+
+  <!-- Package/Box Icon -->
+  <g transform="translate(14, 14)">
+    <!-- Box outline -->
+    <path d="M10 2L2 6V14L10 18L18 14V6L10 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Box front -->
+    <path d="M2 6L10 10L18 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Box vertical line -->
+    <path d="M10 10V18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

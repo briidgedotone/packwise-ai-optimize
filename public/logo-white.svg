@@ -1,0 +1,17 @@
+<svg width="180" height="60" viewBox="0 0 180 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo Icon Background (White version) -->
+  <rect x="4" y="10" width="40" height="40" rx="8" fill="white" fill-opacity="0.15"/>
+
+  <!-- Package/Box Icon -->
+  <g transform="translate(14, 20)">
+    <!-- Box outline -->
+    <path d="M10 2L2 6V14L10 18L18 14V6L10 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Box front -->
+    <path d="M2 6L10 10L18 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Box vertical line -->
+    <path d="M10 10V18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <!-- QuantiPackAI Text (White) -->
+  <text x="52" y="40" font-family="Plus Jakarta Sans, system-ui, sans-serif" font-size="24" font-weight="700" fill="white">QuantiPackAI</text>
+</svg>

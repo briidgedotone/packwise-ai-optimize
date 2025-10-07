@@ -1,6 +1,5 @@
 "use client";
 
-import { Package } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
@@ -49,12 +48,9 @@ export default function Footer() {
         {/* Top Section */}
         <div className="relative mx-auto grid max-w-7xl items-start justify-start gap-8 pb-12 md:grid-cols-2 lg:grid-cols-3">
           <div className="lg:col-span-1">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ backgroundColor: '#767AFA' }}>
-                <Package className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-xl font-bold text-gray-900">QuantiPackAI</span>
-            </div>
+            <Link to="/" className="flex items-center mb-4">
+              <img src="/logo.svg" alt="QuantiPackAI Logo" className="h-10" />
+            </Link>
             <p className="text-gray-600 mb-4 leading-relaxed">
               AI-powered packaging optimization platform that helps businesses reduce costs, 
               eliminate waste, and maximize efficiency through intelligent analysis and forecasting.
