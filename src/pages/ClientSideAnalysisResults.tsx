@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -309,6 +309,10 @@ export default function ClientSideAnalysisResults() {
 
   const { analysisResults: results } = analysisData;
 
+  // Calculate histogram once and cache it (expensive operation)
+  const volumeHistogram = useMemo(() => {
+    return calculateVolumeHistogram(results.allocations);
+  }, [results.allocations]);
 
   // Get unique package types for filter
   const packageTypes = Array.from(new Set(results.allocations.map(a => a.recommendedPackage)));
@@ -389,21 +393,20 @@ export default function ClientSideAnalysisResults() {
     csvSections.push('');
 
     // Section 4.5: Order Volume Histogram
-    const histogram = calculateVolumeHistogram(results.allocations);
-    if (histogram) {
+    if (volumeHistogram) {
       csvSections.push('=== ORDER VOLUME HISTOGRAM ===');
-      csvSections.push(`Min Volume (in³),${Math.round(histogram.min).toLocaleString()}`);
-      csvSections.push(`Max Volume (in³),${Math.round(histogram.max).toLocaleString()}`);
-      csvSections.push(`Median Volume (in³),${Math.round(histogram.median).toLocaleString()}`);
-      csvSections.push(`Average Volume (in³),${Math.round(histogram.average).toLocaleString()}`);
-      csvSections.push(`Total Orders,${histogram.totalOrders.toLocaleString()}`);
-      if (histogram.cappedAt99) {
-        csvSections.push(`Note: Chart capped at 99th percentile (${Math.round(histogram.effectiveMax).toLocaleString()} in³)`);
-        csvSections.push(`Outlier Orders,${histogram.outlierCount}`);
+      csvSections.push(`Min Volume (in³),${Math.round(volumeHistogram.min).toLocaleString()}`);
+      csvSections.push(`Max Volume (in³),${Math.round(volumeHistogram.max).toLocaleString()}`);
+      csvSections.push(`Median Volume (in³),${Math.round(volumeHistogram.median).toLocaleString()}`);
+      csvSections.push(`Average Volume (in³),${Math.round(volumeHistogram.average).toLocaleString()}`);
+      csvSections.push(`Total Orders,${volumeHistogram.totalOrders.toLocaleString()}`);
+      if (volumeHistogram.cappedAt99) {
+        csvSections.push(`Note: Chart capped at 99th percentile (${Math.round(volumeHistogram.effectiveMax).toLocaleString()} in³)`);
+        csvSections.push(`Outlier Orders,${volumeHistogram.outlierCount}`);
       }
       csvSections.push('');
       csvSections.push('Volume Range (in³),Frequency,Percentage');
-      histogram.data.forEach(bin => {
+      volumeHistogram.data.forEach(bin => {
         csvSections.push(`${bin.range},${bin.count.toLocaleString()},${bin.percentage}%`);
       });
       csvSections.push('');
@@ -1348,11 +1351,7 @@ export default function ClientSideAnalysisResults() {
         </Card>
 
         {/* Order Profile Histogram */}
-        {(() => {
-          const histogram = calculateVolumeHistogram(results.allocations);
-          if (!histogram || !histogram.data || histogram.data.length === 0) return null;
-
-          return (
+        {volumeHistogram && volumeHistogram.data && volumeHistogram.data.length > 0 && (
             <Card className="mb-6">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -1368,34 +1367,34 @@ export default function ClientSideAnalysisResults() {
                 <div className="flex flex-wrap gap-4 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-600">Median Volume:</span>
-                    <Badge className="bg-blue-600 text-white">{Math.round(histogram.median).toLocaleString()} cu in</Badge>
+                    <Badge className="bg-blue-600 text-white">{Math.round(volumeHistogram.median).toLocaleString()} cu in</Badge>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-600">Average Volume:</span>
-                    <Badge className="bg-blue-600 text-white">{Math.round(histogram.average).toLocaleString()} cu in</Badge>
+                    <Badge className="bg-blue-600 text-white">{Math.round(volumeHistogram.average).toLocaleString()} cu in</Badge>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-600">Total Orders:</span>
-                    <Badge className="bg-blue-600 text-white">{histogram.totalOrders.toLocaleString()}</Badge>
+                    <Badge className="bg-blue-600 text-white">{volumeHistogram.totalOrders.toLocaleString()}</Badge>
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-gray-600">Range:</span>
-                    <Badge variant="outline">{Math.round(histogram.min).toLocaleString()} - {Math.round(histogram.max).toLocaleString()} cu in</Badge>
+                    <Badge variant="outline">{Math.round(volumeHistogram.min).toLocaleString()} - {Math.round(volumeHistogram.max).toLocaleString()} cu in</Badge>
                   </div>
                 </div>
 
                 {/* Outlier Warning */}
-                {histogram.cappedAt99 && (
+                {volumeHistogram.cappedAt99 && (
                   <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
                     <p className="text-sm text-yellow-800">
-                      <strong>Note:</strong> Chart capped at 99th percentile ({Math.round(histogram.effectiveMax).toLocaleString()} cu in).
-                      {histogram.outlierCount} outlier order{histogram.outlierCount !== 1 ? 's' : ''} beyond this range {histogram.outlierCount !== 1 ? 'are' : 'is'} grouped in the final bin.
+                      <strong>Note:</strong> Chart capped at 99th percentile ({Math.round(volumeHistogram.effectiveMax).toLocaleString()} cu in).
+                      {volumeHistogram.outlierCount} outlier order{volumeHistogram.outlierCount !== 1 ? 's' : ''} beyond this range {volumeHistogram.outlierCount !== 1 ? 'are' : 'is'} grouped in the final bin.
                     </p>
                   </div>
                 )}
 
                 {/* Log Scale Toggle (if highly skewed) */}
-                {histogram.isHighlySkewed && (
+                {volumeHistogram.isHighlySkewed && (
                   <div className="mb-4 flex justify-end">
                     <Button
                       variant="outline"
@@ -1412,7 +1411,7 @@ export default function ClientSideAnalysisResults() {
                 <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
-                      data={histogram.data}
+                      data={volumeHistogram.data}
                       margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
@@ -1422,7 +1421,7 @@ export default function ClientSideAnalysisResults() {
                         textAnchor="end"
                         height={80}
                         tick={{ fontSize: 11 }}
-                        interval={Math.max(0, Math.ceil(histogram.data.length / 15) - 1)} // Show fewer labels if too many bins
+                        interval={Math.max(0, Math.ceil(volumeHistogram.data.length / 15) - 1)} // Show fewer labels if too many bins
                       />
                       <YAxis
                         scale={useLogScale ? "log" : "linear"}
@@ -1461,13 +1460,12 @@ export default function ClientSideAnalysisResults() {
                   <p className="text-sm text-gray-700">
                     <strong>💡 Interpretation:</strong> This histogram shows where your orders cluster by volume.
                     Peaks indicate common order sizes, which helps identify optimal package configurations.
-                    The median ({Math.round(histogram.median).toLocaleString()} cu in) represents the typical order size.
+                    The median ({Math.round(volumeHistogram.median).toLocaleString()} cu in) represents the typical order size.
                   </p>
                 </div>
               </CardContent>
             </Card>
-          );
-        })()}
+        )}
 
         {/* Detailed Order Table */}
         <Card>
