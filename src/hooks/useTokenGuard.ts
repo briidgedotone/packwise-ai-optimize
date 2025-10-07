@@ -26,7 +26,15 @@ export const useTokenGuard = () => {
           description: 'You need tokens to run analyses. Please upgrade your plan.',
           action: {
             label: 'Upgrade',
-            onClick: () => navigate('/#pricing')
+            onClick: () => {
+              navigate('/');
+              setTimeout(() => {
+                const pricingSection = document.getElementById('pricing');
+                if (pricingSection) {
+                  pricingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+              }, 100);
+            }
           }
         }
       );
@@ -51,7 +59,15 @@ export const useTokenGuard = () => {
             description: tokenError.message || 'Please try again or upgrade your plan.',
             action: {
               label: 'Upgrade',
-              onClick: () => navigate('/#pricing')
+              onClick: () => {
+                navigate('/');
+                setTimeout(() => {
+                  const pricingSection = document.getElementById('pricing');
+                  if (pricingSection) {
+                    pricingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }
+                }, 100);
+              }
             }
           }
         );
