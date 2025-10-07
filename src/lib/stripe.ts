@@ -41,3 +41,30 @@ export const PRICING_CONFIG = {
 export const isStripeConfigured = (): boolean => {
   return !!stripePublishableKey;
 };
+
+// Create Stripe checkout session
+export const createCheckoutSession = async (
+  planId: 'starter' | 'professional',
+  userEmail: string,
+  successUrl: string,
+  cancelUrl: string
+) => {
+  const priceId = planId === 'starter'
+    ? PRICING_CONFIG.starter.monthly.priceId
+    : PRICING_CONFIG.professional.monthly.priceId;
+
+  if (!priceId) {
+    throw new Error('Price ID not configured for selected plan');
+  }
+
+  // This should call your backend to create a Stripe checkout session
+  // For now, we'll redirect to a Settings page with Billing tab
+  // which has the full Stripe integration
+  window.location.href = `/settings?tab=billing&plan=${planId}`;
+};
+
+// Create Stripe portal session
+export const createPortalSession = async (returnUrl: string) => {
+  // This should call your backend to create a Stripe portal session
+  window.location.href = `/settings?tab=billing`;
+};

@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CheckCheck } from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "@clerk/clerk-react";
 
 const plans = [
   {
@@ -162,9 +163,27 @@ const PricingSwitch = ({
 
 export default function PricingSection() {
   const [isYearly, setIsYearly] = useState(false);
+  const { isSignedIn } = useUser();
+  const navigate = useNavigate();
 
   const togglePricingPeriod = (value: string) =>
     setIsYearly(Number.parseInt(value) === 1);
+
+  const handlePlanClick = (planName: string) => {
+    if (planName === "Contact Sales") {
+      navigate("/contact");
+      return;
+    }
+
+    if (isSignedIn) {
+      // User is logged in - redirect to billing page
+      const planId = planName.includes("Starter") ? "starter" : "professional";
+      navigate(`/settings?tab=billing&plan=${planId}`);
+    } else {
+      // User not logged in - redirect to sign up
+      navigate("/sign-up");
+    }
+  };
 
   return (
     <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'transparent' }}>
@@ -234,17 +253,16 @@ export default function PricingSection() {
                 </CardHeader>
 
                 <CardContent className="pt-0">
-                  <Link to={plan.buttonText === "Contact Sales" ? "/contact" : "/sign-up"} className="block mb-6">
-                    <button
-                      className={`w-full p-4 text-lg rounded-3xl font-medium transition-all ${
-                        plan.popular
-                          ? "bg-[#767AFA] hover:opacity-90 text-white"
-                          : "bg-gray-900 hover:bg-gray-800 text-white"
-                      }`}
-                    >
-                      {plan.buttonText}
-                    </button>
-                  </Link>
+                  <button
+                    onClick={() => handlePlanClick(plan.name)}
+                    className={`w-full p-4 text-lg rounded-3xl font-medium transition-all mb-6 ${
+                      plan.popular
+                        ? "bg-[#767AFA] hover:opacity-90 text-white"
+                        : "bg-gray-900 hover:bg-gray-800 text-white"
+                    }`}
+                  >
+                    {plan.buttonText}
+                  </button>
 
                   <div className="space-y-3 pt-4 border-t border-gray-200">
                     <h4 className="font-semibold text-gray-900 mb-3">
