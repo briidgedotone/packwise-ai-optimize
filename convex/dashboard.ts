@@ -191,13 +191,6 @@ export const getToolUsageStats = query({
       .order("desc")
       .take(1000); // Limit to recent 1000 analyses for stats calculation
 
-    console.log(`[Tool Analytics] Found ${analyses.length} analyses for user ${user._id}`);
-    console.log(`[Tool Analytics] Analysis details:`, analyses.map(a => ({
-      type: a.type,
-      status: a.status,
-      name: a.name
-    })));
-
     const toolCounts = {
       suite_analyzer: 0,
       spec_generator: 0,
@@ -218,8 +211,6 @@ export const getToolUsageStats = query({
         toolCounts[analysisType as keyof typeof toolCounts]++;
       }
     });
-
-    console.log(`[Tool Analytics] Tool counts (excluding failed):`, toolCounts);
 
     const total = Object.values(toolCounts).reduce((a, b) => a + b, 0);
 
