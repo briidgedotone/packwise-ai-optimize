@@ -103,15 +103,27 @@ export default function ClientSideAnalysisResults() {
   const [showMeetingTarget, setShowMeetingTarget] = useState(false);
   const [showNeedingImprovement, setShowNeedingImprovement] = useState(false);
 
-  // Sort packages in logical order: Small → Medium → Large
+  // Sort packages in logical order: X-small → Small → Medium → Large → X-large → XX-large
   const sortPackagesBySize = (packages: any[]) => {
-    const sizeOrder = { 'small': 1, 'medium': 2, 'large': 3 };
+    const sizeOrder: { [key: string]: number } = {
+      'x-small': 1,
+      'xsmall': 1,
+      'small': 2,
+      'medium': 3,
+      'large': 4,
+      'x-large': 5,
+      'xlarge': 5,
+      'xx-large': 6,
+      'xxlarge': 6,
+      '2xl': 6,
+      '2x-large': 6
+    };
     return [...packages].sort((a, b) => {
       // Handle different property names for package identification
-      const aName = (a.name || a.packageName || '').toLowerCase();
-      const bName = (b.name || b.packageName || '').toLowerCase();
-      const aSize = sizeOrder[aName as keyof typeof sizeOrder] || 999;
-      const bSize = sizeOrder[bName as keyof typeof sizeOrder] || 999;
+      const aName = (a.name || a.packageName || '').toLowerCase().trim();
+      const bName = (b.name || b.packageName || '').toLowerCase().trim();
+      const aSize = sizeOrder[aName] || 999;
+      const bSize = sizeOrder[bName] || 999;
       return aSize - bSize;
     });
   };
@@ -587,7 +599,7 @@ export default function ClientSideAnalysisResults() {
                         </tr>
                       </thead>
                       <tbody>
-                        {results.packageCostBreakdown.map((pkg, index) => {
+                        {sortPackagesBySize(results.packageCostBreakdown).map((pkg, index) => {
                           const isPositiveSavings = pkg.savings > 0;
                           const isZeroSavings = pkg.savings === 0;
 
@@ -767,7 +779,7 @@ export default function ClientSideAnalysisResults() {
                         </tr>
                       </thead>
                       <tbody>
-                        {results.packageMaterialBreakdown.map((pkg, index) => {
+                        {sortPackagesBySize(results.packageMaterialBreakdown).map((pkg, index) => {
                           const isPositiveSavings = pkg.materialSavings > 0;
                           const isZeroSavings = pkg.materialSavings === 0;
 

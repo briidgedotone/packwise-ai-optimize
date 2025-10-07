@@ -1,51 +1,66 @@
 import { useState, useEffect } from 'react';
-import { useQuery, useMutation } from 'convex/react';
+import { useQuery, useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { 
+import {
   CreditCard, Check, Zap, AlertCircle, ArrowRight,
-  Sparkles, Crown, Building, Star, Shield
+  Sparkles, Crown
 } from 'lucide-react';
-import { createCheckoutSession, createPortalSession } from '@/lib/stripe';
+import { createCheckoutSession } from '@/lib/stripe';
 import { useUser } from '@clerk/clerk-react';
 import { toast } from 'sonner';
 
+// Simplified plan configuration matching pricing page
+const PLANS = [
+  {
+    planId: 'starter',
+    name: 'Starter',
+    description: 'Individuals or small teams getting started with packaging analysis',
+    price: 3999, // $39.99
+    tokensPerMonth: 50,
+    icon: Sparkles,
+    features: [
+      '50 tokens per month',
+      'All analysis tools',
+      'Email support',
+      'Export reports'
+    ]
+  },
+  {
+    planId: 'professional',
+    name: 'Professional',
+    description: 'Frequent users who need deeper insights and higher usage limits',
+    price: 9999, // $99.99
+    tokensPerMonth: 150,
+    icon: Crown,
+    popular: true,
+    features: [
+      '150 tokens per month',
+      'All analysis tools',
+      'Priority support',
+      'Advanced analytics',
+      'API access'
+    ]
+  }
+];
+
 interface PlanCardProps {
-  plan: {
-    name: string;
-    planId: string;
-    price: number;
-    tokensPerMonth: number;
-    features: string[];
-    description: string;
-  };
+  plan: typeof PLANS[0];
   currentPlan: string;
   onSelect: () => void;
-  isPopular?: boolean;
 }
 
-const PlanCard = ({ plan, currentPlan, onSelect, isPopular }: PlanCardProps) => {
+const PlanCard = ({ plan, currentPlan, onSelect }: PlanCardProps) => {
   const isCurrentPlan = currentPlan === plan.planId;
-  const isFree = plan.planId === 'free';
-  const isEnterprise = plan.planId === 'enterprise';
-
-  const getIcon = () => {
-    switch (plan.planId) {
-      case 'free': return <Zap className="h-6 w-6" />;
-      case 'starter': return <Sparkles className="h-6 w-6" />;
-      case 'professional': return <Crown className="h-6 w-6" />;
-      case 'enterprise': return <Building className="h-6 w-6" />;
-      default: return <Zap className="h-6 w-6" />;
-    }
-  };
+  const Icon = plan.icon;
 
   return (
-    <Card className={`relative ${isPopular ? 'border-blue-500 shadow-lg' : ''} ${isCurrentPlan ? 'bg-blue-50 border-blue-200' : ''}`}>
-      {isPopular && (
+    <Card className={`relative ${plan.popular ? 'border-blue-500 shadow-lg' : ''} ${isCurrentPlan ? 'bg-blue-50 border-blue-200' : ''}`}>
+      {plan.popular && (
         <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
           <Badge className="bg-blue-500 text-white">Most Popular</Badge>
         </div>
@@ -55,26 +70,22 @@ const PlanCard = ({ plan, currentPlan, onSelect, isPopular }: PlanCardProps) => 
           <Badge variant="outline" className="bg-white">Current Plan</Badge>
         </div>
       )}
-      
+
       <CardHeader>
         <div className="flex items-center justify-between mb-2">
           <div className="p-2 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg">
-            {getIcon()}
+            <Icon className="h-6 w-6" />
           </div>
-          {plan.tokensPerMonth < 999999 && (
-            <Badge variant="secondary">{plan.tokensPerMonth} tokens/mo</Badge>
-          )}
+          <Badge variant="secondary">{plan.tokensPerMonth} tokens/mo</Badge>
         </div>
         <CardTitle className="text-xl">{plan.name}</CardTitle>
         <CardDescription>{plan.description}</CardDescription>
         <div className="mt-4">
-          <span className="text-3xl font-bold">
-            {isFree ? 'Free' : isEnterprise ? 'Custom' : `$${plan.price / 100}`}
-          </span>
-          {!isFree && !isEnterprise && <span className="text-gray-500">/month</span>}
+          <span className="text-3xl font-bold">${plan.price / 100}</span>
+          <span className="text-gray-500">/month</span>
         </div>
       </CardHeader>
-      
+
       <CardContent>
         <ul className="space-y-3 mb-6">
           {plan.features.map((feature, index) => (
@@ -84,15 +95,15 @@ const PlanCard = ({ plan, currentPlan, onSelect, isPopular }: PlanCardProps) => 
             </li>
           ))}
         </ul>
-        
+
         <Button
           className="w-full"
           variant={isCurrentPlan ? "outline" : "default"}
-          disabled={isCurrentPlan || isFree}
+          disabled={isCurrentPlan}
           onClick={onSelect}
         >
-          {isCurrentPlan ? 'Current Plan' : isEnterprise ? 'Contact Sales' : 'Upgrade'}
-          {!isCurrentPlan && !isEnterprise && <ArrowRight className="h-4 w-4 ml-2" />}
+          {isCurrentPlan ? 'Current Plan' : 'Upgrade'}
+          {!isCurrentPlan && <ArrowRight className="h-4 w-4 ml-2" />}
         </Button>
       </CardContent>
     </Card>
@@ -102,10 +113,36 @@ const PlanCard = ({ plan, currentPlan, onSelect, isPopular }: PlanCardProps) => 
 export const Billing = () => {
   const { user } = useUser();
   const subscription = useQuery(api.subscriptions.getUserSubscription);
-  const plans = useQuery(api.subscriptions.getSubscriptionPlans);
-  const setStripeCustomerId = useMutation(api.subscriptions.setStripeCustomerId);
-  
+  const tokenBalance = useQuery(api.tokens.getTokenBalance);
+  const createBillingPortal = useAction(api.stripe.createBillingPortalSession);
+
   const [isLoading, setIsLoading] = useState(false);
+
+  const handleManageSubscription = async () => {
+    if (!subscription?.stripeCustomerId) {
+      toast.error('Unable to access billing portal. Please contact support.');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const result = await createBillingPortal({
+        customerId: subscription.stripeCustomerId,
+        returnUrl: window.location.origin + '/settings?tab=billing'
+      });
+
+      if (result?.url) {
+        window.location.href = result.url;
+      } else {
+        toast.error('Failed to create billing portal session');
+      }
+    } catch (error) {
+      console.error('Error creating billing portal:', error);
+      toast.error('Failed to open billing portal. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleUpgrade = async (planId: 'starter' | 'professional') => {
     if (!user?.emailAddresses[0]?.emailAddress) {
@@ -130,18 +167,6 @@ export const Billing = () => {
     }
   };
 
-  const handleManageSubscription = async () => {
-    setIsLoading(true);
-    
-    try {
-      await createPortalSession(`${window.location.origin}/settings?tab=billing`);
-    } catch (error) {
-      console.error('Portal error:', error);
-      toast.error('Failed to open billing portal');
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   // Check for success parameter in URL
   useEffect(() => {
@@ -155,7 +180,7 @@ export const Billing = () => {
     }
   }, []);
 
-  if (!subscription || !plans) {
+  if (!subscription || !tokenBalance) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -163,7 +188,9 @@ export const Billing = () => {
     );
   }
 
-  const usagePercentage = (subscription.tokensUsed / subscription.tokensLimit) * 100;
+  const currentPlan = subscription.plan || 'free';
+  const totalTokens = tokenBalance.monthlyTokens + tokenBalance.additionalTokens;
+  const usagePercentage = totalTokens > 0 ? (tokenBalance.usedTokens / totalTokens) * 100 : 0;
   const isNearLimit = usagePercentage > 80;
   const hasReachedLimit = usagePercentage >= 100;
 
@@ -174,7 +201,7 @@ export const Billing = () => {
         <CardHeader>
           <CardTitle>Current Usage</CardTitle>
           <CardDescription>
-            Your token usage for {subscription.billingCycle}
+            Your token usage for {new Date().toISOString().slice(0, 7)}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -182,15 +209,15 @@ export const Billing = () => {
             <div className="flex items-center justify-between">
               <span className="text-sm font-medium">Tokens Used</span>
               <span className="text-sm text-gray-500">
-                {subscription.tokensUsed} / {subscription.tokensLimit}
+                {tokenBalance.usedTokens} / {totalTokens}
               </span>
             </div>
-            
-            <Progress 
-              value={Math.min(usagePercentage, 100)} 
+
+            <Progress
+              value={Math.min(usagePercentage, 100)}
               className={`h-2 ${hasReachedLimit ? 'bg-red-100' : isNearLimit ? 'bg-yellow-100' : ''}`}
             />
-            
+
             {hasReachedLimit && (
               <Alert className="border-red-200 bg-red-50">
                 <AlertCircle className="h-4 w-4 text-red-600" />
@@ -199,7 +226,7 @@ export const Billing = () => {
                 </AlertDescription>
               </Alert>
             )}
-            
+
             {isNearLimit && !hasReachedLimit && (
               <Alert className="border-yellow-200 bg-yellow-50">
                 <AlertCircle className="h-4 w-4 text-yellow-600" />
@@ -208,12 +235,12 @@ export const Billing = () => {
                 </AlertDescription>
               </Alert>
             )}
-            
+
             <div className="pt-2 border-t">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Tokens Remaining</span>
                 <span className="font-semibold text-lg">
-                  {subscription.tokensRemaining}
+                  {tokenBalance.remainingTokens}
                 </span>
               </div>
             </div>
@@ -226,26 +253,26 @@ export const Billing = () => {
         <CardHeader>
           <CardTitle>Token Usage by Analysis Type</CardTitle>
           <CardDescription>
-            Each analysis type consumes a different number of tokens
+            Each analysis type consumes 1 token per run
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm font-medium">Suite Analyzer</span>
-              <Badge variant="secondary">10 tokens</Badge>
+              <Badge variant="secondary">1 token</Badge>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm font-medium">Spec Generator</span>
-              <Badge variant="secondary">15 tokens</Badge>
+              <Badge variant="secondary">1 token</Badge>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm font-medium">Demand Planner</span>
-              <Badge variant="secondary">8 tokens</Badge>
+              <Badge variant="secondary">1 token</Badge>
             </div>
             <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
               <span className="text-sm font-medium">PDP Analyzer</span>
-              <Badge variant="secondary">5 tokens</Badge>
+              <Badge variant="secondary">1 token</Badge>
             </div>
           </div>
         </CardContent>
@@ -254,20 +281,13 @@ export const Billing = () => {
       {/* Subscription Plans */}
       <div>
         <h3 className="text-lg font-semibold mb-4">Subscription Plans</h3>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {plans.map((plan) => (
+        <div className="grid gap-6 md:grid-cols-2">
+          {PLANS.map((plan) => (
             <PlanCard
               key={plan.planId}
               plan={plan}
-              currentPlan={subscription.plan}
-              isPopular={plan.planId === 'professional'}
-              onSelect={() => {
-                if (plan.planId === 'enterprise') {
-                  window.open('mailto:sales@quantipackai.com?subject=Enterprise Plan Inquiry', '_blank');
-                } else if (plan.planId === 'starter' || plan.planId === 'professional') {
-                  handleUpgrade(plan.planId);
-                }
-              }}
+              currentPlan={currentPlan}
+              onSelect={() => handleUpgrade(plan.planId)}
             />
           ))}
         </div>

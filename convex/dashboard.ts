@@ -285,10 +285,11 @@ export const getRecentFiles = query({
 // Helper functions
 function getActivityTitle(type: string): string {
   switch (type) {
-    case 'suite_analyzer': return 'Suite Analysis Completed';
-    case 'spec_generator': return 'Specs Generated';
-    case 'pdp_analyzer': return 'Design Analysis';
-    case 'demand_planner': return 'Demand Forecast Updated';
+    case 'suite_analyzer': return 'Suite Analyzer Analysis Completed';
+    case 'spec_generator': return 'Spec Generator Analysis Completed';
+    case 'pdp_analyzer': return 'Design Analyzer Analysis Completed';
+    case 'demand_planner': return 'Demand Planner Analysis Completed';
+    case 'demand_planner_v2': return 'Demand Planner Analysis Completed';
     default: return 'Analysis Completed';
   }
 }
