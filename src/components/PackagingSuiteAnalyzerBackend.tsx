@@ -453,6 +453,22 @@ export const PackagingSuiteAnalyzerBackend = () => {
               console.log('Analysis complete! Saving to database...');
               setIsProcessing(false);
 
+              // Save analysis to database for usage tracking
+              createAnalysis({
+                type: "suite_analyzer",
+                name: `Suite Analysis - ${new Date().toLocaleDateString()}`,
+                status: "completed",
+                results: {
+                  totalSavings: data.costReduction?.totalSavings || 0,
+                  processedCount: data.allocations?.length || 0,
+                  timestamp: new Date().toISOString()
+                }
+              }).then(() => {
+                console.log('Analysis saved to database successfully');
+              }).catch((err) => {
+                console.error('Failed to save analysis:', err);
+              });
+
               // Navigate to results page with data passed through React Router state
               navigate(`/suite-analysis/${analysisId}/client-results`, {
                 state: {
