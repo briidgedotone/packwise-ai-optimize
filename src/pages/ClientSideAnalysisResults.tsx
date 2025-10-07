@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -102,11 +102,10 @@ export default function ClientSideAnalysisResults() {
   const [targetFillRate, setTargetFillRate] = useState(75);
   const [showMeetingTarget, setShowMeetingTarget] = useState(false);
   const [showNeedingImprovement, setShowNeedingImprovement] = useState(false);
-  const [useLogScale, setUseLogScale] = useState(false);
 
   // Sort packages in logical order: X-small → Small → Medium → Large → X-large → XX-large
   const sortPackagesBySize = (packages: any[]) => {
-    const sizeOrder: { [key: string]: number} = {
+    const sizeOrder: { [key: string]: number } = {
       'x-small': 1,
       'xsmall': 1,
       'small': 2,
@@ -127,141 +126,6 @@ export default function ClientSideAnalysisResults() {
       const bSize = sizeOrder[bName] || 999;
       return aSize - bSize;
     });
-  };
-
-  // Calculate volume histogram with smart binning
-  const calculateVolumeHistogram = (allocations: AllocationResult[]) => {
-    if (!allocations || allocations.length === 0) {
-      return null;
-    }
-
-    // Extract volumes (limit to first 1M orders for performance)
-    const volumes = allocations
-      .slice(0, 1000000)
-      .map(a => a.orderVolume)
-      .filter(v => v != null && v > 0 && isFinite(v));
-
-    if (volumes.length === 0) return null;
-
-    const n = volumes.length;
-    const minV = Math.min(...volumes);
-    const maxV = Math.max(...volumes);
-
-    // Determine bin count based on dataset size
-    const bins = n < 2000 ? 20 : n <= 50000 ? 30 : 40;
-
-    // Calculate percentiles for outlier handling
-    const sortedVolumes = [...volumes].sort((a, b) => a - b);
-    const p99Index = Math.floor(sortedVolumes.length * 0.99);
-    const p99 = sortedVolumes[p99Index];
-
-    // Use 99th percentile if max stretches beyond 90% of range
-    const effectiveMax = (maxV - minV) === 0 ? maxV : ((p99 - minV) / (maxV - minV) > 0.9 ? maxV : p99);
-    const cappedAt99 = effectiveMax < maxV;
-
-    // Calculate bin width and edges
-    const binWidth = (effectiveMax - minV) / bins;
-
-    // Edge case: all volumes are the same or very similar (binWidth too small)
-    if (binWidth === 0 || !isFinite(binWidth) || binWidth < 0.1) {
-      // Return a single-bin histogram
-      return {
-        data: [{
-          range: `${Math.round(minV)}`,
-          count: n,
-          percentage: '100.0',
-          lowEdge: minV,
-          highEdge: minV
-        }],
-        median: minV,
-        average: minV,
-        min: minV,
-        max: maxV,
-        effectiveMax: maxV,
-        cappedAt99: false,
-        outlierCount: 0,
-        isHighlySkewed: false,
-        totalOrders: n
-      };
-    }
-
-    // Smart rounding function for clean labels
-    const smartRound = (value: number): number => {
-      if (binWidth >= 100) return Math.round(value / 100) * 100;
-      if (binWidth >= 50) return Math.round(value / 50) * 50;
-      if (binWidth >= 10) return Math.round(value / 10) * 10;
-      if (binWidth >= 5) return Math.round(value / 5) * 5;
-      return Math.round(value);
-    };
-
-    // Create bin edges
-    const edges: number[] = [];
-    for (let i = 0; i <= bins; i++) {
-      edges.push(minV + i * binWidth);
-    }
-
-    // Count frequencies with [low, high) rule, except last bin includes max
-    const counts: number[] = new Array(bins).fill(0);
-    volumes.forEach(v => {
-      if (v > effectiveMax) {
-        // Outliers go in last bin
-        counts[bins - 1]++;
-      } else {
-        for (let i = 0; i < bins; i++) {
-          const low = edges[i];
-          const high = edges[i + 1];
-          if (i === bins - 1) {
-            // Last bin: [low, high]
-            if (v >= low && v <= high) {
-              counts[i]++;
-              break;
-            }
-          } else {
-            // Other bins: [low, high)
-            if (v >= low && v < high) {
-              counts[i]++;
-              break;
-            }
-          }
-        }
-      }
-    });
-
-    // Create histogram data with rounded labels
-    const histogramData = counts.map((count, i) => {
-      const low = smartRound(edges[i]);
-      const high = i === bins - 1 && cappedAt99
-        ? `${smartRound(edges[i + 1])}+`
-        : smartRound(edges[i + 1]);
-
-      return {
-        range: `${low}-${high}`,
-        count,
-        percentage: ((count / n) * 100).toFixed(1),
-        lowEdge: edges[i],
-        highEdge: edges[i + 1]
-      };
-    });
-
-    // Calculate summary statistics
-    const median = sortedVolumes[Math.floor(sortedVolumes.length / 2)];
-    const average = volumes.reduce((sum, v) => sum + v, 0) / volumes.length;
-
-    // Check if data is highly skewed (for log scale suggestion)
-    const isHighlySkewed = maxV > 10 * median;
-
-    return {
-      data: histogramData,
-      median,
-      average,
-      min: minV,
-      max: maxV,
-      effectiveMax,
-      cappedAt99,
-      outlierCount: cappedAt99 ? volumes.filter(v => v > effectiveMax).length : 0,
-      isHighlySkewed,
-      totalOrders: n
-    };
   };
 
   useEffect(() => {
@@ -309,10 +173,6 @@ export default function ClientSideAnalysisResults() {
 
   const { analysisResults: results } = analysisData;
 
-  // Calculate histogram once and cache it (expensive operation)
-  const volumeHistogram = useMemo(() => {
-    return calculateVolumeHistogram(results.allocations);
-  }, [results.allocations]);
 
   // Get unique package types for filter
   const packageTypes = Array.from(new Set(results.allocations.map(a => a.recommendedPackage)));
@@ -391,26 +251,6 @@ export default function ClientSideAnalysisResults() {
       csvSections.push(`${dist.range},${dist.count.toLocaleString()}`);
     });
     csvSections.push('');
-
-    // Section 4.5: Order Volume Histogram
-    if (volumeHistogram) {
-      csvSections.push('=== ORDER VOLUME HISTOGRAM ===');
-      csvSections.push(`Min Volume (in³),${Math.round(volumeHistogram.min).toLocaleString()}`);
-      csvSections.push(`Max Volume (in³),${Math.round(volumeHistogram.max).toLocaleString()}`);
-      csvSections.push(`Median Volume (in³),${Math.round(volumeHistogram.median).toLocaleString()}`);
-      csvSections.push(`Average Volume (in³),${Math.round(volumeHistogram.average).toLocaleString()}`);
-      csvSections.push(`Total Orders,${volumeHistogram.totalOrders.toLocaleString()}`);
-      if (volumeHistogram.cappedAt99) {
-        csvSections.push(`Note: Chart capped at 99th percentile (${Math.round(volumeHistogram.effectiveMax).toLocaleString()} in³)`);
-        csvSections.push(`Outlier Orders,${volumeHistogram.outlierCount}`);
-      }
-      csvSections.push('');
-      csvSections.push('Volume Range (in³),Frequency,Percentage');
-      volumeHistogram.data.forEach(bin => {
-        csvSections.push(`${bin.range},${bin.count.toLocaleString()},${bin.percentage}%`);
-      });
-      csvSections.push('');
-    }
 
     // Section 5: Order Details (use all allocations, not just filtered)
     csvSections.push('=== ORDER ALLOCATION DETAILS ===');
@@ -1349,123 +1189,6 @@ export default function ClientSideAnalysisResults() {
             })()}
           </CardContent>
         </Card>
-
-        {/* Order Profile Histogram */}
-        {volumeHistogram && volumeHistogram.data && volumeHistogram.data.length > 0 && (
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-blue-600" />
-                  Order Profile Histogram
-                </CardTitle>
-                <CardDescription>
-                  Distribution of order volumes to identify common size ranges
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {/* Summary Statistics */}
-                <div className="flex flex-wrap gap-4 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-600">Median Volume:</span>
-                    <Badge className="bg-blue-600 text-white">{Math.round(volumeHistogram.median).toLocaleString()} cu in</Badge>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-600">Average Volume:</span>
-                    <Badge className="bg-blue-600 text-white">{Math.round(volumeHistogram.average).toLocaleString()} cu in</Badge>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-600">Total Orders:</span>
-                    <Badge className="bg-blue-600 text-white">{volumeHistogram.totalOrders.toLocaleString()}</Badge>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-600">Range:</span>
-                    <Badge variant="outline">{Math.round(volumeHistogram.min).toLocaleString()} - {Math.round(volumeHistogram.max).toLocaleString()} cu in</Badge>
-                  </div>
-                </div>
-
-                {/* Outlier Warning */}
-                {volumeHistogram.cappedAt99 && (
-                  <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                    <p className="text-sm text-yellow-800">
-                      <strong>Note:</strong> Chart capped at 99th percentile ({Math.round(volumeHistogram.effectiveMax).toLocaleString()} cu in).
-                      {volumeHistogram.outlierCount} outlier order{volumeHistogram.outlierCount !== 1 ? 's' : ''} beyond this range {volumeHistogram.outlierCount !== 1 ? 'are' : 'is'} grouped in the final bin.
-                    </p>
-                  </div>
-                )}
-
-                {/* Log Scale Toggle (if highly skewed) */}
-                {volumeHistogram.isHighlySkewed && (
-                  <div className="mb-4 flex justify-end">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setUseLogScale(!useLogScale)}
-                      className="text-xs"
-                    >
-                      {useLogScale ? 'Switch to Linear Scale' : 'Switch to Log Scale'}
-                    </Button>
-                  </div>
-                )}
-
-                {/* Histogram Chart */}
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={volumeHistogram.data}
-                      margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                      <XAxis
-                        dataKey="range"
-                        angle={-45}
-                        textAnchor="end"
-                        height={80}
-                        tick={{ fontSize: 11 }}
-                        interval={Math.max(0, Math.ceil(volumeHistogram.data.length / 15) - 1)} // Show fewer labels if too many bins
-                      />
-                      <YAxis
-                        scale={useLogScale ? "log" : "linear"}
-                        domain={useLogScale ? [1, 'auto'] : [0, 'auto']}
-                        label={{ value: 'Frequency (Orders)', angle: -90, position: 'insideLeft' }}
-                      />
-                      <Tooltip
-                        formatter={(value: number) => [value.toLocaleString(), 'Orders']}
-                        labelFormatter={(label) => `Range: ${label} cu in`}
-                        content={({ active, payload }) => {
-                          if (active && payload && payload.length) {
-                            const data = payload[0].payload;
-                            return (
-                              <div className="bg-white p-3 border border-gray-200 rounded-lg shadow-lg">
-                                <p className="font-semibold text-gray-900 mb-1">Range: {data.range} cu in</p>
-                                <p className="text-sm text-gray-700">Orders: {data.count.toLocaleString()}</p>
-                                <p className="text-xs text-gray-500">Percentage: {data.percentage}%</p>
-                              </div>
-                            );
-                          }
-                          return null;
-                        }}
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '6px'
-                        }}
-                      />
-                      <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Interpretation Help */}
-                <div className="mt-4 p-4 bg-gray-50 rounded-lg border">
-                  <p className="text-sm text-gray-700">
-                    <strong>💡 Interpretation:</strong> This histogram shows where your orders cluster by volume.
-                    Peaks indicate common order sizes, which helps identify optimal package configurations.
-                    The median ({Math.round(volumeHistogram.median).toLocaleString()} cu in) represents the typical order size.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-        )}
 
         {/* Detailed Order Table */}
         <Card>
