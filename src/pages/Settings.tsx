@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
 import { useQuery, useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
@@ -7,16 +7,27 @@ import { designSystem } from '@/lib/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Settings as SettingsIcon, User, CreditCard,
+  Settings as SettingsIcon, User, CreditCard, Wallet,
   Save
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useSearchParams } from 'react-router-dom';
+import { Billing } from '@/components/Billing';
 
 export const Settings = () => {
   const { user } = useUser();
   const { signOut } = useClerk();
+  const [searchParams] = useSearchParams();
   const [activeSection, setActiveSection] = useState('profile');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Read tab from URL query parameter
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam && ['profile', 'subscription', 'billing'].includes(tabParam)) {
+      setActiveSection(tabParam);
+    }
+  }, [searchParams]);
 
   // Profile settings state
   const [profileData, setProfileData] = useState({
@@ -85,7 +96,8 @@ export const Settings = () => {
 
   const settingSections = [
     { id: 'profile', label: 'Profile', icon: User },
-    { id: 'subscription', label: 'Current Plan', icon: CreditCard }
+    { id: 'subscription', label: 'Current Plan', icon: CreditCard },
+    { id: 'billing', label: 'Billing', icon: Wallet }
   ];
 
   const handleSaveProfile = async () => {
@@ -249,6 +261,7 @@ export const Settings = () => {
     switch (activeSection) {
       case 'profile': return renderProfileSection();
       case 'subscription': return renderSubscriptionSection();
+      case 'billing': return <Billing />;
       default: return renderProfileSection();
     }
   };
