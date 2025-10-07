@@ -520,7 +520,7 @@ export default function ClientSideAnalysisResults() {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={results.volumeDistribution}
-                      margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                      margin={{ top: 20, right: 30, left: 60, bottom: 60 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis
