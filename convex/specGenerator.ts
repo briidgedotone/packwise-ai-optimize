@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { action } from "./_generated/server";
+import { api } from "./_generated/api";
 
 // Simple test action to verify API connectivity
 export const testAPIConnection = action({
@@ -100,11 +101,8 @@ export const generateSpecs = action({
         throw new Error("Not authenticated");
       }
 
-      const user = await ctx.runQuery(async (ctx) => {
-        return await ctx.db
-          .query("users")
-          .withIndex("by_clerk_id", (q: any) => q.eq("clerkId", identity.subject))
-          .first();
+      const user = await ctx.runQuery(api.users.getUserByClerkId, {
+        clerkId: identity.subject
       });
 
       if (!user) {
@@ -128,18 +126,11 @@ export const generateSpecs = action({
       );
 
       // Save analysis record (just tracking usage, no results)
-      await ctx.runMutation(async (ctx) => {
-        await ctx.db.insert("analyses", {
-          userId: user._id,
-          organizationId: user.organizationId,
-          type: "spec_generator",
-          name: `Spec Generation - ${products.length} products`,
-          status: "completed",
-          inputFiles: [],
-          createdAt: Date.now(),
-          completedAt: Date.now(),
-          results: { productCount: products.length }, // Just track count, not actual data
-        });
+      await ctx.runMutation(api.analyses.create, {
+        type: "spec_generator",
+        name: `Spec Generation - ${products.length} products`,
+        status: "completed",
+        results: { productCount: products.length }, // Just track count, not actual data
       });
 
       return results;
