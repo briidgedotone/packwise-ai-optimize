@@ -216,9 +216,9 @@ function calculateVolumeDistribution(allocations: AllocationResult[]) {
   // Extract all order volumes
   const volumes = allocations.map(alloc => alloc.orderVolume);
 
-  // Calculate min and max
-  const minVolume = Math.min(...volumes);
-  const maxVolume = Math.max(...volumes);
+  // Calculate min and max (using reduce to avoid stack overflow with large arrays)
+  const minVolume = volumes.reduce((min, vol) => vol < min ? vol : min, volumes[0]);
+  const maxVolume = volumes.reduce((max, vol) => vol > max ? vol : max, volumes[0]);
 
   // Handle edge case where all volumes are the same
   if (minVolume === maxVolume) {
