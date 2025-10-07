@@ -26,7 +26,7 @@ export const useTokenGuard = () => {
           description: 'You need tokens to run analyses. Please upgrade your plan.',
           action: {
             label: 'Upgrade',
-            onClick: () => navigate('/onboarding')
+            onClick: () => navigate('/#pricing')
           }
         }
       );
@@ -51,7 +51,7 @@ export const useTokenGuard = () => {
             description: tokenError.message || 'Please try again or upgrade your plan.',
             action: {
               label: 'Upgrade',
-              onClick: () => navigate('/onboarding')
+              onClick: () => navigate('/#pricing')
             }
           }
         );
