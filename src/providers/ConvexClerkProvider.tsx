@@ -60,6 +60,10 @@ export function ConvexClerkProvider({ children }: ConvexClerkProviderProps) {
     return (
       <ClerkProvider
         publishableKey={CLERK_PUBLISHABLE_KEY}
+        signInUrl="/sign-in"
+        signUpUrl="/sign-up"
+        afterSignInUrl="/dashboard"
+        afterSignUpUrl="/onboarding"
         appearance={{
           elements: {
             formButtonPrimary: "bg-blue-600 hover:bg-blue-700 text-white",
@@ -75,6 +79,10 @@ export function ConvexClerkProvider({ children }: ConvexClerkProviderProps) {
   return (
     <ClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      afterSignInUrl="/dashboard"
+      afterSignUpUrl="/onboarding"
       appearance={{
         elements: {
           formButtonPrimary: "bg-blue-600 hover:bg-blue-700 text-white",
