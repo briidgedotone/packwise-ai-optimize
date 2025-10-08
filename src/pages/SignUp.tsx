@@ -1,8 +1,12 @@
 import { SignUp } from "@clerk/clerk-react";
 import { Package, CheckCircle, Zap, Shield, BarChart3 } from "lucide-react";
 import { designSystem } from '@/lib/design-system';
+import { useState } from 'react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Link } from 'react-router-dom';
 
 export default function SignUpPage() {
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
   const features = [
     {
       icon: BarChart3,
@@ -88,8 +92,53 @@ export default function SignUpPage() {
               </p>
             </div>
 
-            <div className="bg-white lg:bg-transparent rounded-3xl lg:rounded-none border lg:border-none border-gray-200 p-8 lg:p-0">
-              <SignUp 
+            {/* Policy Agreement Checkbox */}
+            <div className="mb-6">
+              <div className="flex items-start space-x-3 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <Checkbox
+                  id="terms-agreement"
+                  checked={agreedToTerms}
+                  onCheckedChange={(checked) => setAgreedToTerms(checked === true)}
+                  className="mt-1"
+                />
+                <label
+                  htmlFor="terms-agreement"
+                  className="text-sm text-gray-700 leading-relaxed cursor-pointer"
+                >
+                  I agree to the{" "}
+                  <Link
+                    to="/terms-of-service"
+                    target="_blank"
+                    className="font-medium hover:opacity-90 underline"
+                    style={{ color: designSystem.colors.primary }}
+                  >
+                    Terms of Service
+                  </Link>
+                  {" "}and{" "}
+                  <Link
+                    to="/privacy-policy"
+                    target="_blank"
+                    className="font-medium hover:opacity-90 underline"
+                    style={{ color: designSystem.colors.primary }}
+                  >
+                    Privacy Policy
+                  </Link>
+                </label>
+              </div>
+              {!agreedToTerms && (
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                  Please accept the terms to continue with sign-up
+                </p>
+              )}
+            </div>
+
+            <div className="bg-white lg:bg-transparent rounded-3xl lg:rounded-none border lg:border-none border-gray-200 p-8 lg:p-0 relative">
+              {/* Overlay when terms not agreed */}
+              {!agreedToTerms && (
+                <div className="absolute inset-0 bg-gray-100/50 backdrop-blur-sm rounded-3xl lg:rounded-none z-10 cursor-not-allowed" />
+              )}
+
+              <SignUp
                 forceRedirectUrl="/onboarding"
                 appearance={{
                   elements: {
@@ -117,13 +166,6 @@ export default function SignUpPage() {
                   Sign in
                 </a>
               </p>
-            </div>
-
-            <div className="mt-8 text-center text-xs text-gray-500">
-              By signing up, you agree to our{" "}
-              <a href="#" className="hover:opacity-90" style={{ color: designSystem.colors.primary }}>Terms of Service</a>
-              {" "}and{" "}
-              <a href="#" className="hover:opacity-90" style={{ color: designSystem.colors.primary }}>Privacy Policy</a>
             </div>
           </div>
         </div>
