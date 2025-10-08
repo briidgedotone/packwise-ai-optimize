@@ -1,6 +1,7 @@
 import { SignIn } from "@clerk/clerk-react";
 import { Package } from "lucide-react";
 import { designSystem } from '@/lib/design-system';
+import { Link } from 'react-router-dom';
 
 export default function SignInPage() {
   return (
@@ -52,9 +53,9 @@ export default function SignInPage() {
           <div className="text-center mt-6">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <a href="/sign-up" className="font-medium hover:opacity-90" style={{ color: designSystem.colors.primary }}>
+              <Link to="/sign-up" className="font-medium hover:opacity-90" style={{ color: designSystem.colors.primary }}>
                 Sign up for free
-              </a>
+              </Link>
             </p>
           </div>
         </div>

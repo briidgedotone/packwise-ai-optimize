@@ -162,9 +162,9 @@ export default function SignUpPage() {
             <div className="text-center mt-6">
               <p className="text-sm text-gray-600">
                 Already have an account?{" "}
-                <a href="/sign-in" className="font-medium hover:opacity-90" style={{ color: designSystem.colors.primary }}>
+                <Link to="/sign-in" className="font-medium hover:opacity-90" style={{ color: designSystem.colors.primary }}>
                   Sign in
-                </a>
+                </Link>
               </p>
             </div>
           </div>
