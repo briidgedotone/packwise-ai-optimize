@@ -358,15 +358,51 @@ function processOrders(orders: ParsedOrder[], packages: ParsedPackage[]): Analys
     optimizedCounts[alloc.recommendedPackage] = (optimizedCounts[alloc.recommendedPackage] || 0) + 1;
   });
 
+  // Calculate baseline orders using proportional rounding to ensure sum equals total orders
+  // This prevents rounding errors where baseline total ≠ optimized total
+  const baselineOrderCounts: Record<string, number> = {};
+  const packageData: Array<{ name: string; percentage: number; unrounded: number; floor: number; remainder: number }> = [];
+
+  packages.forEach(pkg => {
+    const baselinePercentage = baselineDistribution[pkg.packageName] || (Object.keys(baselineDistribution).length === 0 ? 1 / packages.length : 0);
+    const unrounded = totalOrdersProcessed * baselinePercentage;
+    const floor = Math.floor(unrounded);
+    const remainder = unrounded - floor;
+
+    packageData.push({
+      name: pkg.packageName,
+      percentage: baselinePercentage,
+      unrounded,
+      floor,
+      remainder
+    });
+  });
+
+  // Calculate how many orders need to be distributed (due to rounding down)
+  const sumOfFloors = packageData.reduce((sum, item) => sum + item.floor, 0);
+  const ordersToDistribute = totalOrdersProcessed - sumOfFloors;
+
+  // Sort by remainder (descending) and distribute the remaining orders
+  packageData.sort((a, b) => b.remainder - a.remainder);
+
+  packageData.forEach((item, index) => {
+    baselineOrderCounts[item.name] = item.floor + (index < ordersToDistribute ? 1 : 0);
+  });
+
+  // Verify the sum equals total orders (this should always be true now)
+  const baselineSum = Object.values(baselineOrderCounts).reduce((sum, count) => sum + count, 0);
+  if (baselineSum !== totalOrdersProcessed) {
+    console.warn(`Baseline order sum mismatch: ${baselineSum} !== ${totalOrdersProcessed}`);
+  }
+
   // Create per-package cost and material breakdown
   const packageCostBreakdown: PackageCostBreakdown[] = [];
   const packageMaterialBreakdown: PackageMaterialBreakdown[] = [];
   let baselineMaterial = 0;
 
   packages.forEach(pkg => {
-    // Baseline calculations
-    const baselinePercentage = baselineDistribution[pkg.packageName] || (Object.keys(baselineDistribution).length === 0 ? 1 / packages.length : 0);
-    const baselineOrders = Math.round(totalOrdersProcessed * baselinePercentage);
+    // Baseline calculations using pre-calculated counts
+    const baselineOrders = baselineOrderCounts[pkg.packageName] || 0;
     const packageBaselineCost = baselineOrders * pkg.costPerUnit;
     const packageBaselineMaterial = baselineOrders * pkg.packageWeight;
 
