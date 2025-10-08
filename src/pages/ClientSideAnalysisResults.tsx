@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Slider } from '@/components/ui/slider';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import {
   ArrowLeft,
   Package,
@@ -422,6 +423,52 @@ export default function ClientSideAnalysisResults() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Unallocated Orders Warning */}
+        {results.efficiency.unallocatedOrders > 0 && (
+          <Alert className={`mb-6 ${
+            (results.efficiency.unallocatedOrders / results.summary.totalOrders * 100) >= 5
+              ? 'border-red-500 bg-red-50'
+              : 'border-yellow-500 bg-yellow-50'
+          }`}>
+            <AlertCircle className={`h-5 w-5 ${
+              (results.efficiency.unallocatedOrders / results.summary.totalOrders * 100) >= 5
+                ? 'text-red-600'
+                : 'text-yellow-600'
+            }`} />
+            <AlertTitle className={`text-base font-semibold ${
+              (results.efficiency.unallocatedOrders / results.summary.totalOrders * 100) >= 5
+                ? 'text-red-900'
+                : 'text-yellow-900'
+            }`}>
+              {results.efficiency.unallocatedOrders.toLocaleString()} Orders Could Not Be Processed
+              <span className="ml-2 text-sm font-normal">
+                ({((results.efficiency.unallocatedOrders / results.summary.totalOrders) * 100).toFixed(1)}% of total orders)
+              </span>
+            </AlertTitle>
+            <AlertDescription className={`mt-3 space-y-3 ${
+              (results.efficiency.unallocatedOrders / results.summary.totalOrders * 100) >= 5
+                ? 'text-red-800'
+                : 'text-yellow-800'
+            }`}>
+              <p className="font-medium">These orders were skipped because:</p>
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li>Order volume data is missing, zero, or invalid</li>
+                <li>Order is too large for all available packages in your suite</li>
+                <li>Order weight exceeds maximum capacity of all packages</li>
+              </ul>
+              <div className="pt-2 border-t border-current opacity-50">
+                <p className="font-medium">Recommended Actions:</p>
+                <ul className="list-disc list-inside space-y-1 ml-2">
+                  <li>Review your order CSV file for missing or invalid volume data</li>
+                  <li>Consider adding larger package options to accommodate oversized orders</li>
+                  <li>Verify that package weight limits match your order requirements</li>
+                  <li>Check the CSV export for detailed breakdown of unallocated orders</li>
+                </ul>
+              </div>
+            </AlertDescription>
+          </Alert>
+        )}
 
         {/* Package Distribution Comparison */}
         <div className="mb-6">
