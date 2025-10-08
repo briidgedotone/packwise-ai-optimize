@@ -111,32 +111,55 @@ export const useTokenGuard = () => {
         console.error('Analysis failed after token consumption:', error);
 
         // REFUND THE TOKEN since analysis failed
-        try {
-          console.log('Attempting to refund token for failed analysis...');
-          const refundResult = await refundToken({
-            analysisType,
-            reason: error.message || 'Analysis execution failed'
-          });
+        // Add delay before refund to ensure token consumption is committed to database
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-          if (refundResult.success) {
-            console.log('Token refunded successfully');
-            toast.error('Analysis failed', {
-              description: 'Your token has been refunded. Please try again or contact support if this persists.'
+        let refundSuccessful = false;
+        let retryCount = 0;
+        const maxRetries = 2;
+
+        while (!refundSuccessful && retryCount < maxRetries) {
+          try {
+            console.log(`Attempting to refund token (attempt ${retryCount + 1}/${maxRetries})...`);
+            const refundResult = await refundToken({
+              analysisType,
+              reason: error.message || 'Analysis execution failed'
             });
 
-            // Force refresh token balance
-            setRefreshTrigger(prev => prev + 1);
-            window.dispatchEvent(new CustomEvent('tokenRefunded', {
-              detail: { analysisType, timestamp: Date.now() }
-            }));
-          } else {
-            console.warn('Token refund unsuccessful:', refundResult.message);
-            toast.error('Analysis failed', {
-              description: 'Analysis failed. Please contact support.'
-            });
+            if (refundResult.success) {
+              console.log('Token refunded successfully');
+              refundSuccessful = true;
+              toast.error('Analysis failed', {
+                description: 'Your token has been refunded. Please try again or contact support if this persists.'
+              });
+
+              // Force refresh token balance
+              setRefreshTrigger(prev => prev + 1);
+              window.dispatchEvent(new CustomEvent('tokenRefunded', {
+                detail: { analysisType, timestamp: Date.now() }
+              }));
+            } else {
+              console.warn('Token refund unsuccessful:', refundResult.message);
+              retryCount++;
+
+              // Wait 1 second before retry
+              if (retryCount < maxRetries) {
+                await new Promise(resolve => setTimeout(resolve, 1000));
+              }
+            }
+          } catch (refundError: any) {
+            console.error(`Failed to refund token (attempt ${retryCount + 1}):`, refundError);
+            retryCount++;
+
+            // Wait 1 second before retry
+            if (retryCount < maxRetries) {
+              await new Promise(resolve => setTimeout(resolve, 1000));
+            }
           }
-        } catch (refundError: any) {
-          console.error('Failed to refund token:', refundError);
+        }
+
+        // If all retry attempts failed, show error
+        if (!refundSuccessful) {
           toast.error('Analysis failed', {
             description: 'Your token was consumed but the analysis failed. Please contact support for a refund.'
           });
