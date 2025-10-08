@@ -530,7 +530,7 @@ export default function ClientSideAnalysisResults() {
                         interval={Math.ceil(results.volumeDistribution.length / 5) - 1}
                         label={{ value: 'Volume Range (cubic inches)', position: 'insideBottom', offset: -10 }}
                       />
-                      <YAxis label={{ value: 'Frequency', angle: -90, position: 'insideLeft' }} />
+                      <YAxis label={{ value: 'Frequency', angle: -90, position: 'left' }} />
                       <Tooltip
                         formatter={(value: number, name: string, props: any) => [
                           `${value} orders (${props.payload.percentage.toFixed(1)}%)`,
