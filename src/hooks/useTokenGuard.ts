@@ -12,6 +12,7 @@ export const useTokenGuard = () => {
   const tokenBalance = useQuery(api.tokens.getTokenBalance, {}, { skip: false });
   const canUseToken = useQuery(api.tokens.canUseToken, {}, { skip: false });
   const consumeToken = useMutation(api.tokens.consumeToken);
+  const refundToken = useMutation(api.tokens.refundToken);
   const subscriptionStatus = useQuery(api.tokens.getSubscriptionStatus, {}, { skip: false });
 
   const checkAndConsumeToken = async (
@@ -108,9 +109,39 @@ export const useTokenGuard = () => {
         return { success: true, result };
       } catch (error: any) {
         console.error('Analysis failed after token consumption:', error);
-        toast.error('Analysis failed', {
-          description: 'Your token was consumed but the analysis failed. Please contact support if this persists.'
-        });
+
+        // REFUND THE TOKEN since analysis failed
+        try {
+          console.log('Attempting to refund token for failed analysis...');
+          const refundResult = await refundToken({
+            analysisType,
+            reason: error.message || 'Analysis execution failed'
+          });
+
+          if (refundResult.success) {
+            console.log('Token refunded successfully');
+            toast.error('Analysis failed', {
+              description: 'Your token has been refunded. Please try again or contact support if this persists.'
+            });
+
+            // Force refresh token balance
+            setRefreshTrigger(prev => prev + 1);
+            window.dispatchEvent(new CustomEvent('tokenRefunded', {
+              detail: { analysisType, timestamp: Date.now() }
+            }));
+          } else {
+            console.warn('Token refund unsuccessful:', refundResult.message);
+            toast.error('Analysis failed', {
+              description: 'Analysis failed. Please contact support.'
+            });
+          }
+        } catch (refundError: any) {
+          console.error('Failed to refund token:', refundError);
+          toast.error('Analysis failed', {
+            description: 'Your token was consumed but the analysis failed. Please contact support for a refund.'
+          });
+        }
+
         return { success: false, error: error.message };
       }
     } catch (error: any) {

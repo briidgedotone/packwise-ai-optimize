@@ -116,6 +116,59 @@ export const consumeToken = mutation({
   },
 });
 
+// Refund a token when analysis fails
+export const refundToken = mutation({
+  args: {
+    analysisType: v.string(),
+    reason: v.optional(v.string()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerk_id", (q) => q.eq("clerkId", identity.subject))
+      .first();
+
+    if (!user) throw new Error("User not found");
+
+    const tokenBalance = await ctx.db
+      .query("tokenBalance")
+      .withIndex("by_user", (q) => q.eq("userId", user._id))
+      .first();
+
+    if (!tokenBalance) throw new Error("Token balance not found");
+
+    // Only refund if there are used tokens to refund
+    if (tokenBalance.usedTokens < 1) {
+      console.warn(`Attempted to refund token but usedTokens is ${tokenBalance.usedTokens}`);
+      return {
+        success: false,
+        message: "No tokens to refund",
+        remainingTokens: tokenBalance.monthlyTokens + tokenBalance.additionalTokens - tokenBalance.usedTokens,
+      };
+    }
+
+    // Refund the token by decrementing usedTokens
+    const newUsedTokens = Math.max(0, tokenBalance.usedTokens - 1);
+    await ctx.db.patch(tokenBalance._id, {
+      usedTokens: newUsedTokens,
+      updatedAt: Date.now(),
+    });
+
+    const remainingTokens = tokenBalance.monthlyTokens + tokenBalance.additionalTokens - newUsedTokens;
+
+    console.log(`Token refunded for ${args.analysisType}. Reason: ${args.reason || 'Analysis failed'}`);
+
+    return {
+      success: true,
+      remainingTokens,
+      message: "Token refunded successfully",
+    };
+  },
+});
+
 // Get user's subscription status
 export const getSubscriptionStatus = query({
   args: {},
