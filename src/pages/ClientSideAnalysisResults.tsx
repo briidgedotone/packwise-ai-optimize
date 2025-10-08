@@ -270,7 +270,7 @@ export default function ClientSideAnalysisResults() {
 
     const headers = [
       'Order ID', 'Recommended Package', 'Order Volume (in³)', 'Package Volume (in³)',
-      'Fill Rate (%)', 'Efficiency', 'Cost ($)'
+      'Fill Rate (%)', 'Cost ($)'
     ];
     csvSections.push(headers.join(','));
 
@@ -282,7 +282,6 @@ export default function ClientSideAnalysisResults() {
         allocation.orderVolume.toFixed(2),
         allocation.packageVolume.toFixed(2),
         allocation.fillRate.toFixed(1),
-        allocation.efficiency.toFixed(2),
         allocation.cost.toFixed(2)
       ];
       csvSections.push(row.join(','));
@@ -1295,7 +1294,6 @@ export default function ClientSideAnalysisResults() {
                     <th className="text-left py-3 px-4 font-medium text-gray-600">Order Volume</th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600">Package Volume</th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600">Fill Rate</th>
-                    <th className="text-left py-3 px-4 font-medium text-gray-600">Efficiency</th>
                     <th className="text-left py-3 px-4 font-medium text-gray-600">Cost</th>
                   </tr>
                 </thead>
@@ -1316,7 +1314,6 @@ export default function ClientSideAnalysisResults() {
                           {allocation.fillRate.toFixed(1)}%
                         </span>
                       </td>
-                      <td className="py-3 px-4 text-gray-600">{allocation.efficiency.toFixed(2)}</td>
                       <td className="py-3 px-4 text-gray-600">${allocation.cost.toFixed(2)}</td>
                     </tr>
                   ))}

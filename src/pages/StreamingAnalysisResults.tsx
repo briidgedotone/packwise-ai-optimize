@@ -182,8 +182,8 @@ export default function StreamingAnalysisResults() {
   // Export to CSV
   const exportToCSV = () => {
     const headers = [
-      'Order ID', 'Recommended Package', 'Item Volume', 'Package Volume', 
-      'Fill Rate (%)', 'Efficiency (%)', 'Package Cost', 'Item Length',
+      'Order ID', 'Recommended Package', 'Item Volume', 'Package Volume',
+      'Fill Rate (%)', 'Package Cost', 'Item Length',
       'Item Width', 'Item Height', 'Package Length', 'Package Width', 'Package Height'
     ];
 
@@ -193,10 +193,9 @@ export default function StreamingAnalysisResults() {
       allocation.itemDimensions.volume.toFixed(2),
       allocation.packageDimensions.volume.toFixed(2),
       allocation.fillRate.toFixed(1),
-      allocation.efficiency.toFixed(1),
       allocation.costBreakdown.totalCost.toFixed(2),
       allocation.itemDimensions.length || 'N/A',
-      allocation.itemDimensions.width || 'N/A', 
+      allocation.itemDimensions.width || 'N/A',
       allocation.itemDimensions.height || 'N/A',
       allocation.packageDimensions.length,
       allocation.packageDimensions.width,
