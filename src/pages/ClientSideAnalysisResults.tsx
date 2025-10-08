@@ -1286,7 +1286,6 @@ export default function ClientSideAnalysisResults() {
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>Review your order CSV file for missing or invalid volume data</li>
                   <li>Consider adding larger package options to accommodate oversized orders</li>
-                  <li>Verify that package weight limits match your order requirements</li>
                   <li>Check the CSV export for detailed breakdown of unallocated orders</li>
                 </ul>
               </div>
