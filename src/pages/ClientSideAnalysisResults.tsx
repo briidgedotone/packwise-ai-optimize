@@ -206,7 +206,7 @@ export default function ClientSideAnalysisResults() {
     csvSections.push(`Analysis Date,"${new Date(analysisData.timestamp).toLocaleString()}"`);
     csvSections.push(`Total Orders,${results.summary.totalOrders.toLocaleString()}`);
     csvSections.push(`Processed Orders,${results.summary.processedOrders.toLocaleString()}`);
-    csvSections.push(`Average Fill Rate,${results.summary.averageFillRate.toFixed(1)}%`);
+    csvSections.push(`Optimized Average Fill Rate,${results.summary.averageFillRate.toFixed(1)}%`);
     csvSections.push(`Baseline Cost,$${(results.summary.baselineCost || results.summary.totalCost).toFixed(2)}`);
     csvSections.push(`Optimized Cost,$${results.summary.totalCost.toFixed(2)}`);
     csvSections.push(`Total Savings,$${(results.summary.savings || 0).toFixed(2)}`);
@@ -376,7 +376,7 @@ export default function ClientSideAnalysisResults() {
             <CardContent className="pt-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-600">Average Fill Rate</p>
+                  <p className="text-sm font-medium text-gray-600">Optimized Average Fill Rate</p>
                   <p className="text-3xl font-bold text-green-600 mt-1">
                     {results.summary.averageFillRate.toFixed(1)}%
                   </p>
