@@ -214,22 +214,14 @@ ${contextInfo.length > 0 ? `Context:\n${contextInfo.join('\n')}\n` : ''}
 As a QuantiPackAI packaging optimization expert, provide a helpful and ACCURATE response that:
 
 1. Directly addresses the user's question with factual information about what our platform actually does
-2. Provides actionable next steps specific to our platform's actual capabilities
-3. References relevant QuantiPackAI features when appropriate (but only features we actually have)
-4. If the user asks about something we don't do, politely clarify what we DO offer instead
+2. References relevant QuantiPackAI features when appropriate (but only features we actually have)
+3. If the user asks about something we don't do, politely clarify what we DO offer instead
 
 RESPOND IN THIS EXACT JSON FORMAT:
 {
-  "message": "Direct helpful response to the user's question (2-4 sentences max). Be accurate about our capabilities.",
-  "suggestions": [
-    "Specific actionable suggestion 1 (within our platform capabilities)",
-    "Specific actionable suggestion 2 (within our platform capabilities)",
-    "Specific actionable suggestion 3 (within our platform capabilities)"
-  ],
-  "actionItems": [
-    "Immediate next step the user can take in QuantiPackAI",
-    "Follow-up action if applicable"
-  ]
+  "message": "Direct helpful response to the user's question. Be accurate about our capabilities.",
+  "suggestions": [],
+  "actionItems": []
 }
 
 Focus on being practical, accurate, and specific to what QuantiPackAI actually does.`;
