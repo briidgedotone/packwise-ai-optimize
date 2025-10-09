@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Settings as SettingsIcon, User, CreditCard, Wallet,
-  Save
+  Save, Mail, MessageCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSearchParams } from 'react-router-dom';
@@ -24,7 +24,7 @@ export const Settings = () => {
   // Read tab from URL query parameter
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && ['profile', 'subscription', 'billing'].includes(tabParam)) {
+    if (tabParam && ['profile', 'subscription', 'billing', 'support'].includes(tabParam)) {
       setActiveSection(tabParam);
     }
   }, [searchParams]);
@@ -97,7 +97,8 @@ export const Settings = () => {
   const settingSections = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'subscription', label: 'Current Plan', icon: CreditCard },
-    { id: 'billing', label: 'Billing', icon: Wallet }
+    { id: 'billing', label: 'Billing', icon: Wallet },
+    { id: 'support', label: 'Contact Support', icon: MessageCircle }
   ];
 
   const handleSaveProfile = async () => {
@@ -256,12 +257,80 @@ export const Settings = () => {
     </div>
   );
 
+  const renderSupportSection = () => (
+    <div className="space-y-4">
+      <div>
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">Contact Support</h2>
+        <p className="text-sm text-gray-500">Get help with QuantiPackAI features, billing, or technical issues.</p>
+      </div>
+
+      <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-200 rounded-3xl">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center">
+            <Mail className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h4 className="text-lg font-semibold text-gray-900">We're Here to Help</h4>
+            <p className="text-sm text-gray-600">Our support team is ready to assist you</p>
+          </div>
+        </div>
+
+        <div className="space-y-4 mb-6">
+          <div className="bg-white rounded-2xl p-4 border border-gray-200">
+            <h5 className="font-medium text-gray-900 mb-2">What can we help you with?</h5>
+            <ul className="text-sm text-gray-600 space-y-2">
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">•</span>
+                <span>Technical questions about Suite Analyzer, Spec Generator, Demand Planner, or Design Analyzer</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">•</span>
+                <span>Billing and subscription management</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">•</span>
+                <span>Feature requests and product feedback</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-purple-500 mt-0.5">•</span>
+                <span>Account and security issues</span>
+              </li>
+            </ul>
+          </div>
+
+          <div className="bg-white rounded-2xl p-4 border border-gray-200">
+            <h5 className="font-medium text-gray-900 mb-2">Support Email</h5>
+            <p className="text-sm text-gray-600 mb-3">
+              Send us an email and we'll get back to you as soon as possible.
+            </p>
+            <a
+              href="mailto:knammouz@quantipack.com?subject=QuantiPackAI Support Request"
+              className="text-purple-600 hover:text-purple-700 font-medium text-sm break-all"
+            >
+              knammouz@quantipack.com
+            </a>
+          </div>
+        </div>
+
+        <Button
+          onClick={() => window.location.href = 'mailto:knammouz@quantipack.com?subject=QuantiPackAI Support Request'}
+          className="w-full rounded-full text-white hover:opacity-90"
+          style={{ backgroundColor: designSystem.colors.primary }}
+        >
+          <Mail className="h-4 w-4 mr-2" />
+          Send Support Email
+        </Button>
+      </div>
+    </div>
+  );
+
 
   const renderSection = () => {
     switch (activeSection) {
       case 'profile': return renderProfileSection();
       case 'subscription': return renderSubscriptionSection();
       case 'billing': return <Billing />;
+      case 'support': return renderSupportSection();
       default: return renderProfileSection();
     }
   };
