@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { 
   ArrowRight, 
   Package, 
@@ -30,6 +30,26 @@ import FAQSection from "@/components/ui/faq";
 const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
+  const [dropdownPinned, setDropdownPinned] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setProductDropdownOpen(false);
+        setDropdownPinned(false);
+      }
+    };
+
+    if (productDropdownOpen && dropdownPinned) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [productDropdownOpen, dropdownPinned]);
 
   // Benefits data
   const benefits = [
@@ -131,16 +151,23 @@ const Index = () => {
 
               {/* Desktop Navigation */}
               <nav className="hidden md:flex space-x-8">
-                <div 
+                <div
+                  ref={dropdownRef}
                   className="relative"
-                  onMouseEnter={() => setProductDropdownOpen(true)}
-                  onMouseLeave={() => setProductDropdownOpen(false)}
+                  onMouseEnter={() => !dropdownPinned && setProductDropdownOpen(true)}
+                  onMouseLeave={() => !dropdownPinned && setProductDropdownOpen(false)}
                 >
-                  <button className="flex items-center text-gray-600 hover:text-[#767AFA] transition-colors">
+                  <button
+                    className="flex items-center text-gray-600 hover:text-[#767AFA] transition-colors"
+                    onClick={() => {
+                      setDropdownPinned(!dropdownPinned);
+                      setProductDropdownOpen(!productDropdownOpen);
+                    }}
+                  >
                     Product
                     <ChevronDown className="ml-1 h-4 w-4" />
                   </button>
-                  
+
                   {/* Dropdown Menu */}
                   {productDropdownOpen && (
                     <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-lg border border-gray-200 z-50">
