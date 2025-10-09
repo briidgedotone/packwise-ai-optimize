@@ -160,8 +160,15 @@ const Index = () => {
                   <button
                     className="flex items-center text-gray-600 hover:text-[#767AFA] transition-colors"
                     onClick={() => {
-                      setDropdownPinned(!dropdownPinned);
-                      setProductDropdownOpen(!productDropdownOpen);
+                      if (dropdownPinned) {
+                        // If already pinned, unpin and close
+                        setDropdownPinned(false);
+                        setProductDropdownOpen(false);
+                      } else {
+                        // If not pinned, pin and open
+                        setDropdownPinned(true);
+                        setProductDropdownOpen(true);
+                      }
                     }}
                   >
                     Product
