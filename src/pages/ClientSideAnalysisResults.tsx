@@ -516,21 +516,28 @@ export default function ClientSideAnalysisResults() {
             </CardHeader>
             <CardContent>
               {results.volumeDistribution && results.volumeDistribution.length > 0 ? (
-                <div className="h-64">
+                <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={results.volumeDistribution}
-                      margin={{ top: 20, right: 30, left: 60, bottom: 60 }}
+                      margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis
                         dataKey="range"
-                        tick={{ fontSize: 10, angle: -45, textAnchor: 'end' }}
+                        tick={{ fontSize: 11, angle: -45, textAnchor: 'end' }}
                         height={80}
                         interval={Math.ceil(results.volumeDistribution.length / 5) - 1}
-                        label={{ value: 'Volume Range (cubic inches)', position: 'insideBottom', offset: -10 }}
+                        label={{ value: 'Volume Range (cubic inches)', position: 'insideBottom', offset: -15 }}
                       />
-                      <YAxis label={{ value: 'Frequency', angle: -90, position: 'insideLeft', offset: 10 }} />
+                      <YAxis
+                        label={{
+                          value: 'Frequency',
+                          angle: -90,
+                          position: 'insideLeft',
+                          style: { textAnchor: 'middle' }
+                        }}
+                      />
                       <Tooltip
                         formatter={(value: number, name: string, props: any) => [
                           `${value} orders (${props.payload.percentage.toFixed(1)}%)`,
@@ -542,7 +549,7 @@ export default function ClientSideAnalysisResults() {
                           borderRadius: '6px'
                         }}
                       />
-                      <Bar dataKey="count" fill="#3b82f6" />
+                      <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
