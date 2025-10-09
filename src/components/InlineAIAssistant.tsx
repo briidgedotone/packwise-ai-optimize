@@ -33,12 +33,7 @@ export const InlineAIAssistant = ({
       id: 'welcome',
       type: 'assistant',
       content: "Hi! I'm your AI assistant for packaging optimization. How can I help you today?",
-      suggestions: [
-        "Suite analysis questions",
-        "Spec generation guidance", 
-        "Demand planning insights",
-        "PDP optimization tips"
-      ],
+      suggestions: [],
       actionItems: [],
       timestamp: Date.now()
     }
