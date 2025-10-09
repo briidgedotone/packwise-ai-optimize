@@ -170,7 +170,6 @@ Maintain a professional, helpful, and consultative tone. Be concise and actionab
         }
       ],
       temperature: 0.7,
-      max_tokens: 800,
       response_format: { type: "json_object" }
     }),
   });
@@ -181,7 +180,14 @@ Maintain a professional, helpful, and consultative tone. Be concise and actionab
   }
 
   const data = await response.json();
-  return JSON.parse(data.choices[0].message.content);
+  const parsed = JSON.parse(data.choices[0].message.content);
+
+  // Force empty arrays to prevent suggestions from appearing
+  return {
+    message: parsed.message,
+    suggestions: [],
+    actionItems: []
+  };
 }
 
 // Build contextual prompt for the AI assistant

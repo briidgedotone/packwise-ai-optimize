@@ -1,11 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { 
-  Send, Sparkles, Package,
-  Calculator, TrendingUp, Eye, FileText,
-  Lightbulb, ArrowRight, Loader2
-} from 'lucide-react';
+import { Send, Loader2 } from 'lucide-react';
 import { useAction } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { toast } from 'sonner';
@@ -14,8 +10,6 @@ interface Message {
   id: string;
   type: 'user' | 'assistant';
   content: string;
-  suggestions?: string[];
-  actionItems?: string[];
   timestamp: number;
 }
 
@@ -33,8 +27,6 @@ export const InlineAIAssistant = ({
       id: 'welcome',
       type: 'assistant',
       content: "Hi! I'm your AI assistant for packaging optimization. How can I help you today?",
-      suggestions: [],
-      actionItems: [],
       timestamp: Date.now()
     }
   ]);
@@ -86,8 +78,6 @@ export const InlineAIAssistant = ({
         id: (Date.now() + 1).toString(),
         type: 'assistant',
         content: response.response,
-        suggestions: response.suggestions,
-        actionItems: response.actionItems,
         timestamp: Date.now()
       };
 
@@ -100,30 +90,10 @@ export const InlineAIAssistant = ({
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setInputValue(suggestion);
-    inputRef.current?.focus();
-  };
-
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
-    }
-  };
-
-  const getFeatureIcon = (feature: string) => {
-    switch (feature) {
-      case 'suite-analyzer-backend':
-        return Package;
-      case 'spec-generator':
-        return Calculator;
-      case 'demand-planner-v2':
-        return TrendingUp;
-      case 'pdp-analyzer':
-        return Eye;
-      default:
-        return Lightbulb;
     }
   };
 
@@ -145,21 +115,6 @@ export const InlineAIAssistant = ({
                 } px-3 py-2 rounded-lg`}
               >
                 <p className="text-sm leading-relaxed whitespace-pre-wrap break-words">{message.content}</p>
-                
-                {/* Suggestions */}
-                {message.suggestions && message.suggestions.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {message.suggestions.slice(0, 3).map((suggestion, index) => (
-                      <button
-                        key={index}
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        className="text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 px-2 py-1 rounded transition-colors"
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
             </div>
           ))}
