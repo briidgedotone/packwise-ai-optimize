@@ -520,7 +520,7 @@ export default function ClientSideAnalysisResults() {
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart
                       data={results.volumeDistribution}
-                      margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+                      margin={{ top: 20, right: 30, left: 60, bottom: 60 }}
                     >
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis
@@ -530,14 +530,7 @@ export default function ClientSideAnalysisResults() {
                         interval={Math.ceil(results.volumeDistribution.length / 5) - 1}
                         label={{ value: 'Volume Range (cubic inches)', position: 'insideBottom', offset: -15 }}
                       />
-                      <YAxis
-                        label={{
-                          value: 'Frequency',
-                          angle: -90,
-                          position: 'insideLeft',
-                          style: { textAnchor: 'middle' }
-                        }}
-                      />
+                      <YAxis label={{ value: 'Frequency', angle: -90, position: 'insideLeft' }} />
                       <Tooltip
                         formatter={(value: number, name: string, props: any) => [
                           `${value} orders (${props.payload.percentage.toFixed(1)}%)`,
