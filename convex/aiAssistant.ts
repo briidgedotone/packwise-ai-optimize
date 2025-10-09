@@ -82,7 +82,7 @@ Compares how packaging is currently used versus how it could be optimized to red
 **Main Use:**
 Identify inefficiencies, reduce packaging waste, and visualize potential savings opportunities.
 
-For complete feature details and limitations, visit the Suite Analyzer page for a complete manual.
+For further information about this core function, please reach out to knammouz@quantipack.com.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -102,7 +102,7 @@ Estimates missing product or packaging dimensions using AI-based scaling and bou
 **Main Use:**
 Build or complete packaging specification libraries quickly when dimension data is missing.
 
-For complete feature details and limitations, visit the Spec Generator page for a complete manual.
+For further information about this core function, please reach out to knammouz@quantipack.com.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -124,7 +124,7 @@ Forecasts packaging quantities, costs, and total weight based on expected order 
 **Main Use:**
 Plan packaging inventory and budgets accurately for upcoming demand cycles.
 
-For complete feature details and limitations, visit the Demand Planner page for a complete manual.
+For further information about this core function, please reach out to knammouz@quantipack.com.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
@@ -145,7 +145,7 @@ Evaluates packaging artwork to measure visual impact, clarity, and brand consist
 **Main Use:**
 Analyze design performance and receive actionable feedback to improve shelf presence and communication clarity.
 
-For complete feature details and limitations, visit the Design Analyzer page for a complete manual.
+For further information about this core function, please reach out to knammouz@quantipack.com.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
