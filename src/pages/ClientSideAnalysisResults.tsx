@@ -512,40 +512,134 @@ export default function ClientSideAnalysisResults() {
         <div className="mb-6">
           <Card>
             <CardHeader>
-              <CardTitle>Order Profile Distribution</CardTitle>
-              <CardDescription>Distribution of order profiles across your dataset</CardDescription>
+              <CardTitle>Order Volume Analysis</CardTitle>
+              <CardDescription>Understanding your order size distribution patterns</CardDescription>
             </CardHeader>
             <CardContent>
               {results.volumeDistribution && results.volumeDistribution.length > 0 ? (
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart
-                      data={results.volumeDistribution}
-                      margin={{ top: 20, right: 30, left: 60, bottom: 60 }}
-                    >
-                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
-                      <XAxis
-                        dataKey="range"
-                        tick={{ fontSize: 11, angle: -45, textAnchor: 'end' }}
-                        height={80}
-                        interval={Math.ceil(results.volumeDistribution.length / 5) - 1}
-                        label={{ value: 'Volume Range (cubic inches)', position: 'insideBottom', offset: -15 }}
-                      />
-                      <YAxis label={{ value: 'Frequency', angle: -90, position: 'left', offset: 10 }} />
-                      <Tooltip
-                        formatter={(value: number, name: string, props: any) => [
-                          `${value} orders (${props.payload.percentage.toFixed(1)}%)`,
-                          'Count'
-                        ]}
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '6px'
-                        }}
-                      />
-                      <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                    </BarChart>
-                  </ResponsiveContainer>
+                <div className="space-y-6">
+                  {/* Summary Stats */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {(() => {
+                      const totalOrders = results.volumeDistribution.reduce((sum, d) => sum + d.count, 0);
+                      const volumeData = results.volumeDistribution.map(d => ({
+                        midpoint: parseFloat(d.range.split('-')[0]) + (parseFloat(d.range.split('-')[1] || d.range.split('-')[0]) - parseFloat(d.range.split('-')[0])) / 2,
+                        count: d.count
+                      }));
+                      const totalVolume = volumeData.reduce((sum, d) => sum + (d.midpoint * d.count), 0);
+                      const avgVolume = totalVolume / totalOrders;
+
+                      const sortedByCount = [...results.volumeDistribution].sort((a, b) => b.count - a.count);
+                      const topRange = sortedByCount[0];
+
+                      const smallOrders = results.volumeDistribution.filter(d => {
+                        const max = parseFloat(d.range.split('-')[1] || d.range.split('-')[0]);
+                        return max <= 100;
+                      }).reduce((sum, d) => sum + d.count, 0);
+
+                      return (
+                        <>
+                          <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+                            <p className="text-sm font-medium text-blue-900 mb-1">Average Volume</p>
+                            <p className="text-2xl font-bold text-blue-700">{avgVolume.toFixed(1)}</p>
+                            <p className="text-xs text-blue-600 mt-1">cubic inches</p>
+                          </div>
+
+                          <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+                            <p className="text-sm font-medium text-purple-900 mb-1">Most Common Range</p>
+                            <p className="text-2xl font-bold text-purple-700">{topRange.range}</p>
+                            <p className="text-xs text-purple-600 mt-1">{topRange.percentage.toFixed(1)}% of orders</p>
+                          </div>
+
+                          <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border border-green-200">
+                            <p className="text-sm font-medium text-green-900 mb-1">Small Orders</p>
+                            <p className="text-2xl font-bold text-green-700">{((smallOrders / totalOrders) * 100).toFixed(1)}%</p>
+                            <p className="text-xs text-green-600 mt-1">≤100 cu in</p>
+                          </div>
+
+                          <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-4 border border-orange-200">
+                            <p className="text-sm font-medium text-orange-900 mb-1">Total Orders</p>
+                            <p className="text-2xl font-bold text-orange-700">{totalOrders.toLocaleString()}</p>
+                            <p className="text-xs text-orange-600 mt-1">in dataset</p>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  </div>
+
+                  {/* Simplified Chart - Show top 15 ranges only */}
+                  <div>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="text-sm font-semibold text-gray-700">Volume Distribution</h4>
+                      <p className="text-xs text-gray-500">Top volume ranges by order count</p>
+                    </div>
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={[...results.volumeDistribution]
+                            .sort((a, b) => b.count - a.count)
+                            .slice(0, 15)}
+                          margin={{ top: 10, right: 10, left: 10, bottom: 40 }}
+                        >
+                          <defs>
+                            <linearGradient id="colorVolume" x1="0" y1="0" x2="0" y2="1">
+                              <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.9}/>
+                              <stop offset="95%" stopColor="#3b82f6" stopOpacity={0.6}/>
+                            </linearGradient>
+                          </defs>
+                          <CartesianGrid strokeDasharray="3 3" opacity={0.1} />
+                          <XAxis
+                            dataKey="range"
+                            tick={{ fontSize: 10, angle: -45, textAnchor: 'end' }}
+                            height={60}
+                            stroke="#6b7280"
+                          />
+                          <YAxis
+                            tick={{ fontSize: 11 }}
+                            stroke="#6b7280"
+                            label={{
+                              value: 'Orders',
+                              angle: -90,
+                              position: 'insideLeft',
+                              style: { fontSize: 12, fill: '#6b7280' }
+                            }}
+                          />
+                          <Tooltip
+                            cursor={{ fill: 'rgba(59, 130, 246, 0.1)' }}
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                return (
+                                  <div className="bg-white px-4 py-3 rounded-lg shadow-lg border border-gray-200">
+                                    <p className="text-sm font-semibold text-gray-900 mb-2">
+                                      {payload[0].payload.range} cu in
+                                    </p>
+                                    <div className="space-y-1">
+                                      <p className="text-sm text-gray-700">
+                                        <span className="font-medium">{payload[0].value}</span> orders
+                                      </p>
+                                      <p className="text-xs text-gray-600">
+                                        {payload[0].payload.percentage.toFixed(2)}% of total
+                                      </p>
+                                    </div>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Bar
+                            dataKey="count"
+                            fill="url(#colorVolume)"
+                            radius={[6, 6, 0, 0]}
+                            maxBarSize={60}
+                          />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <p className="text-xs text-gray-500 text-center mt-2">
+                      Showing top 15 volume ranges by order count
+                    </p>
+                  </div>
                 </div>
               ) : (
                 <div className="text-center py-8 text-gray-500">
