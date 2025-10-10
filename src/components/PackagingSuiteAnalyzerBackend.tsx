@@ -1026,8 +1026,7 @@ export const PackagingSuiteAnalyzerBackend = () => {
             items: [
               "Order History CSV with Order ID and Total Order Volume (cubic inches)",
               "Packaging Suite CSV with package dimensions, costs, and baseline packaging usage rate (%)",
-              "Alternative: Manual package entry with dimensions and baseline usage rate",
-              "Optional: Product dimensions (Length, Width, Height) for enhanced analysis"
+              "Alternative: Manual package entry with dimensions and baseline usage rate"
             ]
           },
           {
