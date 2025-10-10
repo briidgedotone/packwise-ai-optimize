@@ -220,9 +220,10 @@ export default function ClientSideAnalysisResults() {
 
     // Section 2: Package Distribution
     csvSections.push('=== PACKAGE DISTRIBUTION ===');
-    csvSections.push('Package Name,Count,Percentage');
+    csvSections.push('Package Name,Baseline Count,Baseline %,Optimized Count,Optimized %');
     results.packageDistribution.forEach(pkg => {
-      csvSections.push(`${pkg.name},${pkg.count.toLocaleString()},${pkg.percentage.toFixed(1)}%`);
+      const baselineCount = Math.round(results.summary.processedOrders * (pkg.baselinePercentage || 0) / 100);
+      csvSections.push(`${pkg.name},${baselineCount.toLocaleString()},${(pkg.baselinePercentage || 0).toFixed(1)}%,${pkg.count.toLocaleString()},${pkg.percentage.toFixed(1)}%`);
     });
     csvSections.push('');
 
