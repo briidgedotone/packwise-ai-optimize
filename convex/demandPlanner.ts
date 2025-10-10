@@ -511,9 +511,9 @@ function parsePackagingSuite(csvData: string): PackagingSuiteRecord[] {
     const calculatedVolume = length * width * height;
     const finalVolume = parsedVolume > 0 ? parsedVolume : calculatedVolume;
     
-    // Parse cost (remove currency symbols)
-    const costPerUnit = costIndex !== -1 
-      ? parseFloat(values[costIndex]?.trim().replace(/[$,]/g, '')) || 0
+    // Parse cost (remove all non-numeric characters except decimal point)
+    const costPerUnit = costIndex !== -1
+      ? parseFloat(values[costIndex]?.trim().replace(/[^0-9.]/g, '')) || 0
       : 0;
     
     // Parse weight
