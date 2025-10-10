@@ -1000,14 +1000,14 @@ export const SpecGenerator = () => {
                       <strong className="text-gray-900">📥 INPUTS:</strong>
                       <ul className="mt-2 space-y-1 text-sm">
                         <li>• Product List (CSV with product names - required)</li>
-                        <li>• Bounding dimensions (Min/Avg/Max L×W×H in inches)</li>
-                        <li>• Optional: Order ID, Product descriptions, Category, Material, Size info</li>
+                        <li>• Bounding dimensions (Min/Max L×W×H in inches)</li>
+                        <li>• Optional: Product descriptions, Category</li>
                       </ul>
                     </div>
                     <div>
                       <strong className="text-gray-900">📤 OUTPUTS:</strong>
                       <ul className="mt-2 space-y-1 text-sm">
-                        <li>• Order ID (if applicable) + Product Name</li>
+                        <li>• Product Name</li>
                         <li>• Estimated L×W×H dimensions in inches</li>
                         <li>• Total CUIN (cubic inches)</li>
                         <li>• Confidence level and AI reasoning notes</li>
