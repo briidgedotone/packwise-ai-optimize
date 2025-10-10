@@ -170,8 +170,8 @@ export default function PricingSection() {
     setIsYearly(Number.parseInt(value) === 1);
 
   const handlePlanClick = (planName: string) => {
-    if (planName === "Contact Sales") {
-      navigate("/contact");
+    if (planName === "Enterprise Plan") {
+      window.location.href = 'mailto:knammouz@quantipack.com?subject=QuantiPackAI Enterprise Plan Inquiry';
       return;
     }
 
