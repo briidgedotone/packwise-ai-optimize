@@ -204,14 +204,14 @@ export default function ClientSideAnalysisResults() {
     csvSections.push('Metric,Value');
     csvSections.push(`Analysis ID,${analysisId}`);
     csvSections.push(`Analysis Date,"${new Date(analysisData.timestamp).toLocaleString()}"`);
-    csvSections.push(`Total Orders,${results.summary.totalOrders.toLocaleString()}`);
-    csvSections.push(`Processed Orders,${results.summary.processedOrders.toLocaleString()}`);
+    csvSections.push(`Total Orders,${results.summary.totalOrders}`);
+    csvSections.push(`Processed Orders,${results.summary.processedOrders}`);
     csvSections.push(`Optimized Average Fill Rate,${results.summary.averageFillRate.toFixed(1)}%`);
     csvSections.push(`Baseline Cost,$${(results.summary.baselineCost || results.summary.totalCost).toFixed(2)}`);
     csvSections.push(`Optimized Cost,$${results.summary.totalCost.toFixed(2)}`);
     csvSections.push(`Total Savings,$${(results.summary.savings || 0).toFixed(2)}`);
     csvSections.push(`Savings Percentage,${(results.summary.savingsPercentage || 0).toFixed(1)}%`);
-    csvSections.push(`Processing Speed,"${results.summary.throughput.toLocaleString()} orders/sec"`);
+    csvSections.push(`Processing Speed,${results.summary.throughput} orders/sec`);
     csvSections.push(`Processing Time,${results.summary.processingTime}ms`);
     if (results.summary.memoryUsed) {
       csvSections.push(`Memory Used,${results.summary.memoryUsed}MB`);
@@ -223,7 +223,7 @@ export default function ClientSideAnalysisResults() {
     csvSections.push('Package Name,Baseline Count,Baseline %,Optimized Count,Optimized %');
     results.packageDistribution.forEach(pkg => {
       const baselineCount = Math.round(results.summary.processedOrders * (pkg.baselinePercentage || 0) / 100);
-      csvSections.push(`${pkg.name},${baselineCount.toLocaleString()},${(pkg.baselinePercentage || 0).toFixed(1)}%,${pkg.count.toLocaleString()},${pkg.percentage.toFixed(1)}%`);
+      csvSections.push(`${pkg.name},${baselineCount},${(pkg.baselinePercentage || 0).toFixed(1)}%,${pkg.count},${pkg.percentage.toFixed(1)}%`);
     });
     csvSections.push('');
 
@@ -231,17 +231,17 @@ export default function ClientSideAnalysisResults() {
     csvSections.push('=== EFFICIENCY ANALYSIS ===');
     csvSections.push('Category,Count,Percentage of Processed');
     csvSections.push(
-      `Optimal Allocations (Fill Rate ≥75%),${results.efficiency.optimalAllocations.toLocaleString()},${
+      `Optimal Allocations (Fill Rate ≥75%),${results.efficiency.optimalAllocations},${
         ((results.efficiency.optimalAllocations / results.summary.processedOrders) * 100).toFixed(1)
       }%`
     );
     csvSections.push(
-      `Sub-Optimal Allocations (Fill Rate 25-75%),${results.efficiency.subOptimalAllocations.toLocaleString()},${
+      `Sub-Optimal Allocations (Fill Rate 25-75%),${results.efficiency.subOptimalAllocations},${
         ((results.efficiency.subOptimalAllocations / results.summary.processedOrders) * 100).toFixed(1)
       }%`
     );
     csvSections.push(
-      `Unallocated Orders,${results.efficiency.unallocatedOrders.toLocaleString()},${
+      `Unallocated Orders,${results.efficiency.unallocatedOrders},${
         ((results.efficiency.unallocatedOrders / results.summary.totalOrders) * 100).toFixed(1)
       }%`
     );
@@ -251,7 +251,7 @@ export default function ClientSideAnalysisResults() {
     csvSections.push('=== FILL RATE DISTRIBUTION ===');
     csvSections.push('Fill Rate Range,Count');
     results.fillRateDistribution.forEach(dist => {
-      csvSections.push(`${dist.range},${dist.count.toLocaleString()}`);
+      csvSections.push(`${dist.range},${dist.count}`);
     });
     csvSections.push('');
 
@@ -260,14 +260,14 @@ export default function ClientSideAnalysisResults() {
       csvSections.push('=== ORDER PROFILE DISTRIBUTION ===');
       csvSections.push('Volume Range (cu in),Count,Percentage');
       results.volumeDistribution.forEach(dist => {
-        csvSections.push(`${dist.range},${dist.count.toLocaleString()},${dist.percentage.toFixed(2)}%`);
+        csvSections.push(`${dist.range},${dist.count},${dist.percentage.toFixed(2)}%`);
       });
       csvSections.push('');
     }
 
     // Section 6: Order Details (use all allocations, not just filtered)
     csvSections.push('=== ORDER ALLOCATION DETAILS ===');
-    csvSections.push(`Total Records,${results.allocations.length.toLocaleString()}`);
+    csvSections.push(`Total Records,${results.allocations.length}`);
     csvSections.push('');
 
     const headers = [
