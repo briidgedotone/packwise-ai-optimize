@@ -261,7 +261,7 @@ export const processStripeWebhook = internalAction({
 
 async function handleSubscriptionDeleted(ctx: any, subscription: any) {
   console.log("Subscription deleted:", subscription.id);
-  
+
   try {
     const userId = subscription.metadata?.userId;
     if (!userId) return;
@@ -269,25 +269,29 @@ async function handleSubscriptionDeleted(ctx: any, subscription: any) {
     const user = await ctx.runQuery("users:getUserByClerkId", { clerkId: userId });
     if (!user) return;
 
-    // Update subscription status to canceled
     const existingSub = await ctx.runQuery("subscriptionCRUD:getSubscriptionByUser", { userId: user._id });
+
+    // This webhook fires when subscription actually ends (at period end if cancel_at_period_end was true)
+    // Remove all tokens since subscription is now fully canceled
     if (existingSub) {
       await ctx.runMutation("subscriptionCRUD:updateSubscription", {
         subscriptionId: existingSub._id,
         status: 'canceled',
       });
+
+      // Set tokens to 0 (no free tier)
+      const tokenBalance = await ctx.runQuery("tokenBalance:getByUserId", { userId: user._id });
+      if (tokenBalance) {
+        await ctx.runMutation("tokenBalance:updateBalance", {
+          balanceId: tokenBalance._id,
+          monthlyTokens: 0,
+          usedTokens: 0,
+          resetDate: Date.now(),
+        });
+      }
     }
 
-    // Set tokens to 0 (back to free plan)
-    const tokenBalance = await ctx.runQuery("tokenBalance:getByUserId", { userId: user._id });
-    if (tokenBalance) {
-      await ctx.runMutation("tokenBalance:updateBalance", {
-        balanceId: tokenBalance._id,
-        monthlyTokens: 5, // Free plan tokens
-        usedTokens: 0,
-        resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
-      });
-    }
+    console.log(`Subscription fully canceled for user ${userId}, tokens set to 0`);
   } catch (error) {
     console.error("Error handling subscription deleted:", error);
   }
@@ -418,7 +422,17 @@ async function handleSubscriptionCreated(ctx: any, subscription: any) {
 
 async function handleSubscriptionUpdated(ctx: any, subscription: any) {
   console.log("Subscription updated:", subscription.id);
-  // Similar to created, update the subscription record
+
+  // Check if subscription is marked for cancellation at period end
+  if (subscription.cancel_at_period_end) {
+    const periodEndDate = new Date(subscription.current_period_end * 1000);
+    console.log(`Subscription ${subscription.id} will cancel at period end: ${periodEndDate.toISOString()}`);
+    console.log(`User keeps tokens until: ${periodEndDate.toISOString()}`);
+    // Keep current subscription active with current tokens until period ends
+    // The handleSubscriptionDeleted webhook will fire when it actually expires
+  }
+
+  // Update subscription details (this preserves current token allocation during grace period)
   await handleSubscriptionCreated(ctx, subscription);
 }
 

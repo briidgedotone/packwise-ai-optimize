@@ -22,11 +22,11 @@ export const useTokenGuard = () => {
     // Check if user has tokens
     if (!canUseToken) {
       toast.error(
-        'No tokens available',
+        'Subscription required',
         {
-          description: 'You need tokens to run analyses. Please upgrade your plan.',
+          description: 'You need an active subscription to run analyses. Please subscribe to continue.',
           action: {
-            label: 'Upgrade',
+            label: 'Subscribe',
             onClick: () => {
               navigate('/');
               setTimeout(() => {
@@ -39,7 +39,7 @@ export const useTokenGuard = () => {
           }
         }
       );
-      return { success: false, error: 'NO_TOKENS' };
+      return { success: false, error: 'NO_SUBSCRIPTION' };
     }
 
     try {
@@ -57,17 +57,11 @@ export const useTokenGuard = () => {
         toast.error(
           'Unable to consume token',
           {
-            description: tokenError.message || 'Please try again or upgrade your plan.',
+            description: tokenError.message || 'Please try again or check your subscription.',
             action: {
-              label: 'Upgrade',
+              label: 'View Plan',
               onClick: () => {
-                navigate('/');
-                setTimeout(() => {
-                  const pricingSection = document.getElementById('pricing');
-                  if (pricingSection) {
-                    pricingSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }
-                }, 100);
+                navigate('/settings?tab=subscription');
               }
             }
           }
@@ -95,7 +89,7 @@ export const useTokenGuard = () => {
         if (remaining <= 2 && remaining > 0) {
           toast.warning(`Only ${remaining} token${remaining === 1 ? '' : 's'} remaining`);
         } else if (remaining === 0) {
-          toast.warning('That was your last token! Please purchase more to continue.');
+          toast.warning('That was your last token! Your subscription will renew automatically.');
         }
 
         // Add a small delay to ensure backend updates propagate

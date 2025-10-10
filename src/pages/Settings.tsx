@@ -233,10 +233,23 @@ export const Settings = () => {
           <>
             <p className="text-blue-800 mb-4">
               You are currently on the <strong>{currentSubscription.plan}</strong> plan.
-              {currentSubscription.nextBillingDate && (
+              {currentSubscription.cancelAtPeriodEnd ? (
+                <>
+                  {' '}Your subscription will end on <strong>{formatDate(currentSubscription.nextBillingDate)}</strong>.
+                  You can continue using your remaining tokens until then.
+                </>
+              ) : currentSubscription.nextBillingDate ? (
                 <> Your next billing date is {formatDate(currentSubscription.nextBillingDate)}.</>
-              )}
+              ) : null}
             </p>
+            {currentSubscription.cancelAtPeriodEnd && (
+              <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-2xl">
+                <p className="text-sm text-yellow-800">
+                  <strong>⚠️ Cancellation Scheduled:</strong> Your subscription will cancel on {formatDate(currentSubscription.nextBillingDate)}.
+                  You'll keep your current token balance until then.
+                </p>
+              </div>
+            )}
             <Button
               variant="outline"
               className="rounded-full border-blue-300 text-blue-700 hover:bg-blue-100"

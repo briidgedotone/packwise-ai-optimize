@@ -23,12 +23,12 @@ export const getTokenBalance = query({
       .first();
 
     if (!tokenBalance) {
-      // Return default for users without token balance record
+      // Return default for users without token balance record (no free tokens)
       return {
-        monthlyTokens: 5,
+        monthlyTokens: 0,
         additionalTokens: 0,
         usedTokens: 0,
-        remainingTokens: 5,
+        remainingTokens: 0,
         resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000,
       };
     }
@@ -66,7 +66,7 @@ export const canUseToken = query({
       .withIndex("by_user", (q) => q.eq("userId", user._id))
       .first();
 
-    if (!tokenBalance) return true; // Default 5 tokens for new users
+    if (!tokenBalance) return false; // No free tokens - must have subscription
 
     const remainingTokens = tokenBalance.monthlyTokens + tokenBalance.additionalTokens - tokenBalance.usedTokens;
     return remainingTokens > 0;

@@ -12,7 +12,7 @@ const TOKEN_COSTS = {
 
 // Plan limits
 export const PLAN_LIMITS = {
-  free: { tokensPerMonth: 10, name: "Free", price: 0 },
+  free: { tokensPerMonth: 0, name: "Free", price: 0 }, // No free tokens
   starter: { tokensPerMonth: 50, name: "Starter", price: 3999 }, // $39.99/month
   professional: { tokensPerMonth: 150, name: "Professional", price: 9999 }, // $99.99/month
   enterprise: { tokensPerMonth: 999999, name: "Enterprise", price: 0 }, // Custom pricing
