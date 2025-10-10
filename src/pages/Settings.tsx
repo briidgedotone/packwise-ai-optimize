@@ -7,12 +7,11 @@ import { designSystem } from '@/lib/design-system';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
-  Settings as SettingsIcon, User, CreditCard, Wallet,
+  Settings as SettingsIcon, User, CreditCard,
   Save, Mail, MessageCircle
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useSearchParams } from 'react-router-dom';
-import { Billing } from '@/components/Billing';
 
 export const Settings = () => {
   const { user } = useUser();
@@ -24,7 +23,7 @@ export const Settings = () => {
   // Read tab from URL query parameter
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && ['profile', 'subscription', 'billing', 'support'].includes(tabParam)) {
+    if (tabParam && ['profile', 'subscription', 'support'].includes(tabParam)) {
       setActiveSection(tabParam);
     }
   }, [searchParams]);
@@ -97,7 +96,6 @@ export const Settings = () => {
   const settingSections = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'subscription', label: 'Current Plan', icon: CreditCard },
-    { id: 'billing', label: 'Billing', icon: Wallet },
     { id: 'support', label: 'Contact Support', icon: MessageCircle }
   ];
 
@@ -329,7 +327,6 @@ export const Settings = () => {
     switch (activeSection) {
       case 'profile': return renderProfileSection();
       case 'subscription': return renderSubscriptionSection();
-      case 'billing': return <Billing />;
       case 'support': return renderSupportSection();
       default: return renderProfileSection();
     }
