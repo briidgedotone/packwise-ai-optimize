@@ -59,7 +59,7 @@ async function generateAssistantResponse(
       messages: [
         {
           role: 'system',
-          content: 'You are a packaging engineering expert providing dictionary-style factual definitions. Answer with pure technical facts only.'
+          content: 'You are a packaging engineering expert. Answer questions as if writing a Wikipedia article: provide neutral, encyclopedic information. Never mention specific companies, products, or services.'
         },
         {
           role: 'user',
