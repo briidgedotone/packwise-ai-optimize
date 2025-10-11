@@ -244,11 +244,11 @@ export const ImprovedPackagingDemandPlanner = () => {
 
           const type: PackagingType = {
             name: values[nameIndex] || `Package ${types.length + 1}`,
-            length: lengthIndex !== -1 ? parseFloat(values[lengthIndex]) || 0 : 0,
-            width: widthIndex !== -1 ? parseFloat(values[widthIndex]) || 0 : 0,
-            height: heightIndex !== -1 ? parseFloat(values[heightIndex]) || 0 : 0,
-            cost: costIndex !== -1 ? parseFloat(values[costIndex]) || 0 : 0,
-            weight: weightIndex !== -1 ? parseFloat(values[weightIndex]) || 0 : 0,
+            length: lengthIndex !== -1 ? parseFloat(values[lengthIndex]?.trim().replace(/[^0-9.]/g, '')) || 0 : 0,
+            width: widthIndex !== -1 ? parseFloat(values[widthIndex]?.trim().replace(/[^0-9.]/g, '')) || 0 : 0,
+            height: heightIndex !== -1 ? parseFloat(values[heightIndex]?.trim().replace(/[^0-9.]/g, '')) || 0 : 0,
+            cost: costIndex !== -1 ? parseFloat(values[costIndex]?.trim().replace(/[^0-9.]/g, '')) || 0 : 0,
+            weight: weightIndex !== -1 ? parseFloat(values[weightIndex]?.trim().replace(/[^0-9.]/g, '')) || 0 : 0,
           };
           types.push(type);
         }
@@ -382,7 +382,7 @@ export const ImprovedPackagingDemandPlanner = () => {
           newQuarterData.push({
             quarter,
             packageType: packageTypeName,
-            quantity: parseFloat(values[qtyIndex]) || 0
+            quantity: parseFloat(values[qtyIndex]?.trim().replace(/[^0-9.]/g, '')) || 0
           });
         }
 
