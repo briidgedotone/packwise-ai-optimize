@@ -27,7 +27,7 @@ export const askAssistant = action({
   },
 });
 
-// Generate comprehensive AI response for packaging optimization
+// Simple AI response - no prompts, just user question → AI answer
 async function generateAssistantResponse(
   userMessage: string,
   context?: {
@@ -46,8 +46,6 @@ async function generateAssistantResponse(
     throw new Error("OpenAI API key not configured");
   }
 
-  const prompt = buildAssistantPrompt(userMessage, context);
-
   const response = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
     headers: {
@@ -58,16 +56,11 @@ async function generateAssistantResponse(
       model: 'gpt-4o',
       messages: [
         {
-          role: 'system',
-          content: 'You are a packaging engineering expert. Answer questions as if writing a Wikipedia article: provide neutral, encyclopedic information. Never mention specific companies, products, or services.'
-        },
-        {
           role: 'user',
-          content: prompt
+          content: userMessage
         }
       ],
-      temperature: 0.0,
-      response_format: { type: "json_object" }
+      temperature: 0.7
     }),
   });
 
@@ -77,31 +70,10 @@ async function generateAssistantResponse(
   }
 
   const data = await response.json();
-  const parsed = JSON.parse(data.choices[0].message.content);
 
-  // Force empty arrays to prevent suggestions from appearing
   return {
-    message: parsed.message,
+    message: data.choices[0].message.content,
     suggestions: [],
     actionItems: []
   };
-}
-
-// Build prompt for the AI assistant
-function buildAssistantPrompt(
-  userMessage: string,
-  context?: {
-    currentFeature?: string;
-    userHistory?: string[];
-    analysisResults?: any;
-  }
-): string {
-  return `${userMessage}
-
-Respond in this JSON format:
-{
-  "message": "Your answer here",
-  "suggestions": [],
-  "actionItems": []
-}`;
 }
