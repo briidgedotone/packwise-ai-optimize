@@ -56,6 +56,10 @@ async function generateAssistantResponse(
       model: 'gpt-4o',
       messages: [
         {
+          role: 'system',
+          content: 'You are a packaging engineering expert.'
+        },
+        {
           role: 'user',
           content: userMessage
         }
