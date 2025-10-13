@@ -265,7 +265,43 @@ export default function ClientSideAnalysisResults() {
       csvSections.push('');
     }
 
-    // Section 6: Order Details (use all allocations, not just filtered)
+    // Section 6: Detailed Cost Savings Breakdown
+    if (results.packageCostBreakdown && results.packageCostBreakdown.length > 0) {
+      csvSections.push('=== DETAILED COST SAVINGS BREAKDOWN (BY PACKAGE) ===');
+      csvSections.push('Package Name,Baseline Orders,Optimized Orders,Baseline Cost,Optimized Cost,Cost Savings,Savings %');
+      results.packageCostBreakdown.forEach(pkg => {
+        csvSections.push(
+          `${pkg.packageName},${pkg.baselineOrders},${pkg.optimizedOrders},$${pkg.baselineCost.toFixed(2)},$${pkg.optimizedCost.toFixed(2)},$${pkg.savings.toFixed(2)},${pkg.savingsPercentage.toFixed(1)}%`
+        );
+      });
+      csvSections.push('');
+    }
+
+    // Section 7: Detailed Weight Savings Breakdown
+    if (results.packageMaterialBreakdown && results.packageMaterialBreakdown.length > 0) {
+      csvSections.push('=== DETAILED WEIGHT SAVINGS BREAKDOWN (BY PACKAGE) ===');
+      csvSections.push('Package Name,Unit Weight (lbs),Baseline Material (lbs),Optimized Material (lbs),Material Savings (lbs),Savings %');
+      results.packageMaterialBreakdown.forEach(pkg => {
+        csvSections.push(
+          `${pkg.packageName},${pkg.packageWeight.toFixed(3)},${pkg.baselineMaterial.toFixed(2)},${pkg.optimizedMaterial.toFixed(2)},${pkg.materialSavings.toFixed(2)},${pkg.materialSavingsPercentage.toFixed(1)}%`
+        );
+      });
+      csvSections.push('');
+    }
+
+    // Section 8: Fill Rate Improvement Recommendations
+    const lowFillRateOrders = results.allocations.filter(alloc => alloc.fillRate < 60);
+    if (lowFillRateOrders.length > 0) {
+      csvSections.push('=== FILL RATE IMPROVEMENT RECOMMENDATIONS ===');
+      csvSections.push(`Total Orders Needing Optimization,${lowFillRateOrders.length}`);
+      csvSections.push('Recommendation,Impact');
+      csvSections.push(`"Consider smaller packaging options for ${lowFillRateOrders.length} orders with fill rates below 60%","Potential to improve packaging efficiency and reduce material waste"`);
+      csvSections.push('"Review product bundling opportunities for low fill rate orders","Combining items could increase fill rates and reduce package count"');
+      csvSections.push('"Evaluate custom packaging sizes for frequently shipped item dimensions","Tailored packaging could significantly improve fill rates for common orders"');
+      csvSections.push('');
+    }
+
+    // Section 9: Order Details (use all allocations, not just filtered)
     csvSections.push('=== ORDER ALLOCATION DETAILS ===');
     csvSections.push(`Total Records,${results.allocations.length}`);
     csvSections.push('');
