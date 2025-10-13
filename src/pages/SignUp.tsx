@@ -121,7 +121,7 @@ export default function SignUpPage() {
                     className="font-medium hover:opacity-90 underline"
                     style={{ color: designSystem.colors.primary }}
                   >
-                    Privacy Policy
+                    Privacy and Cookies Policy
                   </Link>
                 </label>
               </div>
