@@ -617,11 +617,15 @@ const Dashboard = () => {
               >
                 <div className="flex items-center gap-3">
                   <div className="w-7 h-7 bg-purple-500 rounded-full flex items-center justify-center text-white font-medium text-xs">
-                    {(currentUser?.name || user?.firstName || user?.fullName || 'U')[0].toUpperCase()}
+                    {(currentUser?.firstName || currentUser?.lastName || user?.firstName || user?.fullName || 'U')[0].toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0 text-left">
                     <p className="text-xs font-medium text-gray-900 truncate">
-                      {currentUser?.name || user?.fullName || user?.firstName || 'User'}
+                      {
+                        currentUser?.firstName && currentUser?.lastName
+                          ? `${currentUser.firstName} ${currentUser.lastName}`
+                          : currentUser?.name || user?.fullName || user?.firstName || 'User'
+                      }
                     </p>
                     <p className="text-xs text-gray-500 truncate">
                       {currentUser?.email || user?.primaryEmailAddress?.emailAddress}
