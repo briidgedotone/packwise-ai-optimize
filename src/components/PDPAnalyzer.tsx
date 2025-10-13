@@ -255,38 +255,47 @@ export const PDPAnalyzer = () => {
     <div className="mb-8">
       {/* Progress Steps */}
       <div className="flex items-center justify-center mb-6">
-        {steps.map((step, index) => (
-          <div key={step.number} className="flex items-center">
-            <div
-              className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
-                currentStep === step.number
-                  ? 'text-white'
-                  : step.isComplete
-                    ? 'text-white'
-                    : step.isValid
-                      ? ''
-                      : 'border-gray-300 bg-gray-50 text-gray-400'
-              }`}
-              style={
-                currentStep === step.number
-                  ? { borderColor: designSystem.colors.primary, backgroundColor: designSystem.colors.primary }
-                  : step.isComplete
-                    ? { borderColor: designSystem.colors.primary, backgroundColor: designSystem.colors.primary }
-                    : step.isValid
-                      ? { borderColor: designSystem.colors.primary, color: designSystem.colors.primary, backgroundColor: designSystem.colors.primaryLight }
-                      : {}
-              }
-            >
-              {step.isComplete ? <Check className="h-5 w-5" /> : step.number}
-            </div>
-            {index < steps.length - 1 && (
+        {steps.map((step, index) => {
+          const isCurrentStep = currentStep === step.number;
+          const isFutureStep = step.number > currentStep;
+
+          return (
+            <div key={step.number} className="flex items-center">
               <div
-                className="w-16 h-0.5 transition-all"
-                style={{ backgroundColor: step.isComplete ? designSystem.colors.primary : '#D1D5DB' }}
-              />
-            )}
-          </div>
-        ))}
+                className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+                  isCurrentStep
+                    ? 'text-white'
+                    : step.isComplete
+                      ? 'text-white'
+                      : isFutureStep
+                        ? 'border-gray-300 bg-gray-50 text-gray-400'
+                        : step.isValid
+                          ? ''
+                          : 'border-gray-300 bg-gray-50 text-gray-400'
+                }`}
+                style={
+                  isCurrentStep
+                    ? { borderColor: designSystem.colors.primary, backgroundColor: designSystem.colors.primary }
+                    : step.isComplete
+                      ? { borderColor: designSystem.colors.primary, backgroundColor: designSystem.colors.primary }
+                      : isFutureStep
+                        ? {}
+                        : step.isValid
+                          ? { borderColor: designSystem.colors.primary, color: designSystem.colors.primary, backgroundColor: designSystem.colors.primaryLight }
+                          : {}
+                }
+              >
+                {step.isComplete ? <Check className="h-5 w-5" /> : step.number}
+              </div>
+              {index < steps.length - 1 && (
+                <div
+                  className="w-16 h-0.5 transition-all"
+                  style={{ backgroundColor: step.isComplete ? designSystem.colors.primary : '#D1D5DB' }}
+                />
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {/* Current Step Info */}
