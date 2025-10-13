@@ -435,6 +435,37 @@ const SuiteAnalysisResults = () => {
     csv += `Cost Savings Percentage,${data.analysisInfo.costSavingsPercent}%\n`;
     csv += '\n';
 
+    // Detailed Cost Savings Breakdown
+    csv += 'DETAILED COST SAVINGS BREAKDOWN (BY PACKAGE)\n';
+    csv += 'Package Name,Baseline Orders,Optimized Orders,Baseline Cost,Optimized Cost,Cost Savings,Savings %\n';
+
+    data.packageBreakdown.forEach((pkg: any) => {
+      const baselineOrders = Math.round(pkg.baselineMaterialUsage / pkg.packageWeight); // Derive from material data
+      const optimizedOrders = pkg.orderCount;
+      csv += `${pkg.packageName},${baselineOrders},${optimizedOrders},$${pkg.baselineCost.toFixed(2)},$${pkg.optimizedCost.toFixed(2)},$${pkg.costSavings.toFixed(2)},${pkg.costSavings > 0 ? ((pkg.costSavings / pkg.baselineCost) * 100).toFixed(1) : '0.0'}%\n`;
+    });
+    csv += '\n';
+
+    // Detailed Weight Savings Breakdown
+    csv += 'DETAILED WEIGHT SAVINGS BREAKDOWN (BY PACKAGE)\n';
+    csv += 'Package Name,Unit Weight (lbs),Baseline Material (lbs),Optimized Material (lbs),Material Savings (lbs),Savings %\n';
+
+    data.packageBreakdown.forEach((pkg: any) => {
+      csv += `${pkg.packageName},${pkg.packageWeight.toFixed(3)},${pkg.baselineMaterialUsage.toFixed(2)},${pkg.optimizedMaterialUsage.toFixed(2)},${pkg.materialSavings.toFixed(2)},${pkg.materialSavings > 0 ? ((pkg.materialSavings / pkg.baselineMaterialUsage) * 100).toFixed(1) : '0.0'}%\n`;
+    });
+    csv += '\n';
+
+    // Fill Rate Recommendations
+    if (data.optimizationOrders.lowFillRateOrders.length > 0) {
+      csv += 'FILL RATE IMPROVEMENT RECOMMENDATIONS\n';
+      csv += `Total Orders Needing Optimization,${data.optimizationOrders.lowFillRateOrders.length}\n`;
+      csv += 'Recommendation,Impact\n';
+      csv += `"Consider smaller packaging options for ${data.optimizationOrders.lowFillRateOrders.length} orders with fill rates below 60%","Potential to improve packaging efficiency and reduce material waste"\n`;
+      csv += '"Review product bundling opportunities for low fill rate orders","Combining items could increase fill rates and reduce package count"\n';
+      csv += '"Evaluate custom packaging sizes for frequently shipped item dimensions","Tailored packaging could significantly improve fill rates for common orders"\n';
+      csv += '\n';
+    }
+
     // Package Weights from CSV
     csv += 'PACKAGE WEIGHTS (FROM YOUR CSV)\n';
     csv += 'Package Name,Weight (lbs)\n';
