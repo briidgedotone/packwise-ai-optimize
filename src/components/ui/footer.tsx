@@ -32,7 +32,7 @@ const navigation = {
           id: "legal",
           name: "Legal",
           items: [
-            { name: "Privacy Policy", href: "/privacy-policy" },
+            { name: "Privacy and Cookies Policy", href: "/privacy-policy" },
             { name: "Terms of Service", href: "/terms-of-service" },
           ],
         },
@@ -117,7 +117,7 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="flex flex-col md:flex-row items-center justify-between">
           <div className="flex space-x-6 text-gray-600 text-sm mb-4 md:mb-0">
-            <Link to="/privacy-policy" className="hover:text-[#767AFA] transition-colors">Privacy Policy</Link>
+            <Link to="/privacy-policy" className="hover:text-[#767AFA] transition-colors">Privacy and Cookies Policy</Link>
             <Link to="/terms-of-service" className="hover:text-[#767AFA] transition-colors">Terms of Service</Link>
           </div>
           

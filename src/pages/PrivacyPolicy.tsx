@@ -35,7 +35,7 @@ const PrivacyPolicy = () => {
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy Policy</h1>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy and Cookies Policy</h1>
           <p className="text-gray-600 mb-8">Last Updated: 9/9/2025</p>
           
           <div className="prose prose-gray max-w-none">
@@ -102,10 +102,68 @@ const PrivacyPolicy = () => {
               <li><strong>Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets.</li>
             </ul>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">5. Cookies & Tracking</h2>
-            <p className="mb-6">
-              We may use cookies, analytics tools, and similar technologies to improve performance and user experience. You can adjust cookie settings in your browser.
+            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">5. Cookies Policy</h2>
+            <p className="text-gray-700 leading-relaxed mb-6">
+              This Cookies Policy explains how QuantiPack LLC ("Company," "we," "our," or "us") uses cookies and similar technologies when you visit or use the QuantiPackAI platform ("Service").
             </p>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.1 What Are Cookies?</h3>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Cookies are small text files placed on your device by a website or app. They are widely used to make websites work efficiently, improve user experience, and provide usage information to service operators.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">Cookies may be:</p>
+            <ul className="list-disc pl-6 space-y-1 mb-6">
+              <li><strong>Session cookies:</strong> Deleted once you close your browser.</li>
+              <li><strong>Persistent cookies:</strong> Remain until they expire or are deleted.</li>
+              <li><strong>First-party cookies:</strong> Placed directly by us.</li>
+              <li><strong>Third-party cookies:</strong> Placed by service providers (e.g., analytics tools).</li>
+            </ul>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.2 Types of Cookies We Use</h3>
+
+            <div className="space-y-4 mb-6">
+              <div>
+                <h4 className="font-semibold text-gray-900">Strictly Necessary Cookies</h4>
+                <p className="text-gray-700">Enable essential functions like login, account authentication, and session management. Without these, the Service may not function properly.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-gray-900">Performance & Analytics Cookies</h4>
+                <p className="text-gray-700">Collect information about how users interact with the Service (e.g., most visited features, error logs). Help us improve performance and usability. Example: Google Analytics, Convex logs.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-gray-900">Functional Cookies</h4>
+                <p className="text-gray-700">Remember user preferences (e.g., language, saved settings). Enhance your personalized experience.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-gray-900">Security Cookies</h4>
+                <p className="text-gray-700">Help detect fraud, abuse, and unauthorized access.</p>
+              </div>
+            </div>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.3 Third-Party Cookies</h3>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              We may allow trusted third-party providers to place cookies for analytics, hosting, and platform functionality. These providers include (but are not limited to):
+            </p>
+            <ul className="list-disc pl-6 space-y-1 mb-4">
+              <li>Hosting and infrastructure providers.</li>
+              <li>Analytics providers (e.g., Google Analytics, Mixpanel).</li>
+              <li>API partners (e.g., OpenAI, Convex logs, payment processors).</li>
+            </ul>
+            <p className="text-gray-700 leading-relaxed mb-6">
+              We are not responsible for third-party cookie practices, which are governed by their own privacy policies.
+            </p>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.4 How to Manage Cookies</h3>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              You can manage or disable cookies by adjusting your browser settings. Please note:
+            </p>
+            <ul className="list-disc pl-6 space-y-1 mb-6">
+              <li>Disabling strictly necessary cookies may impair Service functionality.</li>
+              <li>You can also opt out of certain analytics tools directly (e.g., via Google Analytics opt-out).</li>
+            </ul>
 
             <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">6. Security</h2>
             <p className="mb-6">
