@@ -179,6 +179,8 @@ export const getCurrentUser = query({
 export const updateUserProfile = mutation({
   args: {
     name: v.optional(v.string()),
+    firstName: v.optional(v.string()),
+    lastName: v.optional(v.string()),
     phone: v.optional(v.string()),
     company: v.optional(v.string()),
     customRole: v.optional(v.string()),
@@ -201,6 +203,8 @@ export const updateUserProfile = mutation({
 
     const updateData: any = {};
     if (args.name !== undefined) updateData.name = args.name;
+    if (args.firstName !== undefined) updateData.firstName = args.firstName;
+    if (args.lastName !== undefined) updateData.lastName = args.lastName;
     if (args.phone !== undefined) updateData.phone = args.phone;
     if (args.company !== undefined) updateData.company = args.company;
     if (args.customRole !== undefined) updateData.customRole = args.customRole;

@@ -46,8 +46,9 @@ export const Settings = () => {
   useEffect(() => {
     if (user || currentUser) {
       setProfileData({
-        firstName: user?.firstName || '',
-        lastName: user?.lastName || '',
+        // Prefer Convex values, fallback to Clerk values
+        firstName: currentUser?.firstName || user?.firstName || '',
+        lastName: currentUser?.lastName || user?.lastName || '',
         email: user?.primaryEmailAddress?.emailAddress || '',
         phone: currentUser?.phone || '',
         company: currentUser?.company || '',
@@ -120,10 +121,12 @@ export const Settings = () => {
   const handleSaveProfile = async () => {
     setIsLoading(true);
     try {
-      // Update profile data via Convex (all fields including name, phone, company, role)
-      // Note: firstName/lastName are managed by Clerk authentication and cannot be updated via SDK
+      // Update profile data via Convex (all fields including firstName, lastName, phone, company, role)
+      // Note: We save to Convex since Clerk doesn't allow updating names via SDK
       await updateUserProfile({
         name: `${profileData.firstName} ${profileData.lastName}`,
+        firstName: profileData.firstName || undefined,
+        lastName: profileData.lastName || undefined,
         phone: profileData.phone || undefined,
         company: profileData.company || undefined,
         customRole: profileData.role || undefined,
