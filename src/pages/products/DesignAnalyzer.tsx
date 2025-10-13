@@ -1,10 +1,13 @@
 import { Eye, ArrowRight, Camera, Award, Target, Package, Upload, Search, FileText, CheckCircle, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const DesignAnalyzer = () => {
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
+
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -114,9 +117,24 @@ const DesignAnalyzer = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <Button size="lg" variant="outline">
-                View Demo
-              </Button>
+              <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
+                <DialogTrigger asChild>
+                  <Button size="lg" variant="outline">
+                    View Demo
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl w-full p-0">
+                  <div className="aspect-video w-full">
+                    <iframe
+                      className="w-full h-full rounded-lg"
+                      src="https://www.youtube.com/embed/dJyQ8qA0kl4?start=470"
+                      title="Design Analyzer Demo"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>
