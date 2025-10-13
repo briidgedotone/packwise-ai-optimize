@@ -9,6 +9,10 @@ export default defineSchema({
     name: v.string(),
     organizationId: v.optional(v.id("organizations")),
     role: v.union(v.literal("admin"), v.literal("user")),
+    // Profile fields
+    phone: v.optional(v.string()),
+    company: v.optional(v.string()),
+    customRole: v.optional(v.string()),
     createdAt: v.number(),
     lastLoginAt: v.number(),
     // Subscription fields

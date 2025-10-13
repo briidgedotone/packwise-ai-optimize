@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useUser, useClerk } from '@clerk/clerk-react';
-import { useQuery, useAction } from 'convex/react';
+import { useQuery, useAction, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { Button } from '@/components/ui/button';
 import { designSystem } from '@/lib/design-system';
@@ -20,6 +20,10 @@ export const Settings = () => {
   const [activeSection, setActiveSection] = useState('profile');
   const [isLoading, setIsLoading] = useState(false);
 
+  // Get current user data from Convex
+  const currentUser = useQuery(api.users.getCurrentUser);
+  const updateUserProfile = useMutation(api.users.updateUserProfile);
+
   // Read tab from URL query parameter
   useEffect(() => {
     const tabParam = searchParams.get('tab');
@@ -33,10 +37,24 @@ export const Settings = () => {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
     email: user?.primaryEmailAddress?.emailAddress || '',
-    phone: user?.primaryPhoneNumber?.phoneNumber || '',
-    company: user?.organizationMemberships?.[0]?.organization?.name || '',
-    role: 'Packaging Manager'
+    phone: currentUser?.phone || '',
+    company: currentUser?.company || '',
+    role: currentUser?.customRole || 'Packaging Manager'
   });
+
+  // Update profile data when user or currentUser changes
+  useEffect(() => {
+    if (user || currentUser) {
+      setProfileData({
+        firstName: user?.firstName || '',
+        lastName: user?.lastName || '',
+        email: user?.primaryEmailAddress?.emailAddress || '',
+        phone: currentUser?.phone || '',
+        company: currentUser?.company || '',
+        role: currentUser?.customRole || 'Packaging Manager'
+      });
+    }
+  }, [user, currentUser]);
 
   // Real subscription data from Convex
   const getCurrentSubscription = useAction(api.billing.getCurrentSubscriptionDetails);
@@ -102,14 +120,23 @@ export const Settings = () => {
   const handleSaveProfile = async () => {
     setIsLoading(true);
     try {
-      // Update user profile via Clerk
+      // Update user profile via Clerk (firstName, lastName)
       await user?.update({
         firstName: profileData.firstName,
         lastName: profileData.lastName,
       });
-      
+
+      // Update additional profile data via Convex (phone, company, role)
+      await updateUserProfile({
+        name: `${profileData.firstName} ${profileData.lastName}`,
+        phone: profileData.phone || undefined,
+        company: profileData.company || undefined,
+        customRole: profileData.role || undefined,
+      });
+
       toast.success('Profile updated successfully');
     } catch (error) {
+      console.error('Failed to update profile:', error);
       toast.error('Failed to update profile');
     } finally {
       setIsLoading(false);

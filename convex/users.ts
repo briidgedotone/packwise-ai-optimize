@@ -179,6 +179,9 @@ export const getCurrentUser = query({
 export const updateUserProfile = mutation({
   args: {
     name: v.optional(v.string()),
+    phone: v.optional(v.string()),
+    company: v.optional(v.string()),
+    customRole: v.optional(v.string()),
     organizationId: v.optional(v.id("organizations")),
   },
   handler: async (ctx, args) => {
@@ -198,6 +201,9 @@ export const updateUserProfile = mutation({
 
     const updateData: any = {};
     if (args.name !== undefined) updateData.name = args.name;
+    if (args.phone !== undefined) updateData.phone = args.phone;
+    if (args.company !== undefined) updateData.company = args.company;
+    if (args.customRole !== undefined) updateData.customRole = args.customRole;
     if (args.organizationId !== undefined) updateData.organizationId = args.organizationId;
 
     await ctx.db.patch(user._id, updateData);
