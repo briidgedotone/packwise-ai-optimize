@@ -120,24 +120,38 @@ export const Settings = () => {
   const handleSaveProfile = async () => {
     setIsLoading(true);
     try {
+      console.log('Starting profile update...');
+      console.log('Profile data:', profileData);
+
       // Update user profile via Clerk (firstName, lastName)
-      await user?.update({
-        firstName: profileData.firstName,
-        lastName: profileData.lastName,
-      });
+      if (user) {
+        console.log('Updating Clerk profile...');
+        await user.update({
+          firstName: profileData.firstName,
+          lastName: profileData.lastName,
+        });
+        console.log('Clerk profile updated successfully');
+      }
 
       // Update additional profile data via Convex (phone, company, role)
-      await updateUserProfile({
+      console.log('Updating Convex profile...');
+      const updateData = {
         name: `${profileData.firstName} ${profileData.lastName}`,
         phone: profileData.phone || undefined,
         company: profileData.company || undefined,
         customRole: profileData.role || undefined,
-      });
+      };
+      console.log('Update data:', updateData);
+
+      await updateUserProfile(updateData);
+      console.log('Convex profile updated successfully');
 
       toast.success('Profile updated successfully');
-    } catch (error) {
-      console.error('Failed to update profile:', error);
-      toast.error('Failed to update profile');
+    } catch (error: any) {
+      console.error('Failed to update profile - Full error:', error);
+      console.error('Error message:', error?.message);
+      console.error('Error stack:', error?.stack);
+      toast.error(`Failed to update profile: ${error?.message || 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
