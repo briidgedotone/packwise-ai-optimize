@@ -499,8 +499,17 @@ export const ImprovedPackagingDemandPlanner = () => {
 
   // Add a new quarter
   const addQuarter = () => {
-    const newIndex = quarterNames.length;
-    const newQuarterName = `Q${newIndex + 1}`;
+    // Find the highest quarter number in existing quarters
+    const quarterNumbers = quarterNames
+      .map(name => {
+        const match = name.match(/Q(\d+)/i);
+        return match ? parseInt(match[1], 10) : 0;
+      })
+      .filter(num => !isNaN(num));
+
+    const maxQuarterNum = quarterNumbers.length > 0 ? Math.max(...quarterNumbers) : 0;
+    const newQuarterName = `Q${maxQuarterNum + 1}`;
+
     setQuarterNames([...quarterNames, newQuarterName]);
   };
 
