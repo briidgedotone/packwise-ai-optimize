@@ -21,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
 import PricingSection from "@/components/ui/pricing";
 import TestimonialSection from "@/components/ui/testimonials";
@@ -31,6 +32,7 @@ const Index = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productDropdownOpen, setProductDropdownOpen] = useState(false);
   const [dropdownPinned, setDropdownPinned] = useState(false);
+  const [showVideoDialog, setShowVideoDialog] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Handle click outside to close dropdown
@@ -198,7 +200,7 @@ const Index = () => {
                     </div>
                   )}
                 </div>
-                <a href="#how-it-works" className="text-gray-600 hover:text-[#767AFA] transition-colors">How it Works</a>
+                <button onClick={() => setShowVideoDialog(true)} className="text-gray-600 hover:text-[#767AFA] transition-colors">How it Works</button>
                 <a href="#pricing" className="text-gray-600 hover:text-[#767AFA] transition-colors">Pricing</a>
                 <a href="#faq" className="text-gray-600 hover:text-[#767AFA] transition-colors">FAQ</a>
               </nav>
@@ -254,7 +256,15 @@ const Index = () => {
                       </div>
                     )}
                   </div>
-                  <a href="#how-it-works" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">How it Works</a>
+                  <button
+                    onClick={() => {
+                      setShowVideoDialog(true);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block px-3 py-2 text-gray-600 hover:text-[#767AFA] w-full text-left"
+                  >
+                    How it Works
+                  </button>
                   <a href="#pricing" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">Pricing</a>
                   <a href="#faq" className="block px-3 py-2 text-gray-600 hover:text-[#767AFA]">FAQ</a>
                   <div className="flex flex-col space-y-2 px-3 pt-4">
@@ -292,11 +302,24 @@ const Index = () => {
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </Link>
-              <a href="#how-it-works">
-                <Button size="lg" variant="outline" className="text-lg px-8 py-4 rounded-full">
-                  How it Works
-                </Button>
-              </a>
+              <Dialog open={showVideoDialog} onOpenChange={setShowVideoDialog}>
+                <DialogTrigger asChild>
+                  <Button size="lg" variant="outline" className="text-lg px-8 py-4 rounded-full">
+                    How it Works
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl w-full p-0">
+                  <div className="aspect-video w-full">
+                    <iframe
+                      className="w-full h-full rounded-lg"
+                      src="https://www.youtube.com/embed/dJyQ8qA0kl4"
+                      title="How QuantiPackAI Works - Founder Explanation"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
 
