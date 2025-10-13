@@ -274,6 +274,13 @@ export default function ClientSideAnalysisResults() {
           `${pkg.packageName},${pkg.baselineOrders},${pkg.optimizedOrders},$${pkg.baselineCost.toFixed(2)},$${pkg.optimizedCost.toFixed(2)},$${pkg.savings.toFixed(2)},${pkg.savingsPercentage.toFixed(1)}%`
         );
       });
+      // Add total row
+      const totalBaselineOrders = results.packageCostBreakdown.reduce((sum, pkg) => sum + pkg.baselineOrders, 0);
+      const totalOptimizedOrders = results.packageCostBreakdown.reduce((sum, pkg) => sum + pkg.optimizedOrders, 0);
+      csvSections.push('');
+      csvSections.push(
+        `TOTAL,${totalBaselineOrders},${totalOptimizedOrders},$${results.summary.baselineCost.toFixed(2)},$${results.summary.totalCost.toFixed(2)},$${results.summary.savings.toFixed(2)},${results.summary.savingsPercentage.toFixed(1)}%`
+      );
       csvSections.push('');
     }
 
@@ -286,20 +293,71 @@ export default function ClientSideAnalysisResults() {
           `${pkg.packageName},${pkg.packageWeight.toFixed(3)},${pkg.baselineMaterial.toFixed(2)},${pkg.optimizedMaterial.toFixed(2)},${pkg.materialSavings.toFixed(2)},${pkg.materialSavingsPercentage.toFixed(1)}%`
         );
       });
+      // Add total row
+      csvSections.push('');
+      csvSections.push(
+        `TOTAL,-,${results.summary.baselineMaterial.toFixed(2)},${results.summary.totalMaterial.toFixed(2)},${results.summary.materialSavings.toFixed(2)},${results.summary.materialSavingsPercentage.toFixed(1)}%`
+      );
       csvSections.push('');
     }
 
-    // Section 8: Fill Rate Improvement Recommendations
-    const lowFillRateOrders = results.allocations.filter(alloc => alloc.fillRate < 60);
-    if (lowFillRateOrders.length > 0) {
-      csvSections.push('=== FILL RATE IMPROVEMENT RECOMMENDATIONS ===');
-      csvSections.push(`Total Orders Needing Optimization,${lowFillRateOrders.length}`);
-      csvSections.push('Recommendation,Impact');
-      csvSections.push(`"Consider smaller packaging options for ${lowFillRateOrders.length} orders with fill rates below 60%","Potential to improve packaging efficiency and reduce material waste"`);
-      csvSections.push('"Review product bundling opportunities for low fill rate orders","Combining items could increase fill rates and reduce package count"');
-      csvSections.push('"Evaluate custom packaging sizes for frequently shipped item dimensions","Tailored packaging could significantly improve fill rates for common orders"');
-      csvSections.push('');
-    }
+    // Section 8: Fill Rate Recommendations by Package
+    csvSections.push('=== FILL RATE RECOMMENDATIONS BY PACKAGE ===');
+
+    // Group allocations by package and calculate metrics
+    const packageFillRateAnalysis: Record<string, {
+      orders: number[];
+      fillRates: number[];
+      volumes: number[];
+    }> = {};
+
+    results.allocations.forEach(allocation => {
+      const pkgName = allocation.recommendedPackage;
+      if (!packageFillRateAnalysis[pkgName]) {
+        packageFillRateAnalysis[pkgName] = {
+          orders: [],
+          fillRates: [],
+          volumes: []
+        };
+      }
+      packageFillRateAnalysis[pkgName].orders.push(1);
+      packageFillRateAnalysis[pkgName].fillRates.push(allocation.fillRate);
+      packageFillRateAnalysis[pkgName].volumes.push(allocation.orderVolume);
+    });
+
+    // Generate recommendations for each package
+    csvSections.push('Package Name,Orders Count,Average Fill Rate (%),Suggested Dimensional Adjustment,Expected Improvement');
+
+    Object.entries(packageFillRateAnalysis).forEach(([packageName, data]) => {
+      const orderCount = data.orders.length;
+      const avgFillRate = data.fillRates.reduce((sum, rate) => sum + rate, 0) / data.fillRates.length;
+      const avgVolume = data.volumes.reduce((sum, vol) => sum + vol, 0) / data.volumes.length;
+      const targetFillRate = 75; // Industry standard optimal fill rate
+
+      let recommendation: string;
+      let improvement: string;
+
+      if (avgFillRate < targetFillRate) {
+        // Calculate optimal volume for target fill rate
+        const optimalVolume = avgVolume / (targetFillRate / 100);
+        const cubicRoot = Math.cbrt(optimalVolume);
+
+        // Suggest balanced dimensions (slightly varied for realistic packaging)
+        const suggestedLength = Math.ceil(cubicRoot * 1.1);
+        const suggestedWidth = Math.ceil(cubicRoot * 0.95);
+        const suggestedHeight = Math.ceil(cubicRoot * 0.95);
+
+        recommendation = `"Reduce to approximately ${suggestedLength}"" × ${suggestedWidth}"" × ${suggestedHeight}"""`;
+        improvement = `"${avgFillRate.toFixed(1)}% → ${Math.min(targetFillRate + 5, 95)}% (affects ${orderCount} orders)"`;
+      } else {
+        recommendation = `"Current dimensions are optimal for target fill rate"`;
+        improvement = `"${avgFillRate.toFixed(1)}% (target achieved for ${orderCount} orders)"`;
+      }
+
+      csvSections.push(`${packageName},${orderCount},${avgFillRate.toFixed(1)},${recommendation},${improvement}`);
+    });
+
+    csvSections.push('');
 
     // Section 9: Order Details (use all allocations, not just filtered)
     csvSections.push('=== ORDER ALLOCATION DETAILS ===');
