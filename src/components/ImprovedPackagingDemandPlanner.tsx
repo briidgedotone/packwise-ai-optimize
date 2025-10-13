@@ -514,29 +514,37 @@ export const ImprovedPackagingDemandPlanner = () => {
   };
 
   // Remove a quarter
-  const removeQuarter = (index: number) => {
+  const removeQuarter = async (index: number) => {
     if (quarterNames.length <= 1) {
       toast.error('You need at least one quarter');
       return;
     }
 
     const quarterToRemove = quarterNames[index];
-    
+
     // Remove the quarter name
     const updatedNames = quarterNames.filter((_, i) => i !== index);
     setQuarterNames(updatedNames);
-    
-    // Remove any data associated with this quarter
+
+    // Remove any data associated with this quarter from local state
     const updatedData = quarterlyData.filter(d => d.quarter !== quarterToRemove);
     setQuarterlyData(updatedData);
-    
+
+    // Delete the quarter data from the database by storing an empty array
+    try {
+      await storeQuarterlyData({ quarter: quarterToRemove, usageData: [] });
+    } catch (error) {
+      console.error('Failed to delete quarter data from database:', error);
+      toast.error('Failed to fully remove quarter data');
+    }
+
     // Recalculate mix if there's remaining data
     if (updatedData.length > 0) {
       updateMixFromQuarterlyData(updatedData);
     } else {
       setCurrentMix({});
     }
-    
+
     toast.success(`Removed ${quarterToRemove} and its data`);
   };
 
