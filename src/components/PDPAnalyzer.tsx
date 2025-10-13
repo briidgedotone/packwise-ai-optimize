@@ -257,25 +257,33 @@ export const PDPAnalyzer = () => {
       <div className="flex items-center justify-center mb-6">
         {steps.map((step, index) => (
           <div key={step.number} className="flex items-center">
-            <div className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
-              currentStep === step.number
-                ? 'text-white'
-                  + ` border-[${designSystem.colors.primary}]`
-                  + ` bg-[${designSystem.colors.primary}]`
-                : step.isComplete
+            <div
+              className={`flex items-center justify-center w-10 h-10 rounded-full border-2 transition-all ${
+                currentStep === step.number
                   ? 'text-white'
-                    + ` border-[${designSystem.colors.primary}] bg-[${designSystem.colors.primary}]`
-                  : step.isValid
-                    ? `border-[${designSystem.colors.primary}] text-[${designSystem.colors.primary}]`
-                      + ` bg-[${designSystem.colors.primaryLight}]`
-                    : 'border-gray-300 bg-gray-50 text-gray-400'
-            }`}>
+                  : step.isComplete
+                    ? 'text-white'
+                    : step.isValid
+                      ? ''
+                      : 'border-gray-300 bg-gray-50 text-gray-400'
+              }`}
+              style={
+                currentStep === step.number
+                  ? { borderColor: designSystem.colors.primary, backgroundColor: designSystem.colors.primary }
+                  : step.isComplete
+                    ? { borderColor: designSystem.colors.primary, backgroundColor: designSystem.colors.primary }
+                    : step.isValid
+                      ? { borderColor: designSystem.colors.primary, color: designSystem.colors.primary, backgroundColor: designSystem.colors.primaryLight }
+                      : {}
+              }
+            >
               {step.isComplete ? <Check className="h-5 w-5" /> : step.number}
             </div>
             {index < steps.length - 1 && (
-              <div className={`w-16 h-0.5 transition-all ${
-                step.isComplete ? `bg-[${designSystem.colors.primary}]` : 'bg-gray-300'
-              }`} />
+              <div
+                className="w-16 h-0.5 transition-all"
+                style={{ backgroundColor: step.isComplete ? designSystem.colors.primary : '#D1D5DB' }}
+              />
             )}
           </div>
         ))}
