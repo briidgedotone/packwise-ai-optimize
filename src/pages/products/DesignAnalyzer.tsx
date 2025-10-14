@@ -58,16 +58,16 @@ const DesignAnalyzer = () => {
   ];
 
   const criteria = [
+    "Brand Prominence",
+    "Balance",
+    "Consistency",
     "Visual Hierarchy",
-    "Brand Prominence & Placement",
-    "Typography & Readability",
-    "Color Strategy & Contrast",
-    "Imagery Integration & Quality",
-    "Messaging Clarity & Claim Placement",
-    "Simplicity & Focus",
-    "Balance & Composition",
-    "Shelf & Omni-Channel Performance",
-    "Design Consistency & Cohesion"
+    "Messaging Clarity",
+    "Shelf Performance",
+    "Simplicity",
+    "Typography",
+    "Color Strategy",
+    "Imagery Quality"
   ];
 
   return (
