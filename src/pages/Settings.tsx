@@ -189,7 +189,6 @@ export const Settings = () => {
             placeholder="Enter your email"
             disabled
           />
-          <p className="text-xs text-gray-500 mt-1">Email changes must be done through your account security settings</p>
         </div>
         <div>
           <Label htmlFor="phone" className="text-gray-700 font-medium">Phone Number</Label>
