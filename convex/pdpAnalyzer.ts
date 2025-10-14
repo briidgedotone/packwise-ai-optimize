@@ -33,51 +33,59 @@ export const analyzePDP = action({
         throw new Error("User not found");
       }
 
-      // Run main analysis and competitor analyses in parallel with error handling
-      const mainAnalysisPromise = analyzeImage(args.mainPDPData, args.metaInfo)
-        .catch(error => {
-          console.error('Main PDP analysis failed:', error);
-          throw new Error(`Failed to analyze main design: ${error.message}`);
-        });
-
-      const competitorAnalysesPromise = args.competitorPDPs && args.competitorPDPs.length > 0
-        ? Promise.allSettled(args.competitorPDPs.map((competitorPDP, i) =>
-            analyzeImage(
-              competitorPDP,
-              args.metaInfo,
-              `Competitor ${String.fromCharCode(65 + i)}` // A, B, C, D
-            )
-          ))
-        : Promise.resolve([]);
-
-      // Wait for both main and competitor analyses to complete
-      let mainAnalysis;
-      let competitorResults;
+      // SEQUENTIAL PROCESSING: Analyze main design first
+      console.log('Starting main design analysis...');
+      let mainAnalysis: PDPAnalysis;
 
       try {
-        [mainAnalysis, competitorResults] = await Promise.all([
-          mainAnalysisPromise,
-          competitorAnalysesPromise
-        ]);
+        mainAnalysis = await analyzeImageWithRetry(args.mainPDPData, args.metaInfo, "Your Design");
+        console.log('✅ Main design analysis completed');
       } catch (error) {
         // If main analysis fails, throw a user-friendly error
+        console.error('Main PDP analysis failed:', error);
         throw new Error(
           error instanceof Error
-            ? error.message
+            ? `Failed to analyze main design: ${error.message}`
             : 'Failed to analyze your design. The image may be too large or the service is temporarily unavailable. Please try again with a smaller image or wait a few moments.'
         );
       }
 
-      // Filter successful competitor analyses and log failures
+      // SEQUENTIAL PROCESSING: Analyze competitors one by one with delays to avoid rate limiting
       const competitorAnalyses: PDPAnalysis[] = [];
-      if (Array.isArray(competitorResults)) {
-        competitorResults.forEach((result, index) => {
-          if (result.status === 'fulfilled') {
-            competitorAnalyses.push(result.value);
-          } else {
-            console.warn(`Competitor ${String.fromCharCode(65 + index)} analysis failed:`, result.reason);
+
+      if (args.competitorPDPs && args.competitorPDPs.length > 0) {
+        console.log(`Starting analysis of ${args.competitorPDPs.length} competitor designs...`);
+
+        for (let i = 0; i < args.competitorPDPs.length; i++) {
+          const competitorLabel = `Competitor ${String.fromCharCode(65 + i)}`; // A, B, C, D
+
+          try {
+            // Add delay before each competitor analysis to avoid burst rate limits
+            // Skip delay for first competitor (already waited after main analysis)
+            if (i > 0) {
+              const delayMs = 1500; // 1.5 seconds between each competitor
+              console.log(`Waiting ${delayMs}ms before analyzing ${competitorLabel}...`);
+              await delay(delayMs);
+            }
+
+            console.log(`Analyzing ${competitorLabel}...`);
+            const competitorAnalysis = await analyzeImageWithRetry(
+              args.competitorPDPs[i],
+              args.metaInfo,
+              competitorLabel
+            );
+            competitorAnalyses.push(competitorAnalysis);
+            console.log(`✅ ${competitorLabel} analysis completed (${i + 1}/${args.competitorPDPs.length})`);
+
+          } catch (error) {
+            // Log but don't fail entire analysis if competitor fails
+            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+            console.warn(`❌ ${competitorLabel} analysis failed: ${errorMessage}`);
+            // Continue to next competitor
           }
-        });
+        }
+
+        console.log(`Completed competitor analyses: ${competitorAnalyses.length}/${args.competitorPDPs.length} successful`);
       }
 
       // Calculate Z-scores if competitors exist
@@ -119,6 +127,57 @@ export const analyzePDP = action({
     }
   },
 });
+
+// Helper function to add delay between API calls to avoid rate limiting
+async function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Retry logic with exponential backoff for rate limit errors
+async function analyzeImageWithRetry(
+  imageData: string,
+  metaInfo: MetaInfo | undefined,
+  label: string = "Your PDP",
+  maxRetries: number = 3
+): Promise<PDPAnalysis> {
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const result = await analyzeImage(imageData, metaInfo, label);
+      return result;
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error('Unknown error');
+      const errorMessage = lastError.message;
+
+      // Don't retry on authentication errors (401)
+      if (errorMessage.includes('401') || errorMessage.includes('API key')) {
+        throw lastError;
+      }
+
+      // Retry on rate limit (429) and server errors (5xx), but not on final attempt
+      if (attempt < maxRetries) {
+        const shouldRetry =
+          errorMessage.includes('429') ||
+          errorMessage.includes('rate limit') ||
+          errorMessage.includes('500') ||
+          errorMessage.includes('503');
+
+        if (shouldRetry) {
+          const backoffDelay = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+          console.log(`${label} analysis failed (attempt ${attempt}/${maxRetries}), retrying in ${backoffDelay}ms...`);
+          await delay(backoffDelay);
+          continue;
+        }
+      }
+
+      // Don't retry on other errors (timeouts, client errors, etc.)
+      throw lastError;
+    }
+  }
+
+  throw lastError || new Error(`Failed to analyze ${label} after ${maxRetries} attempts`);
+}
 
 // Analyze individual image using OpenAI Vision with enhanced Design Comparator system prompt
 async function analyzeImage(
@@ -189,9 +248,21 @@ Provide expert-level analysis with evidence-based reasoning that demonstrates de
     });
     
     clearTimeout(timeoutId);
-    
+
     if (!response.ok) {
       const errorText = await response.text();
+
+      // Provide specific error messages for common issues
+      if (response.status === 429) {
+        throw new Error(`Rate limit exceeded - Too many requests to OpenAI API. Please wait a moment and try again.`);
+      } else if (response.status === 401) {
+        throw new Error(`Invalid API key - OpenAI authentication failed. Please check your API key configuration.`);
+      } else if (response.status >= 500) {
+        throw new Error(`OpenAI server error (${response.status}) - The service is temporarily unavailable. Please try again in a few moments.`);
+      } else if (response.status === 400) {
+        throw new Error(`Invalid request - The image may be too large or in an unsupported format. Please try with a smaller image (under 1MB) in JPG or PNG format.`);
+      }
+
       throw new Error(`OpenAI Vision API error: ${response.status} - ${errorText}`);
     }
     
