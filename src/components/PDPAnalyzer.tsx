@@ -89,6 +89,66 @@ export const PDPAnalyzer = () => {
   ];
 
   // File conversion helpers
+  const compressImage = (file: File): Promise<File> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+
+          if (!ctx) {
+            reject(new Error('Failed to get canvas context'));
+            return;
+          }
+
+          // Calculate dimensions (max 1024px, maintain aspect ratio)
+          let width = img.width;
+          let height = img.height;
+          const maxDimension = 1024;
+
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = (height / width) * maxDimension;
+              width = maxDimension;
+            } else {
+              width = (width / height) * maxDimension;
+              height = maxDimension;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          // Draw resized image
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Convert to blob with 80% JPEG quality
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name, {
+                  type: 'image/jpeg',
+                  lastModified: Date.now(),
+                });
+                resolve(compressedFile);
+              } else {
+                reject(new Error('Failed to compress image'));
+              }
+            },
+            'image/jpeg',
+            0.8
+          );
+        };
+        img.onerror = () => reject(new Error('Failed to load image'));
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+    });
+  };
+
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -114,17 +174,24 @@ export const PDPAnalyzer = () => {
 
   const handleMainPDPUpload = async (file: File | null) => {
     if (file) {
-      // Check file size (limit to 2MB per image to avoid storage quota issues)
+      // Check file size (limit to 2MB per image before compression)
       const maxSize = 2 * 1024 * 1024; // 2MB in bytes
       if (file.size > maxSize) {
         toast.error(`File size exceeds 2MB limit. Please compress or resize your image. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
         return;
       }
 
-      setFiles(prev => ({ ...prev, mainPDP: file }));
-      const preview = await fileToDataUrl(file);
-      setMainPDPPreview(preview);
-      toast.success(`Main Design loaded: ${file.name}`);
+      try {
+        // Compress image before storing
+        const compressedFile = await compressImage(file);
+        setFiles(prev => ({ ...prev, mainPDP: compressedFile }));
+        const preview = await fileToDataUrl(compressedFile);
+        setMainPDPPreview(preview);
+        toast.success(`Main Design loaded and optimized: ${file.name}`);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        toast.error('Failed to process image. Please try a different file.');
+      }
     } else {
       setFiles(prev => ({ ...prev, mainPDP: null }));
       setMainPDPPreview(null);
@@ -133,17 +200,24 @@ export const PDPAnalyzer = () => {
 
   const handleCompetitorUpload = async (file: File | null) => {
     if (file && files.competitors.length < 4) {
-      // Check file size (limit to 2MB per image)
+      // Check file size (limit to 2MB per image before compression)
       const maxSize = 2 * 1024 * 1024; // 2MB in bytes
       if (file.size > maxSize) {
         toast.error(`File size exceeds 2MB limit. Please compress or resize your image. Current size: ${(file.size / 1024 / 1024).toFixed(2)}MB`);
         return;
       }
 
-      setFiles(prev => ({ ...prev, competitors: [...prev.competitors, file] }));
-      const preview = await fileToDataUrl(file);
-      setCompetitorPreviews(prev => [...prev, preview]);
-      toast.success(`Competitor Design added: ${file.name}`);
+      try {
+        // Compress image before storing
+        const compressedFile = await compressImage(file);
+        setFiles(prev => ({ ...prev, competitors: [...prev.competitors, compressedFile] }));
+        const preview = await fileToDataUrl(compressedFile);
+        setCompetitorPreviews(prev => [...prev, preview]);
+        toast.success(`Competitor Design added and optimized: ${file.name}`);
+      } catch (error) {
+        console.error('Error compressing image:', error);
+        toast.error('Failed to process image. Please try a different file.');
+      }
     }
   };
 

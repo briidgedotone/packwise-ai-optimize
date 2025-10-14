@@ -176,43 +176,22 @@ async function analyzeImageWithRetry(
   throw lastError || new Error(`Failed to analyze ${label} after ${maxRetries} attempts`);
 }
 
-// Analyze individual image using OpenAI Vision with enhanced Design Comparator system prompt
+// Analyze individual image using Google Gemini 2.0 Flash with enhanced Design Comparator system prompt
 async function analyzeImage(
   imageData: string,
   metaInfo: MetaInfo | undefined,
   label: string = "Your PDP"
 ): Promise<PDPAnalysis> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  
+  const apiKey = process.env.GEMINI_API_KEY;
+
   if (!apiKey) {
-    throw new Error("OpenAI API key not configured");
+    throw new Error("Gemini API key not configured");
   }
 
   const prompt = buildAnalysisPrompt(metaInfo, label);
-  
-  // Add timeout protection similar to Design Comparator
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => {
-    console.error(`OpenAI API timeout (30s) for PDP ${label}`);
-    controller.abort();
-  }, 30000); // 30 second timeout
-  
-  console.log(`Analyzing ${label} with enhanced GPT-4 Vision`);
-  
-  try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-        'Content-Type': 'application/json',
-      },
-      signal: controller.signal,
-      body: JSON.stringify({
-        model: 'gpt-4o',
-        messages: [
-          {
-            role: 'system',
-            content: `You are GPT-4 Vision with advanced packaging design expertise, specializing in Principal Display Panel (PDP) analysis. You understand retail psychology, shelf visibility, consumer behavior, and the sophisticated 10-criterion scoring methodology used by professional packaging consultants.
+
+  // System instruction for Gemini
+  const systemInstruction = `You are an AI with advanced packaging design expertise, specializing in Principal Display Panel (PDP) analysis. You understand retail psychology, shelf visibility, consumer behavior, and the sophisticated 10-criterion scoring methodology used by professional packaging consultants.
 
 You understand:
 - Category-specific design principles and consumer psychology
@@ -222,28 +201,49 @@ You understand:
 - Premium design perception and quality indicators
 - Omni-channel performance (shelf visibility + digital thumbnails)
 
-Provide expert-level analysis with evidence-based reasoning that demonstrates deep packaging science knowledge.`
-          },
+Provide expert-level analysis with evidence-based reasoning that demonstrates deep packaging science knowledge.`;
+
+  // Add timeout protection
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    console.error(`Gemini API timeout (30s) for PDP ${label}`);
+    controller.abort();
+  }, 30000); // 30 second timeout
+
+  console.log(`Analyzing ${label} with Gemini 2.0 Flash`);
+
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: controller.signal,
+      body: JSON.stringify({
+        system_instruction: {
+          parts: [{ text: systemInstruction }]
+        },
+        contents: [
           {
-            role: 'user',
-            content: [
-              { type: 'text', text: prompt },
-              { 
-                type: 'image_url', 
-                image_url: { 
-                  url: `data:image/jpeg;base64,${imageData}`,
-                  detail: 'high'
-                } 
+            parts: [
+              { text: prompt },
+              {
+                inline_data: {
+                  mime_type: 'image/jpeg',
+                  data: imageData
+                }
               }
             ]
           }
         ],
-        temperature: 0.3,
-        max_tokens: 2000,
-        response_format: { type: "json_object" }
+        generationConfig: {
+          temperature: 0.3,
+          maxOutputTokens: 2000,
+          responseMimeType: 'application/json'
+        }
       }),
     });
-    
+
     clearTimeout(timeoutId);
 
     if (!response.ok) {
@@ -251,21 +251,28 @@ Provide expert-level analysis with evidence-based reasoning that demonstrates de
 
       // Provide specific error messages for common issues
       if (response.status === 429) {
-        throw new Error(`Rate limit exceeded - Too many requests to OpenAI API. Please wait a moment and try again.`);
-      } else if (response.status === 401) {
-        throw new Error(`Invalid API key - OpenAI authentication failed. Please check your API key configuration.`);
+        throw new Error(`Rate limit exceeded - Too many requests to Gemini API. Please wait a moment and try again.`);
+      } else if (response.status === 401 || response.status === 403) {
+        throw new Error(`Invalid API key - Gemini authentication failed. Please check your API key configuration.`);
       } else if (response.status >= 500) {
-        throw new Error(`OpenAI server error (${response.status}) - The service is temporarily unavailable. Please try again in a few moments.`);
+        throw new Error(`Gemini server error (${response.status}) - The service is temporarily unavailable. Please try again in a few moments.`);
       } else if (response.status === 400) {
         throw new Error(`Invalid request - The image may be too large or in an unsupported format. Please try with a smaller image (under 1MB) in JPG or PNG format.`);
       }
 
-      throw new Error(`OpenAI Vision API error: ${response.status} - ${errorText}`);
+      throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
     }
-    
+
     const data = await response.json();
-    const result = JSON.parse(data.choices[0].message.content);
-    
+
+    // Parse Gemini response format
+    if (!data.candidates || data.candidates.length === 0) {
+      throw new Error('No response from Gemini API');
+    }
+
+    const resultText = data.candidates[0].content.parts[0].text;
+    const result = JSON.parse(resultText);
+
     return {
       label,
       scores: result.scores,
@@ -275,7 +282,7 @@ Provide expert-level analysis with evidence-based reasoning that demonstrates de
       risks: result.risks || [],
       recommendations: result.recommendations || []
     };
-    
+
   } catch (error) {
     clearTimeout(timeoutId);
 
@@ -448,50 +455,57 @@ function interpretZScore(zScore: number): string {
   return "Significantly below average";
 }
 
-// Generate actionable recommendations using GPT
+// Generate actionable recommendations using Gemini
 async function generateRecommendations(
   mainAnalysis: PDPAnalysis,
   competitorAnalyses: PDPAnalysis[],
   metaInfo: MetaInfo | undefined
 ): Promise<Recommendations> {
-  const apiKey = process.env.OPENAI_API_KEY;
-  
+  const apiKey = process.env.GEMINI_API_KEY;
+
   if (!apiKey) {
-    throw new Error("OpenAI API key not configured");
+    throw new Error("Gemini API key not configured");
   }
 
   const prompt = buildRecommendationsPrompt(mainAnalysis, competitorAnalyses, metaInfo);
-  
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+
+  const systemInstruction = 'You are a packaging design consultant providing actionable recommendations to improve PDP performance based on analysis data.';
+
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
     method: 'POST',
     headers: {
-      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: [
+      system_instruction: {
+        parts: [{ text: systemInstruction }]
+      },
+      contents: [
         {
-          role: 'system',
-          content: 'You are a packaging design consultant providing actionable recommendations to improve PDP performance based on analysis data.'
-        },
-        {
-          role: 'user',
-          content: prompt
+          parts: [{ text: prompt }]
         }
       ],
-      temperature: 0.4,
-      max_tokens: 2000,
-      response_format: { type: "json_object" }
+      generationConfig: {
+        temperature: 0.4,
+        maxOutputTokens: 2000,
+        responseMimeType: 'application/json'
+      }
     }),
   });
-  
+
   if (!response.ok) {
-    throw new Error(`OpenAI API error: ${response.status}`);
+    const errorText = await response.text();
+    throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
   }
-  
+
   const data = await response.json();
-  return JSON.parse(data.choices[0].message.content);
+
+  if (!data.candidates || data.candidates.length === 0) {
+    throw new Error('No response from Gemini API');
+  }
+
+  const resultText = data.candidates[0].content.parts[0].text;
+  return JSON.parse(resultText);
 }
 
 // Build recommendations prompt
