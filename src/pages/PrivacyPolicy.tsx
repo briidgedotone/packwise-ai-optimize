@@ -35,183 +35,206 @@ const PrivacyPolicy = () => {
       {/* Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-white rounded-lg shadow-sm p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy and Cookies Policy</h1>
-          <p className="text-gray-600 mb-8">Last Updated: 9/9/2025</p>
-          
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Privacy & Cookies Policy</h1>
+          <p className="text-gray-600 mb-8">Last Updated: October 13, 2025</p>
+
           <div className="prose prose-gray max-w-none">
             <p className="text-gray-700 leading-relaxed mb-6">
-              QuantiPack LLC ("Company," "we," "our," or "us") values your privacy. This Privacy Policy explains how we collect, use, and protect personal information when you use the QuantiPackAI platform ("Service").
+              This combined Privacy & Cookies Policy explains how QuantiPack LLC ("Company," "we," "our," or "us") collects, uses, protects, and discloses personal information, and how cookies and similar technologies are used when you access or use the QuantiPackAI platform and related services ("Service").
             </p>
             <p className="text-gray-700 leading-relaxed mb-6">
-              By accessing or using the Service, you consent to the practices described in this Privacy Policy.
+              By accessing or using the Service, you agree to the terms of this Policy. If you do not agree, please discontinue use of the Service.
             </p>
 
             <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">1. Information We Collect</h2>
-            <p className="mb-4">We collect the following categories of information:</p>
-            
+            <p className="mb-4 text-gray-700">We collect and process limited information necessary to operate and improve the Service. This may include:</p>
+
             <div className="space-y-4 mb-6">
               <div>
                 <h3 className="font-semibold text-gray-900">Account Information</h3>
                 <p className="text-gray-700">Name, email address, company name, billing details, and subscription plan.</p>
               </div>
-              
+
               <div>
                 <h3 className="font-semibold text-gray-900">Usage Data</h3>
-                <p className="text-gray-700">Logs of how you interact with the Service (e.g., modules accessed, frequency of use, Token consumption).</p>
+                <p className="text-gray-700 mb-2">Non-personal metrics such as login timestamps, token consumption, module access frequency, and general system interactions to ensure platform performance and reliability.</p>
               </div>
-              
+
               <div>
                 <h3 className="font-semibold text-gray-900">Content Data</h3>
-                <p className="text-gray-700">Files, datasets, and other materials you upload or input into the Service.</p>
+                <p className="text-gray-700 mb-2">Files, datasets, or text you voluntarily upload or input while using the Service.</p>
+                <p className="text-gray-700 font-semibold">We do not permanently store this data. Uploaded or generated content is processed in real time during your active session only. Once you close or refresh the session, your data is not retained on our servers.</p>
               </div>
-              
+
               <div>
                 <h3 className="font-semibold text-gray-900">Technical Information</h3>
-                <p className="text-gray-700">IP address, device/browser type, operating system, and system logs.</p>
+                <p className="text-gray-700">IP address, browser type, operating system, and diagnostic logs for debugging and performance monitoring.</p>
               </div>
-              
+
               <div>
                 <h3 className="font-semibold text-gray-900">Payment Information</h3>
-                <p className="text-gray-700">Processed through secure third-party providers (e.g., Stripe). We do not store full payment card details.</p>
+                <p className="text-gray-700">Payment data is securely processed by third-party providers (e.g., Stripe). We do not store full payment card details.</p>
               </div>
             </div>
 
             <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">2. How We Use Information</h2>
-            <p className="mb-4">We use collected information for the following purposes:</p>
-            <ul className="list-disc pl-6 space-y-1 mb-6">
-              <li>To operate, maintain, and improve the Service.</li>
-              <li>To provide support, respond to inquiries, and send service updates.</li>
-              <li>To manage subscriptions, billing, and account authentication.</li>
-              <li>To monitor and analyze trends, usage, and security.</li>
-              <li>To comply with legal obligations and enforce our Terms & Conditions.</li>
-              <li>To conduct research and analytics using aggregated and anonymized data only.</li>
+            <p className="mb-4 text-gray-700">We use the collected data solely for legitimate business and operational purposes, including:</p>
+            <ul className="list-disc pl-6 space-y-1 mb-4">
+              <li>Operating, maintaining, and improving the Service.</li>
+              <li>Providing user support and responding to inquiries.</li>
+              <li>Managing account authentication, billing, and subscriptions.</li>
+              <li>Monitoring platform performance, analytics, and security.</li>
+              <li>Complying with legal and regulatory obligations.</li>
             </ul>
+            <p className="text-gray-700 font-semibold mb-6">We do not use user data for advertising, profiling, or resale.</p>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">3. Data Ownership & Processing</h2>
-            <div className="space-y-2 mb-6">
-              <p><strong>3.1</strong> You retain ownership of all Content you upload.</p>
-              <p><strong>3.2</strong> We process Content solely to provide the Service.</p>
-              <p><strong>3.3</strong> We may generate aggregated or anonymized insights from usage data for analytics and improvement. These outputs contain no personally identifiable information (PII).</p>
-            </div>
+            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">3. Data Ownership and Retention</h2>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">3.1 User Ownership</h3>
+            <p className="text-gray-700 mb-4">You retain full ownership of all content or data you upload or input into the Service.</p>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">3.2 Processing Scope</h3>
+            <p className="text-gray-700 mb-4">We process your data only for the purpose of generating requested outputs or reports during your active session. Once your session ends, the data is automatically deleted and is not retrievable by us.</p>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">3.3 Aggregated Insights</h3>
+            <p className="text-gray-700 mb-4">We may use de-identified, aggregated data derived from usage metrics to enhance Service performance. These insights do not contain personal or uploaded content.</p>
+
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">3.4 Retention Period</h3>
+            <p className="text-gray-700 mb-6">We retain limited account and billing data for compliance and transaction recordkeeping as required by law. No content data is stored after session termination.</p>
 
             <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">4. Sharing of Information</h2>
-            <p className="mb-4">We do not sell or rent your personal information. We may share information in limited cases:</p>
-            <ul className="list-disc pl-6 space-y-2 mb-6">
-              <li><strong>Service Providers:</strong> With third-party vendors (e.g., hosting providers, Convex, OpenAI, payment processors) who help us operate the Service.</li>
-              <li><strong>Legal Compliance:</strong> If required by law, subpoena, or regulatory request.</li>
-              <li><strong>Business Transfers:</strong> In the event of a merger, acquisition, or sale of assets.</li>
+            <p className="mb-4 text-gray-700">We do not sell, rent, or trade personal information. Information may be shared only in the following limited circumstances:</p>
+            <ul className="list-disc pl-6 space-y-2 mb-4">
+              <li><strong>Service Providers:</strong> With trusted vendors and partners (e.g., hosting providers, Convex, OpenAI, Stripe) that assist in operating the Service under confidentiality and security agreements.</li>
+              <li><strong>Legal Compliance:</strong> When required by law, subpoena, or other legal process.</li>
+              <li><strong>Business Transfers:</strong> In connection with a merger, acquisition, or sale of all or part of our assets.</li>
             </ul>
+            <p className="text-gray-700 mb-6">All partners and service providers are contractually obligated to handle data securely and in accordance with this Policy.</p>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">5. Cookies Policy</h2>
-            <p className="text-gray-700 leading-relaxed mb-6">
-              This Cookies Policy explains how QuantiPack LLC ("Company," "we," "our," or "us") uses cookies and similar technologies when you visit or use the QuantiPackAI platform ("Service").
-            </p>
+            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">5. Cookies and Tracking Technologies</h2>
 
-            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.1 What Are Cookies?</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.1 What Are Cookies</h3>
             <p className="text-gray-700 leading-relaxed mb-4">
-              Cookies are small text files placed on your device by a website or app. They are widely used to make websites work efficiently, improve user experience, and provide usage information to service operators.
+              Cookies are small text files stored on your device to enable website functionality, improve performance, and analyze user interactions.
             </p>
-            <p className="text-gray-700 leading-relaxed mb-4">Cookies may be:</p>
-            <ul className="list-disc pl-6 space-y-1 mb-6">
-              <li><strong>Session cookies:</strong> Deleted once you close your browser.</li>
-              <li><strong>Persistent cookies:</strong> Remain until they expire or are deleted.</li>
-              <li><strong>First-party cookies:</strong> Placed directly by us.</li>
-              <li><strong>Third-party cookies:</strong> Placed by service providers (e.g., analytics tools).</li>
-            </ul>
 
             <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.2 Types of Cookies We Use</h3>
-
             <div className="space-y-4 mb-6">
               <div>
                 <h4 className="font-semibold text-gray-900">Strictly Necessary Cookies</h4>
-                <p className="text-gray-700">Enable essential functions like login, account authentication, and session management. Without these, the Service may not function properly.</p>
+                <p className="text-gray-700">Required for login, authentication, and core Service operations.</p>
               </div>
 
               <div>
-                <h4 className="font-semibold text-gray-900">Performance & Analytics Cookies</h4>
-                <p className="text-gray-700">Collect information about how users interact with the Service (e.g., most visited features, error logs). Help us improve performance and usability. Example: Google Analytics, Convex logs.</p>
+                <h4 className="font-semibold text-gray-900">Performance and Analytics Cookies</h4>
+                <p className="text-gray-700">Collect anonymized usage data to measure platform performance.</p>
               </div>
 
               <div>
                 <h4 className="font-semibold text-gray-900">Functional Cookies</h4>
-                <p className="text-gray-700">Remember user preferences (e.g., language, saved settings). Enhance your personalized experience.</p>
+                <p className="text-gray-700">Remember optional preferences such as language settings.</p>
               </div>
 
               <div>
                 <h4 className="font-semibold text-gray-900">Security Cookies</h4>
-                <p className="text-gray-700">Help detect fraud, abuse, and unauthorized access.</p>
+                <p className="text-gray-700">Detect and prevent fraud or unauthorized access.</p>
+              </div>
+
+              <div>
+                <h4 className="font-semibold text-gray-900">Marketing Cookies</h4>
+                <p className="text-gray-700 font-semibold">Currently not in use. If this changes, the Policy will be updated accordingly.</p>
               </div>
             </div>
 
             <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.3 Third-Party Cookies</h3>
             <p className="text-gray-700 leading-relaxed mb-4">
-              We may allow trusted third-party providers to place cookies for analytics, hosting, and platform functionality. These providers include (but are not limited to):
+              We may use cookies or analytics services from trusted third parties such as:
             </p>
             <ul className="list-disc pl-6 space-y-1 mb-4">
-              <li>Hosting and infrastructure providers.</li>
-              <li>Analytics providers (e.g., Google Analytics, Mixpanel).</li>
-              <li>API partners (e.g., OpenAI, Convex logs, payment processors).</li>
+              <li>Google Analytics</li>
+              <li>Convex Logs</li>
+              <li>OpenAI APIs</li>
+              <li>Stripe (for payment processing)</li>
             </ul>
-            <p className="text-gray-700 leading-relaxed mb-6">
-              We are not responsible for third-party cookie practices, which are governed by their own privacy policies.
+            <p className="text-gray-700 mb-6">
+              Each third party operates under its own privacy policy.
             </p>
 
-            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.4 How to Manage Cookies</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mt-6 mb-3">5.4 Managing Cookies</h3>
             <p className="text-gray-700 leading-relaxed mb-4">
-              You can manage or disable cookies by adjusting your browser settings. Please note:
+              You may disable or manage cookies through your browser settings. Please note that disabling essential cookies may impair some Service features.
             </p>
-            <ul className="list-disc pl-6 space-y-1 mb-6">
-              <li>Disabling strictly necessary cookies may impair Service functionality.</li>
-              <li>You can also opt out of certain analytics tools directly (e.g., via Google Analytics opt-out).</li>
-            </ul>
 
             <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">6. Security</h2>
-            <p className="mb-6">
-              We use reasonable technical, organizational, and administrative measures to protect your data. However, no system is completely secure, and we cannot guarantee absolute security.
+            <p className="text-gray-700 leading-relaxed mb-4">
+              We implement industry-standard technical, organizational, and administrative security measures to protect your personal information from unauthorized access, disclosure, alteration, or destruction.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              These measures include encryption in transit (HTTPS/TLS), secure authentication protocols, access controls, and regular security assessments. Our third-party service providers (Convex, Clerk, Stripe, OpenAI) maintain their own robust security frameworks.
+            </p>
+            <p className="text-gray-700 mb-6">
+              However, no method of transmission over the internet or electronic storage is 100% secure. While we strive to protect your personal information, we cannot guarantee its absolute security.
             </p>
 
             <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">7. International Data Transfers</h2>
-            <p className="mb-6">
-              If you access the Service from outside the United States, your information may be transferred to and processed in the United States. We implement safeguards for international transfers where required by law.
+            <p className="text-gray-700 leading-relaxed mb-4">
+              The Service is hosted and operated in the United States. If you access the Service from outside the United States, your information may be transferred to, stored, and processed in the United States or other countries where our service providers operate.
+            </p>
+            <p className="text-gray-700 mb-6">
+              Data protection laws in the United States and other countries may differ from those in your country of residence. By using the Service, you consent to the transfer of your information to the United States and other jurisdictions as necessary to provide the Service. We implement appropriate safeguards for international transfers where required by applicable law.
             </p>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">8. Data Retention</h2>
-            <p className="mb-6">
-              We retain your information only as long as necessary to provide the Service, fulfill legal obligations, or enforce our rights. Upon account closure, we may retain limited information for compliance and security purposes.
+            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">8. Your Rights</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              Depending on your jurisdiction, you may have certain rights regarding your personal information under applicable data protection laws, including the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA).
             </p>
-
-            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">9. Your Rights</h2>
-            <p className="mb-4">Depending on your location, you may have rights under applicable law (e.g., GDPR, CCPA), including:</p>
-            <ul className="list-disc pl-6 space-y-1 mb-4">
-              <li>Right to access and receive a copy of your data.</li>
-              <li>Right to correct or update inaccurate information.</li>
-              <li>Right to request deletion of your data.</li>
-              <li>Right to opt out of certain processing (e.g., marketing communications).</li>
-              <li>Right to data portability.</li>
+            <p className="text-gray-700 mb-4">These rights may include:</p>
+            <ul className="list-disc pl-6 space-y-2 mb-4 text-gray-700">
+              <li><strong>Right to Access:</strong> Request access to and receive a copy of the personal information we hold about you.</li>
+              <li><strong>Right to Rectification:</strong> Request correction of inaccurate or incomplete personal information.</li>
+              <li><strong>Right to Deletion:</strong> Request deletion of your personal information, subject to certain exceptions (e.g., legal obligations, dispute resolution).</li>
+              <li><strong>Right to Restriction:</strong> Request that we limit the processing of your personal information in certain circumstances.</li>
+              <li><strong>Right to Data Portability:</strong> Receive your personal information in a structured, commonly used format and transmit it to another controller.</li>
+              <li><strong>Right to Object:</strong> Object to processing of your personal information for certain purposes, including marketing communications.</li>
+              <li><strong>Right to Withdraw Consent:</strong> Withdraw consent at any time where processing is based on your consent.</li>
             </ul>
-            <p className="mb-6">
-              To exercise these rights, contact us at <a href="mailto:knammouz@quantipack.com" className="text-[#767AFA] hover:underline">knammouz@quantipack.com</a>.
+            <p className="text-gray-700 mb-4">
+              To exercise any of these rights, please contact us at <a href="mailto:knammouz@quantipack.com" className="text-[#767AFA] hover:underline">knammouz@quantipack.com</a>. We will respond to your request in accordance with applicable law, typically within 30 days.
+            </p>
+            <p className="text-gray-700 mb-6">
+              You also have the right to lodge a complaint with a supervisory authority if you believe our processing of your personal information violates applicable law.
             </p>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">10. Children's Privacy</h2>
-            <p className="mb-6">
-              The Service is not intended for individuals under 18. We do not knowingly collect data from minors.
+            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">9. Children's Privacy</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              The Service is not directed to individuals under the age of 18. We do not knowingly collect personal information from children under 18.
+            </p>
+            <p className="text-gray-700 mb-6">
+              If we become aware that we have collected personal information from a child under 18 without parental consent, we will take steps to delete such information as soon as possible. If you believe we have collected information from a child under 18, please contact us immediately at <a href="mailto:knammouz@quantipack.com" className="text-[#767AFA] hover:underline">knammouz@quantipack.com</a>.
             </p>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">11. Changes to This Policy</h2>
-            <p className="mb-6">
-              We may update this Privacy Policy from time to time. Updates will be posted on this page with a revised "Last Updated" date. Continued use of the Service constitutes acceptance of the revised Policy.
+            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">10. Changes to This Policy</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              We reserve the right to update or modify this Privacy & Cookies Policy at any time to reflect changes in our practices, technology, legal requirements, or other factors.
+            </p>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              When we make material changes to this Policy, we will update the "Last Updated" date at the top of this page and may notify you through the Service or via email. We encourage you to review this Policy periodically to stay informed about how we protect your information.
+            </p>
+            <p className="text-gray-700 mb-6">
+              Your continued use of the Service after any changes to this Policy constitutes your acceptance of the updated terms.
             </p>
 
-            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">12. Contact Us</h2>
-            <p className="mb-6">
-              For privacy-related questions, contact:
-              <br />
+            <h2 className="text-xl font-semibold text-gray-900 mt-8 mb-4">11. Contact Us</h2>
+            <p className="text-gray-700 leading-relaxed mb-4">
+              If you have any questions, concerns, or requests regarding this Privacy & Cookies Policy or our data practices, please contact us at:
+            </p>
+            <p className="text-gray-700 mb-6">
               <strong>QuantiPack LLC</strong>
               <br />
-              <a href="mailto:knammouz@quantipack.com" className="text-[#767AFA] hover:underline">
-                knammouz@quantipack.com
-              </a>
+              Email: <a href="mailto:knammouz@quantipack.com" className="text-[#767AFA] hover:underline">knammouz@quantipack.com</a>
+            </p>
+            <p className="text-gray-700 mb-6">
+              We will respond to your inquiry as promptly as possible, typically within 7 business days.
             </p>
           </div>
         </div>
