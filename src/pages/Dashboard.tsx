@@ -321,7 +321,7 @@ const Dashboard = () => {
               {/* Welcome Message */}
               <div className="mb-6">
                 <h1 className="text-3xl font-bold text-gray-900">
-                  Welcome, {user?.firstName || user?.fullName || 'there'}!
+                  Welcome, {currentUser?.firstName || user?.firstName || user?.fullName || 'there'}!
                 </h1>
               </div>
 
