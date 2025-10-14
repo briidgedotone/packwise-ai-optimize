@@ -60,13 +60,10 @@ export const analyzePDP = action({
           const competitorLabel = `Competitor ${String.fromCharCode(65 + i)}`; // A, B, C, D
 
           try {
-            // Add delay before each competitor analysis to avoid burst rate limits
-            // Skip delay for first competitor (already waited after main analysis)
-            if (i > 0) {
-              const delayMs = 1500; // 1.5 seconds between each competitor
-              console.log(`Waiting ${delayMs}ms before analyzing ${competitorLabel}...`);
-              await delay(delayMs);
-            }
+            // Add delay before EVERY competitor analysis to avoid burst rate limits
+            const delayMs = 1500; // 1.5 seconds before each competitor
+            console.log(`Waiting ${delayMs}ms before analyzing ${competitorLabel}...`);
+            await delay(delayMs);
 
             console.log(`Analyzing ${competitorLabel}...`);
             const competitorAnalysis = await analyzeImageWithRetry(
