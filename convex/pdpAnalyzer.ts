@@ -487,7 +487,7 @@ async function generateRecommendations(
       ],
       generationConfig: {
         temperature: 0.4,
-        maxOutputTokens: 2000,
+        maxOutputTokens: 4000,
         responseMimeType: 'application/json'
       }
     }),
@@ -570,7 +570,11 @@ COMPETITIVE DIFFERENTIATION:
 - Reference successful design disruptions (RXBAR minimalism, Oatly's anti-dairy positioning)
 - Suggest improvements that create competitive advantage, not just compliance
 
-Provide strategic recommendations that demonstrate deep packaging expertise and consumer behavior understanding. Focus on ALL metrics that score below 8.5 (indicating room for improvement) plus holistic strategy.
+Provide strategic recommendations that demonstrate deep packaging expertise and consumer behavior understanding. 
+
+CRITICAL: You MUST provide recommendations for ALL metrics that score below 8.5. Do not limit yourself to just 3 recommendations. If multiple metrics score below 8.5, include improvement recommendations for each one. This ensures comprehensive optimization guidance.
+
+Focus on ALL metrics that score below 8.5 (indicating room for improvement) plus holistic strategy.
 
 RESPOND IN THIS EXACT JSON FORMAT:
 {
@@ -582,6 +586,7 @@ RESPOND IN THIS EXACT JSON FORMAT:
       "recommendation": "Specific actionable advice",
       "example": "Concrete example or reference"
     }
+    // IMPORTANT: Include ALL metrics with scores below 8.5, not just the lowest 3
   ],
   "overall_strategy": "High-level strategic advice for PDP optimization",
   "quick_wins": [
