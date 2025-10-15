@@ -536,6 +536,12 @@ ${contextInfo ? `CONTEXT:\n${contextInfo}\n\n` : ''}
 YOUR PDP SCORES:
 ${Object.entries(mainAnalysis.scores).map(([key, value]) => `${key}: ${value}/10`).join('\n')}
 
+METRICS REQUIRING IMPROVEMENT (scores below 8.5):
+${Object.entries(mainAnalysis.scores)
+  .filter(([key, value]) => value < 8.5)
+  .map(([key, value]) => `${key}: ${value}/10`)
+  .join('\n')}
+
 YOUR PDP ANALYSIS:
 ${Object.entries(mainAnalysis.analysis).map(([key, value]) => `${key}: ${value}`).join('\n')}
 
@@ -572,7 +578,9 @@ COMPETITIVE DIFFERENTIATION:
 
 Provide strategic recommendations that demonstrate deep packaging expertise and consumer behavior understanding. 
 
-CRITICAL: You MUST provide recommendations for ALL metrics that score below 8.5. Do not limit yourself to just 3 recommendations. If multiple metrics score below 8.5, include improvement recommendations for each one. This ensures comprehensive optimization guidance.
+CRITICAL REQUIREMENT: You MUST provide improvement recommendations for ALL metrics that score below 8.5. This is not optional - you must include recommendations for every single metric below 8.5, regardless of how many there are.
+
+Based on the "METRICS REQUIRING IMPROVEMENT" section above, you MUST provide a priority_improvements entry for EVERY SINGLE metric listed there. Each metric in that list requires an improvement recommendation. Do not skip any of them. Do not limit yourself to just the lowest 3 scores.
 
 Focus on ALL metrics that score below 8.5 (indicating room for improvement) plus holistic strategy.
 
@@ -586,7 +594,7 @@ RESPOND IN THIS EXACT JSON FORMAT:
       "recommendation": "Specific actionable advice",
       "example": "Concrete example or reference"
     }
-    // IMPORTANT: Include ALL metrics with scores below 8.5, not just the lowest 3
+    // CRITICAL: Include EVERY metric from the "METRICS REQUIRING IMPROVEMENT" section above
   ],
   "overall_strategy": "High-level strategic advice for PDP optimization",
   "quick_wins": [
