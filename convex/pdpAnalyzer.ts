@@ -570,7 +570,7 @@ COMPETITIVE DIFFERENTIATION:
 - Reference successful design disruptions (RXBAR minimalism, Oatly's anti-dairy positioning)
 - Suggest improvements that create competitive advantage, not just compliance
 
-Provide strategic recommendations that demonstrate deep packaging expertise and consumer behavior understanding. Focus on the 3 lowest-scoring metrics plus holistic strategy.
+Provide strategic recommendations that demonstrate deep packaging expertise and consumer behavior understanding. Focus on ALL metrics that score below 8.5 (indicating room for improvement) plus holistic strategy.
 
 RESPOND IN THIS EXACT JSON FORMAT:
 {
