@@ -192,9 +192,9 @@ export const exportPDPAnalysisToPDF = async (
     pdf.setFont('helvetica', 'normal');
 
     const stats = [
-      `✓ ${strongMetrics} strong metrics`,
-      `⚠ ${results.recommendations.priority_improvements.length} areas to improve`,
-      `🏆 ${results.recommendations.competitive_advantages.length} competitive advantages`
+      `${strongMetrics} strong metrics`,
+      `${results.recommendations.priority_improvements.length} areas to improve`,
+      `${results.recommendations.competitive_advantages.length} competitive advantages`
     ];
 
     const statStartY = yPosition;
@@ -378,7 +378,7 @@ export const exportPDPAnalysisToPDF = async (
         pdf.setFontSize(9);
         pdf.setFont('helvetica', 'bold');
         pdf.setTextColor(146, 64, 14); // Amber-800
-        pdf.text('💡 Potential Improvement', margin + boxPadding, yPosition);
+        pdf.text('Potential Improvement', margin + boxPadding, yPosition);
 
         yPosition += 6;
 
@@ -449,15 +449,7 @@ export const exportPDPAnalysisToPDF = async (
       pdf.setFontSize(10);
       pdf.setTextColor(40, 40, 40);
       const recHeight = addWrappedText(improvement.recommendation, margin + 3, yPosition, contentWidth - 3, 10);
-      yPosition += recHeight + 5;
-
-      if (improvement.example) {
-        pdf.setFontSize(9);
-        pdf.setFont('helvetica', 'italic');
-        pdf.setTextColor(80, 80, 80);
-        const exampleHeight = addWrappedText(`Example: ${improvement.example}`, margin + 3, yPosition, contentWidth - 3, 9);
-        yPosition += exampleHeight + 10;
-      }
+      yPosition += recHeight + 15;
     });
 
     // Competitive Advantages
