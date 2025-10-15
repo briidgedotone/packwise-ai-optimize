@@ -6,6 +6,8 @@
   <g transform="translate(14, 14)">
     <!-- Box outline -->
     <path d="M10 2L2 6V14L10 18L18 14V6L10 2Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    <!-- Box lid stripe (horizontal line dividing top face) -->
+    <path d="M6 4L14 4" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <!-- Box front -->
     <path d="M2 6L10 10L18 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     <!-- Box vertical line -->
