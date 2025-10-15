@@ -147,7 +147,7 @@ const Index = () => {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               {/* Logo */}
-              <Link to="/" className="flex items-center gap-2">
+              <Link to="/" className="flex items-center gap-1.5">
                 <img src="/quantipack logo.png" alt="QuantiPackAI Logo" className="h-12" />
                 <span className="text-xl font-bold text-gray-900">QuantiPackAI</span>
               </Link>
