@@ -505,7 +505,152 @@ async function generateRecommendations(
   }
 
   const resultText = data.candidates[0].content.parts[0].text;
-  return JSON.parse(resultText);
+  const initialRecommendations = JSON.parse(resultText);
+  
+  // Validate that we have recommendations for ALL metrics below 8.5
+  const qualifyingMetrics = Object.entries(mainAnalysis.scores)
+    .filter(([key, value]) => value < 8.5)
+    .map(([key, value]) => key);
+  
+  const existingMetrics = initialRecommendations.priority_improvements.map((imp: any) => imp.metric);
+  const missingMetrics = qualifyingMetrics.filter(metric => !existingMetrics.includes(metric));
+  
+  console.log(`Initial recommendations: ${existingMetrics.length}/${qualifyingMetrics.length} metrics covered`);
+  console.log(`Missing metrics: ${missingMetrics.join(', ')}`);
+  
+  // If we're missing any qualifying metrics, make individual API calls for them
+  if (missingMetrics.length > 0) {
+    console.log(`Making individual API calls for ${missingMetrics.length} missing metrics...`);
+    
+    for (let i = 0; i < missingMetrics.length; i++) {
+      const metric = missingMetrics[i];
+      
+      try {
+        // Add delay between individual API calls to avoid rate limiting
+        if (i > 0) {
+          await delay(1000); // 1 second delay between calls
+        }
+        
+        const individualRecommendation = await generateIndividualMetricRecommendation(
+          metric,
+          mainAnalysis.scores[metric],
+          mainAnalysis.analysis[metric],
+          metaInfo
+        );
+        
+        if (individualRecommendation) {
+          initialRecommendations.priority_improvements.push(individualRecommendation);
+          console.log(`✅ Added recommendation for ${metric}`);
+        }
+      } catch (error) {
+        console.warn(`Failed to generate individual recommendation for ${metric}:`, error);
+        // Continue with other metrics even if one fails
+      }
+    }
+  }
+  
+  console.log(`Final recommendations: ${initialRecommendations.priority_improvements.length}/${qualifyingMetrics.length} metrics covered`);
+  
+  // Ensure we have at least the initial recommendations even if some individual calls failed
+  if (initialRecommendations.priority_improvements.length === 0) {
+    console.warn('No recommendations generated, this should not happen');
+  }
+  
+  return initialRecommendations;
+}
+
+// Generate individual recommendation for a specific metric
+async function generateIndividualMetricRecommendation(
+  metric: string,
+  currentScore: number,
+  analysis: string,
+  metaInfo: MetaInfo | undefined
+): Promise<any> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  
+  if (!apiKey) {
+    throw new Error("Gemini API key not configured");
+  }
+
+  const contextInfo = metaInfo ? [
+    metaInfo.category && `Product Category: ${metaInfo.category}`,
+    metaInfo.description && `Product Description: ${metaInfo.description}`,
+    metaInfo.shelfType && `Shelf Type: ${metaInfo.shelfType}`,
+    metaInfo.retailEnvironment && `Retail Environment: ${metaInfo.retailEnvironment}`,
+  ].filter(Boolean).join('\n') : '';
+
+  const prompt = `You are an expert packaging design consultant providing a targeted recommendation for a specific metric.
+
+${contextInfo ? `CONTEXT:\n${contextInfo}\n\n` : ''}
+
+METRIC TO IMPROVE: ${metric}
+CURRENT SCORE: ${currentScore}/10
+CURRENT ANALYSIS: ${analysis}
+
+TARGET: Generate ONE specific recommendation to improve this metric from ${currentScore} to 8.5+.
+
+Provide a focused, actionable recommendation that addresses this specific metric. Be specific about what changes to make and why they will improve the score.
+
+RESPOND IN THIS EXACT JSON FORMAT:
+{
+  "metric": "${metric}",
+  "current_score": ${currentScore},
+  "target_score": ${Math.max(currentScore + 1.5, 8.5)},
+  "recommendation": "Specific actionable advice for improving this metric",
+  "example": "Concrete example or reference"
+}`;
+
+  const systemInstruction = 'You are a packaging design consultant providing focused recommendations for specific metrics.';
+
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${apiKey}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      system_instruction: {
+        parts: [{ text: systemInstruction }]
+      },
+      contents: [
+        {
+          parts: [{ text: prompt }]
+        }
+      ],
+      generationConfig: {
+        temperature: 0.4,
+        maxOutputTokens: 1000,
+        responseMimeType: 'application/json'
+      }
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Gemini API error: ${response.status} - ${errorText}`);
+  }
+
+  const data = await response.json();
+
+  if (!data.candidates || data.candidates.length === 0) {
+    throw new Error('No response from Gemini API');
+  }
+
+  const resultText = data.candidates[0].content.parts[0].text;
+  
+  try {
+    const result = JSON.parse(resultText);
+    
+    // Validate the response has the required fields
+    if (!result.metric || !result.current_score || !result.recommendation) {
+      throw new Error('Invalid response format from individual recommendation API');
+    }
+    
+    return result;
+  } catch (parseError) {
+    console.error(`Failed to parse individual recommendation for ${metric}:`, parseError);
+    console.error('Raw response:', resultText);
+    throw new Error(`Failed to parse recommendation response for ${metric}`);
+  }
 }
 
 // Build recommendations prompt
