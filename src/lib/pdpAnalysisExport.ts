@@ -347,7 +347,58 @@ export const exportPDPAnalysisToPDF = async (
       pdf.setFont('helvetica', 'normal');
       pdf.setTextColor(60, 60, 60);
       const analysisHeight = addWrappedText(results.mainAnalysis.analysis[metric], margin, yPosition, contentWidth - 5, 9);
-      yPosition += analysisHeight + 15;
+      yPosition += analysisHeight + 10;
+
+      // Check if there's a potential improvement for this metric
+      const improvement = results.recommendations.priority_improvements.find(
+        imp => imp.metric === metric
+      );
+
+      if (improvement) {
+        checkPageBreak(35);
+
+        // Potential Improvement box
+        const boxPadding = 5;
+        const boxStartY = yPosition;
+
+        // Draw box background
+        pdf.setFillColor(254, 243, 199); // Light amber background
+        pdf.setDrawColor(251, 191, 36); // Amber border
+        pdf.setLineWidth(0.3);
+
+        // Calculate box height dynamically
+        pdf.setFontSize(9);
+        const improvementLines = pdf.splitTextToSize(improvement.recommendation, contentWidth - 15);
+        const boxHeight = 15 + (improvementLines.length * 3.2);
+
+        pdf.roundedRect(margin, boxStartY, contentWidth - 5, boxHeight, 2, 2, 'FD');
+
+        // Icon and title
+        yPosition += boxPadding + 4;
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(146, 64, 14); // Amber-800
+        pdf.text('💡 Potential Improvement', margin + boxPadding, yPosition);
+
+        yPosition += 6;
+
+        // Improvement recommendation
+        pdf.setFontSize(9);
+        pdf.setFont('helvetica', 'normal');
+        pdf.setTextColor(60, 60, 60);
+        const impHeight = addWrappedText(improvement.recommendation, margin + boxPadding, yPosition, contentWidth - 15, 9);
+        yPosition += impHeight + 3;
+
+        // Target score
+        pdf.setFontSize(8);
+        pdf.setFont('helvetica', 'bold');
+        pdf.setTextColor(146, 64, 14);
+        pdf.text(`Target Score: ${improvement.current_score.toFixed(1)} → ${improvement.target_score.toFixed(1)}`, margin + boxPadding, yPosition);
+
+        yPosition += boxPadding + 10;
+      }
+
+      yPosition += 5;
     });
 
     // ============ PAGE 4: RECOMMENDATIONS ============
