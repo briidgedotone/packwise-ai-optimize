@@ -348,7 +348,7 @@ export default function ClientSideAnalysisResults() {
         const suggestedHeight = Math.ceil(cubicRoot * 0.95);
 
         recommendation = `"Reduce to approximately ${suggestedLength}"" × ${suggestedWidth}"" × ${suggestedHeight}"""`;
-        improvement = `"${avgFillRate.toFixed(1)}% → ${Math.min(targetFillRate + 5, 95)}% (affects ${orderCount} orders)"`;
+        improvement = `"${avgFillRate.toFixed(1)}% → ${targetFillRate}% (affects ${orderCount} orders)"`;
       } else {
         recommendation = `"Current dimensions are optimal for target fill rate"`;
         improvement = `"${avgFillRate.toFixed(1)}% (target achieved for ${orderCount} orders)"`;
@@ -1220,7 +1220,7 @@ export default function ClientSideAnalysisResults() {
                     reason: `Only ${successRate.toFixed(0)}% of orders meet your ${targetFillRate}% target`,
                     suggestion: `Reduce dimensions to approximately ${Math.ceil(cubicRoot * 1.1)}" × ${Math.ceil(cubicRoot * 0.95)}" × ${Math.ceil(cubicRoot * 0.95)}"`,
                     impact: `Could improve fill rate for ${data.orders} orders`,
-                    expectedFillRate: `${avgFillRate.toFixed(0)}% → ${Math.min(targetFillRate + 5, 95)}%`
+                    expectedFillRate: `${avgFillRate.toFixed(0)}% → ${targetFillRate}%`
                   };
                 } else if (successRate < 60) {
                   // Moderate performance - minor adjustments
@@ -1232,7 +1232,7 @@ export default function ClientSideAnalysisResults() {
                     reason: `${successRate.toFixed(0)}% success rate - room for improvement`,
                     suggestion: `Reduce package size by ~${reductionPercent}% to better fit orders`,
                     impact: `Affects ${data.orders} orders (${((data.orders / results.allocations.length) * 100).toFixed(0)}% of total)`,
-                    expectedFillRate: `${avgFillRate.toFixed(0)}% → ${Math.min(avgFillRate + 10, targetFillRate + 5)}%`
+                    expectedFillRate: `${avgFillRate.toFixed(0)}% → ${Math.min(avgFillRate + 10, targetFillRate)}%`
                   };
                 } else if (successRate >= 80) {
                   // Good performance - keep as is
