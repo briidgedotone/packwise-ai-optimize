@@ -21,40 +21,7 @@ export const createOrUpdateUser = mutation({
         name: args.name,
         lastLoginAt: Date.now(),
       });
-      
-      // Check if this is a testing account and update tokens if needed
-      const isTestingAccount = args.email === 'admin@briidge.one';
-      if (isTestingAccount) {
-        const tokenBalance = await ctx.db
-          .query("tokenBalance")
-          .withIndex("by_user", (q) => q.eq("userId", existingUser._id))
-          .first();
-        
-        if (tokenBalance && tokenBalance.monthlyTokens < 1000) {
-          // Update to testing tokens
-          await ctx.db.patch(tokenBalance._id, {
-            monthlyTokens: 1000,
-            updatedAt: Date.now(),
-          });
-        }
-        
-        // Update subscription as well
-        const subscription = await ctx.db
-          .query("subscriptions")
-          .withIndex("by_user", (q) => q.eq("userId", existingUser._id))
-          .first();
-        
-        if (subscription && subscription.tokensPerMonth < 1000) {
-          await ctx.db.patch(subscription._id, {
-            tokensPerMonth: 1000,
-            planType: "enterprise",
-            status: "trialing",
-            currentPeriodEnd: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year
-            updatedAt: Date.now(),
-          });
-        }
-      }
-      
+
       return existingUser._id;
     } else {
       // Create new user
@@ -66,39 +33,10 @@ export const createOrUpdateUser = mutation({
         createdAt: Date.now(),
         lastLoginAt: Date.now(),
       });
-      
-      // Check if this is a testing account - only create subscription/tokens for testing accounts
-      const isTestingAccount = args.email === 'admin@briidge.one';
 
-      if (isTestingAccount) {
-        const monthlyTokens = 1000; // 1000 tokens for testing account
+      // No automatic subscription or token balance creation
+      // Users must explicitly choose a plan on the onboarding page
 
-        // Initialize enterprise subscription for testing account
-        await ctx.db.insert("subscriptions", {
-          userId,
-          stripeCustomerId: "", // Will be set when they subscribe
-          stripeSubscriptionId: undefined,
-          status: "trialing",
-          planType: "enterprise",
-          tokensPerMonth: monthlyTokens,
-          currentPeriodEnd: Date.now() + 365 * 24 * 60 * 60 * 1000, // 1 year for testing
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        });
-
-        // Initialize token balance for testing account
-        await ctx.db.insert("tokenBalance", {
-          userId,
-          monthlyTokens: monthlyTokens,
-          additionalTokens: 0,
-          usedTokens: 0,
-          resetDate: Date.now() + 30 * 24 * 60 * 60 * 1000, // Reset in 30 days
-          updatedAt: Date.now(),
-        });
-      }
-      // For regular users: NO automatic subscription or token balance creation
-      // They must explicitly choose a plan on the onboarding page
-      
       return userId;
     }
   },
